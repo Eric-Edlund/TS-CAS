@@ -1,16 +1,14 @@
 import { AlgebraDoer } from "./mathlib/AlgebraDoer";
-import { Argument } from "./mathlib/Argument";
-import { a, b, c, num, product, sum, v } from "./mathlib/ConvenientExpressions";
+import { a, b, c, fraction, num, product, sum, v } from "./mathlib/ConvenientExpressions";
 import { EquivalenceFinder } from "./mathlib/EquivalenceFinder";
-import { Expression } from "./mathlib/expressions/Expression";
-import { ArgumentEdge, GraphEdge, Graph, MathGraphNode } from "./mathlib/Graph";
-import { GraphMinipulator } from "./mathlib/GraphMinipulator";
-import { Inference } from "./mathlib/Inference";
 import { parse } from "./mathlib/userinput/Parser";
 import { WebGraphView, WebGraphViewInitSettings } from "./mathlib/uielements/WebGraphView";
-import { Derivative } from "./mathlib/expressions/Derivative";
 import { Integral } from "./mathlib/expressions/Integral";
 import { Fraction } from "./mathlib/expressions/Fraction";
+import { Graph } from "./mathlib/Graph";
+import { Expression } from "./mathlib/expressions/Expression";
+
+
 
 
 export function loadPrimaryPage(): void {
@@ -26,7 +24,7 @@ export function loadPrimaryPage(): void {
     */
 
     //const root = Derivative.of(sum(a, a, product(num(2), b)), a)
-    const root = Integral.of(Fraction.of(Fraction.of(a, a), b), c)
+    const root = Integral.of(fraction(Fraction.of(a, a), b), c)
     graph.addNode(root)
 
 

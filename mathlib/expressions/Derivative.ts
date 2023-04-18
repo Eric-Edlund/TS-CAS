@@ -1,4 +1,3 @@
-import { product } from "../ConvenientExpressions";
 import { Expression } from "./Expression";
 import { Integer } from "./Integer";
 import { Product, ProductType } from "./Product";

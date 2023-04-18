@@ -1,10 +1,14 @@
 import { Expression } from "./expressions/Expression";
-import { Fraction } from "./expressions/Fraction";
 import { Integer } from "./expressions/Integer";
+import { Fraction } from "./expressions/Fraction";
 import { Integral } from "./expressions/Integral";
 import { Product } from "./expressions/Product";
 import { orderTerms, Sum, SumType } from "./expressions/Sum";
 import { Variable } from "./expressions/Variable";
+
+export function fraction(num: Expression, den: Expression): Fraction {
+    return Fraction.of(num, den)
+}
 
 /**
  * A convenience method for Sum.of()
@@ -142,10 +146,6 @@ export function v(symbol: string): Variable {
 
 export function int(integrand: Expression, respectTo: Expression): Integral {
     return Integral.of(integrand, respectTo)
-}
-
-export function frac(num: Expression, den: Expression): Fraction {
-    return Fraction.of(num, den)
 }
 
 export const a = v('a')

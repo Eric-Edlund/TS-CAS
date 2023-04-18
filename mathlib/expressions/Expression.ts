@@ -1,7 +1,10 @@
 import { Integer, IntegerType } from "./Integer";
 import { MathElement } from "./MathElement";
 
-
+/**
+ * Base of all mathematical expressions.
+ * All children should implement fly-wheel pattern.
+ */
 export abstract class Expression extends MathElement {
 
     /**

@@ -1,4 +1,4 @@
-import { a, b, c, frac, int, negative, num, product, sum, x, y } from "./mathlib/ConvenientExpressions"
+import { a, b, c, int, negative, num, product, sum, x, y } from "./mathlib/ConvenientExpressions"
 import { Derivative } from "./mathlib/expressions/Derivative"
 import { Exponent } from "./mathlib/expressions/Exponent"
 import { Expression } from "./mathlib/expressions/Expression"
@@ -44,7 +44,7 @@ export function loadExpressionsTestPage(): void {
     view(Integral.of(Fraction.of(Fraction.of(Fraction.of(Fraction.of(Fraction.of(a, a), a), a), a), b), c))
     
     p("")
-    view(int(frac(sum(negative(b), Exponent.of(sum(x, a), frac(num(1), num(2)))), product(num(2), a)), x))
+    view(int(Fraction.of(sum(negative(b), Exponent.of(sum(x, a), Fraction.of(num(1), num(2)))), product(num(2), a)), x))
 
     p("Product of x and y")
     view(product(x, y))
