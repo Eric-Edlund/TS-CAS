@@ -1,4 +1,4 @@
-import { inParen } from "../MathMLHelpers";
+import { inParen } from "../util/MathMLHelpers";
 import { Expression } from "./Expression";
 import { Integer } from "./Integer";
 import { ProductType } from "./Product";

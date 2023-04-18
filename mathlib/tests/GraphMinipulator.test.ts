@@ -3,7 +3,7 @@
  * Tests the graph minipulator functions.
  */
 
-import { AlgebraDoer } from "../AlgebraDoer"
+import { Algebra } from "../derivations/Algebra"
 import { num } from "../ConvenientExpressions"
 import { Graph } from "../Graph"
 import { GraphMinipulator } from "../GraphMinipulator"

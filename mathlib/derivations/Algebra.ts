@@ -1,18 +1,18 @@
-import { Argument } from "./Argument";
-import { negative, product, sum, sumEvalIntegerTerms, sumIntuitive } from "./ConvenientExpressions";
-import { Expression } from "./expressions/Expression";
-import { Integer } from "./expressions/Integer";
-import { Product } from "./expressions/Product";
-import { Sum } from "./expressions/Sum";
-import { Graph, MathGraphNode } from "./Graph";
-import { GraphMinipulator } from "./GraphMinipulator";
-import { Inference } from "./Inference";
-import { Relationship } from "./Relationship";
+import { Argument } from "../Argument";
+import { negative, product, sum, sumEvalIntegerTerms, sumIntuitive } from "../ConvenientExpressions";
+import { Expression } from "../expressions/Expression";
+import { Integer } from "../expressions/Integer";
+import { Product } from "../expressions/Product";
+import { Sum } from "../expressions/Sum";
+import { Graph, MathGraphNode } from "../Graph";
+import { GraphMinipulator } from "../GraphMinipulator";
+import { Inference } from "../Inference";
+import { Relationship } from "../Relationship";
 
 /**
  * Uses algebra to expand a graph.
  */
-export class AlgebraDoer {
+export class Algebra {
     /**
      * Create a new graph containing only expansions from the 
      * given one.

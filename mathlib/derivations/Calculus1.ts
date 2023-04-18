@@ -1,9 +1,9 @@
-import { Graph } from "./Graph";
+import { Graph } from "../Graph";
 
 /**
  * Class that can perform math operations featured in Calculus 1.
  */
-export namespace Calculus1Doer {
+export class Calculus1 {
 
     /**
      * Gets an expansion of the given graph using rules from calculus.

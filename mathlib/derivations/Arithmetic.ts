@@ -1,20 +1,19 @@
-import { Argument } from "./Argument";
-import { orderedSum } from "./ConvenientExpressions";
-import { Exponent } from "./expressions/Exponent";
-import { Expression } from "./expressions/Expression";
-import { Integer } from "./expressions/Integer";
-import { Product } from "./expressions/Product";
-import { Sum } from "./expressions/Sum";
-import { Graph } from "./Graph";
-import { GraphMinipulator } from "./GraphMinipulator";
-import { Inference } from "./Inference";
-import { assert } from "./util/assert";
+import { orderedSum } from "../ConvenientExpressions";
+import { Exponent } from "../expressions/Exponent";
+import { Expression } from "../expressions/Expression";
+import { Integer } from "../expressions/Integer";
+import { Product } from "../expressions/Product";
+import { Sum } from "../expressions/Sum";
+import { Graph } from "../Graph";
+import { Inference } from "../Inference";
+import { assert } from "../util/assert";
+
 
 /**
  * Given an expression, this class can derive other
  * equivalent expressions.
  */
-export class EquivalenceFinder {
+export class Arithmetic {
 
     /**
      * Produces a graph containing expressions
@@ -141,7 +140,6 @@ class CombineCommonTermsAddition extends RuleOfInference {
         })
         return inferences;
     }
-
 }
 
 class CombineCommonTermsMultiplication extends RuleOfInference {
@@ -219,10 +217,6 @@ class EvaluateSums extends RuleOfInference {
         }
         const newInt = integerTerms.map<Integer>(e => e as Integer).reduce((a, b) => Integer.of(a.value + b.value))
         const otherTerms = [...sum.terms].filter(t => !(t instanceof Integer))
-
-        //console.log("Simplifying via Addition " + sum.toString())
-        //console.log("Found " + integerTerms.length + " integer terms")
-        //integerTerms.forEach(t => console.log(t))
 
         let result: Inference;
         if (otherTerms.length == 0) {

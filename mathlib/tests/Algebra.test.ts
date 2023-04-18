@@ -3,7 +3,7 @@
  * Checks that we are drawing valid algebraic conclusions.
  */
 
-import { AlgebraDoer } from "../AlgebraDoer"
+import { Algebra } from "../derivations/Algebra"
 import { Argument } from "../Argument"
 import { num, sum, v } from "../ConvenientExpressions"
 import { Integer } from "../expressions/Integer"
@@ -28,7 +28,7 @@ test("a + b = c => a = c - b", () => {
     startGraph.addInference(new Inference(leftHand, rightHand, "Given by problem"))
     startGraph.addInference(new Inference(rightHand, leftHand, "Given by problem"))
 
-    const expansion = AlgebraDoer.expand(startGraph)
+    const expansion = Algebra.expand(startGraph)
     const expected = Sum.of([c, Product.of([Integer.of(-1), b])])
     assert(expansion.contains(expected), "" + expansion + " doesn't contain " + expected)
     assert(expansion.contains(a))
@@ -38,9 +38,9 @@ test("a + b = c => a = c - b", () => {
 test("Algebraic Expansion produces a connected resultant graph", () => {
     const graph = new Graph();
     graph.addInference(new Inference(sum(a, b), c, "given"))
-    graph.addGraph(AlgebraDoer.expand(graph));
+    graph.addGraph(Algebra.expand(graph));
     assert(GraphMinipulator.isConnected(graph), "graph isn't connected")
-    graph.addGraph(AlgebraDoer.expand(graph));
+    graph.addGraph(Algebra.expand(graph));
     assert(GraphMinipulator.isConnected(graph), "graph isn't connected")
 })
 
@@ -52,10 +52,10 @@ test("Algebraic Expansion produces a connected resultant graph 2", () => {
     graph.addNode(right)
     graph.addInference(new Inference(left, right, "Given by problem"))
     
-    const result = AlgebraDoer.expand(graph)
+    const result = Algebra.expand(graph)
     graph.addGraph(result);
 
     assert(GraphMinipulator.isConnected(graph), "graph isn't connected")
-    graph.addGraph(AlgebraDoer.expand(graph));
+    graph.addGraph(Algebra.expand(graph));
     assert(GraphMinipulator.isConnected(graph), "graph isn't connected")
 })

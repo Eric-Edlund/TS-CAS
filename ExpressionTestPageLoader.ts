@@ -6,10 +6,13 @@ import { Fraction } from "./mathlib/expressions/Fraction"
 import { Integral } from "./mathlib/expressions/Integral"
 import { EditableMathView } from "./mathlib/uielements/EditableMathView"
 
-
+/**
+ * Called after the dom is loaded.
+ * Populates the body element of the document
+ * with the test expressions page
+ */
 export function loadExpressionsTestPage(): void {
-    if (!document.getElementsByTagName('body')[0].classList.contains('expressionTestPage')) return
-    const page = document.getElementsByClassName('expressionTestPage')[0] as HTMLBodyElement
+    const page = document.getElementsByTagName('body')[0] as HTMLBodyElement
 
     function p(content: string): HTMLParagraphElement {
         const e = document.createElement('p')

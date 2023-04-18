@@ -1,19 +1,22 @@
-import { AlgebraDoer } from "./mathlib/AlgebraDoer";
+import { Algebra } from "./mathlib/derivations/Algebra";
 import { a, b, c, fraction, num, product, sum, v } from "./mathlib/ConvenientExpressions";
-import { EquivalenceFinder } from "./mathlib/EquivalenceFinder";
 import { parse } from "./mathlib/userinput/Parser";
 import { WebGraphView, WebGraphViewInitSettings } from "./mathlib/uielements/WebGraphView";
 import { Integral } from "./mathlib/expressions/Integral";
 import { Fraction } from "./mathlib/expressions/Fraction";
 import { Graph } from "./mathlib/Graph";
 import { Expression } from "./mathlib/expressions/Expression";
+import { Arithmetic } from "./mathlib/derivations/Arithmetic";
 
 
 
-
+/**
+ * Called after DOM is loaded.
+ * Substitutes the body element in the document
+ * with the primary integrator view.
+ * @returns 
+ */
 export function loadPrimaryPage(): void {
-    if (!document.getElementsByTagName('body')[0].classList.contains('primaryIntegrator')) return
-
     const graph = new Graph();
     /*
     const left = sum(v('x'), num(2), num(2))
@@ -28,10 +31,10 @@ export function loadPrimaryPage(): void {
     graph.addNode(root)
 
 
-    graph.addGraph(EquivalenceFinder.expand(graph))
-    graph.addGraph(AlgebraDoer.expand(graph))
-    graph.addGraph(EquivalenceFinder.expand(graph))
-    graph.addGraph(AlgebraDoer.expand(graph))
+    graph.addGraph(Arithmetic.expand(graph))
+    graph.addGraph(Algebra.expand(graph))
+    graph.addGraph(Arithmetic.expand(graph))
+    graph.addGraph(Algebra.expand(graph))
 
 
     //console.log("Result: " + graph)
