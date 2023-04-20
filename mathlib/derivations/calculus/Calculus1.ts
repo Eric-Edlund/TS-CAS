@@ -1,4 +1,5 @@
-import { Graph } from "../Graph";
+import { Graph } from "../../Graph";
+
 
 /**
  * Class that can perform math operations featured in Calculus 1.
@@ -11,7 +12,7 @@ export class Calculus1 {
      * you will get a connected graph (if the input was connected).
      * @param input 
      */
-    //function expand(input: Graph): Graph {
+    //public static expand(input: Graph): Graph {
 
     //}
 }

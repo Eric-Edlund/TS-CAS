@@ -30,6 +30,9 @@ export abstract class Expression extends MathElement {
      * pi
      */
     public abstract readonly isReducible: boolean;
+    /**
+     * True if the expression is reducible or is an integer.
+     */
     public get reducibleOrInt(): boolean {
         return this.isReducible || this.class == IntegerType
     }
