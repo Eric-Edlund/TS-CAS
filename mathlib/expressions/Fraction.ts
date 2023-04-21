@@ -13,6 +13,8 @@ export class Fraction extends Expression {
         super()
         this.numerator = num
         this.denominator = denom
+        Object.freeze(this.numerator)
+        Object.freeze(this.denominator)
 
         /*
         A fraction is reducible if the denom | num.

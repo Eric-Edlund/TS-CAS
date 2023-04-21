@@ -26,6 +26,7 @@ export class Product extends Expression {
         super()
         assert(factors.length >= 2, "Creating product with less than 2 factors.")
         this.factors = factors;
+        Object.freeze(this.factors)
         
         let reducible = true
         this.factors.forEach(f => {

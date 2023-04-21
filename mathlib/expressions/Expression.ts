@@ -4,6 +4,7 @@ import { MathElement } from "./MathElement";
 /**
  * Base of all mathematical expressions.
  * All children should implement fly-wheel pattern.
+ * All children should be immutable.
  */
 export abstract class Expression extends MathElement {
 

@@ -80,7 +80,7 @@ export function sumEvalIntegerTerms(...terms: Expression[]): Expression {
 export function sumIntuitive(...terms: Expression[]): Expression {
     const intEval =  sumEvalIntegerTerms(...terms)
     if (intEval.class != SumType) return intEval
-    terms = (intEval as Sum).terms
+    terms = [...(intEval as Sum).terms]
 
     // Find opposite pairs
     // They will take the form

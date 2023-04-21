@@ -17,6 +17,8 @@ export class Derivative extends Expression {
         super()
         this.exp = exp
         this.relativeTo = relativeTo
+        Object.freeze(this.exp)
+        Object.freeze(this.relativeTo)
         this.isReducible = false //TODO: Determine if a derivative is reducible
         this.isConstant = false // TODO: Determine if a derivative is constant
 

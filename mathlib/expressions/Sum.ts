@@ -31,6 +31,7 @@ export class Sum extends Expression {
 
         this.isHealthy = this.determineHealth()
         this.isConstant = this.terms.map<boolean>(t => t.isConstant).reduce((a, b) => a && b)
+        Object.freeze(this.terms)
     }
 
     /**
@@ -46,9 +47,13 @@ export class Sum extends Expression {
         const index = newTerms.findIndex((value) => {
             return value === term
         })
+        if (index == -1) return this
+
+        console.log("Original " + newTerms)
         newTerms.splice(index, 1)
-        if (newTerms.length <= 1) {
-            return newTerms[0]
+        console.log(newTerms)
+        if (newTerms.length < 2) {
+            return newTerms[0] // Gauranteed there's one term here
         }
         return Sum.of(newTerms)
     }
@@ -91,7 +96,7 @@ export class Sum extends Expression {
     
     public readonly class = SumType;
     /**
-     * Ordered, don't change it.
+     * Ordered, immutable
      */
     public readonly terms: Expression[];
     public readonly isReducible: boolean;
@@ -139,6 +144,9 @@ export class Sum extends Expression {
      */
     public readonly isHealthy: boolean
     public readonly isConstant: boolean
+    public get children(): Expression[] {
+        return [...this.terms]
+    }
 }
 
 export const SumType = "Sum"

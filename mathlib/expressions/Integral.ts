@@ -22,6 +22,9 @@ export class Integral extends Expression {
         this.integrand = integrand
         this.relativeTo = relativeTo
 
+        Object.freeze(this.integrand)
+        Object.freeze(this.relativeTo)
+
         this.isReducible = false
         this.isHealthy = true
         this.isConstant = false

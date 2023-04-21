@@ -23,7 +23,9 @@ export function loadPrimaryPage(): void {
     const graph = new Graph().addNode(root)
     graph.addGraph(Equivalence.expandExperimental(graph))
         .addGraph(Equivalence.expandExperimental(graph))
+        .addGraph(Algebra.expand(graph))
         .addGraph(Equivalence.expandExperimental(graph))
+        .addGraph(Algebra.expand(graph))
         .addGraph(Equivalence.expandExperimental(graph))
 
     //graph.addGraph(Algebra.expand(graph))

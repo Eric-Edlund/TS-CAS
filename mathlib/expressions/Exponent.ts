@@ -38,6 +38,8 @@ export class Exponent extends Expression {
         super()
         this.base = base
         this.power = power
+        Object.freeze(this.base)
+        Object.freeze(this.power)
         // The integers are closed over exponentiation
         this.isReducible = (base.isReducible || base.class == IntegerType) && (power.isReducible || power.class == IntegerType) && Math.pow(base.reduced.value, power.reduced.value) % 1 == 0
         this.isHealthy = !this.isReducible
