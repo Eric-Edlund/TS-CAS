@@ -154,7 +154,7 @@ export class WebGraphView extends HTMLDivElement {
 
     /**
      * Pick places for all the nodes/edges on the screen.
-     * Populates the position_* rep vars.
+     * Populates the position* rep vars.
      */
     private arrange(): void {
         this.nodePositions.clear()
@@ -196,7 +196,8 @@ export class WebGraphView extends HTMLDivElement {
              *      = n * smallR / pi
              */
             const nodeRadius = 70; // pixels
-            const radius = Math.max(nodes.size * nodeRadius / Math.PI, lastRadius + (3*nodeRadius))
+            let radius = Math.max(nodes.size * nodeRadius / Math.PI, lastRadius + (3*nodeRadius))
+            if (depth == 0 && nodes.size == 1) radius = 0
             lastRadius = radius;
     
             const ns = [...nodes]// TODO, assign a meaningful ordering
