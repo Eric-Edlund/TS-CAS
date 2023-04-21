@@ -7,6 +7,7 @@ import { Fraction } from "./mathlib/expressions/Fraction";
 import { Graph } from "./mathlib/Graph";
 import { Expression } from "./mathlib/expressions/Expression";
 import { Equivalence } from "./mathlib/derivations/equivalence/Equivalence";
+import { Relationship } from "./mathlib/Relationship";
 
 
 
@@ -20,12 +21,15 @@ export function loadPrimaryPage(): void {
 
     //const root = Derivative.of(sum(a, a, product(num(2), b)), a)
     const root = sum(sum(a, a), product(a, a))
-    const graph = new Graph().addNode(root)
+    const graph = new Graph().addRelationship(
+        root,
+        sum(product(b, c), a),
+        Relationship.Equal)
     graph.addGraph(Equivalence.expandExperimental(graph))
         //.addGraph(Equivalence.expandExperimental(graph))
         .addGraph(Algebra.expand(graph))
-        //.addGraph(Equivalence.expandExperimental(graph))
-        //.addGraph(Algebra.expand(graph))
+        .addGraph(Equivalence.expandExperimental(graph))
+        .addGraph(Algebra.expand(graph))
         //.addGraph(Equivalence.expandExperimental(graph))
 
     //graph.addGraph(Algebra.expand(graph))

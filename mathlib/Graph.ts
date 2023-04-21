@@ -1,5 +1,6 @@
 import { Argument } from "./Argument";
 import { Expression } from "./expressions/Expression";
+import { Relationship } from "./Relationship";
 import { assert } from "./util/assert";
 
 /**
@@ -24,6 +25,29 @@ export class Graph {
         this.repOk()
         return this
     }
+
+    /**
+     * Add a relationship between two elements given by the user to the graph.
+     * Should not be called to add derived truths bc this won't store an explanation.
+     * Adds given nodes if they aren't already on the graph.
+     * @param n 
+     * @param n1 
+     * @param r 
+     * @returns self for chaining
+     */
+    public addRelationship(n: MathGraphNode, n1: MathGraphNode, r: Relationship): Graph {
+        this.addNode(n)
+        this.addNode(n1)
+
+        // Defined both ways because the user is giving it
+        this.addEdge(n, n1, r)
+        this.addEdge(n1, n, r)
+        this.addConnection(n, n1)
+        this.addConnection(n1, n)
+
+        return this
+    }
+
 
     /**
      * Adds a node representing an acumulation of facts
@@ -257,4 +281,4 @@ export enum ArgumentEdge {
  * When an argument results in two expressions that are equal, the expressions
  * are connected by that Argument.
  */
-export type GraphEdge = Argument | ArgumentEdge
+export type GraphEdge = Argument | ArgumentEdge | Relationship
