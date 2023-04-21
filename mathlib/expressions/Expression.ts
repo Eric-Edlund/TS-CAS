@@ -92,4 +92,11 @@ export abstract class Expression extends MathElement {
      * True if this expression contains no variables.
      */
     public abstract readonly isConstant: boolean
+
+    /**
+     * Positive integer representing the complexity of the expression
+     * including its composing elements. Equals number of children
+     *  plus the total complexity of all children.
+     */
+    public abstract readonly childCount: number
 }

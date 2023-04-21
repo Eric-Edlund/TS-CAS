@@ -8,7 +8,7 @@ import { assert } from "./util/assert";
  * Contains an explanation/argument for the connection.
  */
 export class Argument {
-    constructor(grounds: Set<Expression>, claim: {n: MathGraphNode, r: Relationship, n1: MathGraphNode}, argument: string) {
+    constructor(grounds: Set<Expression>, claim: {n: Expression, r: Relationship, n1: Expression}, argument: string) {
         this.grounds = grounds
         Object.freeze(this.grounds)
         this.claim = claim
@@ -27,7 +27,7 @@ export class Argument {
     /**
      * Two out math graph nodes that are related by this Arugment.
      */
-    public readonly claim: {n: MathGraphNode, r: Relationship, n1: MathGraphNode};
+    public readonly claim: {n: Expression, r: Relationship, n1: Expression};
     /**
      * The explanation that connects the argument's grounds to 
      * it's claimed relationship between the two out nodes.
@@ -37,7 +37,7 @@ export class Argument {
     /**
      * Nodes that have an edge pointing to this argument.
      */
-    public readonly grounds: Set<MathGraphNode>;
+    public readonly grounds: Set<Expression>;
 
     private repOk() {
         assert(this.grounds != null)

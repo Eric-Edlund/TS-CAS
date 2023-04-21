@@ -33,6 +33,7 @@ export class Variable extends Expression {
     }
     public readonly isHealthy: boolean = true
     public readonly isConstant = false;
+    public readonly childCount: number = 0
 }
 
 export const VariableType = "Variable"

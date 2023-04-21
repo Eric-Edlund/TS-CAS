@@ -48,6 +48,7 @@ export class Integer extends Expression {
     }
     public isHealthy: boolean = true;
     public readonly isConstant = true;
+    public readonly childCount = 0
     
 }
 

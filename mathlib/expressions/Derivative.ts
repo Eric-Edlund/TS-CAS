@@ -21,6 +21,7 @@ export class Derivative extends Expression {
         Object.freeze(this.relativeTo)
         this.isReducible = false //TODO: Determine if a derivative is reducible
         this.isConstant = false // TODO: Determine if a derivative is constant
+        this.childCount = 2 + exp.childCount + relativeTo.childCount
 
         let isHealthy = true
         if (exp.isConstant) isHealthy = false
@@ -60,7 +61,8 @@ export class Derivative extends Expression {
         }
         return "<mfrac><mn>d</mn><mrow><mn>d</mn>" + wrapIfNeeded(this.relativeTo) + "</mrow></mfrac>" + wrapIfNeeded(this.exp)
     }
-    public isConstant: boolean;
+    public readonly isConstant: boolean;
+    public readonly childCount: number
 }
 
 export const DerivativeType = "Derivative"

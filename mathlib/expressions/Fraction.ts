@@ -26,6 +26,7 @@ export class Fraction extends Expression {
         this.isReducible = false
         this.isHealthy = true
         this.isConstant = num.isConstant && denom.isConstant
+        this.childCount = 2 + num.childCount + denom.childCount
     }
     public readonly numerator: Expression
     public readonly denominator: Expression
@@ -33,19 +34,20 @@ export class Fraction extends Expression {
     public get reduced(): Integer {
         throw new Error("Method not implemented.");
     }
-    public isReducible: boolean;
-    public class: string = FractionType;
+    public readonly isReducible: boolean;
+    public readonly class: string = FractionType;
     public toString(): string {
         return this.numerator.toString() + " / " + this.denominator.toString()
     }
     public get hash(): string {
         return FractionType + this.numerator.hash + this.denominator.hash
     }
-    public isHealthy: boolean;
-    public isConstant: boolean;
+    public readonly isHealthy: boolean;
+    public readonly isConstant: boolean;
     public toMathXML(): string {
         return "<mfrac><mrow>" + this.numerator.toMathXML() + "</mrow><mrow>" + this.denominator.toMathXML() + "</mrow></mfrac>"
     }
+    public readonly childCount: number
 
 }
 

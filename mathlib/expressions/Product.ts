@@ -46,6 +46,7 @@ export class Product extends Expression {
         this.isNegation = isNegation
 
         this.isConstant = this.factors.map<boolean>(f => f.isConstant).reduce((a, b) => a && b)
+        this.childCount = factors.length + factors.map<number>(f => f.childCount).reduce((a, b) => a + b)
     }
 
     /**
@@ -131,7 +132,7 @@ export class Product extends Expression {
 
     // At least 2 elements, order matters
     public readonly factors: Expression[];
-    public class: string = ProductType;
+    public readonly class: string = ProductType;
     public readonly isReducible: boolean;
     public get reduced(): Integer {
         return this.factors.map<Integer>(e => e.reduced).reduce((a, b) => {
@@ -146,6 +147,7 @@ export class Product extends Expression {
      */
     public readonly isHealthy: boolean;
     public readonly isConstant: boolean;
+    public readonly childCount: number;
 }
 
 export const ProductType = "Product"

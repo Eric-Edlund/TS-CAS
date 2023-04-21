@@ -48,6 +48,14 @@ function subtractFromBothSides(input: Graph): Graph {
     equalities.forEach(component => {
         const args = subFromBothSides(component)
         args.forEach(a => {
+            // Only take resulting equations which are simpler than what they came from
+            let groundsComplexity = 0
+            for (const ground of a.grounds) {
+                groundsComplexity += ground.childCount
+            }
+
+            let claimComplexity = a.claim.n.childCount + a.claim.n1.childCount
+            if (claimComplexity > groundsComplexity) return
 
             out.addArgument(a)
         })

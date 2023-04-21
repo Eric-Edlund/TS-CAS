@@ -28,6 +28,7 @@ export class Integral extends Expression {
         this.isReducible = false
         this.isHealthy = true
         this.isConstant = false
+        this.childCount = 2 + integrand.childCount + relativeTo.childCount
     }
     public readonly integrand: Expression
     public readonly relativeTo: Expression
@@ -54,6 +55,7 @@ export class Integral extends Expression {
 
         return "<mrow><mo>∫</mo>" + wrapIfNeeded(this.integrand) + "<mn>d</mn>" + wrapIfNeeded(this.relativeTo) + "</mrow>"
     }
+    public readonly childCount: number;
 
 }
 

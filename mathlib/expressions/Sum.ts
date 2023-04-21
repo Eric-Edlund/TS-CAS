@@ -32,6 +32,7 @@ export class Sum extends Expression {
         this.isHealthy = this.determineHealth()
         this.isConstant = this.terms.map<boolean>(t => t.isConstant).reduce((a, b) => a && b)
         Object.freeze(this.terms)
+        this.childCount = terms.length + terms.map<number>(t => t.childCount).reduce((a, b) => a + b)
     }
 
     /**
@@ -142,9 +143,7 @@ export class Sum extends Expression {
      */
     public readonly isHealthy: boolean
     public readonly isConstant: boolean
-    public get children(): Expression[] {
-        return [...this.terms]
-    }
+    public readonly childCount: number;
 }
 
 export const SumType = "Sum"
