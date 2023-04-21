@@ -49,9 +49,7 @@ export class Sum extends Expression {
         })
         if (index == -1) return this
 
-        console.log("Original " + newTerms)
         newTerms.splice(index, 1)
-        console.log(newTerms)
         if (newTerms.length < 2) {
             return newTerms[0] // Gauranteed there's one term here
         }
