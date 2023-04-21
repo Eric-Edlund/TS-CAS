@@ -184,6 +184,9 @@ export class WebGraphView extends HTMLDivElement {
             
             // Organize the root nodes on a circle around the center
             const stepSize = (2 * Math.PI) / nodes.size;
+            // The starting angular offset to add the stepsize to
+            // Making it non-zero stops things from aligning
+            const stepOffset = (Math.PI / nodes.size) * depth
             /**
              * Calculating the radius of the circle
              * Suppose every root node on the starting circle requires
@@ -208,8 +211,8 @@ export class WebGraphView extends HTMLDivElement {
                 //view.style.height = "" + smallR + "px"
 
                 // Get the cartesian point from the radius and angle
-                const x = radius * Math.cos(stepSize * index) + center.x
-                const y = radius * Math.sin(stepSize * index) + center.y
+                const x = radius * Math.cos(stepSize * index + stepOffset) + center.x
+                const y = radius * Math.sin(stepSize * index + stepOffset) + center.y
                 this.nodePositions.set(view, Point(x, y))
             })
 
