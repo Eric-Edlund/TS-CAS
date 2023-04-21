@@ -1,5 +1,7 @@
 import { Argument } from "../Argument"
+import { Expression } from "../expressions/Expression"
 import { GraphEdge } from "../Graph"
+import { inMath, inMathBlock, inRow } from "../util/MathMLHelpers"
 
 export class ExplanationPopup extends HTMLDivElement {
 
@@ -22,13 +24,25 @@ export class ExplanationPopup extends HTMLDivElement {
         closeButton.style.float = "right"
         this.append(closeButton)
 
-        const text = document.createElement('p')
+        const text = document.createElement('div')
+        text.innerHTML = arg.argument + "<br>"
+        if (arg.claim.n instanceof Expression && arg.claim.n1 instanceof Expression)
+        text.innerHTML += inMathBlock(inRow(arg.claim.n.toMathXML() + " <mo>" + arg.claim.r + "</mo> " + arg.claim.n1.toMathXML())) + "<br> Derived from: <br>" 
+        for (const ground of arg.grounds) {
+            if (ground instanceof Expression)
+                text.innerHTML += inMath(ground.toMathXML()) + "<br>"
+        }
         this.append(text)
 
-        text.textContent = arg.argument
+        
         this.style.backgroundColor = "lightgray"
         this.style.border = "1px solid black"
         this.style.padding = "1ch"
+        this.style.width = "300px"
+    }
+
+    public connectedCallback(): void {
+        MathJax.typeset([this])
     }
 
     private readonly arg: Argument
@@ -36,3 +50,5 @@ export class ExplanationPopup extends HTMLDivElement {
 }
 
 customElements.define("explanation-popup", ExplanationPopup, {extends: "div"});
+
+declare const MathJax: any

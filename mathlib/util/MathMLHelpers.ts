@@ -16,3 +16,19 @@ export function inParen(str: string): string {
 export function inRow(str: string): string {
     return "<mrow>" + str + "</mrow>"
 }
+
+/**
+ * Wraps the given string in <math></math>
+ * @param str 
+ */
+export function inMath(str: string): string {
+    return "<math>" + str + "</math>"
+}
+
+/**
+ * Wraps the given string in <math display='block'></math>
+ * @param str 
+ */
+ export function inMathBlock(str: string): string {
+    return "<math display='block'>" + str + "</math>"
+}

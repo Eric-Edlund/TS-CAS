@@ -32,12 +32,12 @@ export class Algebra {
  */
 function subtractFromBothSides(input: Graph): Graph {
     // Get the components of the graph which are equal
-    const equals = GraphMinipulator.getComponentNodes(input, (e) => {
+    const equalities = GraphMinipulator.getComponentNodes(input, (e) => {
         return e instanceof Argument && (e as Argument).relationship == Relationship.Equal
     }) as Set<Set<Expression>>
 
-    // Filter out unhealthy expressions
-    equals.forEach(component => {
+    // Filter out unhealthy expressions from each component
+    equalities.forEach(component => {
         const healthy = [...component].filter(e => e.isHealthy)
         component.clear()
         healthy.forEach(e => component.add(e))
@@ -45,9 +45,10 @@ function subtractFromBothSides(input: Graph): Graph {
 
     const out = new Graph()
 
-    equals.forEach(equation => {
-        const args = subFromBothSides(equation)
+    equalities.forEach(component => {
+        const args = subFromBothSides(component)
         args.forEach(a => {
+
             out.addArgument(a)
         })
     })

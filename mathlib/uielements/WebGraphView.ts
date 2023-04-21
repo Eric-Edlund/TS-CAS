@@ -328,7 +328,7 @@ export class WebGraphView extends HTMLDivElement {
 
         const center = this.center;
         const scale = this.scale
-
+        //TODO: Verify this is correct
         return Point (
             (p.x - center.x) / scale + center.x,
             (p.y - center.y) / scale + center.y,
@@ -341,17 +341,25 @@ export class WebGraphView extends HTMLDivElement {
      * @param event The click event
      */
     public edgeClicked(view: EdgeView, event: MouseEvent): void {
+
+        // TODO: Don't allow dupliate explanation popups
+        
+
         if (view.edge instanceof Argument) {
             const popup = new ExplanationPopup(view.edge, () => {
                 this.removeChild(popup)
                 for(let i=0; i < this.explanationPopups.length; i++) {
-                    if (this.explanationPopups[i].e === popup)
+                    if (this.explanationPopups[i].e === popup) {
                         this.explanationPopups.splice(i, 1)
+                        break
+                    }
+                        
                 }
             })
             const rect = this.getBoundingClientRect();
             const realtiveX = event.clientX - rect.left;
             const relativeY = event.clientY - rect.top;
+            //TODO: The position isn't correct
             //TODO: Algorithm for picking where we should put the popup so it stays out
             // of the way of the graph
             this.explanationPopups.push({
