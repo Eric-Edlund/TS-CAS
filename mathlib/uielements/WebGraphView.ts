@@ -306,17 +306,62 @@ export class WebGraphView extends HTMLDivElement {
             view.style.scale = "" + this.scale
             view.style.transformOrigin = "0 0"
         })
+
+        this.explanationPopups.forEach(val => {
+            const view = val.e
+            const pos = val.pos
+            const adjusted = applyScale({
+                x: pos.x + this.offsetX,
+                y: pos.y + this.offsetY,
+            })
+            view.style.left = "" + (adjusted.x  - (0.5 * view.offsetWidth)) + "px"
+            view.style.top = "" + (adjusted.y  - (0.5 * view.offsetHeight)) + "px"
+        })
         this.repOk()
     }
 
     /**
+     * Map from relative screen coordinates (where tl of this view is (0,0))
+     * to the internal coordinate system we're using.
+     */
+    private getInternalPos(p: Point): Point {
+
+        const center = this.center;
+        const scale = this.scale
+
+        return Point (
+            (p.x - center.x) / scale + center.x,
+            (p.y - center.y) / scale + center.y,
+        )
+    }
+
+    /**
      * React to an edge being clicked.
-     * @param edge In this view
+     * @param view In this view
      * @param event The click event
      */
-    public edgeClicked(edge: EdgeView, event: MouseEvent): void {
-        //const popup = new ExplanationPopup(edge.argument)
-        //this.explanationPopups
+    public edgeClicked(view: EdgeView, event: MouseEvent): void {
+        if (view.edge instanceof Argument) {
+            const popup = new ExplanationPopup(view.edge, () => {
+                this.removeChild(popup)
+                for(let i=0; i < this.explanationPopups.length; i++) {
+                    if (this.explanationPopups[i].e === popup)
+                        this.explanationPopups.splice(i, 1)
+                }
+            })
+            const rect = this.getBoundingClientRect();
+            const realtiveX = event.clientX - rect.left;
+            const relativeY = event.clientY - rect.top;
+            //TODO: Algorithm for picking where we should put the popup so it stays out
+            // of the way of the graph
+            this.explanationPopups.push({
+                e: popup, 
+                pos: this.getInternalPos(Point(realtiveX, relativeY)),
+            })
+            popup.style.position = "absolute"
+            this.append(popup)
+            this.updateOffset()
+        }
     }
 
     private repOk(): void {

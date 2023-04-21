@@ -13,6 +13,7 @@ export class EdgeView extends HTMLParagraphElement {
         this.edge = edge.e
         this.first = edge.n
         this.second = edge.n1
+        Object.freeze(this.edge)
 
         this.style.width = "fit-content"
         this.style.height = "fit-content"
@@ -65,7 +66,7 @@ export class EdgeView extends HTMLParagraphElement {
     }
 
     private readonly owner: WebGraphView
-    private readonly edge: GraphEdge;
+    public readonly edge: GraphEdge;
     public readonly first: MathGraphNode;
     public readonly second: MathGraphNode;
 }
