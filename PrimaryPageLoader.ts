@@ -22,11 +22,11 @@ export function loadPrimaryPage(): void {
     const root = sum(sum(a, a), product(a, a))
     const graph = new Graph().addNode(root)
     graph.addGraph(Equivalence.expandExperimental(graph))
-        .addGraph(Equivalence.expandExperimental(graph))
+        //.addGraph(Equivalence.expandExperimental(graph))
         .addGraph(Algebra.expand(graph))
-        .addGraph(Equivalence.expandExperimental(graph))
-        .addGraph(Algebra.expand(graph))
-        .addGraph(Equivalence.expandExperimental(graph))
+        //.addGraph(Equivalence.expandExperimental(graph))
+        //.addGraph(Algebra.expand(graph))
+        //.addGraph(Equivalence.expandExperimental(graph))
 
     //graph.addGraph(Algebra.expand(graph))
     //graph.addGraph(Equivalence.expand(graph))
@@ -45,7 +45,7 @@ export function loadPrimaryPage(): void {
 
     const config: WebGraphViewInitSettings = {
         showArguments: false,
-        drawEdgeLines: false,
+        drawEdgeLines: true,
     }
 
     const graphView = new WebGraphView(graph, new Set([root]), config)

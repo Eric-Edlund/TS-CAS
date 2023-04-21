@@ -2,13 +2,15 @@ import { Argument } from "../Argument"
 import { GraphEdge, MathGraphNode } from "../Graph"
 import { Inference } from "../Inference"
 import { uiPreferences } from "./UIPreferences"
+import { WebGraphView } from "./WebGraphView"
 
 /**
  * Represents an edge in a graph.
  */
 export class EdgeView extends HTMLParagraphElement {
-    public constructor(edge: {n: MathGraphNode, n1: MathGraphNode, e: GraphEdge}) {
+    public constructor(owner: WebGraphView, edge: {n: MathGraphNode, n1: MathGraphNode, e: GraphEdge}) {
         super()
+        this.owner = owner
         this.edge = edge.e
         this.first = edge.n
         this.second = edge.n1
@@ -27,7 +29,7 @@ export class EdgeView extends HTMLParagraphElement {
         })
         
         this.addEventListener("click", event => {
-
+            this.owner.edgeClicked(this, event)
         })
         this.addEventListener("mouseout", event => {
             
@@ -65,6 +67,7 @@ export class EdgeView extends HTMLParagraphElement {
         }
     }
 
+    private readonly owner: WebGraphView
     private readonly edge: GraphEdge;
     public readonly first: MathGraphNode;
     public readonly second: MathGraphNode;

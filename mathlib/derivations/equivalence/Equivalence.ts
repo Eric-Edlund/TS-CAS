@@ -270,7 +270,7 @@ class CombineCommonTermsAddition extends RuleOfInference {
             // If it occures multiple times, create a new sum
             // expression with that term combined
             if (occurances > 1) {
-                const product = orderedProduct(...[Integer.of(occurances), uniqueTerm]))
+                const product = orderedProduct(...[Integer.of(occurances), uniqueTerm])
                 
                 if (remainingTerms.length == 0) {
                     equivalentExpressions.add(product)

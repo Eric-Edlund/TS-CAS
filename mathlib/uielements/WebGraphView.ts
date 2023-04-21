@@ -12,6 +12,7 @@ import { EdgeView } from "./EdgeView";
 import { ExpressionNodeView } from "./ExpressionNodeView";
 import { ArgumentNodeView } from "./ArgumentNodeView";
 import { GraphNodeView } from "./GraphNodeView";
+import { ExplanationPopup } from "./ExplanationPopup";
 
 /**
  * A ui element that will display a math graph in a web.
@@ -33,6 +34,7 @@ export class WebGraphView extends HTMLDivElement {
         this.rootNodes = new Set(roots);
         this.ringElements = new Set();
         this.ringPositions = new Map();
+        this.explanationPopups = []
 
         if (config != undefined) {
             this.showArguments = config.showArguments
@@ -137,7 +139,7 @@ export class WebGraphView extends HTMLDivElement {
             // Only consider edges for which we have both endpoints on the view
             return this.nodes.has(edge.n) && this.nodes.has(edge.n1);
         }).forEach(edge => {
-            const view = new EdgeView(edge)
+            const view = new EdgeView(this, edge)
             view.style.position = "absolute"
             this.edges.set(edge, view)
             this.append(view)
@@ -309,6 +311,16 @@ export class WebGraphView extends HTMLDivElement {
         this.repOk()
     }
 
+    /**
+     * React to an edge being clicked.
+     * @param edge In this view
+     * @param event The click event
+     */
+    public edgeClicked(edge: EdgeView, event: MouseEvent): void {
+        //const popup = new ExplanationPopup(edge.argument)
+        //this.explanationPopups
+    }
+
     private repOk(): void {
         assert (this.rootNodes.size > 0)
         assert(GraphMinipulator.isConnected(this.graph), "Graph not connected")
@@ -334,6 +346,11 @@ export class WebGraphView extends HTMLDivElement {
 
     private readonly ringElements: Set<HTMLElement>;
     private readonly ringPositions: Map<HTMLElement, Point>;
+
+    /**
+     * Position of top left of popup
+     */
+    private readonly explanationPopups: {e: ExplanationPopup, pos: Point}[]
 
     private readonly gestureRecognizer: TouchGestureRecognizer;
 
