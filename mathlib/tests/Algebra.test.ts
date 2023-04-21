@@ -5,14 +5,13 @@
 
 import { Algebra } from "../derivations/Algebra"
 import { Argument } from "../Argument"
-import { num, sum, v } from "../ConvenientExpressions"
+import { equivalenceArgument, num, sum, v } from "../ConvenientExpressions"
 import { Integer } from "../expressions/Integer"
 import { Product } from "../expressions/Product"
 import { Sum } from "../expressions/Sum"
 import { Variable } from "../expressions/Variable"
 import { Graph } from "../Graph"
 import { GraphMinipulator } from "../GraphMinipulator"
-import { Inference } from "../Inference"
 import { assert } from "../util/assert"
 
 const a = Variable.of('a')
@@ -25,8 +24,8 @@ test("a + b = c => a = c - b", () => {
     const rightHand = c
     const startGraph = new Graph()
     startGraph.addNode(leftHand)
-    startGraph.addInference(new Inference(leftHand, rightHand, "Given by problem"))
-    startGraph.addInference(new Inference(rightHand, leftHand, "Given by problem"))
+    startGraph.addArgument(equivalenceArgument(leftHand, rightHand, "Given by problem"))
+    startGraph.addArgument(equivalenceArgument(rightHand, leftHand, "Given by problem"))
 
     const expansion = Algebra.expand(startGraph)
     const expected = Sum.of([c, Product.of([Integer.of(-1), b])])
@@ -37,7 +36,7 @@ test("a + b = c => a = c - b", () => {
 
 test("Algebraic Expansion produces a connected resultant graph", () => {
     const graph = new Graph();
-    graph.addInference(new Inference(sum(a, b), c, "given"))
+    graph.addArgument(equivalenceArgument(sum(a, b), c, "given"))
     graph.addGraph(Algebra.expand(graph));
     assert(GraphMinipulator.isConnected(graph), "graph isn't connected")
     graph.addGraph(Algebra.expand(graph));
@@ -50,7 +49,7 @@ test("Algebraic Expansion produces a connected resultant graph 2", () => {
     const right = sum(v('y'), num(2))
     graph.addNode(left)
     graph.addNode(right)
-    graph.addInference(new Inference(left, right, "Given by problem"))
+    graph.addArgument(equivalenceArgument(left, right, "Given by problem"))
     
     const result = Algebra.expand(graph)
     graph.addGraph(result);

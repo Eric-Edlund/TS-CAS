@@ -5,9 +5,9 @@
  * 
  */
 
-import { v } from "../ConvenientExpressions";
+import { equivalenceArgument, v } from "../ConvenientExpressions";
 import { Graph } from "../Graph";
-import { Inference } from "../Inference";
+import { Argument } from "../Argument";
 import { assert } from "../util/assert";
 
 const a = v('a')
@@ -19,10 +19,10 @@ const f = v('f')
 
 test("graph correctly finds/counts neighbors", () => {
     const graph = new Graph()
-    graph.addInference(new Inference(a, b, "given"))
-    graph.addInference(new Inference(b, a, "given"))
-    graph.addInference(new Inference(b, c, "g"))
-    graph.addInference(new Inference(a, d, ""))
+    graph.addArgument(equivalenceArgument(a, b, "given"))
+    graph.addArgument(equivalenceArgument(b, a, "given"))
+    graph.addArgument(equivalenceArgument(b, c, "g"))
+    graph.addArgument(equivalenceArgument(a, d, ""))
     graph.addNode(e)
 
     assert(graph.getNeighbors(a, "both")!.size == 2, "" + [...graph.getNeighbors(a, "both")!])

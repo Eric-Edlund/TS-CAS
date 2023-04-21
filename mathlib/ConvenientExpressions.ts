@@ -5,6 +5,9 @@ import { Integral } from "./expressions/Integral";
 import { factorOrder, Product } from "./expressions/Product";
 import { orderTerms, Sum, SumType } from "./expressions/Sum";
 import { Variable } from "./expressions/Variable";
+import { MathGraphNode } from "./Graph";
+import { Argument } from "./Argument";
+import { Relationship } from "./Relationship";
 
 export function fraction(num: Expression, den: Expression): Fraction {
     return Fraction.of(num, den)
@@ -156,6 +159,20 @@ export function v(symbol: string): Variable {
 
 export function int(integrand: Expression, respectTo: Expression): Integral {
     return Integral.of(integrand, respectTo)
+}
+
+export function equivalenceArgument(first: Expression, second: Expression, explanation: string): Argument {
+    return new Argument(setOf(first), {
+        n: first,
+        r: Relationship.Equal,
+        n1: second,
+    }, explanation)
+}
+
+function setOf(...expressions: Expression[]): Set<Expression> {
+    const out = new Set<Expression>()
+    expressions.forEach(e => out.add(e))
+    return out
 }
 
 export const a = v('a')

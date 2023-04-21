@@ -1,13 +1,13 @@
 import { WebGraphView } from "../uielements/WebGraphView"
 import { Algebra } from "../derivations/Algebra"
-import { a, b, c, sum } from "../ConvenientExpressions"
+import { a, b, c, equivalenceArgument, sum } from "../ConvenientExpressions"
 import { Graph } from "../Graph"
-import { Inference } from "../Inference"
+import { Argument } from "../Argument"
 
 
 test("WebGraphView constructs", () => {
     const graph = new Graph()
-    graph.addInference(new Inference(sum(a, b), c, "given"))
+    graph.addArgument(equivalenceArgument(sum(a, b), c, "given"))
     graph.addGraph(Algebra.expand(graph))
     graph.addGraph(Algebra.expand(graph))
 

@@ -4,10 +4,10 @@
  */
 
 import { Algebra } from "../derivations/Algebra"
-import { num } from "../ConvenientExpressions"
+import { equivalenceArgument, num } from "../ConvenientExpressions"
 import { Graph } from "../Graph"
 import { GraphMinipulator } from "../GraphMinipulator"
-import { Inference } from "../Inference"
+import { Argument } from "../Argument"
 import { assert } from "../util/assert"
 
 
@@ -17,8 +17,8 @@ test("depth mapping works", () => {
     const d1 = num(1)
     const d2 = num(2)
     graph.addNode(root)
-    graph.addInference(new Inference(root, d1, "nothing"))
-    graph.addInference(new Inference(d1, d2, "nothing"))
+    graph.addArgument(equivalenceArgument(root, d1, "nothing"))
+    graph.addArgument(equivalenceArgument(d1, d2, "nothing"))
 
     const result = GraphMinipulator.getLevels(graph, [root]);
     //console.log(result)
