@@ -6,7 +6,6 @@ import { Product } from "../expressions/Product";
 import { Sum } from "../expressions/Sum";
 import { Graph, MathGraphNode } from "../Graph";
 import { GraphMinipulator } from "../GraphMinipulator";
-import { Inference } from "../Inference";
 import { Relationship } from "../Relationship";
 
 /**
@@ -34,7 +33,7 @@ export class Algebra {
 function subtractFromBothSides(input: Graph): Graph {
     // Get the components of the graph which are equal
     const equals = GraphMinipulator.getComponentNodes(input, (e) => {
-        return e instanceof Inference && (e as Inference).relationship == Relationship.Equal
+        return e instanceof Argument && (e as Argument).relationship == Relationship.Equal
     }) as Set<Set<Expression>>
 
     // Filter out unhealthy expressions

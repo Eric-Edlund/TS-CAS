@@ -1,6 +1,5 @@
 import { Argument } from "../Argument"
 import { GraphEdge, MathGraphNode } from "../Graph"
-import { Inference } from "../Inference"
 import { uiPreferences } from "./UIPreferences"
 import { WebGraphView } from "./WebGraphView"
 
@@ -58,9 +57,7 @@ export class EdgeView extends HTMLParagraphElement {
      * Called when element is conncted to the DOM.
      */
     public connectedCallback(): void {
-        if (this.edge instanceof Inference) {
-            this.textContent = "" + this.edge.relationship
-        } else if (this.edge instanceof Argument) {
+        if (this.edge instanceof Argument) {
             this.textContent = "" + this.edge.claim.r
         } else {
             this.textContent = "'" + this.first.toString() + "' -> '" + this.second.toString() + "'"

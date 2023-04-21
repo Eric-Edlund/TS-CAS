@@ -1,35 +1,27 @@
-import { ExpressionEdge } from "./ExpressionEdge";
 import { Expression } from "./expressions/Expression";
 import { Graph, MathGraphNode } from "./Graph";
 import { Relationship } from "./Relationship";
 import { assert } from "./util/assert";
 
 /**
- * Has several dependancies and draws exatly 1.
- * Communicates several Nodes are all required to prove what
- * comes after this one.
+ * Connects one or more nodes (grounds) to one or more nodes (claims).
+ * Contains an explanation/argument for the connection.
  */
- export class Argument implements ExpressionEdge {
+export class Argument {
     constructor(grounds: Set<Expression>, claim: {n: MathGraphNode, r: Relationship, n1: MathGraphNode}, argument: string) {
-        this._grounds = grounds
+        this.grounds = grounds
+        Object.freeze(this.grounds)
         this.claim = claim
         this.argument = argument
         this.repOk()
     }
-     expressionEdge: true = true
-     get relationship(): Relationship {
-         return this.claim.r
-     }
+    expressionEdge: true = true
+    get relationship(): Relationship {
+        return this.claim.r
+    }
 
     public toString(): string {
         return "Argument " + this.claim.r
-    }
-    /**
-     * The nodes this argument draws from.
-     * 2 or more.
-     */
-    public get grounds(): Iterable<MathGraphNode> {
-        return this._grounds;
     }
 
     /**
@@ -42,10 +34,13 @@ import { assert } from "./util/assert";
      * 
      */
     public readonly argument: string;
-    private readonly _grounds;
+    /**
+     * Nodes that have an edge pointing to this argument.
+     */
+    public readonly grounds: Set<MathGraphNode>;
 
     private repOk() {
-        assert(this._grounds != null)
+        assert(this.grounds != null)
         for(const ground of this.grounds) {
             assert(ground != null && ground != undefined)
         }

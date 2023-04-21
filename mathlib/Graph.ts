@@ -1,7 +1,5 @@
 import { Argument } from "./Argument";
-import { ExpressionEdge } from "./ExpressionEdge";
 import { Expression } from "./expressions/Expression";
-import { Inference } from "./Inference";
 import { assert } from "./util/assert";
 
 /**
@@ -21,38 +19,9 @@ export class Graph {
     public addNode(node: MathGraphNode): Graph {
         this.nodes.add(node)
         if (node instanceof Argument) {
-            const a = node as Argument;
-            for(const ground of a.grounds) {
-                this
-            }
+            this.addArgument(node)
         }
         this.repOk()
-        return this
-    }
-
-    /**
-     * Adds an inference to the graph.
-     * Adds both endpoints of the inference to the graph.
-     * @param i 
-     * @returns the same graph for chaining.
-     */
-    public addInference(i: Inference): Graph {
-        this.addEdge(i.first, i.second, i)
-        this.addConnection(i.first, i.second)
-        this.nodes.add(i.first)
-        this.nodes.add(i.second)
-        this.repOk()
-        return this
-    }
-
-    /**
-     * 
-     * @param list 
-     * @returns the same graph for chaining.
-     */
-    public addInferences(list: Iterable<Inference>): Graph {
-        for (const i of list)
-            this.addInference(i)
         return this
     }
 
@@ -88,6 +57,14 @@ export class Graph {
         this.addEdge(claim.n1, claim.n, a)
 
         this.repOk()
+        return this
+    }
+
+    /**
+     * @returns the same graph for chaining.
+     */
+    public addArguments(...a: Argument[]): Graph {
+        a.forEach(arg => this.addArgument(arg))
         return this
     }
 
@@ -185,9 +162,7 @@ export class Graph {
         })
         graph.edges.forEach((map, node1) => {
             map.forEach((edge, node2) => {
-                if (edge instanceof Inference)
-                    this.addInference(edge)
-                else if (edge instanceof Argument) 
+                if (edge instanceof Argument) 
                     this.addArgument(edge)
                 else if (edge == "supports") {
                     this.addEdge(node1, node2, ArgumentEdge.To)
@@ -230,7 +205,7 @@ export class Graph {
 
     private addEdge(n: MathGraphNode, n1: MathGraphNode, e: GraphEdge) {
         if (this.edges.get(n) == undefined) {
-            this.edges.set(n, new Map<Expression, Inference>())
+            this.edges.set(n, new Map<Expression, GraphEdge>())
         }
         this.edges.get(n)!.set(n1, e);
     }
@@ -267,7 +242,7 @@ export class Graph {
 }
 
 /**
- * Nodes in the graph can be expressions or Acumulations.
+ * Nodes in the graph can be expressions or Arguments.
  */
 export type MathGraphNode = Expression | Argument;
 export enum ArgumentEdge {
@@ -282,4 +257,4 @@ export enum ArgumentEdge {
  * When an argument results in two expressions that are equal, the expressions
  * are connected by that Argument.
  */
-export type GraphEdge = ExpressionEdge | ArgumentEdge
+export type GraphEdge = Argument | ArgumentEdge

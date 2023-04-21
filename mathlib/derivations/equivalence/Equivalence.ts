@@ -1,3 +1,4 @@
+import { Argument } from "../../Argument";
 import { orderedProduct, orderedSum, product, sum, sumIntuitive } from "../../ConvenientExpressions";
 import { Exponent, ExponentType } from "../../expressions/Exponent";
 import { Expression } from "../../expressions/Expression";
@@ -6,8 +7,8 @@ import { Product, ProductType } from "../../expressions/Product";
 import { Sum, SumType } from "../../expressions/Sum";
 import { Variable } from "../../expressions/Variable";
 import { Graph } from "../../Graph";
-import { Inference } from "../../Inference";
 import { assert } from "../../util/assert";
+import { Relationship } from "../../Relationship";
 
 
 /**
@@ -26,7 +27,7 @@ export class Equivalence {
         let out = new Graph();
         for (const rule of rulesOfInference) {
             if (rule.applies(exp)) {
-                out.addInferences(rule.apply(exp))
+                out.addArguments(...rule.apply(exp))
             }
         }
         return out;
@@ -50,7 +51,7 @@ export class Equivalence {
         for (const node of base) {
             if (!(node instanceof Expression)) continue
             rulesOfInference.filter(r => r.applies(node)).forEach(rule => {
-                out.addInferences(rule.apply(node))
+                out.addArguments(...rule.apply(node))
             })
         }
         return out;
@@ -64,11 +65,11 @@ export class Equivalence {
      */
     public static expandExperimental(input: Graph): Graph {
         const base = [...input.getNodes()].filter(node => node instanceof Expression)
-        const inferred: Inference[] = base.map(exp => {
+        const inferred: Argument[] = base.map(exp => {
             return equiv(exp as Expression)
         }).flat()
         const out = new Graph()
-        out.addInferences(inferred)
+        out.addArguments(...inferred)
         return out
     }
 }
@@ -78,8 +79,8 @@ export class Equivalence {
  * using rules of inference. Not recursive.
  * @param exp 
  */
-function directEquivalents(exp: Expression): Set<Inference> {
-    const out: Set<Inference> = new Set()
+function directEquivalents(exp: Expression): Set<Argument> {
+    const out: Set<Argument> = new Set()
     rulesOfInference.filter(r => r.applies(exp)).forEach(rule => {
         rule.apply(exp).forEach(i => {
             out.add(i)
@@ -97,7 +98,7 @@ function directEquivalents(exp: Expression): Set<Inference> {
  * @param exp 
  * @returns Array of inferences to equivalent expressions.
  */
-function equiv(exp: Expression): Inference[] {
+function equiv(exp: Expression): Argument[] {
     if (exp instanceof Variable || exp instanceof Integer) return []
     else switch(exp.class) {
         case SumType: return sumEquiv(exp as Sum)
@@ -116,8 +117,8 @@ function equiv(exp: Expression): Inference[] {
  * @param exp 
  * @returns Array of inferences to equivalent expressions.
  */
-function sumEquiv(exp: Sum): Inference[] {
-    const equivalentSums: Set<Inference> = new Set()
+function sumEquiv(exp: Sum): Argument[] {
+    const equivalentSums: Set<Argument> = new Set()
 
     // Add top level equivalents
     directEquivalents(exp).forEach(inf => {
@@ -129,8 +130,11 @@ function sumEquiv(exp: Sum): Inference[] {
         const term = exp.terms[i]
 
         // Substitute term for each equivalent
-        equiv(term).forEach(alt => {
-            equivalentSums.add(new Inference(exp, swap(exp, i, alt.second as Expression), alt.explanation))
+        equiv(term).forEach(a => {
+            equivalentSums.add(new Argument(setOf(exp), {
+                n: exp, 
+                r: Relationship.Equal, 
+                n1: swap(exp, i, a.claim.n1 as Expression)}, a.argument))
         })
 
     }
@@ -144,8 +148,8 @@ function sumEquiv(exp: Sum): Inference[] {
     return [...equivalentSums]
 }
 
-function productEquiv(exp: Product): Inference[] {
-    const equivalentProducts: Set<Inference> = new Set()
+function productEquiv(exp: Product): Argument[] {
+    const equivalentProducts: Set<Argument> = new Set()
 
     // Add top level equivalents
     directEquivalents(exp).forEach(inf => {
@@ -158,7 +162,11 @@ function productEquiv(exp: Product): Inference[] {
 
         // Substitute term for each equivalent
         equiv(factor).forEach(alt => {
-            equivalentProducts.add(new Inference(exp, swap(exp, i, alt.second as Expression), alt.explanation))
+            equivalentProducts.add(new Argument(setOf(exp), {
+                n: exp,
+                r: Relationship.Equal,
+                n1: swap(exp, i, alt.claim.n1 as Expression),
+            }, alt.argument))
         })
     }
 
@@ -171,8 +179,8 @@ function productEquiv(exp: Product): Inference[] {
     return [...equivalentProducts]
 }
 
-function exponentEquiv(exp: Exponent): Inference[] {
-    const equivalents: Set<Inference> = new Set()
+function exponentEquiv(exp: Exponent): Argument[] {
+    const equivalents: Set<Argument> = new Set()
 
     // Add top level equivalents
     directEquivalents(exp).forEach(inf => {
@@ -180,10 +188,17 @@ function exponentEquiv(exp: Exponent): Inference[] {
     })
 
     equiv(exp.base).forEach(alt => {
-        equivalents.add(new Inference(exp, Exponent.of(alt.second as Expression, exp.power), alt.explanation))
+        equivalents.add(new Argument(setOf(exp), {
+            n: exp, 
+            r: Relationship.Equal,
+            n1: Exponent.of(alt.claim.n1 as Expression, exp.power)}, alt.argument))
     })
     equiv(exp.power).forEach(alt => {
-        equivalents.add(new Inference(exp, Exponent.of(exp.base, alt.second as Expression), alt.explanation))
+        equivalents.add(new Argument(setOf(exp), {
+            n: exp,
+            r: Relationship.Equal,
+            n1: Exponent.of(exp.base, alt.claim.n1 as Expression),
+        }, alt.argument))
     })
 
     return [...equivalents]
@@ -217,7 +232,7 @@ abstract class RuleOfInference {
      * Gets the set of inferences this
      * rule creates. Only called if applies() is true.
      */
-    public apply(exp: Expression): Set<Inference> {
+    public apply(exp: Expression): Set<Argument> {
         const result = this.applyImpl(exp);
         result.forEach(e => {
             assert(e != null && e != undefined)
@@ -226,7 +241,7 @@ abstract class RuleOfInference {
     }
 
     
-    protected abstract applyImpl(exp: Expression): Set<Inference>;
+    protected abstract applyImpl(exp: Expression): Set<Argument>;
 }
 
 /**
@@ -245,7 +260,7 @@ class CombineCommonTermsAddition extends RuleOfInference {
         return false;
     }
 
-    protected applyImpl(exp: Expression): Set<Inference> {
+    protected applyImpl(exp: Expression): Set<Argument> {
         let equivalentExpressions = new Set<Sum | Product>();
         const sum = exp as Sum;
         const uniqueTerms = new Set(sum.terms);
@@ -282,12 +297,22 @@ class CombineCommonTermsAddition extends RuleOfInference {
         }
 
         // Turn the equivalent expressions into inferences
-        let inferences = new Set<Inference>()
+        let inferences = new Set<Argument>()
         equivalentExpressions.forEach(e => {
-            inferences.add(new Inference(sum, e, "Distributive property of multiplication"))
+            inferences.add(new Argument(setOf(sum), {
+                n: sum,
+                r: Relationship.Equal,
+                n1: e,
+            }, "Distributive property of multiplication"))
         })
         return inferences;
     }
+}
+
+function setOf(...arr: Expression[]): Set<Expression> {
+    const out = new Set<Expression>()
+    arr.forEach(e => out.add(e))
+    return out
 }
 
 class CombineCommonTermsMultiplication extends RuleOfInference {
@@ -299,7 +324,7 @@ class CombineCommonTermsMultiplication extends RuleOfInference {
         if (new Set(product.factors).size < product.factors.length) return true;
         return false;
     }
-    protected applyImpl(exp: Expression): Set<Inference> {
+    protected applyImpl(exp: Expression): Set<Argument> {
         let equivalentExpressions = new Set<Product | Exponent>();
         const product = exp as Product;
         const uniqueFactors = new Set(product.factors);
@@ -333,9 +358,13 @@ class CombineCommonTermsMultiplication extends RuleOfInference {
         }
 
         // Turn the equivalent expressions into inferences
-        let inferences = new Set<Inference>()
+        let inferences = new Set<Argument>()
         equivalentExpressions.forEach(e => {
-            inferences.add(new Inference(product, e, "Exponential rule for multiplying equal bases"))
+            inferences.add(new Argument(setOf(product), {
+                n: product,
+                r: Relationship.Equal,
+                n1: e,
+            }, "Exponential rule for multiplying equal bases"))
         })
         
         return inferences;
@@ -356,9 +385,9 @@ class EvaluateSums extends RuleOfInference {
     public applies(exp: Expression): boolean {
         return exp instanceof Sum
     }
-    protected applyImpl(exp: Expression): Set<Inference> {
+    protected applyImpl(exp: Expression): Set<Argument> {
         const sum = exp as Sum
-        const out = new Set<Inference>()
+        const out = new Set<Argument>()
         const integerTerms = [...sum.terms].filter(t => t instanceof Integer)
         if (integerTerms.length == 0) {
             return out
@@ -366,11 +395,19 @@ class EvaluateSums extends RuleOfInference {
         const newInt = integerTerms.map<Integer>(e => e as Integer).reduce((a, b) => Integer.of(a.value + b.value))
         const otherTerms = [...sum.terms].filter(t => !(t instanceof Integer))
 
-        let result: Inference;
+        let result: Argument;
         if (otherTerms.length == 0) {
-            result = new Inference(sum, newInt, "Evaluated Addition")
+            result = new Argument(setOf(sum), {
+                n: sum,
+                r: Relationship.Equal,
+                n1: newInt
+            }, "Evaluated Addition")
         } else {
-            result = new Inference(sum, Sum.of(otherTerms.concat(newInt)), "Evaluated Addition")
+            result = new Argument(setOf(sum), {
+                n: sum,
+                r: Relationship.Equal,
+                n1: Sum.of(otherTerms.concat(newInt)),
+            }, "Evaluated Addition")
         }
         out.add(result)
         return out
@@ -382,8 +419,12 @@ class ReduceReducibles extends RuleOfInference {
     public applies(exp: Expression): boolean {
         return exp.isReducible
     }
-    protected applyImpl(exp: Expression): Set<Inference> {
-        return new Set<Inference>([new Inference(exp, exp.reduced, "Reduced")])
+    protected applyImpl(exp: Expression): Set<Argument> {
+        return new Set<Argument>([new Argument(setOf(exp), {
+            n: exp,
+            r: Relationship.Equal,
+            n1: exp.reduced
+        }, "Reduced")])
     }
     
 }
@@ -398,8 +439,12 @@ class OrderSums extends RuleOfInference {
     public applies(exp: Expression): boolean {
         return !exp.isHealthy && exp instanceof Sum
     }
-    protected applyImpl(exp: Expression): Set<Inference> {
-        return new Set<Inference>([new Inference(exp, orderedSum(exp as Sum), "Reordered")])
+    protected applyImpl(exp: Expression): Set<Argument> {
+        return new Set<Argument>([new Argument(setOf(exp), {
+            n: exp,
+            r: Relationship.Equal,
+            n1: orderedSum(exp as Sum),
+        }, "Reordered")])
     }
 }
 
