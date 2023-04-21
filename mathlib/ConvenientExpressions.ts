@@ -2,7 +2,7 @@ import { Expression } from "./expressions/Expression";
 import { Integer } from "./expressions/Integer";
 import { Fraction } from "./expressions/Fraction";
 import { Integral } from "./expressions/Integral";
-import { Product } from "./expressions/Product";
+import { factorOrder, Product } from "./expressions/Product";
 import { orderTerms, Sum, SumType } from "./expressions/Sum";
 import { Variable } from "./expressions/Variable";
 
@@ -108,6 +108,16 @@ export function sumIntuitive(...terms: Expression[]): Expression {
         return terms[0]
     else
         return sum(...terms)
+}
+
+/**
+ * Produces a product from the given factors
+ * where the factors are ordered according to convention.
+ * @param factors At least 2
+ */
+export function orderedProduct(...factors: Expression[]): Product {
+    factors.sort(factorOrder)
+    return product(...factors)
 }
 
 /**

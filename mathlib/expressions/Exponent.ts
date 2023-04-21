@@ -17,7 +17,7 @@ export class Exponent extends Expression {
     }
     private static instances = new Map<Expression, Map<Expression, Exponent>>()
 
-    public class: string = "Exponent";
+    public class: string = ExponentType;
     public toMathXML(): string {
         function wrapIfNeeded(exp: Expression): string {
             if (exp.class == SumType || exp.class == ProductType)
@@ -54,3 +54,5 @@ export class Exponent extends Expression {
     }
     public readonly isConstant: boolean;
 } 
+
+export const ExponentType = "Exponent"

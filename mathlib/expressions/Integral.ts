@@ -38,7 +38,7 @@ export class Integral extends Expression {
         return "∫" + this.integrand.toString()
     }
     public get hash(): string {
-        throw new Error("Method not implemented.");
+        return "∫" + this.integrand.toString() + this.relativeTo.toString()
     }
     public readonly isHealthy: boolean;
     public readonly isConstant: boolean;

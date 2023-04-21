@@ -148,3 +148,12 @@ export class Product extends Expression {
 }
 
 export const ProductType = "Product"
+
+/**
+ * Can be used in array.sort() to get properly ordered products
+ * @param a 
+ * @param b 
+ */
+export function factorOrder(a: Expression, b: Expression): number {
+    return 0 //TODO: Implement
+}

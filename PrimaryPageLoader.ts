@@ -6,7 +6,7 @@ import { Integral } from "./mathlib/expressions/Integral";
 import { Fraction } from "./mathlib/expressions/Fraction";
 import { Graph } from "./mathlib/Graph";
 import { Expression } from "./mathlib/expressions/Expression";
-import { Arithmetic } from "./mathlib/derivations/Arithmetic";
+import { Equivalence } from "./mathlib/derivations/equivalence/Equivalence";
 
 
 
@@ -17,24 +17,18 @@ import { Arithmetic } from "./mathlib/derivations/Arithmetic";
  * @returns 
  */
 export function loadPrimaryPage(): void {
-    const graph = new Graph();
-    /*
-    const left = sum(v('x'), num(2), num(2))
-    const right = sum(v('y'), num(2))
-    graph.addNode(left)
-    graph.addNode(right)
-    graph.addInference(new Inference(left, right, "Given by problem"))
-    */
 
     //const root = Derivative.of(sum(a, a, product(num(2), b)), a)
-    const root = Integral.of(fraction(Fraction.of(a, a), b), c)
-    graph.addNode(root)
+    const root = sum(sum(a, a), product(a, a))
+    const graph = new Graph().addNode(root)
+    graph.addGraph(Equivalence.expandExperimental(graph))
+        .addGraph(Equivalence.expandExperimental(graph))
+        .addGraph(Equivalence.expandExperimental(graph))
+        .addGraph(Equivalence.expandExperimental(graph))
 
-
-    graph.addGraph(Arithmetic.expand(graph))
-    graph.addGraph(Algebra.expand(graph))
-    graph.addGraph(Arithmetic.expand(graph))
-    graph.addGraph(Algebra.expand(graph))
+    //graph.addGraph(Algebra.expand(graph))
+    //graph.addGraph(Equivalence.expand(graph))
+    //graph.addGraph(Algebra.expand(graph))
 
 
     //console.log("Result: " + graph)

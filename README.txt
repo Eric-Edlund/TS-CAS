@@ -27,3 +27,20 @@ I'm no javascript expert, but I think npm should get everything it needs from
 package.json and resolve it's own dependancies.
 
 Good luck.
+
+
+
+
+// Notes
+
+To find equivalents of complex expressions, we need access to their children.
+This is difficult because subclasses have different child implementations.
+Options:
+    1. Expression has a children property subclasses implement
+        Attempts to avoid reflection in equivalence rules
+        But doesn't suceed in avoiding reflection because it's needed to construct the equivalent expressions
+
+    2. Equivalence rules are organized by operation
+        This already happens implicitly with how they're organized
+        Matches how humans think about this stuff
+        

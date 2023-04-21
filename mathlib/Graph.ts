@@ -16,8 +16,9 @@ export class Graph {
     /**
      * Adds an expression to the problem.
      * @param node 
+     * @returns the same graph for chaining.
      */
-    public addNode(node: MathGraphNode): void {
+    public addNode(node: MathGraphNode): Graph {
         this.nodes.add(node)
         if (node instanceof Argument) {
             const a = node as Argument;
@@ -26,32 +27,42 @@ export class Graph {
             }
         }
         this.repOk()
+        return this
     }
 
     /**
      * Adds an inference to the graph.
      * Adds both endpoints of the inference to the graph.
      * @param i 
+     * @returns the same graph for chaining.
      */
-    public addInference(i: Inference): void {
+    public addInference(i: Inference): Graph {
         this.addEdge(i.first, i.second, i)
         this.addConnection(i.first, i.second)
         this.nodes.add(i.first)
         this.nodes.add(i.second)
         this.repOk()
+        return this
     }
 
-    public addInferences(list: Iterable<Inference>): void {
+    /**
+     * 
+     * @param list 
+     * @returns the same graph for chaining.
+     */
+    public addInferences(list: Iterable<Inference>): Graph {
         for (const i of list)
             this.addInference(i)
+        return this
     }
 
     /**
      * Adds a node representing an acumulation of facts
      * that leads to a conclusion.
      * @param a 
+     * @returns the same graph for chaining.
      */
-    public addArgument(a: Argument) {
+    public addArgument(a: Argument): Graph {
         this.nodes.add(a)
 
         // Add the grounds
@@ -77,6 +88,7 @@ export class Graph {
         this.addEdge(claim.n1, claim.n, a)
 
         this.repOk()
+        return this
     }
 
     /**
@@ -165,8 +177,9 @@ export class Graph {
     /**
      * Adds all graph nodes and edges to this one.
      * @param graph 
+     * @returns the same graph for chaining.
      */
-    public addGraph(graph: Graph): void {
+    public addGraph(graph: Graph): Graph {
         graph.nodes.forEach(node => {
             this.nodes.add(node)
         })
@@ -187,6 +200,7 @@ export class Graph {
             })
         })
         this.repOk()
+        return this
     }
 
     public toString(): string {
