@@ -1,10 +1,10 @@
 import { Argument } from "../Argument";
-import { negative, product, sum, sumEvalIntegerTerms, sumIntuitive } from "../ConvenientExpressions";
+import { fraction, negative, orderedProduct, product, productOrNot, sum, sumEvalIntegerTerms, sumIntuitive } from "../ConvenientExpressions";
 import { Expression } from "../expressions/Expression";
 import { Integer } from "../expressions/Integer";
 import { Product } from "../expressions/Product";
 import { Sum } from "../expressions/Sum";
-import { Graph, MathGraphNode } from "../Graph";
+import { GivenEdge, Graph, MathGraphNode } from "../Graph";
 import { GraphMinipulator } from "../GraphMinipulator";
 import { Relationship } from "../Relationship";
 
@@ -18,7 +18,7 @@ export class Algebra {
      * @param input 
      */
     public static expand(input: Graph): Graph {
-        return subtractFromBothSides(input)
+        return divideBothSides(input).addGraph(subtractFromBothSides(input))
     }
 }
 
@@ -33,7 +33,8 @@ export class Algebra {
 function subtractFromBothSides(input: Graph): Graph {
     // Get the components of the graph which are equal
     const equalities = GraphMinipulator.getComponentNodes(input, (e) => {
-        return e instanceof Argument && (e as Argument).relationship == Relationship.Equal
+        return (e instanceof Argument && (e as Argument).relationship == Relationship.Equal)
+                || (e instanceof GivenEdge && e.r == Relationship.Equal)
     }) as Set<Set<Expression>>
 
     // Filter out unhealthy expressions from each component
@@ -106,6 +107,68 @@ function subFromBothSides(equation: Set<Expression>): Argument[] {
             }
             const claim = {n: s.without(term), n1: sumIntuitive(...second, negative(term)), r: Relationship.Equal}
             out.push(new Argument(new Set([s, other]), claim, "a=b & c=d => a-c = b-d"))
+        })
+    })
+
+    return out
+}
+
+function divideBothSides(input: Graph): Graph {
+        // Get the components of the graph which are equal
+        const equalities = GraphMinipulator.getComponentNodes(input, (e) => {
+            return (e instanceof Argument && (e as Argument).relationship == Relationship.Equal)
+                    || (e instanceof GivenEdge && e.r == Relationship.Equal)
+        }) as Set<Set<Expression>>
+    
+        // Filter out unhealthy expressions from each component
+        equalities.forEach(component => {
+            const healthy = [...component].filter(e => e.isHealthy)
+            component.clear()
+            healthy.forEach(e => component.add(e))
+        })
+    
+        const out = new Graph()
+    
+        equalities.forEach(component => {
+            const args = divBothSides(component)
+            args.forEach(a => {
+                // Only take resulting equations which are simpler than what they came from
+                let groundsComplexity = 0
+                for (const ground of a.grounds) {
+                    groundsComplexity += ground.childCount
+                }
+
+                let claimComplexity = a.claim.n.childCount + a.claim.n1.childCount
+                if (claimComplexity > groundsComplexity) return
+                out.addArgument(a)
+            })
+        })
+    
+       return out
+}
+
+function divBothSides(equation: Set<Expression>): Argument[] {
+    const out: Argument[] = []
+
+    const combinations = cartesianProduct<Expression>(equation)
+
+    combinations.filter(pair => {
+        return pair[0] instanceof Product
+    }).forEach(pair => {
+        console.log("Testing a product pair")
+        const p = pair[0] as Product
+        const other = pair[1]
+
+        // Some products have multiple factors
+        p.factors.forEach(factor => {
+            let second: Expression[]
+            if (other instanceof Product) {
+                second = [...other.factors]
+            } else {
+                second = [other]
+            }
+            const claim = {n: p.without(factor), n1: fraction(productOrNot(...second), factor), r: Relationship.Equal}
+            out.push(new Argument(new Set([p, other]), claim, "a=b & c=d => a/c = b/d"))
         })
     })
 

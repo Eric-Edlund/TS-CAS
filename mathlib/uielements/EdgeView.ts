@@ -1,7 +1,9 @@
 import { Argument } from "../Argument"
 import { GraphEdge, MathGraphNode } from "../Graph"
+import { Relationship } from "../Relationship"
 import { uiPreferences } from "./UIPreferences"
 import { WebGraphView } from "./WebGraphView"
+import { GivenEdge } from "../Graph"
 
 /**
  * Represents an edge in a graph.
@@ -61,9 +63,9 @@ export class EdgeView extends HTMLParagraphElement {
     public connectedCallback(): void {
         if (this.edge instanceof Argument) {
             this.textContent = "" + this.edge.claim.r
-        } else {
-            this.textContent = "'" + this.first.toString() + "' -> '" + this.second.toString() + "'"
-        }
+        } else if (this.edge instanceof GivenEdge) {
+            this.textContent = "" + this.edge.r
+        } else throw new Error("Not implemented for " + this.edge)
     }
 
     private readonly owner: WebGraphView

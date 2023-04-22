@@ -36,7 +36,7 @@ export class Product extends Expression {
         this.isReducible = reducible
 
         let healthy = true
-        healthy &&= this.numNegatives() > 1
+        healthy &&= this.numNegatives() < 2
         this.isHealthy = healthy
 
         let isNegation = factors.length == 2
@@ -65,6 +65,28 @@ export class Product extends Expression {
         if (this.factors[0].class == IntegerType && (this.factors[0] as Integer).value == -1)
             return this.factors[1]
         return this.factors[0]
+    }
+
+    /**
+     * Returns a new Expression without the given factor.
+     * If the product contains the factor multiple times, 
+     * only removes one. If it doesn't contain the factor, 
+     * returns itself.
+     * @param exp A factor in this product.
+     */
+    public without(exp: Expression): Expression {
+        const newFactors = [...this.factors]
+        
+        const index = newFactors.findIndex((value) => {
+            return value === exp
+        })
+        if (index == -1) return this
+
+        newFactors.splice(index, 1)
+        if (newFactors.length < 2) {
+            return newFactors[0] // Gauranteed there's one term here
+        }
+        return Product.of(newFactors)
     }
 
     public toMathXML(): string {

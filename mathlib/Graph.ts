@@ -40,8 +40,8 @@ export class Graph {
         this.addNode(n1)
 
         // Defined both ways because the user is giving it
-        this.addEdge(n, n1, r)
-        this.addEdge(n1, n, r)
+        this.addEdge(n, n1, new GivenEdge(r))
+        this.addEdge(n1, n, new GivenEdge(r))
         this.addConnection(n, n1)
         this.addConnection(n1, n)
 
@@ -281,4 +281,14 @@ export enum ArgumentEdge {
  * When an argument results in two expressions that are equal, the expressions
  * are connected by that Argument.
  */
-export type GraphEdge = Argument | ArgumentEdge | Relationship
+export type GraphEdge = Argument | ArgumentEdge | GivenEdge
+
+/**
+ * Communicates a relationhip given by the user.
+ */
+export class GivenEdge {
+    public constructor(r: Relationship) {
+        this.r = r
+    }
+    public readonly r: Relationship
+}

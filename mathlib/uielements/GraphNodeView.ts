@@ -9,6 +9,8 @@ export abstract class GraphNodeView extends HTMLDivElement {
         this.style.borderRadius = "1ch"
         this.style.backgroundColor = "lightblue"
         this.style.padding = "1ch"
+        this.style.paddingTop = "0"
+        this.style.paddingBottom = "0"
         this.style.width = "fit-content"
         this.style.height = "fit-content"
         this.style.whiteSpace = "nowrap"

@@ -1,4 +1,5 @@
 import { Expression } from "../expressions/Expression";
+import { Variable } from "../expressions/Variable";
 import { EditableMathView } from "./EditableMathView";
 import { GraphNodeView } from "./GraphNodeView";
 
@@ -16,6 +17,12 @@ export class ExpressionNodeView extends GraphNodeView {
 
         if (!node.isHealthy)
             this.style.backgroundColor = 'red'
+        else if (node instanceof Variable)
+            this.style.backgroundColor = "lightgreen"
+
+        this.addEventListener("click", () => {
+            console.log(this.node.toString())
+        })
     }
 
     public connectedCallback(): void {

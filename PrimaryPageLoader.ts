@@ -21,20 +21,17 @@ export function loadPrimaryPage(): void {
 
     //const root = Derivative.of(sum(a, a, product(num(2), b)), a)
     const root = sum(sum(a, a), product(a, a))
+    const otherRoot = sum(product(b, c), a)
     const graph = new Graph().addRelationship(
         root,
-        sum(product(b, c), a),
+        otherRoot,
         Relationship.Equal)
     graph.addGraph(Equivalence.expandExperimental(graph))
         //.addGraph(Equivalence.expandExperimental(graph))
         .addGraph(Algebra.expand(graph))
-        .addGraph(Equivalence.expandExperimental(graph))
+        //.addGraph(Equivalence.expandExperimental(graph))
         .addGraph(Algebra.expand(graph))
         //.addGraph(Equivalence.expandExperimental(graph))
-
-    //graph.addGraph(Algebra.expand(graph))
-    //graph.addGraph(Equivalence.expand(graph))
-    //graph.addGraph(Algebra.expand(graph))
 
 
     //console.log("Result: " + graph)
@@ -52,7 +49,7 @@ export function loadPrimaryPage(): void {
         drawEdgeLines: true,
     }
 
-    const graphView = new WebGraphView(graph, new Set([root]), config)
+    const graphView = new WebGraphView(graph, new Set([root, otherRoot]), config)
     graphView.setAttribute("id", "web-graphview")
     out.appendChild(graphView)
 

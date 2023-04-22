@@ -8,6 +8,7 @@ import { Variable } from "./expressions/Variable";
 import { MathGraphNode } from "./Graph";
 import { Argument } from "./Argument";
 import { Relationship } from "./Relationship";
+import { assert } from "./util/assert";
 
 export function fraction(num: Expression, den: Expression): Fraction {
     return Fraction.of(num, den)
@@ -167,6 +168,17 @@ export function equivalenceArgument(first: Expression, second: Expression, expla
         r: Relationship.Equal,
         n1: second,
     }, explanation)
+}
+
+/**
+ * 
+ * @returns The product of the given factors, or the only factor given
+ * if only one given. Throws if no expressions are given.
+ */
+export function productOrNot(...expressions: Expression[]): Expression {
+    assert(expressions.length > 0)
+    if (expressions.length == 1) return expressions[0]
+    return product(...expressions)
 }
 
 function setOf(...expressions: Expression[]): Set<Expression> {
