@@ -155,7 +155,7 @@ export class Graph {
     }
 
     /**
-     * @returns An iterable of all the nodes in the graph.
+     * @returns A new set containing all the nodes in the graph
      */
     public getNodes(): Set<MathGraphNode> {
         return new Set<MathGraphNode>(this.nodes)

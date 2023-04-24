@@ -55,8 +55,13 @@ function subtractFromBothSides(input: Graph): Graph {
                 groundsComplexity += ground.childCount
             }
 
+
+
             let claimComplexity = a.claim.n.childCount + a.claim.n1.childCount
-            if (claimComplexity > groundsComplexity) return
+            if (claimComplexity > groundsComplexity) {
+                //console.log("Discarding " + a.claim.n + " = " + a.claim.n1)
+                //return
+            }
 
             out.addArgument(a)
         })
@@ -139,7 +144,11 @@ function divideBothSides(input: Graph): Graph {
                 }
 
                 let claimComplexity = a.claim.n.childCount + a.claim.n1.childCount
-                if (claimComplexity > groundsComplexity) return
+                if (claimComplexity > groundsComplexity) {
+                    //console.log("Discarding result " + a.claim.n1.toString())
+                    //return
+                }
+                //console.log("Adding result " + a.claim.n1.toString())
                 out.addArgument(a)
             })
         })
@@ -155,7 +164,6 @@ function divBothSides(equation: Set<Expression>): Argument[] {
     combinations.filter(pair => {
         return pair[0] instanceof Product
     }).forEach(pair => {
-        console.log("Testing a product pair")
         const p = pair[0] as Product
         const other = pair[1]
 

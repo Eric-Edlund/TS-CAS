@@ -78,6 +78,22 @@ export class WebGraphView extends HTMLDivElement {
     }
 
     /**
+     * Set a function that determines the color of a node.
+     * @param colorFn 
+     */
+    public setNodeColoringScheme(colorFn: (n: MathGraphNode) => string) {
+        this.nodeColorFn = colorFn
+        this.propogateSettingsToNodes()
+    }
+    private nodeColorFn: (n: MathGraphNode) => string = (n) => "lightblue"
+
+    private propogateSettingsToNodes(): void {
+        this.nodes.forEach((view, node) => {
+            view.backgroundColor = this.nodeColorFn(node)
+        })
+    }
+
+    /**
      * Sets if the view should show argument nodes as nodes.
      * False by default.
      * @param val 
@@ -142,6 +158,8 @@ export class WebGraphView extends HTMLDivElement {
             this.edges.set(edge, view)
             this.append(view)
         })
+
+        this.propogateSettingsToNodes()
 
         this.repOk()
     }

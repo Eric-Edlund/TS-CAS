@@ -16,5 +16,9 @@ export abstract class GraphNodeView extends HTMLDivElement {
         this.style.whiteSpace = "nowrap"
     }
 
+    public set backgroundColor(value: string) {
+        this.style.backgroundColor = value
+    }
+
     public abstract connectedCallback(): void;
 }

@@ -97,7 +97,7 @@ export function sumIntuitive(...terms: Expression[]): Expression {
 
         for (const other of otherTerms) {
             if (other instanceof Product) {
-                if (other.isNegation && other.negation == t) {
+                if (other.isNegation && other.negation === t) {
                     remove(terms, other)
                     remove(terms, t)
                     continue terms

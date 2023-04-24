@@ -46,7 +46,7 @@ export class Product extends Expression {
         this.isNegation = isNegation
 
         this.isConstant = this.factors.map<boolean>(f => f.isConstant).reduce((a, b) => a && b)
-        this.childCount = factors.length + factors.map<number>(f => f.childCount).reduce((a, b) => a + b)
+        this.childCount = factors.length + factors.map<number>(f => f.childCount).reduce((a, b) => a + b) - (this.isNegation ? 1 : 0)
     }
 
     /**

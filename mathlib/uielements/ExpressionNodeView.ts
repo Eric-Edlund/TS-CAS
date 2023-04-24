@@ -15,11 +15,6 @@ export class ExpressionNodeView extends GraphNodeView {
         this.editableMathView.value = this.node
         this.appendChild(this.editableMathView)
 
-        if (!node.isHealthy)
-            this.style.backgroundColor = 'red'
-        else if (node instanceof Variable)
-            this.style.backgroundColor = "lightgreen"
-
         this.addEventListener("click", () => {
             console.log(this.node.toString())
         })

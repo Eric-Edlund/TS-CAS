@@ -1,15 +1,22 @@
-import { Algebra } from "./mathlib/derivations/Algebra";
 import { a, b, c, fraction, num, product, sum, v } from "./mathlib/ConvenientExpressions";
 import { parse } from "./mathlib/userinput/Parser";
 import { WebGraphView, WebGraphViewInitSettings } from "./mathlib/uielements/WebGraphView";
-import { Integral } from "./mathlib/expressions/Integral";
-import { Fraction } from "./mathlib/expressions/Fraction";
 import { Graph } from "./mathlib/Graph";
-import { Expression } from "./mathlib/expressions/Expression";
-import { Equivalence } from "./mathlib/derivations/equivalence/Equivalence";
 import { Relationship } from "./mathlib/Relationship";
+import { Deriver } from "./mathlib/derivations/Deriver";
+import { NoContextExpressionSimplificationRule } from "./mathlib/derivations/NoContextExpressionSimplificationRule";
+import { CombineCommonTermsAddition } from "./mathlib/derivations/simplifications/CombineCommonTermsAddition";
+import { CombineCommonTermsMultiplication } from "./mathlib/derivations/simplifications/CombineCommonTermsMultiplication";
+import { EvaluateSums } from "./mathlib/derivations/simplifications/EvaluateSums";
+import { OrderSums } from "./mathlib/derivations/simplifications/OrderSums";
+import { ReduceReducibles } from "./mathlib/derivations/simplifications/ReduceReducibles";
+import { Expression } from "./mathlib/expressions/Expression";
 
-
+NoContextExpressionSimplificationRule.rules.add(new CombineCommonTermsAddition())
+NoContextExpressionSimplificationRule.rules.add(new CombineCommonTermsMultiplication())
+NoContextExpressionSimplificationRule.rules.add(new EvaluateSums())
+NoContextExpressionSimplificationRule.rules.add(new OrderSums())
+NoContextExpressionSimplificationRule.rules.add(new ReduceReducibles())
 
 /**
  * Called after DOM is loaded.
@@ -26,13 +33,9 @@ export function loadPrimaryPage(): void {
         root,
         otherRoot,
         Relationship.Equal)
-    graph.addGraph(Equivalence.expandExperimental(graph))
-        //.addGraph(Equivalence.expandExperimental(graph))
-        .addGraph(Algebra.expand(graph))
-        //.addGraph(Equivalence.expandExperimental(graph))
-        .addGraph(Algebra.expand(graph))
-        //.addGraph(Equivalence.expandExperimental(graph))
 
+    const deriver = new Deriver(graph)
+    deriver.expand()
 
     //console.log("Result: " + graph)
 
@@ -50,6 +53,14 @@ export function loadPrimaryPage(): void {
     }
 
     const graphView = new WebGraphView(graph, new Set([root, otherRoot]), config)
+    graphView.setNodeColoringScheme(n => {
+        if (n instanceof Expression) {
+            if (!deriver.isSimplified(n)) return "gray"
+            else if (!n.isHealthy) return "lightred"
+            else return "lightblue"
+        }
+        return "black"
+    })
     graphView.setAttribute("id", "web-graphview")
     out.appendChild(graphView)
 
