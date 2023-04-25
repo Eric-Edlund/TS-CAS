@@ -61,7 +61,23 @@ export class WebGraphView extends HTMLDivElement {
         })
 
         this.addEventListener("wheel", (event) => {
-            this.scale = Math.pow(0.8, event.deltaY / 360) * this.scale
+            const mousePos = Point(event.offsetX, event.offsetY)
+            const preMousePos = this.getInternalPos(mousePos)
+
+            const scaleDelta = Math.pow(0.8, event.deltaY / 360)
+            this.scale = scaleDelta * this.scale
+
+            const postMousePos = this.getInternalPos(mousePos)
+
+            const intXDiff = postMousePos.x - preMousePos.x
+
+            //console.log("Internal X Change under mouse " + intXDiff)
+            // Adjust offset so that content under the mouse doesn't move
+            //this.offsetX += intXDiff
+
+            //console.log("Corrected X Change under mouse " + (this.getInternalPos(mousePos).x - preMousePos.x))
+            
+
             this.updateOffset()
             return true
         })
@@ -340,14 +356,13 @@ export class WebGraphView extends HTMLDivElement {
      * Map from relative screen coordinates (where tl of this view is (0,0))
      * to the internal coordinate system we're using.
      */
-    private getInternalPos(p: Point): Point {
-
+    private getInternalPos(pixelPos: Point): Point {
         const center = this.center;
         const scale = this.scale
-        //TODO: Verify this is correct
+        
         return Point (
-            (p.x - center.x) / scale + center.x,
-            (p.y - center.y) / scale + center.y,
+            (pixelPos.x - center.x) / scale + center.x - this.offsetX,
+            (pixelPos.y - center.y) / scale + center.y - this.offsetY,
         )
     }
 
@@ -424,7 +439,6 @@ export class WebGraphView extends HTMLDivElement {
     // If the graph should draw argument nodes.
     private showArguments: boolean = false;
     private drawEdgeLines: boolean = false;
-    
 }
 
 customElements.define("web-graphview", WebGraphView, {extends: "div"});
