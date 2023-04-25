@@ -235,15 +235,13 @@ export class WebGraphView extends HTMLDivElement {
             })
 
             const ring = document.createElement("div")
-            ring.style.width = "" + (2 * radius) + "px"
-            ring.style.height = "" + (2 * radius) + "px"
             ring.style.border = "lightgray solid 0.3ch"
             ring.style.borderRadius = "100%"
             ring.style.position = "absolute"
             ring.style.zIndex = "-10"
             this.appendChild(ring)
             this.ringElements.add(ring)
-            this.ringPositions.set(ring, {x: center.x, y: center.y})
+            this.ringPositions.set(ring, {radius: radius})
         }
 
         // Now arange the edges
@@ -315,14 +313,14 @@ export class WebGraphView extends HTMLDivElement {
     
         // Overlay elements change size with scale
         this.ringPositions.forEach((pos, view) => {
-            const adjustedPos = applyScale({
-                x: pos.x + this.offsetX - (0.5 * view.offsetWidth),
-                y: pos.y + this.offsetY - (0.5 * view.offsetHeight),
+            const adjustedCenterPos = applyScale({
+                x: center.x + this.offsetX,
+                y: center.y + this.offsetY,
             })
-            view.style.left = "" + adjustedPos.x + "px"
-            view.style.top = "" + adjustedPos.y + "px"
-            view.style.scale = "" + this.scale
-            view.style.transformOrigin = "0 0"
+            view.style.left = "" + (adjustedCenterPos.x - (pos.radius * scale)) + "px"
+            view.style.top = "" + (adjustedCenterPos.y - (pos.radius * scale)) + "px"
+            view.style.width = "" + pos.radius * 2 * scale + "px"
+            view.style.aspectRatio = "1"
         })
 
         this.explanationPopups.forEach(val => {
@@ -414,7 +412,7 @@ export class WebGraphView extends HTMLDivElement {
     private readonly rootNodes: Set<MathGraphNode>;
 
     private readonly ringElements: Set<HTMLElement>;
-    private readonly ringPositions: Map<HTMLElement, Point>;
+    private readonly ringPositions: Map<HTMLElement, {radius: number}>;
 
     /**
      * Position of top left of popup
