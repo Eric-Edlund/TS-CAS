@@ -1,9 +1,11 @@
 import { Argument } from "../Argument";
 import { Expression } from "../expressions/Expression";
-import { Graph } from "../Graph";
+import { GivenEdge, Graph, MathGraphNode } from "../Graph";
 import { GraphMinipulator } from "../GraphMinipulator";
+import { Relationship } from "../Relationship";
 import { NoContextExpressionSimplificationRule as NoContextExpressionSimplificationRule } from "./NoContextExpressionSimplificationRule";
 import { equiv } from "./recursion";
+import { RelationalDerivationRule } from "./RelationalDerivationRule";
 
 /**
  * Holds a single graph and expands it using rules.
@@ -28,6 +30,12 @@ export class Deriver {
         // Simplify all the expressions using the contextless simplifying rules
         // Do this until there's nothing more to simplify
         this.simplifyNoContext()
+
+        this.algebraicExpansion()
+
+        this.simplifyNoContext()
+        this.algebraicExpansion()
+        this.simplifyNoContext()
     }
 
     /**
@@ -50,6 +58,33 @@ export class Deriver {
         })
 
         if (unchecked.length > 0) this.simplifyNoContext()
+    }
+
+    /**
+     * Expands the graph using algebra rules.
+     * Only simplified rules are used.
+     */
+    private algebraicExpansion(): void {
+        const rules = [...RelationalDerivationRule.rules]
+
+        const components = [...GraphMinipulator.getComponentNodes(this.graph, edge => {
+            return (edge instanceof Argument && edge.relationship == Relationship.Equal)
+                || (edge instanceof GivenEdge && edge.r == Relationship.Equal)
+        })]
+
+        components.forEach(component => {
+            const equation: Expression[] = []
+            for (const node of component) {
+                if (node instanceof Expression && this.notSimplifiable.has(node))
+                    equation.push(node)
+            }
+                   
+            rules.forEach(r => {
+                r.apply(setOf(...equation)).forEach(a => {
+                    this.graph.addArgument(a)
+                })
+            })
+        })
     }
 
     public readonly graph: Graph
@@ -85,5 +120,11 @@ const contextlessSimplificationsFn = function directEquivalents(exp: Expression)
             out.add(i)
         })
     })
+    return out
+}
+
+function setOf(...arr: Expression[]): Set<Expression> {
+    const out = new Set<Expression>()
+    arr.forEach(e => out.add(e))
     return out
 }

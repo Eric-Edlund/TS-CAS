@@ -13,8 +13,8 @@ export class GraphMinipulator {
      * @param isConnected 
      */
     public static getComponentNodes(input: Graph, isConnected: (e: GraphEdge) => boolean): Set<Set<MathGraphNode>> {
-        let includedNodes = new Set<MathGraphNode>()
-        let components = new Set<Set<MathGraphNode>>()
+        const includedNodes = new Set<MathGraphNode>()
+        const components = new Set<Set<MathGraphNode>>()
 
         for (const node of input.getNodes()) {
             if (includedNodes.has(node)) {

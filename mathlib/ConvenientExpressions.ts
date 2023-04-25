@@ -114,6 +114,11 @@ export function sumIntuitive(...terms: Expression[]): Expression {
         return sum(...terms)
 }
 
+export function sumOrNot(...terms: Expression[]): Expression {
+    if (terms.length == 1) return terms[0]
+    else return sum(...terms)
+}
+
 /**
  * Produces a product from the given factors
  * where the factors are ordered according to convention.
@@ -179,6 +184,19 @@ export function productOrNot(...expressions: Expression[]): Expression {
     assert(expressions.length > 0)
     if (expressions.length == 1) return expressions[0]
     return product(...expressions)
+}
+
+/**
+ * @returns The product of the given terms exlcuding the first if 
+ *          it's one. If the resulting terms list is only one term,
+ *          returns the only term.
+ */
+export function productAndNotTimesOne(...expressions: Expression[]): Expression {
+    if (expressions[0] instanceof Integer && expressions[0].value == 1) {
+        expressions.shift()
+        return productOrNot(...expressions)
+    }
+    return productOrNot(...expressions)
 }
 
 function setOf(...expressions: Expression[]): Set<Expression> {

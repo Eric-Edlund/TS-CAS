@@ -2,6 +2,7 @@ import { Argument } from "../Argument"
 import { product, sum } from "../ConvenientExpressions"
 import { Exponent, ExponentType } from "../expressions/Exponent"
 import { Expression } from "../expressions/Expression"
+import { Fraction, FractionType } from "../expressions/Fraction"
 import { Integer } from "../expressions/Integer"
 import { Product, ProductType } from "../expressions/Product"
 import { Sum, SumType } from "../expressions/Sum"
@@ -25,6 +26,7 @@ import { Relationship } from "../Relationship"
         case SumType: return sumEquiv(exp as Sum, directEquivalents)
         case ProductType: return productEquiv(exp as Product, directEquivalents)
         case ExponentType: return exponentEquiv(exp as Exponent, directEquivalents)
+        case FractionType: return fractionEquiv(exp as Fraction, directEquivalents)
         default: throw new Error("Not implemented " + exp.class)
     }
 }
@@ -119,6 +121,31 @@ function exponentEquiv(exp: Exponent, directEquivalents: (e: Expression) => Set<
             n: exp,
             r: Relationship.Equal,
             n1: Exponent.of(exp.base, alt.claim.n1 as Expression),
+        }, alt.argument))
+    })
+
+    return [...equivalents]
+}
+
+function fractionEquiv(exp: Fraction, directEquivalents: (e: Expression) => Set<Argument>): Argument[] {
+    const equivalents: Set<Argument> = new Set()
+
+    // Add top level equivalents
+    directEquivalents(exp).forEach(inf => {
+        equivalents.add(inf)
+    })
+
+    equiv(exp.numerator, directEquivalents).forEach(alt => {
+        equivalents.add(new Argument(setOf(exp), {
+            n: exp, 
+            r: Relationship.Equal,
+            n1: Fraction.of(alt.claim.n1 as Expression, exp.denominator)}, alt.argument))
+    })
+    equiv(exp.denominator, directEquivalents).forEach(alt => {
+        equivalents.add(new Argument(setOf(exp), {
+            n: exp,
+            r: Relationship.Equal,
+            n1: Fraction.of(exp.numerator, alt.claim.n1 as Expression),
         }, alt.argument))
     })
 

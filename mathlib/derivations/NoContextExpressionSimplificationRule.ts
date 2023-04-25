@@ -43,5 +43,5 @@ export abstract class NoContextExpressionSimplificationRule {
     }
 
     protected abstract appliesImpl(exp: Expression): boolean;
-    protected abstract applyImpl(ex: Expression): Set<Argument>
+    protected abstract applyImpl(exp: Expression): Set<Argument>
 }
