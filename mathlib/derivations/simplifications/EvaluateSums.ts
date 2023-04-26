@@ -3,6 +3,7 @@ import { Expression } from "../../expressions/Expression";
 import { Integer } from "../../expressions/Integer";
 import { Sum } from "../../expressions/Sum";
 import { Relationship } from "../../Relationship";
+import { setOf } from "../../util/ThingsThatShouldBeInTheStdLib";
 import { NoContextExpressionSimplificationRule } from "../NoContextExpressionSimplificationRule";
 
 
@@ -47,8 +48,3 @@ export class EvaluateSums extends NoContextExpressionSimplificationRule {
     }
 }
 
-function setOf(...arr: Expression[]): Set<Expression> {
-    const out = new Set<Expression>()
-    arr.forEach(e => out.add(e))
-    return out
-}

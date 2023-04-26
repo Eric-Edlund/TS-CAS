@@ -3,6 +3,7 @@ import { orderedSum } from "../../ConvenientExpressions"
 import { Expression } from "../../expressions/Expression"
 import { Sum, SumType } from "../../expressions/Sum"
 import { Relationship } from "../../Relationship"
+import { setOf } from "../../util/ThingsThatShouldBeInTheStdLib"
 import { NoContextExpressionSimplificationRule } from "../NoContextExpressionSimplificationRule"
 
 /**
@@ -21,10 +22,4 @@ import { NoContextExpressionSimplificationRule } from "../NoContextExpressionSim
             n1: orderedSum(exp as Sum),
         }, "Reordered")])
     }
-}
-
-function setOf(...arr: Expression[]): Set<Expression> {
-    const out = new Set<Expression>()
-    arr.forEach(e => out.add(e))
-    return out
 }

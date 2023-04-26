@@ -5,6 +5,7 @@ import { Integer } from "../../expressions/Integer";
 import { Product } from "../../expressions/Product";
 import { Sum } from "../../expressions/Sum";
 import { Relationship } from "../../Relationship";
+import { setOf } from "../../util/ThingsThatShouldBeInTheStdLib";
 import { NoContextExpressionSimplificationRule } from "../NoContextExpressionSimplificationRule";
 import { RelationalDerivationRule } from "../RelationalDerivationRule";
 
@@ -74,10 +75,4 @@ export class SumCoefficientsOfAddedTerms extends NoContextExpressionSimplificati
         return out
     }
 
-}
-
-function setOf(...arr: Expression[]): Set<Expression> {
-    const out = new Set<Expression>()
-    arr.forEach(e => out.add(e))
-    return out
 }

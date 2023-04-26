@@ -5,6 +5,7 @@ import { Product } from "../../expressions/Product";
 import { Relationship } from "../../Relationship";
 import { NoContextExpressionSimplificationRule } from "../NoContextExpressionSimplificationRule";
 import { Sum } from "../../expressions/Sum";
+import { setOf } from "../../util/ThingsThatShouldBeInTheStdLib";
 
 /**
  * a + a = 2a
@@ -69,10 +70,4 @@ export class CombineCommonTermsAddition extends NoContextExpressionSimplificatio
         })
         return inferences;
     }
-}
-
-function setOf(...arr: Expression[]): Set<Expression> {
-    const out = new Set<Expression>()
-    arr.forEach(e => out.add(e))
-    return out
 }

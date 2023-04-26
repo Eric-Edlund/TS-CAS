@@ -1,6 +1,7 @@
 import { Argument } from "../../Argument"
 import { Expression } from "../../expressions/Expression"
 import { Relationship } from "../../Relationship"
+import { setOf } from "../../util/ThingsThatShouldBeInTheStdLib"
 import { NoContextExpressionSimplificationRule } from "../NoContextExpressionSimplificationRule"
 
 
@@ -19,8 +20,3 @@ export class ReduceReducibles extends NoContextExpressionSimplificationRule {
     
 }
 
-function setOf(...arr: Expression[]): Set<Expression> {
-    const out = new Set<Expression>()
-    arr.forEach(e => out.add(e))
-    return out
-}
