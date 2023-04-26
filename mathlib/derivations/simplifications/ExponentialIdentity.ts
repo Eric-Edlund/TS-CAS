@@ -6,7 +6,11 @@ import { Relationship } from "../../Relationship";
 import { setOf } from "../../util/ThingsThatShouldBeInTheStdLib";
 import { NoContextExpressionSimplificationRule } from "../NoContextExpressionSimplificationRule";
 
-export class ExponentToTheFirst extends NoContextExpressionSimplificationRule {
+/**
+ * Anything to the first is just that thing.
+ * Turns any exponent with a power of 1 to that thing.
+ */
+export class ExponentialIdentity extends NoContextExpressionSimplificationRule {
     protected appliesImpl(exp: Expression): boolean {
         return exp instanceof Exponent
             && exp.power instanceof Integer
