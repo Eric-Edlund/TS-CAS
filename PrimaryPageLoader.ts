@@ -21,6 +21,7 @@ import { PowerRule } from "./mathlib/derivations/simplifications/PowerRule";
 import { PullConstantsFromDerivatives } from "./mathlib/derivations/simplifications/PullConstantsFromDerivatives";
 import { Derivative } from "./mathlib/expressions/Derivative";
 import { Exponent } from "./mathlib/expressions/Exponent";
+import { ExponentToTheFirst } from "./mathlib/derivations/simplifications/ExponentToTheFirst";
 
 NoContextExpressionSimplificationRule.rules.add(new CombineCommonTermsAddition())
 NoContextExpressionSimplificationRule.rules.add(new CombineCommonTermsMultiplication())
@@ -31,6 +32,7 @@ NoContextExpressionSimplificationRule.rules.add(new SumCoefficientsOfAddedTerms(
 NoContextExpressionSimplificationRule.rules.add(new USubstitution())
 NoContextExpressionSimplificationRule.rules.add(new PowerRule())
 NoContextExpressionSimplificationRule.rules.add(new PullConstantsFromDerivatives())
+NoContextExpressionSimplificationRule.rules.add(new ExponentToTheFirst())
 
 RelationalDerivationRule.rules.add(new SubtractFromBothSides())
 RelationalDerivationRule.rules.add(new DivideOnBothSides())
@@ -44,7 +46,7 @@ RelationalDerivationRule.rules.add(new DivideOnBothSides())
 export function loadPrimaryPage(): void {
 
     //const root = Derivative.of(sum(a, a, product(num(2), b)), a)
-    const root = Derivative.of(product(num(1), Exponent.of(x, num(2))), x)
+    const root = Derivative.of(product(num(3), Exponent.of(x, num(2))), x)
     const graph = new Graph().addNode(root)
 
     const deriver = new Deriver(graph)
