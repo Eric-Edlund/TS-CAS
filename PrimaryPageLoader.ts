@@ -22,6 +22,7 @@ import { PullConstantsFromDerivatives } from "./mathlib/derivations/simplificati
 import { Derivative } from "./mathlib/expressions/Derivative";
 import { Exponent } from "./mathlib/expressions/Exponent";
 import { ExponentToTheFirst } from "./mathlib/derivations/simplifications/ExponentToTheFirst";
+import { AssociativePropertyOfProductsAndSums } from "./mathlib/derivations/simplifications/AssociativePropertyOfProductsAndSums";
 
 NoContextExpressionSimplificationRule.rules.add(new CombineCommonTermsAddition())
 NoContextExpressionSimplificationRule.rules.add(new CombineCommonTermsMultiplication())
@@ -33,6 +34,7 @@ NoContextExpressionSimplificationRule.rules.add(new USubstitution())
 NoContextExpressionSimplificationRule.rules.add(new PowerRule())
 NoContextExpressionSimplificationRule.rules.add(new PullConstantsFromDerivatives())
 NoContextExpressionSimplificationRule.rules.add(new ExponentToTheFirst())
+NoContextExpressionSimplificationRule.rules.add(new AssociativePropertyOfProductsAndSums())
 
 RelationalDerivationRule.rules.add(new SubtractFromBothSides())
 RelationalDerivationRule.rules.add(new DivideOnBothSides())
