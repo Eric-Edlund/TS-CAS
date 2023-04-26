@@ -7,15 +7,13 @@ import { SumType } from "./Sum";
 
 export class Exponent extends Expression {
     public static of(base: Expression, power: Expression): Exponent {
-        if (!Exponent.instances.has(base)) {
-            Exponent.instances.set(base, new Map<Expression, Exponent>())
-            if (!Exponent.instances.get(base)!.has(power)) {
-                Exponent.instances.get(base)!.set(power, new Exponent(base, power))
-            }
+        const hash = base.hash + power.hash
+        if (!Exponent.instances.has(hash)) {
+            Exponent.instances.set(hash, new Exponent(base, power))
         }
-        return Exponent.instances.get(base)!.get(power)!
+        return Exponent.instances.get(hash)!
     }
-    private static instances = new Map<Expression, Map<Expression, Exponent>>()
+    private static instances = new Map<string, Exponent>()
 
     public class: string = ExponentType;
     public toMathXML(): string {

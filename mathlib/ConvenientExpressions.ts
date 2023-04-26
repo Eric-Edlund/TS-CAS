@@ -166,6 +166,7 @@ export function remove<T>(array: T[], element: T) {
 }
 
 export function product(...factors: Expression[]): Product {
+    factors.forEach(f => assert(f != null && f != undefined, "Making product with null or undefined factor"))
     return Product.of(factors)
 }
 

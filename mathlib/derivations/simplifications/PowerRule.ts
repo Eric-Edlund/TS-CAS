@@ -1,5 +1,5 @@
 import { Argument } from "../../Argument";
-import { num, product } from "../../ConvenientExpressions";
+import { negative, num, product, sumIntuitive } from "../../ConvenientExpressions";
 import { Derivative, DerivativeType } from "../../expressions/Derivative";
 import { Exponent, ExponentType } from "../../expressions/Exponent";
 import { Expression } from "../../expressions/Expression";
@@ -19,10 +19,17 @@ export class PowerRule extends NoContextExpressionSimplificationRule {
         && exp.exp.base === exp.relativeTo
         && exp.exp.power.isConstant
     }
+
+    /**
+     * We know:
+     * exp is a Derivative of an Exponent with a constant power
+     * the exponent's base is the same as what the derivative is relative to
+     */
     protected applyImpl(exp: Expression): Set<Argument> {
         const d = exp as Derivative
         const exponent = d.exp as Exponent
-        const result = product(exponent.power as Integer, Exponent.of(exponent.base, num((exponent.power as Integer).value - 1)))
+        console.log(sumIntuitive(exponent.power, negative(num(1))).toString() + " " + exponent.base + " " + Exponent.of(exponent.base, sumIntuitive(exponent.power, negative(num(1)))))
+        const result = product(exponent.power, Exponent.of(exponent.base, sumIntuitive(exponent.power, negative(num(1)))))
         return setOf(new Argument(setOf(exp), {
             n: exp,
             r: Relationship.Equal,

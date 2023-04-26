@@ -20,6 +20,7 @@ import { USubstitution } from "./mathlib/derivations/simplifications/USubstituti
 import { PowerRule } from "./mathlib/derivations/simplifications/PowerRule";
 import { PullConstantsFromDerivatives } from "./mathlib/derivations/simplifications/PullConstantsFromDerivatives";
 import { Derivative } from "./mathlib/expressions/Derivative";
+import { Exponent } from "./mathlib/expressions/Exponent";
 
 NoContextExpressionSimplificationRule.rules.add(new CombineCommonTermsAddition())
 NoContextExpressionSimplificationRule.rules.add(new CombineCommonTermsMultiplication())
@@ -43,12 +44,8 @@ RelationalDerivationRule.rules.add(new DivideOnBothSides())
 export function loadPrimaryPage(): void {
 
     //const root = Derivative.of(sum(a, a, product(num(2), b)), a)
-    const root = sum(sum(a, a), product(a, a))
-    const otherRoot = Derivative.of(product(num(1), x), x)
-    const graph = new Graph().addRelationship(
-        root,
-        otherRoot,
-        Relationship.Equal)
+    const root = Derivative.of(product(num(1), Exponent.of(x, num(2))), x)
+    const graph = new Graph().addNode(root)
 
     const deriver = new Deriver(graph)
     deriver.expand()
@@ -68,7 +65,7 @@ export function loadPrimaryPage(): void {
         drawEdgeLines: true,
     }
 
-    const graphView = new WebGraphView(graph, new Set([root, otherRoot]), config)
+    const graphView = new WebGraphView(graph, new Set([root]), config)
     graphView.setNodeColoringScheme(n => {
         if (n instanceof Expression) {
             if (!deriver.isSimplified(n)) return "lightgray"
