@@ -1,5 +1,6 @@
 import { Argument } from "../Argument"
 import { product, sum } from "../ConvenientExpressions"
+import { Derivative, DerivativeType } from "../expressions/Derivative"
 import { Exponent, ExponentType } from "../expressions/Exponent"
 import { Expression } from "../expressions/Expression"
 import { Fraction, FractionType } from "../expressions/Fraction"
@@ -8,6 +9,7 @@ import { Product, ProductType } from "../expressions/Product"
 import { Sum, SumType } from "../expressions/Sum"
 import { Variable } from "../expressions/Variable"
 import { Relationship } from "../Relationship"
+import { setOf } from "../util/ThingsThatShouldBeInTheStdLib"
 
 /**
  * Gets all equivalents of the given expression
@@ -27,7 +29,8 @@ import { Relationship } from "../Relationship"
         case ProductType: return productEquiv(exp as Product, directEquivalents)
         case ExponentType: return exponentEquiv(exp as Exponent, directEquivalents)
         case FractionType: return fractionEquiv(exp as Fraction, directEquivalents)
-        default: throw new Error("Not implemented " + exp.class)
+        case DerivativeType: return derivativeEquiv(exp as Derivative, directEquivalents)
+        default: throw new Error("Not implemented for " + exp.class)
     }
 }
 
@@ -152,8 +155,27 @@ function fractionEquiv(exp: Fraction, directEquivalents: (e: Expression) => Set<
     return [...equivalents]
 }
 
-function setOf(...arr: Expression[]): Set<Expression> {
-    const out = new Set<Expression>()
-    arr.forEach(e => out.add(e))
-    return out
+function derivativeEquiv(exp: Derivative, directEquivalents: (e: Expression) => Set<Argument>): Argument[] {
+    const equivalents: Set<Argument> = new Set()
+
+    // Add top level equivalents
+    directEquivalents(exp).forEach(inf => {
+        equivalents.add(inf)
+    })
+
+    equiv(exp.exp, directEquivalents).forEach(alt => {
+        equivalents.add(new Argument(setOf(exp), {
+            n: exp, 
+            r: Relationship.Equal,
+            n1: Derivative.of(alt.claim.n1 as Expression, exp.relativeTo)}, alt.argument))
+    })
+    equiv(exp.relativeTo, directEquivalents).forEach(alt => {
+        equivalents.add(new Argument(setOf(exp), {
+            n: exp,
+            r: Relationship.Equal,
+            n1: Derivative.of(exp.exp, alt.claim.n1 as Expression),
+        }, alt.argument))
+    })
+
+    return [...equivalents]
 }

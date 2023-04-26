@@ -137,13 +137,32 @@ export function orderedProduct(...factors: Expression[]): Product {
  * @param array 
  * @param element 
  */
-function remove<T>(array: T[], element: T) {
+export function remove<T>(array: T[], element: T) {
     for (let i=0; i < array.length; i++) {
         if (array[i] === element) {
             array.splice(i, 1)
             return
         }
     }
+}
+
+/**
+ * Gets a new array without the first instance of the given
+ * element. Really should be
+ * part of the std library. Identifies object
+ * with referencial equality.
+ * @param array 
+ * @param element 
+ */
+ export function removeNew<T>(array: T[], element: T): T[] {
+    const input = [...array]
+    for (let i=0; i < input.length; i++) {
+        if (input[i] === element) {
+            input.splice(i, 1)
+            return input
+        }
+    }
+    throw new Error("Given array doesn't contain element " + element)
 }
 
 export function product(...factors: Expression[]): Product {

@@ -1,4 +1,4 @@
-import { a, b, c, fraction, num, product, sum, v } from "./mathlib/ConvenientExpressions";
+import { a, b, c, fraction, num, product, sum, v, x } from "./mathlib/ConvenientExpressions";
 import { parse } from "./mathlib/userinput/Parser";
 import { WebGraphView, WebGraphViewInitSettings } from "./mathlib/uielements/WebGraphView";
 import { Graph } from "./mathlib/Graph";
@@ -16,6 +16,10 @@ import { SubtractFromBothSides } from "./mathlib/derivations/algebra/SubtractFro
 import { DivideOnBothSides } from "./mathlib/derivations/algebra/DivideOnBothSides";
 import { Variable } from "./mathlib/expressions/Variable";
 import { SumCoefficientsOfAddedTerms } from "./mathlib/derivations/simplifications/SumCoefficientsOfAddedTerms";
+import { USubstitution } from "./mathlib/derivations/simplifications/USubstitution";
+import { PowerRule } from "./mathlib/derivations/simplifications/PowerRule";
+import { PullConstantsFromDerivatives } from "./mathlib/derivations/simplifications/PullConstantsFromDerivatives";
+import { Derivative } from "./mathlib/expressions/Derivative";
 
 NoContextExpressionSimplificationRule.rules.add(new CombineCommonTermsAddition())
 NoContextExpressionSimplificationRule.rules.add(new CombineCommonTermsMultiplication())
@@ -23,6 +27,9 @@ NoContextExpressionSimplificationRule.rules.add(new EvaluateSums())
 NoContextExpressionSimplificationRule.rules.add(new OrderSums())
 NoContextExpressionSimplificationRule.rules.add(new ReduceReducibles())
 NoContextExpressionSimplificationRule.rules.add(new SumCoefficientsOfAddedTerms())
+NoContextExpressionSimplificationRule.rules.add(new USubstitution())
+NoContextExpressionSimplificationRule.rules.add(new PowerRule())
+NoContextExpressionSimplificationRule.rules.add(new PullConstantsFromDerivatives())
 
 RelationalDerivationRule.rules.add(new SubtractFromBothSides())
 RelationalDerivationRule.rules.add(new DivideOnBothSides())
@@ -37,7 +44,7 @@ export function loadPrimaryPage(): void {
 
     //const root = Derivative.of(sum(a, a, product(num(2), b)), a)
     const root = sum(sum(a, a), product(a, a))
-    const otherRoot = sum(product(b, c), a)
+    const otherRoot = Derivative.of(product(num(1), x), x)
     const graph = new Graph().addRelationship(
         root,
         otherRoot,
