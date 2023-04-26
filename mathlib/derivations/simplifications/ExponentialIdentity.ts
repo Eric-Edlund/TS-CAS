@@ -22,7 +22,7 @@ export class ExponentialIdentity extends NoContextExpressionSimplificationRule {
             n: e,
             r: Relationship.Equal,
             n1: e.base,
-        }, "Anything to the first is that thing"))
+        }, "Exponential Identity is 1"))
     }
 
 }
