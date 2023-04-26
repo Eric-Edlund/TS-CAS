@@ -71,10 +71,6 @@ export class SumCoefficientsOfAddedTerms extends NoContextExpressionSimplificati
             
         })
 
-        out.forEach(a => {
-            console.log("Yielded " + a.claim.n1.toString())
-        })
-
         return out
     }
 
