@@ -17,7 +17,7 @@ export class CombineCommonTermsAddition extends NoContextExpressionSimplificatio
 
     protected appliesImpl(exp: Expression): boolean {
         if (!(exp instanceof Sum)) return false;
-        if (exp.reducibleOrInt) return false;
+        if (exp.isReducibleOrInt) return false;
         const sum = exp as Sum;
         if (new Set(sum.terms).size < sum.terms.length) return true;
         return false;
@@ -32,7 +32,7 @@ export class CombineCommonTermsAddition extends NoContextExpressionSimplificatio
         // For every unique term in {a, b}
         for (const uniqueTerm of uniqueTerms) {
             // Avoid unhealthy expressions
-            if (uniqueTerm.reducibleOrInt) continue
+            if (uniqueTerm.isReducibleOrInt) continue
 
             let remainingTerms: Expression[] = [];
             let occurances = 0;

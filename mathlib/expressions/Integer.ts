@@ -44,7 +44,7 @@ export class Integer extends Expression {
     public readonly value: number;
     public readonly isReducible: boolean = false;
     public get reduced(): Integer {
-        throw new Error("Integers aren't reducible.")
+        return this
     }
     public isHealthy: boolean = true;
     public readonly isConstant = true;

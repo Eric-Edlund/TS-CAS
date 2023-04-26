@@ -35,9 +35,13 @@ export abstract class NoContextExpressionSimplificationRule {
      * @returns Set of equivalent expressions.
      */
     public apply(exp: Expression): Set<Argument> {
+        //console.log(this.constructor.name + " on " + exp.toString())
+
         const result = this.applyImpl(exp);
         result.forEach(e => {
             assert(e != null && e != undefined)
+            if (this.constructor.name == "CombineCommonTermsMultiplication")
+                console.log(this.constructor.name + exp.toString() + "\n -> " + e.claim.n1.toString())
         });
         return result;
     }

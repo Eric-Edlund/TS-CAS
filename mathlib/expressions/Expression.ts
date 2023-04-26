@@ -11,7 +11,8 @@ export abstract class Expression extends MathElement {
     /**
      * Get the reduced form of this expression.
      * @throws NotReducible error if expression
-     * isn't reducible.
+     * isn't reducible, unless the expression is
+     * an int, in which case it will return itself.
      */
     public abstract get reduced(): Integer;
 
@@ -34,7 +35,7 @@ export abstract class Expression extends MathElement {
     /**
      * True if the expression is reducible or is an integer.
      */
-    public get reducibleOrInt(): boolean {
+    public get isReducibleOrInt(): boolean {
         return this.isReducible || this.class == IntegerType
     }
     /**

@@ -39,7 +39,7 @@ export class ExplanationPopup extends HTMLDivElement {
         this.style.border = "1px solid black"
         this.style.boxShadow = "0.3ch 0.3ch 0.6ch rgba(0, 0, 0, 0.5)"
         this.style.padding = "1ch"
-        this.style.width = "300px"
+        this.style.width = "fit-content"
     }
 
     public connectedCallback(): void {

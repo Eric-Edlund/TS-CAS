@@ -31,11 +31,15 @@ export class Deriver {
         // Do this until there's nothing more to simplify
         this.simplifyNoContext()
 
-        this.algebraicExpansion()
+        //this.algebraicExpansion()
 
         this.simplifyNoContext()
-        this.algebraicExpansion()
         this.simplifyNoContext()
+        this.simplifyNoContext()
+        this.simplifyNoContext()
+        //this.algebraicExpansion()
+        //this.simplifyNoContext()
+
     }
 
     /**
@@ -57,7 +61,7 @@ export class Deriver {
             simplifications.forEach(a => this.graph.addArgument(a))
         })
 
-        if (unchecked.length > 0) this.simplifyNoContext()
+        //if (unchecked.length > 0) this.simplifyNoContext()
     }
 
     /**

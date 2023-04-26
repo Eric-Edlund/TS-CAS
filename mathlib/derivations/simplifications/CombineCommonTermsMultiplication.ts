@@ -1,4 +1,5 @@
 import { Argument } from "../../Argument";
+import { num } from "../../ConvenientExpressions";
 import { Exponent } from "../../expressions/Exponent";
 import { Expression } from "../../expressions/Expression";
 import { Integer } from "../../expressions/Integer";
@@ -24,28 +25,28 @@ export class CombineCommonTermsMultiplication extends NoContextExpressionSimplif
         const uniqueFactors = new Set(product.factors);
         // Suppose the product is a * a * b
 
-        // For every unique factor {a, b}
+        // For every unique factor
         for (const uniqueFactor of uniqueFactors) {
             let occurances = 0;
             let remainingFactors: Expression[] = [];
-            // Count the number of times it occurs in the product,
-            // collecting all other factors.
-            for (const t of product.factors) {
-                if (t == uniqueFactor) {
+            // Count the number of times it occurs in the product
+            // Collect the other factors in a list
+            for (const f of product.factors) {
+                if (f === uniqueFactor) {
                     occurances++;
                 } else {
-                    remainingFactors.push(t);
+                    remainingFactors.push(f);
                 }
             }
-            // If it occures multiple times, create a new sum
-            // expression with that term combined
+            // If it occured multiple times, create a new exponent
+            // To combine the repeats
             if (occurances > 1) {
-                const exponent = Exponent.of(uniqueFactor, Integer.of(occurances))
+                const exponent = Exponent.of(uniqueFactor, num(occurances))
                 
                 if (remainingFactors.length == 0) {
                     equivalentExpressions.add(exponent)
                 } else {
-                    remainingFactors.push(product)
+                    remainingFactors.push(exponent)
                     equivalentExpressions.add(Product.of(remainingFactors))
                 }
             }
@@ -58,7 +59,7 @@ export class CombineCommonTermsMultiplication extends NoContextExpressionSimplif
                 n: product,
                 r: Relationship.Equal,
                 n1: e,
-            }, "Exponential rule for multiplying equal bases"))
+            }, "Combine common factors multiplication"))
         })
         
         return inferences;
