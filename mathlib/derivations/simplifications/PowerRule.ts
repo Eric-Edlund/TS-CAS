@@ -28,7 +28,6 @@ export class PowerRule extends NoContextExpressionSimplificationRule {
     protected applyImpl(exp: Expression): Set<Argument> {
         const d = exp as Derivative
         const exponent = d.exp as Exponent
-        console.log(sumIntuitive(exponent.power, negative(num(1))).toString() + " " + exponent.base + " " + Exponent.of(exponent.base, sumIntuitive(exponent.power, negative(num(1)))))
         const result = product(exponent.power, Exponent.of(exponent.base, sumIntuitive(exponent.power, negative(num(1)))))
         return setOf(new Argument(setOf(exp), {
             n: exp,
