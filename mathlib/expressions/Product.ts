@@ -182,5 +182,13 @@ export const ProductType = "Product"
  * @returns Positive if a should be after b
  */
 export function factorOrder(a: Expression, b: Expression): number {
-    return 0 //TODO: Implement
+    if (a instanceof Integer && b instanceof Integer) return 0
+    if (a instanceof Integer) {
+        return aFirst
+    }
+    
+    return 0
 }
+
+const aFirst = 1
+const aAfter = -1

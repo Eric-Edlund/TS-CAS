@@ -61,8 +61,8 @@ export class CombineCommonFactorsMultiplication extends NoContextExpressionSimpl
                         // Pick index
                         let index = 0
                         for (let i=0; i < arr.length; i++) {
-                            if (factorOrder(arr[i], el) >= 0) {
-                                index = i
+                            if (factorOrder(el, arr[i]) >= 0) {
+                                index = i + 1
                                 break
                             }
                         }
