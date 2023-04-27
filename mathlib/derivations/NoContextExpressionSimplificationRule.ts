@@ -40,8 +40,8 @@ export abstract class NoContextExpressionSimplificationRule {
         const result = this.applyImpl(exp);
         result.forEach(e => {
             assert(e != null && e != undefined)
-            if (this.constructor.name == "CombineCommonTermsMultiplication")
-                console.log(this.constructor.name + exp.toString() + "\n -> " + e.claim.n1.toString())
+            //if (this.constructor.name == "CombineCommonTermsMultiplication")
+                //console.log(this.constructor.name + exp.toString() + "\n -> " + e.claim.n1.toString())
         });
         return result;
     }

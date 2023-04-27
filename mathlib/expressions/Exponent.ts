@@ -22,7 +22,7 @@ export class Exponent extends Expression {
                 return inRow(inParen(exp.toMathXML()))
             return exp.toMathXML()
         }
-        return "<msup>" + wrapIfNeeded(this.base) + this.power.toMathXML() + "</msup>"
+        return "<msup>" + wrapIfNeeded(this.base) + inRow(this.power.toMathXML()) + "</msup>"
     }
     public toString(): string {
         return "(" + this.base + ")^(" + this.power + ")"
