@@ -15,9 +15,10 @@ import { NoContextExpressionSimplificationRule } from "../NoContextExpressionSim
 export class PowerRule extends NoContextExpressionSimplificationRule {
     protected appliesImpl(exp: Expression): boolean {
         return exp instanceof Derivative 
-        && exp.exp instanceof Exponent
-        && exp.exp.base === exp.relativeTo
-        && exp.exp.power.isConstant
+        && ((exp.exp instanceof Exponent
+            && exp.exp.base === exp.relativeTo
+            && exp.exp.power.isConstant)
+        || (exp.exp === exp.relativeTo))
     }
 
     /**
@@ -27,7 +28,12 @@ export class PowerRule extends NoContextExpressionSimplificationRule {
      */
     protected applyImpl(exp: Expression): Set<Argument> {
         const d = exp as Derivative
-        const exponent = d.exp as Exponent
+        let exponent: Exponent;
+        if (d.exp instanceof Exponent) {
+            exponent = d.exp
+        } else {
+            exponent = Exponent.of(d.exp, num(1))
+        }
         const result = product(exponent.power, Exponent.of(exponent.base, sumIntuitive(exponent.power, negative(num(1)))))
         return setOf(new Argument(setOf(exp), {
             n: exp,
