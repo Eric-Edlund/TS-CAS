@@ -26,6 +26,8 @@ import { AssociativePropertyOfProductsAndSums } from "./mathlib/derivations/simp
 import { CombineIntegerFactors } from "./mathlib/derivations/simplifications/CombineIntegerFactors";
 import { ProductRule } from "./mathlib/derivations/simplifications/ProductRule";
 import { MultiplyExponentPowers } from "./mathlib/derivations/simplifications/MultiplyExponentPowers";
+import { QuotientRule } from "./mathlib/derivations/simplifications/QuotientRule";
+import { Fraction } from "./mathlib/expressions/Fraction";
 
 NoContextExpressionSimplificationRule.rules.add(new CombineCommonTermsAddition())
 NoContextExpressionSimplificationRule.rules.add(new CombineCommonFactorsMultiplication())
@@ -41,6 +43,7 @@ NoContextExpressionSimplificationRule.rules.add(new AssociativePropertyOfProduct
 NoContextExpressionSimplificationRule.rules.add(new CombineIntegerFactors())
 NoContextExpressionSimplificationRule.rules.add(new ProductRule())
 NoContextExpressionSimplificationRule.rules.add(new MultiplyExponentPowers())
+NoContextExpressionSimplificationRule.rules.add(new QuotientRule())
 
 RelationalDerivationRule.rules.add(new SubtractFromBothSides())
 RelationalDerivationRule.rules.add(new DivideOnBothSides())
@@ -54,8 +57,9 @@ RelationalDerivationRule.rules.add(new DivideOnBothSides())
 export function loadPrimaryPage(): void {
 
     //const root = Derivative.of(sum(a, a, product(num(2), b)), a)
-    const root = Derivative.of(product(num(3), Exponent.of(x, num(2)), Exponent.of(x, num(3))), x)
+    //const root = Derivative.of(product(num(3), Exponent.of(x, num(2)), Exponent.of(x, num(3))), x)
     //const root = product(Exponent.of(x, num(3)), Exponent.of(x, num(4)), x, x)
+    const root = Derivative.of(Fraction.of(Exponent.of(x, num(2)), x), x)
     const graph = new Graph().addNode(root)
 
     const deriver = new Deriver(graph)
