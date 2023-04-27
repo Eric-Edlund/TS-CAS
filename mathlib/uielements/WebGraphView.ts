@@ -37,6 +37,7 @@ export class WebGraphView extends HTMLDivElement {
         if (config != undefined) {
             this.showArguments = config.showArguments
             this.drawEdgeLines = config.drawEdgeLines
+            this.debugCornerEnabled = config.debugCornerEnabled
         }
 
         this.style.clipPath = "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)";
@@ -176,6 +177,23 @@ export class WebGraphView extends HTMLDivElement {
         })
 
         this.propogateSettingsToNodes()
+
+        if (this.debugCornerEnabled) {
+            const corner = document.createElement('p')
+            corner.innerHTML = "Graph Nodes: " + this.graph.getNodes().size + "<br>"
+                             + "Visible Nodes: " + this.nodes.size + "<br>"
+                             + "Graph Edges: " + this.graph.getEdges().size + "<br>"
+                             + "Visible Edges: " + this.edges.size + "<br>"
+            corner.style.zIndex = "100"
+            corner.style.backgroundColor = "white"
+            corner.style.width = "fit-content"
+            corner.style.margin = "0"
+            corner.style.padding = "1ch"
+            corner.style.border = "black 1px solid"
+            corner.style.position = "absolute"
+            this.append(corner)
+                                
+        }
 
         this.repOk()
     }
@@ -439,6 +457,7 @@ export class WebGraphView extends HTMLDivElement {
     // If the graph should draw argument nodes.
     private showArguments: boolean = false;
     private drawEdgeLines: boolean = false;
+    private debugCornerEnabled: boolean = false;
 }
 
 customElements.define("web-graphview", WebGraphView, {extends: "div"});
@@ -455,6 +474,12 @@ export interface WebGraphViewInitSettings {
      * its two end points. (Notates direction of connection)
      */
     drawEdgeLines: boolean;
+
+    /**
+     * If true, shows a box in the corner of the view
+     * that gives debug info about the graph.
+     */
+    debugCornerEnabled: boolean;
 }
 
 type Point = {x: number, y: number}

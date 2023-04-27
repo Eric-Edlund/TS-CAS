@@ -54,8 +54,8 @@ RelationalDerivationRule.rules.add(new DivideOnBothSides())
 export function loadPrimaryPage(): void {
 
     //const root = Derivative.of(sum(a, a, product(num(2), b)), a)
-    //const root = Derivative.of(product(num(3), Exponent.of(x, num(2)), Exponent.of(x, num(3))), x)
-    const root = product(Exponent.of(x, num(3)), Exponent.of(x, num(4)), x, x)
+    const root = Derivative.of(product(num(3), Exponent.of(x, num(2)), Exponent.of(x, num(3))), x)
+    //const root = product(Exponent.of(x, num(3)), Exponent.of(x, num(4)), x, x)
     const graph = new Graph().addNode(root)
 
     const deriver = new Deriver(graph)
@@ -74,6 +74,7 @@ export function loadPrimaryPage(): void {
     const config: WebGraphViewInitSettings = {
         showArguments: false,
         drawEdgeLines: true,
+        debugCornerEnabled: true,
     }
 
     const graphView = new WebGraphView(graph, new Set([root]), config)

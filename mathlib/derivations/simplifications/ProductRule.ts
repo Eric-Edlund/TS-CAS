@@ -19,7 +19,7 @@ export class ProductRule extends NoContextExpressionSimplificationRule {
         // Contains no constant factors
         && !exp.exp.factors.map<boolean>(f => f.isConstant).reduce((a, b) => a || b)
         // Contains no derivatives TODO: Find a better solution to loop guarding
-        && !exp.exp.factors.map<boolean>(f => f instanceof Derivative).reduce((a, b) => a || b)
+        //&& !exp.exp.factors.map<boolean>(f => f instanceof Derivative).reduce((a, b) => a || b)
     }
 
     protected applyImpl(exp: Expression): Set<Argument> {

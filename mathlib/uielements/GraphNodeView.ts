@@ -14,6 +14,7 @@ export abstract class GraphNodeView extends HTMLDivElement {
         this.style.width = "fit-content"
         this.style.height = "fit-content"
         this.style.whiteSpace = "nowrap"
+        this.style.zIndex = "5"
     }
 
     public set backgroundColor(value: string) {
