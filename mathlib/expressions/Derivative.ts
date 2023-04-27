@@ -8,9 +8,10 @@ import { SumType } from "./Sum";
  */
 export class Derivative extends Expression {
     public static of(exp: Expression, relativeTo: Expression): Derivative {
-        if (!this.instances.has(exp.hash))
-            this.instances.set(exp.hash + relativeTo.hash, new Derivative(exp, relativeTo))
-        return this.instances.get(exp.hash + relativeTo.hash)!
+        const hash = exp.hash + relativeTo.hash
+        if (!this.instances.has(hash))
+            this.instances.set(hash, new Derivative(exp, relativeTo))
+        return this.instances.get(hash)!
     }
     private static instances: Map<string, Derivative> = new Map();
     private constructor(exp: Expression, relativeTo: Expression) {

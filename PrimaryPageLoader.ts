@@ -26,6 +26,7 @@ import { AssociativePropertyOfProductsAndSums } from "./mathlib/derivations/simp
 import { CombineIntegerFactors } from "./mathlib/derivations/simplifications/CombineIntegerFactors";
 import { ProductRule } from "./mathlib/derivations/simplifications/ProductRule";
 import { AddExponentsWithLikeBases } from "./mathlib/derivations/simplifications/AddExponentsWithLikeBases";
+import { MultiplyExponentPowers } from "./mathlib/derivations/simplifications/MultiplyExponentPowers";
 
 NoContextExpressionSimplificationRule.rules.add(new CombineCommonTermsAddition())
 NoContextExpressionSimplificationRule.rules.add(new CombineCommonTermsMultiplication())
@@ -41,6 +42,7 @@ NoContextExpressionSimplificationRule.rules.add(new AssociativePropertyOfProduct
 NoContextExpressionSimplificationRule.rules.add(new CombineIntegerFactors())
 NoContextExpressionSimplificationRule.rules.add(new ProductRule())
 NoContextExpressionSimplificationRule.rules.add(new AddExponentsWithLikeBases())
+NoContextExpressionSimplificationRule.rules.add(new MultiplyExponentPowers())
 
 RelationalDerivationRule.rules.add(new SubtractFromBothSides())
 RelationalDerivationRule.rules.add(new DivideOnBothSides())

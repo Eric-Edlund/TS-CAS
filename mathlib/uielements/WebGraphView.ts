@@ -238,7 +238,7 @@ export class WebGraphView extends HTMLDivElement {
             const stepSize = (2 * Math.PI) / nodes.size;
             // The starting angular offset to add the stepsize to
             // Making it non-zero stops things from aligning
-            const stepOffset = (Math.PI / nodes.size) * depth
+            const stepOffset = (Math.PI / 3.5) * depth
             /**
              * Calculating the radius of the circle
              * Suppose every root node on the starting circle requires
@@ -301,7 +301,7 @@ export class WebGraphView extends HTMLDivElement {
      * Also applies the scale factor to the final draw positions, 
      * invisible to everyone else.
      */
-     private updateOffset(): void {
+    private updateOffset(): void {
 
         const center = this.center;
         const scale = this.scale
