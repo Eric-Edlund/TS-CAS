@@ -73,7 +73,10 @@ export class CombineCommonTermsAddition extends NoContextExpressionSimplificatio
             if (relaventTerms.length < 2) continue
             for (const term of relaventTerms) {
                 if (term.isNegation) {
-                    coefficients.push(negative((term.negation as Product).without(factor)))
+                    if (term.negation instanceof Product) {
+                        coefficients.push(negative(term.negation.without(factor)))
+                    } else
+                        coefficients.push(negative(num(1)))
                 } else {
                     coefficients.push(term.without(factor))
                 }

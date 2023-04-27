@@ -28,6 +28,7 @@ import { ProductRule } from "./mathlib/derivations/simplifications/ProductRule";
 import { MultiplyExponentPowers } from "./mathlib/derivations/simplifications/MultiplyExponentPowers";
 import { QuotientRule } from "./mathlib/derivations/simplifications/QuotientRule";
 import { Fraction } from "./mathlib/expressions/Fraction";
+import { MultiplicativeIdentity } from "./mathlib/derivations/simplifications/MultiplicativeIdentity";
 
 NoContextExpressionSimplificationRule.rules.add(new CombineCommonTermsAddition())
 NoContextExpressionSimplificationRule.rules.add(new CombineCommonFactorsMultiplication())
@@ -44,6 +45,7 @@ NoContextExpressionSimplificationRule.rules.add(new CombineIntegerFactors())
 NoContextExpressionSimplificationRule.rules.add(new ProductRule())
 NoContextExpressionSimplificationRule.rules.add(new MultiplyExponentPowers())
 NoContextExpressionSimplificationRule.rules.add(new QuotientRule())
+NoContextExpressionSimplificationRule.rules.add(new MultiplicativeIdentity())
 
 RelationalDerivationRule.rules.add(new SubtractFromBothSides())
 RelationalDerivationRule.rules.add(new DivideOnBothSides())

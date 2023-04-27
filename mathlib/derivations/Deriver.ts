@@ -39,6 +39,15 @@ export class Deriver {
         this.simplifyNoContext()
         this.simplifyNoContext()
         this.simplifyNoContext()
+        this.simplifyNoContext()
+        this.simplifyNoContext()
+        this.simplifyNoContext()
+        this.simplifyNoContext()
+        this.simplifyNoContext()
+        this.simplifyNoContext()
+        this.simplifyNoContext()
+        this.simplifyNoContext()
+        this.simplifyNoContext()
 
         //this.algebraicExpansion()
 
