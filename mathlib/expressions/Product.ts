@@ -175,9 +175,11 @@ export class Product extends Expression {
 export const ProductType = "Product"
 
 /**
- * Can be used in array.sort() to get properly ordered products
+ * Can be used in array.sort() to get properly ordered products.
+ * 
  * @param a 
- * @param b 
+ * @param b
+ * @returns Positive if a should be after b
  */
 export function factorOrder(a: Expression, b: Expression): number {
     return 0 //TODO: Implement

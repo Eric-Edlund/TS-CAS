@@ -6,7 +6,7 @@ import { Relationship } from "./mathlib/Relationship";
 import { Deriver } from "./mathlib/derivations/Deriver";
 import { NoContextExpressionSimplificationRule } from "./mathlib/derivations/NoContextExpressionSimplificationRule";
 import { CombineCommonTermsAddition } from "./mathlib/derivations/simplifications/CombineCommonTermsAddition";
-import { CombineCommonTermsMultiplication } from "./mathlib/derivations/simplifications/CombineCommonTermsMultiplication";
+import { CombineCommonFactorsMultiplication } from "./mathlib/derivations/simplifications/CombineCommonFactorsMultiplication";
 import { EvaluateSums } from "./mathlib/derivations/simplifications/EvaluateSums";
 import { OrderSums } from "./mathlib/derivations/simplifications/OrderSums";
 import { ReduceReducibles } from "./mathlib/derivations/simplifications/ReduceReducibles";
@@ -29,7 +29,7 @@ import { AddExponentsWithLikeBases } from "./mathlib/derivations/simplifications
 import { MultiplyExponentPowers } from "./mathlib/derivations/simplifications/MultiplyExponentPowers";
 
 NoContextExpressionSimplificationRule.rules.add(new CombineCommonTermsAddition())
-NoContextExpressionSimplificationRule.rules.add(new CombineCommonTermsMultiplication())
+NoContextExpressionSimplificationRule.rules.add(new CombineCommonFactorsMultiplication())
 NoContextExpressionSimplificationRule.rules.add(new EvaluateSums())
 NoContextExpressionSimplificationRule.rules.add(new OrderSums())
 NoContextExpressionSimplificationRule.rules.add(new ReduceReducibles())
@@ -41,7 +41,7 @@ NoContextExpressionSimplificationRule.rules.add(new ExponentialIdentity())
 NoContextExpressionSimplificationRule.rules.add(new AssociativePropertyOfProductsAndSums())
 NoContextExpressionSimplificationRule.rules.add(new CombineIntegerFactors())
 NoContextExpressionSimplificationRule.rules.add(new ProductRule())
-NoContextExpressionSimplificationRule.rules.add(new AddExponentsWithLikeBases())
+//NoContextExpressionSimplificationRule.rules.add(new AddExponentsWithLikeBases())
 NoContextExpressionSimplificationRule.rules.add(new MultiplyExponentPowers())
 
 RelationalDerivationRule.rules.add(new SubtractFromBothSides())
