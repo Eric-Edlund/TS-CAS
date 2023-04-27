@@ -30,6 +30,15 @@ export class Deriver {
         // Simplify all the expressions using the contextless simplifying rules
         // Do this until there's nothing more to simplify
         this.simplifyNoContext()
+        this.simplifyNoContext()
+        this.simplifyNoContext()
+        this.simplifyNoContext()
+        this.simplifyNoContext()
+        this.simplifyNoContext()
+        this.simplifyNoContext()
+        this.simplifyNoContext()
+        this.simplifyNoContext()
+        this.simplifyNoContext()
 
         //this.algebraicExpansion()
 
@@ -58,7 +67,7 @@ export class Deriver {
             simplifications.forEach(a => this.graph.addArgument(a))
         })
 
-        if (unchecked.length > 0) this.simplifyNoContext()
+        //if (unchecked.length > 0) this.simplifyNoContext()
     }
 
     /**
