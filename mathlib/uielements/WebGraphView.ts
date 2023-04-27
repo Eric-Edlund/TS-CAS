@@ -61,6 +61,8 @@ export class WebGraphView extends HTMLDivElement {
             this.updateOffset()
         })
 
+        this.resizeObserver.observe(this)
+
         this.addEventListener("wheel", (event) => {
             const mousePos = Point(event.offsetX, event.offsetY)
             const preMousePos = this.getInternalPos(mousePos)
@@ -458,6 +460,11 @@ export class WebGraphView extends HTMLDivElement {
     private showArguments: boolean = false;
     private drawEdgeLines: boolean = false;
     private debugCornerEnabled: boolean = false;
+
+    private readonly resizeObserver = new ResizeObserver(_ => {
+        this.arrange()
+        this.updateOffset()
+    })
 }
 
 customElements.define("web-graphview", WebGraphView, {extends: "div"});

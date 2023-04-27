@@ -33,8 +33,6 @@ export class Deriver {
 
         //this.algebraicExpansion()
 
-        this.simplifyNoContext()
-
 
         //this.algebraicExpansion()
         //this.simplifyNoContext()
@@ -60,7 +58,7 @@ export class Deriver {
             simplifications.forEach(a => this.graph.addArgument(a))
         })
 
-        //if (unchecked.length > 0) this.simplifyNoContext()
+        if (unchecked.length > 0) this.simplifyNoContext()
     }
 
     /**
