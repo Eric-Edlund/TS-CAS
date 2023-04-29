@@ -33,25 +33,6 @@ import { CancelNegatives } from "./mathlib/derivations/simplifications/CancelNeg
 import { DivideFractions } from "./mathlib/derivations/simplifications/DivideFractions";
 import { DivisionIdentity } from "./mathlib/derivations/simplifications/DivisionIdentity";
 
-NoContextExpressionSimplificationRule.rules.add(new CombineCommonTermsAddition())
-NoContextExpressionSimplificationRule.rules.add(new CombineCommonFactorsMultiplication())
-NoContextExpressionSimplificationRule.rules.add(new EvaluateSums())
-NoContextExpressionSimplificationRule.rules.add(new OrderSums())
-NoContextExpressionSimplificationRule.rules.add(new ReduceReducibles())
-NoContextExpressionSimplificationRule.rules.add(new SumCoefficientsOfAddedTerms())
-NoContextExpressionSimplificationRule.rules.add(new USubstitution())
-NoContextExpressionSimplificationRule.rules.add(new PowerRule())
-NoContextExpressionSimplificationRule.rules.add(new PullConstantsFromDerivatives())
-NoContextExpressionSimplificationRule.rules.add(new ExponentialIdentity())
-NoContextExpressionSimplificationRule.rules.add(new AssociativePropertyOfProductsAndSums())
-NoContextExpressionSimplificationRule.rules.add(new CombineIntegerFactors())
-NoContextExpressionSimplificationRule.rules.add(new ProductRule())
-NoContextExpressionSimplificationRule.rules.add(new MultiplyExponentPowers())
-NoContextExpressionSimplificationRule.rules.add(new QuotientRule())
-NoContextExpressionSimplificationRule.rules.add(new MultiplicativeIdentity())
-NoContextExpressionSimplificationRule.rules.add(new CancelNegatives())
-NoContextExpressionSimplificationRule.rules.add(new DivideFractions())
-NoContextExpressionSimplificationRule.rules.add(new DivisionIdentity())
 
 RelationalDerivationRule.rules.add(new SubtractFromBothSides())
 RelationalDerivationRule.rules.add(new DivideOnBothSides())

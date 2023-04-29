@@ -21,7 +21,7 @@ export class DivisionIdentity extends NoContextExpressionSimplificationRule {
         return setOf(new Argument(setOf(frac), {
             n: frac,
             r: Relationship.Equal,
-            n1: Fraction.of(frac.numerator, num(1)),
+            n1: frac.numerator,
         }, "Division identity is 1"))
     }
 

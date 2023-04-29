@@ -13,7 +13,7 @@ import { NoContextExpressionSimplificationRule } from "../NoContextExpressionSim
  export class OrderSums extends NoContextExpressionSimplificationRule {
 
     protected appliesImpl(exp: Expression): boolean {
-        return !exp.isHealthy && exp.class === SumType
+        return exp instanceof Sum && orderedSum(exp) !== exp
     }
     protected applyImpl(exp: Expression): Set<Argument> {
         return new Set<Argument>([new Argument(setOf(exp), {

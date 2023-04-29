@@ -3,9 +3,30 @@ import { Expression } from "../expressions/Expression";
 import { GivenEdge, Graph, MathGraphNode } from "../Graph";
 import { GraphMinipulator } from "../GraphMinipulator";
 import { Relationship } from "../Relationship";
+import { assert } from "../util/assert";
+import { setOf } from "../util/ThingsThatShouldBeInTheStdLib";
 import { NoContextExpressionSimplificationRule as NoContextExpressionSimplificationRule } from "./NoContextExpressionSimplificationRule";
 import { equiv } from "./recursion";
 import { RelationalDerivationRule } from "./RelationalDerivationRule";
+import { AssociativePropertyOfProductsAndSums } from "./simplifications/AssociativePropertyOfProductsAndSums";
+import { CancelNegatives } from "./simplifications/CancelNegatives";
+import { CombineCommonFactorsMultiplication } from "./simplifications/CombineCommonFactorsMultiplication";
+import { CombineCommonTermsAddition } from "./simplifications/CombineCommonTermsAddition";
+import { CombineIntegerFactors as EvaluateIntegerFactors } from "./simplifications/CombineIntegerFactors";
+import { DivideFractions } from "./simplifications/DivideFractions";
+import { DivisionIdentity } from "./simplifications/DivisionIdentity";
+import { EvaluateSums as EvaluateIntegerTerms } from "./simplifications/EvaluateSums";
+import { ExponentialIdentity } from "./simplifications/ExponentialIdentity";
+import { MultiplicativeIdentity } from "./simplifications/MultiplicativeIdentity";
+import { MultiplyExponentPowers } from "./simplifications/MultiplyExponentPowers";
+import { OrderSums } from "./simplifications/OrderSums";
+import { PowerRule } from "./simplifications/PowerRule";
+import { ProductRule } from "./simplifications/ProductRule";
+import { PullConstantsFromDerivatives } from "./simplifications/PullConstantsFromDerivatives";
+import { QuotientRule } from "./simplifications/QuotientRule";
+import { ReduceReducibles } from "./simplifications/ReduceReducibles";
+import { SumCoefficientsOfAddedTerms } from "./simplifications/SumCoefficientsOfAddedTerms";
+import { USubstitution } from "./simplifications/USubstitution";
 
 /**
  * Holds a single graph and expands it using rules.
@@ -34,6 +55,14 @@ export class Deriver {
         this.simplifyNoContext()
         this.simplifyNoContext()
         this.simplifyNoContext()
+        this.simplifyNoContext()
+        this.simplifyNoContext()
+        this.simplifyNoContext()
+        this.simplifyNoContext()
+        this.simplifyNoContext()
+        this.simplifyNoContext()
+        this.simplifyNoContext()
+
 
         //this.algebraicExpansion()
 
@@ -50,19 +79,32 @@ export class Deriver {
      * as unsimplifiable.
      */
     private simplifyNoContext(): void {
-        const rules = NoContextExpressionSimplificationRule.rules
-        const unchecked = [...this.graph.getNodes()].filter(n => n instanceof Expression)
+        const unsimplified = [...this.graph.getNodes()].filter(n => n instanceof Expression)
                             .map<Expression>(n => n as Expression)
                             .filter(e => !this.simplifiedInIsolation.has(e))
 
-        unchecked.forEach(e => {
-            const simplifications = equiv(e, contextlessSimplificationsFn)
+        unsimplified.forEach(e => {
             this.simplifiedInIsolation.add(e)
-            if (simplifications.length == 0) this.notSimplifiable.add(e)
-            simplifications.forEach(a => this.graph.addArgument(a))
+
+            // Try to find equivalents using every set of rules.
+            // If a set finds equivalents, move on to the next
+            // expression instead of trying later rules to save
+            // time.
+            for (const rules of simplificationOrder) {
+                const derivedSimplifications = equiv(e, equivalentsFnUsing(rules))
+                if (derivedSimplifications.length > 0) {
+                    derivedSimplifications.forEach(a => {
+                        this.graph.addArgument(a)
+                    })
+                    return // To next expression
+                }
+            }
+
+            // If none of the rules we have worked, the expression isn't simplifiable.
+            this.notSimplifiable.add(e)
         })
 
-        //if (unchecked.length > 0) this.simplifyNoContext()
+        //if (unsimplified.length > 0) this.simplifyNoContext()
     }
 
     /**
@@ -113,23 +155,79 @@ export class Deriver {
 }
 
 /**
- * Finds equivalents of the given expression
- * using rules of inference. Not recursive.
- * @param exp 
+ * Function that makes a function that gets the equivalent
+ * expressions for a given one.
+ * @param rules What rules the resulting function should use to 
+ *      find equivalents.
+ * @returns A function which will use the given rules to
+ *      find direct equivalents.
  */
-const contextlessSimplificationsFn = function directEquivalents(exp: Expression): Set<Argument> {
-    const rules = [...NoContextExpressionSimplificationRule.rules]
-    const out: Set<Argument> = new Set()
-     rules.filter(r => r.applies(exp)).forEach(rule => {
-        rule.apply(exp).forEach(i => {
-            out.add(i)
+function equivalentsFnUsing(rules: NoContextExpressionSimplificationRule[]): (exp: Expression) => Set<Argument> {
+    return function (exp: Expression): Set<Argument> {
+        const out: Set<Argument> = new Set()
+        rules.filter(r => r.applies(exp)).forEach(rule => {
+            rule.apply(exp).forEach(i => {
+                out.add(i)
+            })
         })
-    })
-    return out
+        return out
+    }
 }
 
-function setOf(...arr: Expression[]): Set<Expression> {
-    const out = new Set<Expression>()
-    arr.forEach(e => out.add(e))
-    return out
-}
+/**
+ * 1 input, 1 output
+ */
+const identityRules = [
+    new MultiplicativeIdentity(),
+    new ExponentialIdentity(),
+    new DivisionIdentity(),
+]
+
+/**
+ * 1 input, 1 output
+ */
+const beautifyingRules = [
+    new OrderSums(),
+]
+
+/**
+ * 1 input, 1 output
+ */
+const evaluativeRules = [
+    new EvaluateIntegerTerms(),
+    new ReduceReducibles(),
+    new CancelNegatives(),
+    new EvaluateIntegerFactors(),
+]
+
+const combinatoricRules = [
+    new SumCoefficientsOfAddedTerms(),
+    new CombineCommonTermsAddition(),
+    new CombineCommonFactorsMultiplication(),
+    new MultiplyExponentPowers(),
+]
+
+const remainingNoContextSimplificationRules: NoContextExpressionSimplificationRule[] = [
+    new USubstitution(),
+    new PowerRule(),
+    new PullConstantsFromDerivatives(),
+    new AssociativePropertyOfProductsAndSums(),
+    new ProductRule(),
+    new QuotientRule(),
+    new DivideFractions(),
+]
+
+/**
+ * A list of lists of simplification rules.
+ * Earlier lists should be tried first.
+ * If and only if an earlier list fails to 
+ * produce equivalent expressions should later lists
+ * be used.
+ */
+const simplificationOrder: NoContextExpressionSimplificationRule[][] = [
+    identityRules,
+    beautifyingRules,
+    evaluativeRules,
+    combinatoricRules,
+    remainingNoContextSimplificationRules,
+]

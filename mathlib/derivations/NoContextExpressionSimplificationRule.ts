@@ -13,12 +13,6 @@ import { assert } from "../util/assert";
  * no other information about the problem.
  */
 export abstract class NoContextExpressionSimplificationRule {
-
-    /**
-     * All subclasses should register themselves in this list.
-     */
-    public static rules: Set<NoContextExpressionSimplificationRule> = new Set()
-
     /**
      * Checks if this rule can find equivalents for the
      * given expression. Only call apply() if true.
@@ -32,7 +26,7 @@ export abstract class NoContextExpressionSimplificationRule {
      * the given one. Only call if the given expression
      * passed the applies() test.
      * @param exp The expression to find an equivalent for.
-     * @returns Set of equivalent expressions.
+     * @returns Set of equivalent expressions, not including the given one.
      */
     public apply(exp: Expression): Set<Argument> {
         //console.log(this.constructor.name + " on " + exp.toString())
@@ -40,6 +34,7 @@ export abstract class NoContextExpressionSimplificationRule {
         const result = this.applyImpl(exp);
         result.forEach(e => {
             assert(e != null && e != undefined)
+            assert(e.claim.n1 !== exp, "Rule " + this.constructor.name + " produced result equivalent to ground")
             //if (this.constructor.name == "CombineCommonTermsMultiplication")
                 //console.log(this.constructor.name + exp.toString() + "\n -> " + e.claim.n1.toString())
         });
