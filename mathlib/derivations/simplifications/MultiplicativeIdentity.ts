@@ -15,6 +15,7 @@ export class MultiplicativeIdentity extends NoContextExpressionSimplificationRul
     protected appliesImpl(exp: Expression): boolean {
         return exp instanceof Product
             && new Set(exp.factors).has(num(1))
+            && !exp.isNegation
     }
     protected applyImpl(exp: Expression): Set<Argument> {
         const p = exp as Product

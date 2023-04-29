@@ -52,17 +52,6 @@ export class Deriver {
         // Simplify all the expressions using the contextless simplifying rules
         // Do this until there's nothing more to simplify
         this.simplifyNoContext()
-        this.simplifyNoContext()
-        this.simplifyNoContext()
-        this.simplifyNoContext()
-        this.simplifyNoContext()
-        this.simplifyNoContext()
-        this.simplifyNoContext()
-        this.simplifyNoContext()
-        this.simplifyNoContext()
-        this.simplifyNoContext()
-        this.simplifyNoContext()
-        this.simplifyNoContext()
 
 
         //this.algebraicExpansion()
@@ -105,7 +94,7 @@ export class Deriver {
             this.notSimplifiable.add(e)
         })
 
-        //if (unsimplified.length > 0) this.simplifyNoContext()
+        if (unsimplified.length > 0) this.simplifyNoContext()
     }
 
     /**
