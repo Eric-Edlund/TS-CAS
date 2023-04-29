@@ -114,6 +114,12 @@ export function sumIntuitive(...terms: Expression[]): Expression {
         return sum(...terms)
 }
 
+/**
+ * Finds the sum of the given terms or if only 1 
+ * is given returns that term.
+ * @param terms 
+ * @returns 
+ */
 export function sumOrNot(...terms: Expression[]): Expression {
     if (terms.length == 1) return terms[0]
     else return sum(...terms)

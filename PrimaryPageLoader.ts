@@ -29,6 +29,9 @@ import { MultiplyExponentPowers } from "./mathlib/derivations/simplifications/Mu
 import { QuotientRule } from "./mathlib/derivations/simplifications/QuotientRule";
 import { Fraction } from "./mathlib/expressions/Fraction";
 import { MultiplicativeIdentity } from "./mathlib/derivations/simplifications/MultiplicativeIdentity";
+import { CancelNegatives } from "./mathlib/derivations/simplifications/CancelNegatives";
+import { DivideFractions } from "./mathlib/derivations/simplifications/DivideFractions";
+import { DivisionIdentity } from "./mathlib/derivations/simplifications/DivisionIdentity";
 
 NoContextExpressionSimplificationRule.rules.add(new CombineCommonTermsAddition())
 NoContextExpressionSimplificationRule.rules.add(new CombineCommonFactorsMultiplication())
@@ -46,6 +49,9 @@ NoContextExpressionSimplificationRule.rules.add(new ProductRule())
 NoContextExpressionSimplificationRule.rules.add(new MultiplyExponentPowers())
 NoContextExpressionSimplificationRule.rules.add(new QuotientRule())
 NoContextExpressionSimplificationRule.rules.add(new MultiplicativeIdentity())
+NoContextExpressionSimplificationRule.rules.add(new CancelNegatives())
+NoContextExpressionSimplificationRule.rules.add(new DivideFractions())
+NoContextExpressionSimplificationRule.rules.add(new DivisionIdentity())
 
 RelationalDerivationRule.rules.add(new SubtractFromBothSides())
 RelationalDerivationRule.rules.add(new DivideOnBothSides())
@@ -61,7 +67,8 @@ export function loadPrimaryPage(): void {
     //const root = Derivative.of(sum(a, a, product(num(2), b)), a)
     //const root = Derivative.of(product(num(3), Exponent.of(x, num(2)), Exponent.of(x, num(3))), x)
     //const root = product(Exponent.of(x, num(3)), Exponent.of(x, num(4)), x, x)
-    const root = Derivative.of(Fraction.of(Exponent.of(x, num(2)), x), x)
+    //const root = Derivative.of(Fraction.of(Exponent.of(x, num(2)), x), x)
+    const root = Fraction.of(product(num(2), x, Exponent.of(x, a), a), product(num(2), a, a, x))
     const graph = new Graph().addNode(root)
 
     const deriver = new Deriver(graph)

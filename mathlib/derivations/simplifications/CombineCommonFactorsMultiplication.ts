@@ -4,6 +4,7 @@ import { Exponent } from "../../expressions/Exponent";
 import { Expression } from "../../expressions/Expression";
 import { Integer } from "../../expressions/Integer";
 import { factorOrder, Product } from "../../expressions/Product";
+import { orderTerms } from "../../expressions/Sum";
 import { Relationship } from "../../Relationship";
 import { setOf } from "../../util/ThingsThatShouldBeInTheStdLib";
 import { NoContextExpressionSimplificationRule } from "../NoContextExpressionSimplificationRule";
@@ -31,7 +32,7 @@ export class CombineCommonFactorsMultiplication extends NoContextExpressionSimpl
         const equivalentExpressions = new Set<Product | Exponent>();
         // For every unique factor
         for (const base of uniqueBases) {
-            const powerTerms: Expression[] = []
+            let powerTerms: Expression[] = []
             let remainingFactors: Expression[] = [];
             // Count the number of times it occurs in the product
             // Collect the other factors in a list
@@ -47,6 +48,9 @@ export class CombineCommonFactorsMultiplication extends NoContextExpressionSimpl
                     }
                 }
             }
+
+            // Order the power terms correctly
+            powerTerms = orderTerms(...powerTerms)
 
             // If it occured multiple times, create a new exponent
             // To combine the repeats
