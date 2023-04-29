@@ -13,6 +13,7 @@ import { NoContextExpressionSimplificationRule } from "../NoContextExpressionSim
 export class CombineIntegerFactors extends NoContextExpressionSimplificationRule {
     protected appliesImpl(exp: Expression): boolean {
         return exp instanceof Product
+        && !exp.isNegation
     }
     protected applyImpl(exp: Expression): Set<Argument> {
         const p = exp as Product
