@@ -1,5 +1,6 @@
 import { Expression } from "../expressions/Expression";
 import { Graph } from "../Graph";
+import { create, all, parse } from 'mathjs';
 
 /**
  * Parses human written, utf-8 type math expressions
@@ -8,6 +9,11 @@ import { Graph } from "../Graph";
  */
 export function parse(input: string): Expression[] {
     const out: Expression[] = []
+
+    const math = create(all)
+
+    
+
 
     console.log("Input: " + input)
 
@@ -20,6 +26,6 @@ export function parse(input: string): Expression[] {
     return out;
 }
 
-function parseExpression(input: string): Expression {
+export function parseExpression(input: string): Expression {
     throw new Error("Not implemented")
 }

@@ -14,18 +14,16 @@ import { EditableMathView } from "./mathlib/uielements/EditableMathView"
 export function loadExpressionsTestPage(): void {
     const page = document.getElementsByTagName('body')[0] as HTMLBodyElement
 
-    function p(content: string): HTMLParagraphElement {
+    function p(content: string) {
         const e = document.createElement('p')
         e.innerText = content
         page.append(e)
-        return e
     }
 
-    function view(exp: Expression): EditableMathView {
+    function view(exp: Expression) {
         const e = new EditableMathView()
         e.value = exp
         page.append(e)
-        return e
     }
 
     p("The sum of a, a, and a")

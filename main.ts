@@ -13,6 +13,8 @@ window.onload = () => {
                 loadExpressionsTestPage()
             } else if (classes.contains('primaryIntegrator')) {
                 loadPrimaryPage()
+            } else if (classes.contains('inputParseTest')) {
+                loadInputParseTestPage()
             }
         }, 100);
    
