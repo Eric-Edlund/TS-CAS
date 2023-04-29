@@ -18,6 +18,7 @@ import { DivideFractions } from "./simplifications/DivideFractions";
 import { DivisionIdentity } from "./simplifications/DivisionIdentity";
 import { EvaluateSums as EvaluateIntegerTerms } from "./simplifications/EvaluateSums";
 import { ExponentialIdentity } from "./simplifications/ExponentialIdentity";
+import { ExponentToZero } from "./simplifications/ExponentToZero";
 import { MultiplicativeIdentity } from "./simplifications/MultiplicativeIdentity";
 import { MultiplyExponentPowers } from "./simplifications/MultiplyExponentPowers";
 import { OrderSums } from "./simplifications/OrderSums";
@@ -182,6 +183,7 @@ const identityRules = [
     new ExponentialIdentity(),
     new DivisionIdentity(),
     new AdditiveIdentity(),
+    new ExponentToZero(),
 ]
 
 /**
