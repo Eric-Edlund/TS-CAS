@@ -24,6 +24,8 @@ export class MultiplicativeIdentity extends NoContextExpressionSimplificationRul
             newFactors.push(factor)
         }
 
+        if (newFactors.length == 0) newFactors.push(num(1))
+
         return setOf(new Argument(setOf(exp), {
             n: exp,
             r: Relationship.Equal,

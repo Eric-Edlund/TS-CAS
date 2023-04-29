@@ -39,3 +39,4 @@ In solving a problem, there are the following steps:
     4. The relevant and reduced subgraph can be displayed.
 
     
+The ONLY valid way to represent negativity is by using the integer -1 in a product. Other negative integer values aren't allowed.
