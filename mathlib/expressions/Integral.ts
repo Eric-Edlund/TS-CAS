@@ -33,9 +33,6 @@ export class Integral extends Expression {
     public readonly integrand: Expression
     public readonly relativeTo: Expression
 
-    public get reduced(): Integer {
-        throw new Error("Method not implemented. Not sure how this works with Integrals.");
-    }
     public readonly isReducible: boolean;
     public readonly class: string = IntegralType;
     public toString(): string {

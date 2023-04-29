@@ -31,9 +31,6 @@ export class Fraction extends Expression {
     public readonly numerator: Expression
     public readonly denominator: Expression
 
-    public get reduced(): Integer {
-        throw new Error("Method not implemented.");
-    }
     public readonly isReducible: boolean;
     public readonly class: string = FractionType;
     public toString(): string {

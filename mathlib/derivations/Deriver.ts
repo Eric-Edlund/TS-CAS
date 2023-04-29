@@ -25,7 +25,6 @@ import { PowerRule } from "./simplifications/PowerRule";
 import { ProductRule } from "./simplifications/ProductRule";
 import { PullConstantsFromDerivatives } from "./simplifications/PullConstantsFromDerivatives";
 import { QuotientRule } from "./simplifications/QuotientRule";
-import { ReduceReducibles } from "./simplifications/ReduceReducibles";
 import { SumCoefficientsOfAddedTerms } from "./simplifications/SumCoefficientsOfAddedTerms";
 import { USubstitution } from "./simplifications/USubstitution";
 
@@ -197,7 +196,6 @@ const beautifyingRules = [
  */
 const evaluativeRules = [
     new EvaluateIntegerTerms(),
-    new ReduceReducibles(),
     new CancelNegatives(),
     new EvaluateIntegerFactors(),
 ]

@@ -100,10 +100,6 @@ export class Sum extends Expression {
     public readonly terms: Expression[];
     public readonly isReducible: boolean;
 
-    public get reduced(): Integer {
-        return Integer.of(this.terms.map<number>(t => t.reduced.value).reduce((a, b) => a + b))
-    }
-
     /**
      * Figure out if we're healthy.
      */

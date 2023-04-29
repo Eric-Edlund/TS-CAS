@@ -156,11 +156,6 @@ export class Product extends Expression {
     public readonly factors: Expression[];
     public readonly class: string = ProductType;
     public readonly isReducible: boolean;
-    public get reduced(): Integer {
-        return this.factors.map<Integer>(e => e.reduced).reduce((a, b) => {
-            return Integer.of(a.reduced.value * b.reduced.value)
-        })
-    } 
 
     /**
      * Only 1 negative integer

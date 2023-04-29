@@ -9,16 +9,8 @@ import { MathElement } from "./MathElement";
 export abstract class Expression extends MathElement {
 
     /**
-     * Get the reduced form of this expression.
-     * @throws NotReducible error if expression
-     * isn't reducible, unless the expression is
-     * an int, in which case it will return itself.
-     */
-    public abstract get reduced(): Integer;
-
-    /**
      * True if the expression could be written as an 
-     * integer but isn't
+     * integer but isn't.
      * 
      * Reducible:
      * 2 + 2 -> 4

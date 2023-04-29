@@ -1,37 +1,15 @@
-import { a, b, c, fraction, num, product, sum, v, x } from "./mathlib/ConvenientExpressions";
+import { a, num, product, x } from "./mathlib/ConvenientExpressions";
 import { parse } from "./mathlib/userinput/Parser";
 import { WebGraphView, WebGraphViewInitSettings } from "./mathlib/uielements/WebGraphView";
 import { Graph } from "./mathlib/Graph";
-import { Relationship } from "./mathlib/Relationship";
 import { Deriver } from "./mathlib/derivations/Deriver";
-import { NoContextExpressionSimplificationRule } from "./mathlib/derivations/NoContextExpressionSimplificationRule";
-import { CombineCommonTermsAddition } from "./mathlib/derivations/simplifications/CombineCommonTermsAddition";
-import { CombineCommonFactorsMultiplication } from "./mathlib/derivations/simplifications/CombineCommonFactorsMultiplication";
-import { EvaluateSums } from "./mathlib/derivations/simplifications/EvaluateSums";
-import { OrderSums } from "./mathlib/derivations/simplifications/OrderSums";
-import { ReduceReducibles } from "./mathlib/derivations/simplifications/ReduceReducibles";
 import { Expression } from "./mathlib/expressions/Expression";
 import { RelationalDerivationRule } from "./mathlib/derivations/RelationalDerivationRule";
 import { SubtractFromBothSides } from "./mathlib/derivations/algebra/SubtractFromBothSides";
 import { DivideOnBothSides } from "./mathlib/derivations/algebra/DivideOnBothSides";
 import { Variable } from "./mathlib/expressions/Variable";
-import { SumCoefficientsOfAddedTerms } from "./mathlib/derivations/simplifications/SumCoefficientsOfAddedTerms";
-import { USubstitution } from "./mathlib/derivations/simplifications/USubstitution";
-import { PowerRule } from "./mathlib/derivations/simplifications/PowerRule";
-import { PullConstantsFromDerivatives } from "./mathlib/derivations/simplifications/PullConstantsFromDerivatives";
-import { Derivative } from "./mathlib/expressions/Derivative";
 import { Exponent } from "./mathlib/expressions/Exponent";
-import { ExponentialIdentity } from "./mathlib/derivations/simplifications/ExponentialIdentity";
-import { AssociativePropertyOfProductsAndSums } from "./mathlib/derivations/simplifications/AssociativePropertyOfProductsAndSums";
-import { CombineIntegerFactors } from "./mathlib/derivations/simplifications/CombineIntegerFactors";
-import { ProductRule } from "./mathlib/derivations/simplifications/ProductRule";
-import { MultiplyExponentPowers } from "./mathlib/derivations/simplifications/MultiplyExponentPowers";
-import { QuotientRule } from "./mathlib/derivations/simplifications/QuotientRule";
 import { Fraction } from "./mathlib/expressions/Fraction";
-import { MultiplicativeIdentity } from "./mathlib/derivations/simplifications/MultiplicativeIdentity";
-import { CancelNegatives } from "./mathlib/derivations/simplifications/CancelNegatives";
-import { DivideFractions } from "./mathlib/derivations/simplifications/DivideFractions";
-import { DivisionIdentity } from "./mathlib/derivations/simplifications/DivisionIdentity";
 
 
 RelationalDerivationRule.rules.add(new SubtractFromBothSides())

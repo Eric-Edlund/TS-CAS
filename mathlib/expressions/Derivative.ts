@@ -38,9 +38,6 @@ export class Derivative extends Expression {
     public readonly exp: Expression;
     public readonly relativeTo: Expression;
 
-    public get reduced(): Integer {
-        throw new Error("Method not implemented. Not sure if derivatives should be reducible.");
-    }
     public readonly isReducible: boolean;
     public readonly class: string = DerivativeType;
     public toString(): string {
