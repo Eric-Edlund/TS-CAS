@@ -8,6 +8,7 @@ import { setOf } from "../util/ThingsThatShouldBeInTheStdLib";
 import { NoContextExpressionSimplificationRule as NoContextExpressionSimplificationRule } from "./NoContextExpressionSimplificationRule";
 import { equiv } from "./recursion";
 import { RelationalDerivationRule } from "./RelationalDerivationRule";
+import { AdditiveIdentity } from "./simplifications/AdditiveIdentity";
 import { AssociativePropertyOfProductsAndSums } from "./simplifications/AssociativePropertyOfProductsAndSums";
 import { CancelNegatives } from "./simplifications/CancelNegatives";
 import { CombineCommonFactorsMultiplication } from "./simplifications/CombineCommonFactorsMultiplication";
@@ -181,6 +182,7 @@ const identityRules = [
     new MultiplicativeIdentity(),
     new ExponentialIdentity(),
     new DivisionIdentity(),
+    new AdditiveIdentity(),
 ]
 
 /**
