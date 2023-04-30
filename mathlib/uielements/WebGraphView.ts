@@ -65,21 +65,9 @@ export class WebGraphView extends HTMLDivElement {
 
         this.addEventListener("wheel", (event) => {
             const mousePos = Point(event.offsetX, event.offsetY)
-            const preMousePos = this.getInternalPos(mousePos)
 
             const scaleDelta = Math.pow(0.8, event.deltaY / 360)
             this.scale = scaleDelta * this.scale
-
-            const postMousePos = this.getInternalPos(mousePos)
-
-            const intXDiff = postMousePos.x - preMousePos.x
-
-            //console.log("Internal X Change under mouse " + intXDiff)
-            // Adjust offset so that content under the mouse doesn't move
-            //this.offsetX += intXDiff
-
-            //console.log("Corrected X Change under mouse " + (this.getInternalPos(mousePos).x - preMousePos.x))
-            
 
             this.updateOffset()
             return true
@@ -193,8 +181,7 @@ export class WebGraphView extends HTMLDivElement {
             corner.style.padding = "1ch"
             corner.style.border = "black 1px solid"
             corner.style.position = "absolute"
-            this.append(corner)
-                                
+            this.append(corner)            
         }
 
         this.repOk()
@@ -304,7 +291,6 @@ export class WebGraphView extends HTMLDivElement {
      * invisible to everyone else.
      */
     private updateOffset(): void {
-
         const center = this.center;
         const scale = this.scale
 
@@ -392,10 +378,8 @@ export class WebGraphView extends HTMLDivElement {
      * @param event The click event
      */
     public edgeClicked(view: EdgeView, event: MouseEvent): void {
-
         // TODO: Don't allow dupliate explanation popups
         
-
         if (view.edge instanceof Argument) {
             const popup = new ExplanationPopup(view.edge, () => {
                 this.removeChild(popup)
@@ -403,8 +387,7 @@ export class WebGraphView extends HTMLDivElement {
                     if (this.explanationPopups[i].e === popup) {
                         this.explanationPopups.splice(i, 1)
                         break
-                    }
-                        
+                    }     
                 }
             })
             const rect = this.getBoundingClientRect();
