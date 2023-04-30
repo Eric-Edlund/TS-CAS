@@ -3,10 +3,9 @@ import { Expression } from "../expressions/Expression";
 import { assert } from "../util/assert";
 
 /**
- * A rule that takes an expression and produces an equivalent expression.
- * ExpressionSimplificationRules can use reflection to determine what
- * type of expression they're given, but should use expression specific
- * functions on sub-expressions. These rules will be recursively used
+ * A rule that takes an expression and produces one or more equivalent expressions.
+ * These can use reflection to determine what
+ * type of expression they're given. These rules will be recursively used
  * to derive simplified expressions.
  * 
  * These rules are also contextless: they're only given the expression,

@@ -5,29 +5,10 @@ import { GraphMinipulator } from "../GraphMinipulator";
 import { Relationship } from "../Relationship";
 import { assert } from "../util/assert";
 import { setOf } from "../util/ThingsThatShouldBeInTheStdLib";
+import { simplificationOrder } from "./DerivationRules";
 import { NoContextExpressionSimplificationRule as NoContextExpressionSimplificationRule } from "./NoContextExpressionSimplificationRule";
 import { equiv } from "./recursion";
 import { RelationalDerivationRule } from "./RelationalDerivationRule";
-import { AdditiveIdentity } from "./simplifications/AdditiveIdentity";
-import { AssociativePropertyOfProductsAndSums } from "./simplifications/AssociativePropertyOfProductsAndSums";
-import { CancelNegatives } from "./simplifications/CancelNegatives";
-import { CombineCommonFactorsMultiplication } from "./simplifications/CombineCommonFactorsMultiplication";
-import { CombineCommonTermsAddition } from "./simplifications/CombineCommonTermsAddition";
-import { CombineIntegerFactors as EvaluateIntegerFactors } from "./simplifications/CombineIntegerFactors";
-import { DivideFractions } from "./simplifications/DivideFractions";
-import { DivisionIdentity } from "./simplifications/DivisionIdentity";
-import { EvaluateSums as EvaluateIntegerTerms } from "./simplifications/EvaluateSums";
-import { ExponentialIdentity } from "./simplifications/ExponentialIdentity";
-import { ExponentToZero } from "./simplifications/ExponentToZero";
-import { MultiplicativeIdentity } from "./simplifications/MultiplicativeIdentity";
-import { MultiplyExponentPowers } from "./simplifications/MultiplyExponentPowers";
-import { OrderSums } from "./simplifications/OrderSums";
-import { PowerRule } from "./simplifications/PowerRule";
-import { ProductRule } from "./simplifications/ProductRule";
-import { PullConstantsFromDerivatives } from "./simplifications/PullConstantsFromDerivatives";
-import { QuotientRule } from "./simplifications/QuotientRule";
-import { SumCoefficientsOfAddedTerms } from "./simplifications/SumCoefficientsOfAddedTerms";
-import { USubstitution } from "./simplifications/USubstitution";
 
 /**
  * Holds a single graph and expands it using rules.
@@ -53,13 +34,7 @@ export class Deriver {
         // Do this until there's nothing more to simplify
         this.simplifyNoContext()
 
-
         //this.algebraicExpansion()
-
-
-        //this.algebraicExpansion()
-        //this.simplifyNoContext()
-
     }
 
     /**
@@ -163,62 +138,3 @@ function equivalentsFnUsing(rules: NoContextExpressionSimplificationRule[]): (ex
         return out
     }
 }
-
-/**
- * 1 input, 1 output
- */
-const identityRules = [
-    new MultiplicativeIdentity(),
-    new ExponentialIdentity(),
-    new DivisionIdentity(),
-    new AdditiveIdentity(),
-    new ExponentToZero(),
-]
-
-/**
- * 1 input, 1 output
- */
-const beautifyingRules = [
-    new OrderSums(),
-]
-
-/**
- * 1 input, 1 output
- */
-const evaluativeRules = [
-    new EvaluateIntegerTerms(),
-    new CancelNegatives(),
-    new EvaluateIntegerFactors(),
-]
-
-const combinatoricRules = [
-    new SumCoefficientsOfAddedTerms(),
-    new CombineCommonTermsAddition(),
-    new CombineCommonFactorsMultiplication(),
-    new MultiplyExponentPowers(),
-]
-
-const remainingNoContextSimplificationRules: NoContextExpressionSimplificationRule[] = [
-    new USubstitution(),
-    new PowerRule(),
-    new PullConstantsFromDerivatives(),
-    new AssociativePropertyOfProductsAndSums(),
-    new ProductRule(),
-    new QuotientRule(),
-    new DivideFractions(),
-]
-
-/**
- * A list of lists of simplification rules.
- * Earlier lists should be tried first.
- * If and only if an earlier list fails to 
- * produce equivalent expressions should later lists
- * be used.
- */
-const simplificationOrder: NoContextExpressionSimplificationRule[][] = [
-    identityRules,
-    beautifyingRules,
-    evaluativeRules,
-    combinatoricRules,
-    remainingNoContextSimplificationRules,
-]
