@@ -1,6 +1,6 @@
 import { Expression } from "./mathlib/expressions/Expression";
 import { EditableMathView } from "./mathlib/uielements/EditableMathView";
-import { parse, parseExpression } from "./mathlib/userinput/Parser";
+import { parseExpression, parseToLatex } from "./mathlib/userinput/Parser";
 
 /**
  * Called after DOM is loaded.
@@ -9,6 +9,7 @@ import { parse, parseExpression } from "./mathlib/userinput/Parser";
  */
 export function loadInputParseTestPage() {
     const page = document.getElementsByTagName('body')[0] as HTMLBodyElement
+    page.style.padding = "8ch"
 
     function p(content: string) {
         const e = document.createElement('p')
@@ -22,11 +23,24 @@ export function loadInputParseTestPage() {
         page.append(e)
     }
 
-    function expression(input: string) {
-        p(input)
-        view(parseExpression(input))
+    function expression(input: string, explanation: string | null = null) {
+        p("Input:       " + input)
+        if (explanation != null) p(explanation)
+        //p(`Parsed: ${parseToLatex(input)}`)
+        
+        view(parseExpression(input)!)
     }
 
     // Expression strings to test
+    expression("a^b+c", "The +c shouldn't be in the exponent")
+
+    expression("-a-b+c")
+    expression("-a+-b+c")
+    expression("a+b+c")
+    expression("a+(b+c)")
+    expression("a-b-c")
+    expression("a*b+c")
+    expression("a/b+c")
+    expression("a/b/c")
     
 }

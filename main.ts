@@ -1,5 +1,6 @@
 import { loadPrimaryPage } from "./PrimaryPageLoader";
 import { loadExpressionsTestPage } from "./ExpressionTestPageLoader"
+import { loadInputParseTestPage } from "./InputParseTestPage";
 
 window.onload = () => {
     setTimeout(
