@@ -8,9 +8,16 @@ import { assert } from "./util/assert";
  * including everything we know about a problem.
  * Connects GraphNodes via Inferences for edges.
  * 
- * It's a digraph.
+ * It's a digraph. TODO: It may also need to be a multigraph...
  */
 export class Graph {
+
+    public constructor() {
+        this.nodes = new Set<MathGraphNode>()
+        this.connections = new Map<MathGraphNode, Set<MathGraphNode>>()
+        this.edges = new Map<MathGraphNode, Map<MathGraphNode, GraphEdge>>()
+        this.repOk()
+    }
 
     /**
      * Adds an expression to the problem.
@@ -40,14 +47,12 @@ export class Graph {
         this.addNode(n1)
 
         // Defined both ways because the user is giving it
-        this.addEdge(n, n1, new GivenEdge(r))
-        this.addEdge(n1, n, new GivenEdge(r))
-        this.addConnection(n, n1)
-        this.addConnection(n1, n)
+        this.internalAdd(n, n1, new GivenEdge(r))
+        this.internalAdd(n1, n, new GivenEdge(r))
 
+        this.repOk()
         return this
     }
-
 
     /**
      * Adds a node representing an acumulation of facts
@@ -61,24 +66,17 @@ export class Graph {
         // Add the grounds
         for (const ground of a.grounds) {
             this.nodes.add(ground)
-            this.addConnection(ground, a)
-            this.addEdge(ground, a, ArgumentEdge.To)
+            this.internalAdd(ground, a, ArgumentEdge.To)
         }
 
         // Add the claim
         const claim = a.claim
         this.addNode(claim.n)
         this.addNode(claim.n1)
-
-        this.addConnection(a, claim.n)
-        this.addEdge(a, claim.n, ArgumentEdge.From)
-        this.addConnection(a, claim.n1)
-        this.addEdge(a, claim.n1, ArgumentEdge.From)
-
-        this.addConnection(claim.n, claim.n1)
-        this.addConnection(claim.n1, claim.n)
-        this.addEdge(claim.n, claim.n1, a)
-        this.addEdge(claim.n1, claim.n, a)
+        this.internalAdd(a, claim.n, ArgumentEdge.From)
+        this.internalAdd(a, claim.n1, ArgumentEdge.From)
+        this.internalAdd(claim.n, claim.n1, a)
+        this.internalAdd(claim.n1, claim.n, a)
 
         this.repOk()
         return this
@@ -133,9 +131,8 @@ export class Graph {
             if (this.connections.get(n)!.has(node)) degIn++
         })
         
-        if (direction == "in") {
+        if (direction == "in")
             return degIn
-        }
 
         return degIn + (this.connections.get(node)?.size ?? 0)
     }
@@ -189,11 +186,9 @@ export class Graph {
                 if (edge instanceof Argument) 
                     this.addArgument(edge)
                 else if (edge == "supports") {
-                    this.addEdge(node1, node2, ArgumentEdge.To)
-                    this.addConnection(node1, node2)
+                    this.internalAdd(node1, node2, ArgumentEdge.To)
                 } else if (edge == "claims") {
-                    this.addEdge(node1, node2, ArgumentEdge.From)
-                    this.addConnection(node1, node2)
+                    this.internalAdd(node1, node2, ArgumentEdge.From)
                 }
                 else throw new Error("Unknown Edge Type")
             })
@@ -216,22 +211,19 @@ export class Graph {
         })
         out += "} Edge Count: " + this.connections.size
         
-
         return out;
     }
 
-    private addConnection(n: MathGraphNode, n1: MathGraphNode): void {
+    private internalAdd(n: MathGraphNode, n1: MathGraphNode, e: GraphEdge): void {
         if (this.connections.get(n) == null) {
             this.connections.set(n, new Set<MathGraphNode>())
         }
         this.connections.get(n)!.add(n1)
-    }
-
-    private addEdge(n: MathGraphNode, n1: MathGraphNode, e: GraphEdge) {
         if (this.edges.get(n) == undefined) {
             this.edges.set(n, new Map<Expression, GraphEdge>())
         }
         this.edges.get(n)!.set(n1, e);
+        this.repOk()
     }
 
     private repOk() {
@@ -254,15 +246,13 @@ export class Graph {
                 assert(this.connections.get(first)!.has(second))
             })
         })
-
     }
-
     
-    private nodes = new Set<MathGraphNode>()
+    private readonly nodes: Set<MathGraphNode>
     // Quickly access all connections of a node
-    private connections = new Map<MathGraphNode, Set<MathGraphNode>>()
+    private readonly connections: Map<MathGraphNode, Set<MathGraphNode>>
     // Determine the type of connection between two nodes
-    private edges = new Map<MathGraphNode, Map<MathGraphNode, GraphEdge>>()
+    private readonly edges: Map<MathGraphNode, Map<MathGraphNode, GraphEdge>>
 }
 
 /**
