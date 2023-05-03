@@ -1,9 +1,10 @@
 import { Argument } from "../Argument"
-import { GraphEdge, MathGraphNode } from "../Graph"
+import { GraphEdge } from "../Graph"
 import { Relationship } from "../Relationship"
 import { uiPreferences } from "./UIPreferences"
 import { WebGraphView } from "./WebGraphView"
 import { GivenEdge } from "../Graph"
+import { MathGraphNode } from "../MathGraphNode"
 
 /**
  * Represents an edge in a graph.

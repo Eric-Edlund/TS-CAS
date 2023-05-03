@@ -1,5 +1,6 @@
 import { Argument } from "./Argument";
 import { Expression } from "./expressions/Expression";
+import { MathGraphNode } from "./MathGraphNode";
 import { Relationship } from "./Relationship";
 import { assert } from "./util/assert";
 
@@ -255,10 +256,6 @@ export class Graph {
     private readonly edges: Map<MathGraphNode, Map<MathGraphNode, GraphEdge>>
 }
 
-/**
- * Nodes in the graph can be expressions or Arguments.
- */
-export type MathGraphNode = Expression | Argument;
 export enum ArgumentEdge {
     To = "supports",
     From = "claims"

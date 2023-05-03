@@ -1,5 +1,6 @@
 import { Expression } from "./expressions/Expression";
-import { Graph, MathGraphNode } from "./Graph";
+import { Graph } from "./Graph";
+import { MathGraphNode } from "./MathGraphNode";
 import { Relationship } from "./Relationship";
 import { assert } from "./util/assert";
 
@@ -7,8 +8,9 @@ import { assert } from "./util/assert";
  * Connects one or more nodes (grounds) to one or more nodes (claims).
  * Contains an explanation/argument for the connection.
  */
-export class Argument {
+export class Argument extends MathGraphNode {
     constructor(grounds: Set<Expression>, claim: {n: Expression, r: Relationship, n1: Expression}, argument: string) {
+        super()
         this.grounds = grounds
         Object.freeze(this.grounds)
         this.claim = claim

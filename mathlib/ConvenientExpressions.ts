@@ -5,7 +5,6 @@ import { Integral } from "./expressions/Integral";
 import { factorOrder, Product } from "./expressions/Product";
 import { orderTerms, Sum, SumType } from "./expressions/Sum";
 import { Variable } from "./expressions/Variable";
-import { MathGraphNode } from "./Graph";
 import { Argument } from "./Argument";
 import { Relationship } from "./Relationship";
 import { assert } from "./util/assert";

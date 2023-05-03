@@ -1,4 +1,5 @@
-import { GraphEdge, Graph, MathGraphNode } from "./Graph";
+import { GraphEdge, Graph } from "./Graph";
+import { MathGraphNode } from "./MathGraphNode";
 import { Relationship } from "./Relationship";
 import { assert } from "./util/assert";
 

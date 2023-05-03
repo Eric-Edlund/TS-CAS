@@ -1,3 +1,4 @@
+import { MathGraphNode } from "../MathGraphNode";
 import { Integer, IntegerType } from "./Integer";
 import { MathElement } from "./MathElement";
 
@@ -6,7 +7,9 @@ import { MathElement } from "./MathElement";
  * All children should implement fly-wheel pattern.
  * All children should be immutable.
  */
-export abstract class Expression extends MathElement {
+export abstract class Expression extends MathGraphNode implements MathElement {
+
+    public abstract toMathXML(): string;
 
     /**
      * True if the expression could be written as an 

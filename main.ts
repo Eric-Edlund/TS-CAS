@@ -1,6 +1,7 @@
 import { loadPrimaryPage } from "./PrimaryPageLoader";
 import { loadExpressionsTestPage } from "./ExpressionTestPageLoader"
 import { loadInputParseTestPage } from "./InputParseTestPage";
+import { loadSolverPage } from "./SolverPageLoader";
 
 window.onload = () => {
     setTimeout(
@@ -16,6 +17,8 @@ window.onload = () => {
                 loadPrimaryPage()
             } else if (classes.contains('inputParseTest')) {
                 loadInputParseTestPage()
+            } else if (classes.contains('solve_in_steps')) {
+                loadSolverPage()
             }
         }, 100);
    

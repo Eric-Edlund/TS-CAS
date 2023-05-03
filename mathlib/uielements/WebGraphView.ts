@@ -1,6 +1,6 @@
 import { Argument } from "../Argument";
 import { Expression } from "../expressions/Expression";
-import { GraphEdge, Graph, MathGraphNode } from "../Graph";
+import { GraphEdge, Graph } from "../Graph";
 import { Relationship } from "../Relationship";
 import { num } from "../ConvenientExpressions";
 import { GraphMinipulator } from "../GraphMinipulator";
@@ -11,6 +11,7 @@ import { ExpressionNodeView } from "./ExpressionNodeView";
 import { ArgumentNodeView } from "./ArgumentNodeView";
 import { GraphNodeView } from "./GraphNodeView";
 import { ExplanationPopup } from "./ExplanationPopup";
+import { MathGraphNode } from "../MathGraphNode";
 
 /**
  * A ui element that will display a math graph in a web.

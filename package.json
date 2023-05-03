@@ -20,6 +20,8 @@
   },
   "dependencies": {
     "mathjax": "^3.2.2",
-    "mathjs": "^11.8.0"
+    "mathjs": "^11.8.0",
+    "ngraph.graph": "^20.0.1",
+    "ngraph.path": "^1.4.0"
   }
 }

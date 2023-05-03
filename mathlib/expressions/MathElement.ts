@@ -1,9 +1,9 @@
 /**
  * Can be expressed with MathML
  */
-export abstract class MathElement {
+export interface MathElement {
     /**
      * Get mathml text for this expression.
      */
-    public abstract toMathXML(): string;
+    toMathXML(): string;
 }

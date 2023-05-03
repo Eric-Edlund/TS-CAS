@@ -1,6 +1,6 @@
 import { Argument } from "../Argument";
 import { Expression } from "../expressions/Expression";
-import { GivenEdge, Graph, MathGraphNode } from "../Graph";
+import { GivenEdge, Graph } from "../Graph";
 import { GraphMinipulator } from "../GraphMinipulator";
 import { Relationship } from "../Relationship";
 import { assert } from "../util/assert";
