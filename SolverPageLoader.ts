@@ -53,12 +53,14 @@ export function loadSolverPage(): void {
     problemView.value = root
     solutionView.value = simplified!
 
+    console.log("Path length: " + resultPath.length)
+
     resultPath.forEach(node => {
         let view: GraphNodeView
         if (node.data instanceof Argument) {
-            view = new ArgumentNodeView(node.data)
+            view = new ArgumentNodeView(node.data, view => {})
         } else if (node.data instanceof Expression) {
-            view = new ExpressionNodeView(node.data)
+            view = new ExpressionNodeView(node.data, view => {})
         } else throw new Error("Not implemented")
 
         stepListView.appendChild(view)

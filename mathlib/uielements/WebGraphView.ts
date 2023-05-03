@@ -141,13 +141,13 @@ export class WebGraphView extends HTMLDivElement {
         // Fetch nodes
         this.graph.getNodes().forEach(node => {
             if (node instanceof Expression) {
-                const view = new ExpressionNodeView(node)
+                const view = new ExpressionNodeView(node, this.baseNodeStyle)
                 view.style.position = "absolute"
                 this.nodes.set(node, view)
                 this.append(view)
             } else if (node instanceof Argument) {
                 if (!this.showArguments) return;
-                const view = new ArgumentNodeView(node)
+                const view = new ArgumentNodeView(node, this.baseNodeStyle)
                 view.style.position = "absolute"
                 this.nodes.set(node, view)
                 this.append(view)
@@ -449,6 +449,12 @@ export class WebGraphView extends HTMLDivElement {
         this.arrange()
         this.updateOffset()
     })
+
+    private readonly baseNodeStyle = (view: GraphNodeView): void => {
+        view.style.borderRadius = "1ch"
+        view.style.backgroundColor = "lightblue"
+        view.style.zIndex = "5"
+    }
 }
 
 customElements.define("web-graphview", WebGraphView, {extends: "div"});

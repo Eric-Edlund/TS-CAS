@@ -27,6 +27,7 @@ export class EdgeView extends HTMLParagraphElement {
         this.style.textAlign = "center"
         this.style.backgroundColor = uiPreferences.edgeEqualsBackgroundColor
         this.style.userSelect = "none"
+        this.style.backgroundColor = "white"
 
         uiPreferences.onUpdate(() => {
             this.style.backgroundColor = uiPreferences.edgeEqualsBackgroundColor

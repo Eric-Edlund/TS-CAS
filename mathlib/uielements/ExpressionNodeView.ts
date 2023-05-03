@@ -7,8 +7,8 @@ import { GraphNodeView } from "./GraphNodeView";
  * A graph node view for expression nodes.
  */
 export class ExpressionNodeView extends GraphNodeView {
-    public constructor(node: Expression) {
-        super();
+    public constructor(node: Expression, setStyle: (view: GraphNodeView) => void) {
+        super(setStyle);
         this.node = node
 
         this.editableMathView = new EditableMathView()

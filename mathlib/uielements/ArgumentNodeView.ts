@@ -6,8 +6,8 @@ import { GraphNodeView } from "./GraphNodeView";
  */
  export class ArgumentNodeView extends GraphNodeView {
 
-    constructor(arg: Argument) {
-        super()
+    constructor(arg: Argument, setStyle: (view: GraphNodeView) => void) {
+        super(setStyle)
         this.argument = arg
     }
 
