@@ -10,6 +10,8 @@ import { assert } from "../util/assert";
  * 
  * These rules are also contextless: they're only given the expression,
  * no other information about the problem.
+ * 
+ * All of these rules need to converge to a simplified answer.
  */
 export abstract class NoContextExpressionSimplificationRule {
     /**
