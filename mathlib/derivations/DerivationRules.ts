@@ -19,6 +19,7 @@ import { MultiplicativeIdentity } from "./simplifications/MultiplicativeIdentity
 import { MultiplyExponentPowers } from "./simplifications/MultiplyExponentPowers"
 import { OrderSums } from "./simplifications/OrderSums"
 import { RemoveCommonFactorsFromTopAndBottomOfFraction } from "./simplifications/RemoveCommonFactorsOnTopAndBottomOfFraction"
+import { SubtractExponentsOnFractions } from "./simplifications/SubtractExponentsOnFractions"
 import { SumCoefficientsOfAddedTerms } from "./simplifications/SumCoefficientsOfAddedTerms"
 
 /**
@@ -53,6 +54,7 @@ const remainingNoContextSimplificationRules: NoContextExpressionSimplificationRu
     new QuotientRule(),
     new DivideFractions(),
     new RemoveCommonFactorsFromTopAndBottomOfFraction(),
+    new SubtractExponentsOnFractions(),
 ]
 
 /**
