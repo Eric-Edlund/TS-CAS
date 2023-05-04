@@ -43,6 +43,7 @@ const combinatoricRules = [
     new CombineCommonTermsAddition(),
     new CombineCommonFactorsMultiplication(),
     new MultiplyExponentPowers(),
+    new SubtractExponentsOnFractions(),
 ]
 
 const remainingNoContextSimplificationRules: NoContextExpressionSimplificationRule[] = [
@@ -54,7 +55,6 @@ const remainingNoContextSimplificationRules: NoContextExpressionSimplificationRu
     new QuotientRule(),
     new DivideFractions(),
     new RemoveCommonFactorsFromTopAndBottomOfFraction(),
-    new SubtractExponentsOnFractions(),
 ]
 
 /**

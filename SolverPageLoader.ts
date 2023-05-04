@@ -48,7 +48,7 @@ export function loadSolverPage(): void {
     }
 
     // Do path finding operation on it
-    const pathFinder = path.aGreedy<MathGraphNode, GraphEdge>(libraryGraph)
+    const pathFinder = path.nba<MathGraphNode, GraphEdge>(libraryGraph)
     const resultPath = pathFinder.find(root.id, simplified!.id).reverse()
 
     const problemView = document.getElementById('problem')! as EditableMathView
