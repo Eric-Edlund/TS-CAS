@@ -1,7 +1,8 @@
 import { Argument } from "../../Argument";
-import { sumOrNot } from "../../ConvenientExpressions";
+import { negative, product, sumOrNot } from "../../ConvenientExpressions";
 import { Expression } from "../../expressions/Expression";
 import { Integer } from "../../expressions/Integer";
+import { Product } from "../../expressions/Product";
 import { Sum } from "../../expressions/Sum";
 import { Relationship } from "../../Relationship";
 import { setOf } from "../../util/ThingsThatShouldBeInTheStdLib";
@@ -22,12 +23,16 @@ export class EvaluateSums extends NoContextExpressionSimplificationRule {
     }
     protected applyImpl(exp: Expression): Set<Argument> {
         const sum = exp as Sum
-        const integerTerms = [...sum.terms].filter(t => t instanceof Integer)
+        const integerTerms = [...sum.terms].filter(t => t instanceof Integer || (t instanceof Product && t.isNegation && t.negation instanceof Integer))
         if (integerTerms.length < 2) {
             return setOf()
         }
-        const newInt = integerTerms.map<Integer>(e => e as Integer).reduce((a, b) => Integer.of(a.value + b.value))
-        const otherTerms = [...sum.terms].filter(t => !(t instanceof Integer))
+        const newInt = Integer.of(integerTerms.map<number>(e => {
+            if (e instanceof Integer) {
+                return e.value
+            } return -((e as Product).negation as Integer).value
+        }).reduce((a, b) => a + b))
+        const otherTerms = [...sum.terms].filter(t => !(t instanceof Integer) && !(t instanceof Product && t.isNegation && t.negation instanceof Integer))
 
         return setOf(new Argument(setOf(sum), {
             n: sum,

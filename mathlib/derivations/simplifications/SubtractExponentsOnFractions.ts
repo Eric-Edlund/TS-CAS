@@ -46,12 +46,9 @@ export class SubtractExponentsOnFractions extends NoContextExpressionSimplificat
             if (has(topExponents.map<Expression>(e => e.base), e.base)) commonBases.add(e.base)
         })
 
-
         if (commonBases.size == 0) return setOf()
 
-        console.log(exp.toString())
-        console.log("Common Bases: " + [...commonBases])
-
+        
         // Separate factors which won't be effected
         const uneffectedTopFactors = top.filter( f => {
             if (f instanceof Exponent) return !commonBases.has(f.base)
@@ -82,8 +79,6 @@ export class SubtractExponentsOnFractions extends NoContextExpressionSimplificat
             exponentTerms.get(e.base)!.push(negative(e.power))
         })
         
-console.log([...exponentTerms])
-
         const resultingTopExponents: Exponent[] = []
         exponentTerms.forEach((powerTerms, base) => {
             resultingTopExponents.push(Exponent.of(base, sum(...powerTerms)))

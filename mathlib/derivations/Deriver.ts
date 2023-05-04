@@ -48,6 +48,7 @@ export class Deriver {
                             .map<Expression>(n => n as Expression)
                             .filter(e => !this.simplifiedInIsolation.has(e))
 
+        let shouldDoAgain = false
         unsimplified.forEach(e => {
             this.simplifiedInIsolation.add(e)
 
@@ -58,6 +59,7 @@ export class Deriver {
             for (const rules of simplificationOrder) {
                 const derivedSimplifications = equiv(e, equivalentsFnUsing(rules))
                 if (derivedSimplifications.length > 0) {
+                    shouldDoAgain = true
                     derivedSimplifications.forEach(a => {
                         this.graph.addArgument(a)
                     })
@@ -69,7 +71,7 @@ export class Deriver {
             this.notSimplifiable.add(e)
         })
 
-        if (unsimplified.length > 0) this.simplifyNoContext()
+        if (shouldDoAgain) this.simplifyNoContext()
     }
 
     /**

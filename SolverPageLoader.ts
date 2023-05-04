@@ -13,6 +13,7 @@ import { Argument } from "./mathlib/Argument"
 import { ArgumentNodeView } from "./mathlib/uielements/ArgumentNodeView"
 import { ExpressionNodeView } from "./mathlib/uielements/ExpressionNodeView"
 import { Derivative } from "./mathlib/expressions/Derivative"
+import { GraphMinipulator } from "./mathlib/GraphMinipulator"
 
 
 export function loadSolverPage(): void {
@@ -38,12 +39,16 @@ export function loadSolverPage(): void {
     // Copy the resulting graph into a library implementation of graph
     const libraryGraph = createGraph<MathGraphNode, GraphEdge>()
     graph.getNodes().forEach(n => libraryGraph.addNode(n.id, n))
-    for (const edge of graph.getEdges()) {
+
+    // I assume that library graph isn't directed
+    for (const edge of GraphMinipulator.dropSymmetric(graph.getEdges())) {
         libraryGraph.addLink(edge.n.id, edge.n1.id)
+        if (edge.n instanceof Expression && edge.n1 instanceof Expression)
+            console.log(`edge ${edge.n} AND ${edge.n1}`)
     }
 
     // Do path finding operation on it
-    const pathFinder = path.aStar<MathGraphNode, GraphEdge>(libraryGraph)
+    const pathFinder = path.aGreedy<MathGraphNode, GraphEdge>(libraryGraph)
     const resultPath = pathFinder.find(root.id, simplified!.id).reverse()
 
     const problemView = document.getElementById('problem')! as EditableMathView
