@@ -1,4 +1,4 @@
-import { a, num, product, x } from "./mathlib/ConvenientExpressions"
+import { a, b, num, product, sum, x } from "./mathlib/ConvenientExpressions"
 import { Deriver } from "./mathlib/derivations/Deriver"
 import { Exponent } from "./mathlib/expressions/Exponent"
 import { Fraction } from "./mathlib/expressions/Fraction"
@@ -19,10 +19,10 @@ import { GraphMinipulator } from "./mathlib/GraphMinipulator"
 export function loadSolverPage(): void {
     const page = document.getElementsByTagName('body')[0]
 
-    //const root = Derivative.of(sum(a, a, product(num(2), b)), a)
+    const root = Derivative.of(sum(a, a, product(num(2), b)), a)
     //const root = Derivative.of(product(num(3), Exponent.of(x, num(2)), Exponent.of(x, num(3))), x)
     //const root = product(Exponent.of(x, num(3)), Exponent.of(x, num(4)), x, x)
-    const root = Derivative.of(Fraction.of(Exponent.of(x, num(2)), x), x)
+    //const root = Derivative.of(Fraction.of(Exponent.of(x, num(2)), x), x)
     //const root = Fraction.of(product(num(2), x, Exponent.of(x, a), a), product(num(2), a, a, x))
     const graph = new Graph().addNode(root)
 
