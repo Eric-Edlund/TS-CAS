@@ -26,7 +26,6 @@ export class Integral extends Expression {
         Object.freeze(this.relativeTo)
 
         this.isReducible = false
-        this.isHealthy = true
         this.isConstant = false
         this.childCount = 2 + integrand.childCount + relativeTo.childCount
     }
@@ -41,7 +40,6 @@ export class Integral extends Expression {
     public get hash(): string {
         return "∫" + this.integrand.toString() + this.relativeTo.toString()
     }
-    public readonly isHealthy: boolean;
     public readonly isConstant: boolean;
     public toMathXML(): string {
         function wrapIfNeeded(exp: Expression): string {

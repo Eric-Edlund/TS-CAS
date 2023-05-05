@@ -24,7 +24,6 @@ export class Fraction extends Expression {
         TODO: Decide if it's worth implementing reducibility for Fractions
         */
         this.isReducible = false
-        this.isHealthy = true
         this.isConstant = num.isConstant && denom.isConstant
         this.childCount = 2 + num.childCount + denom.childCount
     }
@@ -39,7 +38,6 @@ export class Fraction extends Expression {
     public get hash(): string {
         return FractionType + this.numerator.hash + this.denominator.hash
     }
-    public readonly isHealthy: boolean;
     public readonly isConstant: boolean;
     public toMathXML(): string {
         return "<mfrac><mrow>" + this.numerator.toMathXML() + "</mrow><mrow>" + this.denominator.toMathXML() + "</mrow></mfrac>"

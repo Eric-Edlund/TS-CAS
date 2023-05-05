@@ -52,7 +52,6 @@ export function loadPrimaryPage(): void {
     graphView.setNodeColoringScheme(n => {
         if (n instanceof Expression) {
             if (!deriver.isSimplified(n)) return "lightgray"
-            else if (!n.isHealthy) return "lightred"
             else if (n instanceof Variable) return "orange"
             else return "lightblue"
         }

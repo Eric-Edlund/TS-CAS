@@ -29,7 +29,6 @@ export class Sum extends Expression {
         this.terms = terms;
         this.isReducible = this.terms.map<boolean>(t => t.isReducible || t.class == IntegerType).reduce((a, b) => a && b)
 
-        this.isHealthy = this.determineHealth()
         this.isConstant = this.terms.map<boolean>(t => t.isConstant).reduce((a, b) => a && b)
         Object.freeze(this.terms)
         this.childCount = terms.length + terms.map<number>(t => t.childCount).reduce((a, b) => a + b)
@@ -100,44 +99,6 @@ export class Sum extends Expression {
     public readonly terms: Expression[];
     public readonly isReducible: boolean;
 
-    /**
-     * Figure out if we're healthy.
-     */
-    private determineHealth(): boolean {
-        if (this.terms.filter(t => t.isReducible || t instanceof Integer).length > 1)
-            return false
-
-        this.terms.forEach(t => {
-            if (t instanceof Integer)
-                if (t.value == 0) return false
-        })
-        
-        this.terms.forEach(term => {
-            if (!term.isHealthy) return false
-        })
-
-        const correctOrdering = orderTerms(...this.terms)
-        for (let i=0; i < this.terms.length; i++) {
-            if (this.terms[i] !== correctOrdering[i]) return false
-        }
-
-        //TODO: Check condition 3
-
-        return true
-    }
-
-    /**
-     * A sum is healthy iff:
-     * 
-     * 1. Contains a max of 1 reducible term.
-     * 2. Products with integer coefficients are combined.
-     *  a + 2a = 3a,
-     *  a + -a = 0
-     * 3. No term is 0
-     * 4. All terms are healthy.
-     * 5. Terms are ordered correctly.
-     */
-    public readonly isHealthy: boolean
     public readonly isConstant: boolean
     public readonly childCount: number;
 }

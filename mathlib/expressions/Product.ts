@@ -37,7 +37,6 @@ export class Product extends Expression {
 
         let healthy = true
         healthy &&= this.numNegatives() < 2
-        this.isHealthy = healthy
 
         let isNegation = factors.length == 2
         isNegation &&= factors.filter(e => {
@@ -157,12 +156,6 @@ export class Product extends Expression {
     public readonly class: string = ProductType;
     public readonly isReducible: boolean;
 
-    /**
-     * Only 1 negative integer
-     * Integer factors are first
-     * No factor equals 1
-     */
-    public readonly isHealthy: boolean;
     public readonly isConstant: boolean;
     public readonly childCount: number;
 }

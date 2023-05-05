@@ -29,7 +29,6 @@ export class Variable extends Expression {
     public readonly symbol: string;
     public readonly isReducible: boolean = false;
 
-    public readonly isHealthy: boolean = true
     public readonly isConstant = false;
     public readonly childCount: number = 0
 }

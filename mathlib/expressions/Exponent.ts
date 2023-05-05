@@ -40,7 +40,6 @@ export class Exponent extends Expression {
         Object.freeze(this.power)
         // The integers are closed over exponentiation
         this.isReducible = (base.isReducibleOrInt) && (power.isReducibleOrInt)// && Math.pow(base.reduced.value, power.reduced.value) % 1 == 0
-        this.isHealthy = !this.isReducible
         this.isConstant = base.isConstant && power.isConstant
         this.childCount = 2 + base.childCount + power.childCount
     }
@@ -48,7 +47,6 @@ export class Exponent extends Expression {
     public readonly base: Expression;
     public readonly power: Expression;
     public readonly isReducible: boolean;
-    public readonly isHealthy: boolean;
 
     public readonly isConstant: boolean;
     public readonly childCount: number;

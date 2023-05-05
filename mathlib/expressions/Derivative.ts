@@ -23,16 +23,6 @@ export class Derivative extends Expression {
         this.isReducible = false //TODO: Determine if a derivative is reducible
         this.isConstant = false // TODO: Determine if a derivative is constant
         this.childCount = 2 + exp.childCount + relativeTo.childCount
-
-        let isHealthy = true
-        if (exp.isConstant) isHealthy = false
-        if (exp instanceof Product) {
-            new Set(exp.factors).forEach(e => {
-                if (e instanceof Integer || e instanceof Product && e.isNegation && e.negation) isHealthy = false
-                //TODO: There are a lot more possiblities than this
-            })
-        }
-        this.isHealthy = isHealthy
     }
 
     public readonly exp: Expression;
@@ -46,11 +36,7 @@ export class Derivative extends Expression {
     public get hash(): string {
         return this.class + this.exp.hash + this.relativeTo.hash
     }
-    /**
-     * 1. exp isn't a constant
-     * 2. If exp is product, it contains no constants.
-     */
-    public readonly isHealthy: boolean;
+
     public toMathXML(): string {
         function wrapIfNeeded(exp: Expression): string {
             if (exp.class == SumType || exp.class == ProductType)

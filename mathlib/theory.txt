@@ -15,10 +15,6 @@ the graph:
 
     Reducibility - Expressions which are reducible could be rewritten as an Integer. Integers themselves are not reducible.
 
-    Health - An expression is healthy if it's written in the most minimul helpful form. The exact defition depends on the 
-    implmentation of Expression. For example, Sum requires that healthy sums don't have 0 as a term, the terms follow a specific
-    ordering and there are no opposite terms (like -x and x in one sum).
-
 These properties of expressions can be evaluated at runtime and used to skip over using inferences on certian expressions 
 (saving time). Rules of inference do their best not to produce unhealthy expressions. The only rules of inference which 
 can operate on unhealthy/ reducible expressions are those which simplify them.
