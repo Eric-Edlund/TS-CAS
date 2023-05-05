@@ -16,6 +16,7 @@ import { DivisionIdentity } from "./simplifications/DivisionIdentity"
 import { EvaluateSums } from "./simplifications/EvaluateSums"
 import { ExponentialIdentity } from "./simplifications/ExponentialIdentity"
 import { ExponentToZero } from "./simplifications/ExponentToZero"
+import { LogOfOne } from "./simplifications/LogOfOne"
 import { MultiplicativeIdentity } from "./simplifications/MultiplicativeIdentity"
 import { MultiplyExponentPowers } from "./simplifications/MultiplyExponentPowers"
 import { OrderSums } from "./simplifications/OrderSums"
@@ -73,6 +74,7 @@ export const simplificationOrder: NoContextExpressionSimplificationRule[][] = [
     [new ExponentialIdentity()],
     [new DivisionIdentity()],
     [new AdditiveIdentity()],
+    [new LogOfOne()],
     beautifyingRules,
     evaluativeRules,
     combinatoricRules,
