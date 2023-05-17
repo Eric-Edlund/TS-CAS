@@ -1,6 +1,6 @@
 import { Expression } from "./mathlib/expressions/Expression";
 import { EditableMathView } from "./mathlib/uielements/EditableMathView";
-import { parseExpression, parseToLatex } from "./mathlib/userinput/Parser";
+import { getAST, parseExpression, parseToLatex } from "./mathlib/userinput/Parser";
 
 /**
  * Called after DOM is loaded.
@@ -23,10 +23,21 @@ export function loadInputParseTestPage() {
         page.append(e)
     }
 
+    /**
+     * Print the parsed expression.
+     * @param input User input string to parse.
+     * @param explanation 
+     */
     function expression(input: string, explanation: string | null = null) {
         p("Input:       " + input)
         if (explanation != null) p(explanation)
         //p(`Parsed: ${parseToLatex(input)}`)
+
+        const ast = getAST(input)
+        ast.forEach((node, path, parent) => {
+            p(`${node} : ${path} : ${parent.type} ${(parent as any).op}`)
+        })
+        //p(`${ast.}`)
         
         view(parseExpression(input)!)
     }

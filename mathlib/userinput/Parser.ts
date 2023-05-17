@@ -1,5 +1,4 @@
 import { Expression } from "../expressions/Expression";
-import { Graph } from "../Graph";
 import math, { create, all } from 'mathjs';
 import { Sum } from "../expressions/Sum";
 import { Exponent } from "../expressions/Exponent";
@@ -14,15 +13,12 @@ export function parseExpression(input: string): Expression {
 
     const tree = math.parse(input)
 
-    // Traverse the tree and flatten additions
-    tree.traverse(function (node: MathNode, path, parent: MathNode | null) {
-        if (node.type == 'OperatorNode' && parent != null && parent.args != undefined && path != null && node.op === '+') {
-            const index = parent.args.indexOf(node);
-            parent.args.splice(index, 1, ...node.args);
-        }
-    });
-
     return createExpression(tree)!
+}
+
+export function getAST(input: string): math.MathNode {
+    const math = create(all)
+    return math.parse(input)
 }
 
 export function parseToLatex(input: string): string {
@@ -34,6 +30,73 @@ export function parseToLatex(input: string): string {
 }
 
 declare type MathNode = math.MathNode & any
+
+/**
+ * Traverse the given syntax tree, producing intermediate
+ * expression objects.
+ * @param node Root of the tree.
+ * @returns 
+ */
+/*
+function createExpression(node: MathNode): IntermediateExpression {
+    console.log(node)
+    switch (node.type) {
+    case 'OperatorNode':
+        switch(node.fn) {
+            case 'add':
+                return new IntermediateExpression('add', node.args.map(createExpression))
+            case 'pow': {
+                const children = node.args.map(createExpression)
+                return new IntermediateExpression('pow', children[0], children[1])
+            }
+            case 'divide': {
+                const children = node.args.map(createExpression)
+                return new IntermediateExpression('divide', children[0], children[1])
+            }
+            case 'multiply': {
+                return new IntermediateExpression('multiply', node.args.map(createExpression))
+            }
+            case 'subtract': {
+                const children: Expression[] = node.args.map(createExpression)
+
+                return new IntermediateExpression('add', children[0], 
+                    new IntermediateExpression('unaryminus', children[1]))
+            }
+            case 'unaryMinus': {
+                return new IntermediateExpression('unaryminus', node.args.map(createExpression)[0])
+            }
+            default: throw new Error(`Haven't implemented ${node.op}`)
+                
+        }
+        
+    case 'SymbolNode':
+        return new IntermediateExpression('variable', Variable.of(node.name))
+    case 'ConstantNode':
+        return Integer.of(node.value);
+    case 'ParenthesisNode':
+        return Variable.of('b')
+    default:
+        throw new Error(`Unsupported node type: ${node.type}`);
+    }
+}
+*/
+
+/**
+ * A form to represent partially parsed expressions
+ * while we collapse certain operations.
+ */
+/*
+class IntermediateExpression {
+    constructor (type: String, ...args: (IntermediateExpression | Expression)[]) {
+        this.type = type
+        this.args = args
+    }
+    
+    readonly type: 'variable' | 'unaryMinus' | 'subtract' | 'add' | 'multiply' | 'divide' | 
+    readonly args: (IntermediateExpression | Expression)[]
+}*/
+
+
 
 function createExpression(node: MathNode): Expression {
     console.log(node)
