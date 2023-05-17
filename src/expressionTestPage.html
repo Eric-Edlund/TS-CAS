@@ -2,19 +2,23 @@
 
 <html>
     <head>
-        <title>Integrator</title>
+        <title>Expressions Test</title>
         <meta charset="UTF-8">
         <link rel="stylesheet" href="style.css">
         <script>var exports = {};</script>
         <script async src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
         <script id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>  
-        <script src="./dist/bundle.js"></script>
-
+        <script defer src="../dist/bundle.js"></script>
+        <style>
+            body {
+                padding-left: 1ch;
+            }
+            body > div:nth-child(even) {
+                padding-left: 3ch;
+            }
+        </style>
     </head>
-    <body id="body" class="primaryIntegrator">
-
-        <textarea id="input" cols="30" rows="1"></textarea>
-        <div id="outputbox"></div>
+    <body id="body" class="expressionTestPage">
 
     </body>
 
