@@ -5,7 +5,7 @@ import { Relationship } from "../Relationship";
 import { num } from "../ConvenientExpressions";
 import { GraphMinipulator } from "../GraphMinipulator";
 import { assert } from "../util/assert";
-import { TouchGestureRecognizer } from "../../TouchGestureRecognizer";
+import { TouchGestureRecognizer } from "./TouchGestureRecognizer";
 import { EdgeView } from "./EdgeView";
 import { ExpressionNodeView } from "./ExpressionNodeView";
 import { ArgumentNodeView } from "./ArgumentNodeView";
