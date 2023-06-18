@@ -1,9 +1,7 @@
 node_modules/*
 dist/*
 package-lock.json
-src/mathlib/userinput/.antlr/mathexpressions.interp
-src/mathlib/userinput/.antlr/mathexpressions.tokens
-src/mathlib/userinput/.antlr/mathexpressionsLexer.interp
-src/mathlib/userinput/.antlr/mathexpressionsLexer.java
-src/mathlib/userinput/.antlr/mathexpressionsLexer.tokens
-src/mathlib/userinput/.antlr/mathexpressionsParser.java
+**/.antlr/
+**/auto-generated/
+dist/bundle.js
+node_modules/**

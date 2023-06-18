@@ -2,7 +2,7 @@ Jesus I hate compilers
 
 [Building]
 
-Use "npx webpack --mode production"
+Run "npm build-typescript" from the project root.
 It will compile all the ts files into a bundle.js in the dist dir.
 
 Then you open the integrator.html file in a browser and it will load it.
@@ -19,7 +19,22 @@ You have to have 'jest' installed on your system.
 [How it Works]
 Equation rendering is done with MathJax
 Read the theory document in mathlib directory.
+Expression parsing is done with ANTLR.
 
+[ANTLR]
+The ANTLR runtime is a dependancy of the project. The way this work is
+in the src files there is a grammar file (ending in .g) which describes
+the grammar for parsing math expressions. We use the commandline tool
+antlr4 to turn this file into generated js code which will parse math 
+expressions. You have to install antlr4 on your system. On Neon it was
+
+    sudo apt install antlr4
+
+but this is a popular tool and I'm sure you can find it other ways.
+I've added a dependancy to the project which adds the necessary
+runtime files. The generated js files require these runtime files 
+to work. They will be shipped to the client browser along with everything 
+else.
 
 [Other]
 

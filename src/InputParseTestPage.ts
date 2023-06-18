@@ -1,6 +1,6 @@
 import { Expression } from "./mathlib/expressions/Expression";
 import { EditableMathView } from "./mathlib/uielements/EditableMathView";
-import { getAST, parseExpression, parseToLatex } from "./mathlib/userinput/Parser";
+import { parse } from "./mathlib/userinput/AntlrMathParser";
 
 /**
  * Called after DOM is loaded.
@@ -40,6 +40,8 @@ export function loadInputParseTestPage() {
         //p(`${ast.}`)
         
         view(parseExpression(input)!)
+
+        parse(input)
     }
 
     // Expression strings to test
