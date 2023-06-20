@@ -176,6 +176,7 @@ export function product(...factors: Expression[]): Product {
 }
 
 export function negative(expression: Expression): Expression {
+    assert(expression != undefined, "Taking negative of undefined expression")
     if (expression instanceof Integer) return Integer.of(-expression.value)
     else return Product.of([Integer.of(-1), expression])
 }

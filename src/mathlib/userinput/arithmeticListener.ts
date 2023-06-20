@@ -3,12 +3,16 @@
 import {ParseTreeListener} from "antlr4";
 
 
-import { File_Context } from "./arithmeticParser";
 import { EquationContext } from "./arithmeticParser";
 import { ExpressionContext } from "./arithmeticParser";
+import { ProductContext } from "./arithmeticParser";
+import { DivisionContext } from "./arithmeticParser";
+import { SumContext } from "./arithmeticParser";
+import { UnaryOnExpressionContext } from "./arithmeticParser";
+import { PowerContext } from "./arithmeticParser";
+import { ParenContext } from "./arithmeticParser";
+import { UnaryOnAtomContext } from "./arithmeticParser";
 import { AtomContext } from "./arithmeticParser";
-import { ScientificContext } from "./arithmeticParser";
-import { VariableContext } from "./arithmeticParser";
 import { RelopContext } from "./arithmeticParser";
 
 
@@ -17,16 +21,6 @@ import { RelopContext } from "./arithmeticParser";
  * `arithmeticParser`.
  */
 export default class arithmeticListener extends ParseTreeListener {
-	/**
-	 * Enter a parse tree produced by `arithmeticParser.file_`.
-	 * @param ctx the parse tree
-	 */
-	enterFile_?: (ctx: File_Context) => void;
-	/**
-	 * Exit a parse tree produced by `arithmeticParser.file_`.
-	 * @param ctx the parse tree
-	 */
-	exitFile_?: (ctx: File_Context) => void;
 	/**
 	 * Enter a parse tree produced by `arithmeticParser.equation`.
 	 * @param ctx the parse tree
@@ -48,6 +42,90 @@ export default class arithmeticListener extends ParseTreeListener {
 	 */
 	exitExpression?: (ctx: ExpressionContext) => void;
 	/**
+	 * Enter a parse tree produced by the `Product`
+	 * labeled alternative in `arithmeticParser.expression_part`.
+	 * @param ctx the parse tree
+	 */
+	enterProduct?: (ctx: ProductContext) => void;
+	/**
+	 * Exit a parse tree produced by the `Product`
+	 * labeled alternative in `arithmeticParser.expression_part`.
+	 * @param ctx the parse tree
+	 */
+	exitProduct?: (ctx: ProductContext) => void;
+	/**
+	 * Enter a parse tree produced by the `Division`
+	 * labeled alternative in `arithmeticParser.expression_part`.
+	 * @param ctx the parse tree
+	 */
+	enterDivision?: (ctx: DivisionContext) => void;
+	/**
+	 * Exit a parse tree produced by the `Division`
+	 * labeled alternative in `arithmeticParser.expression_part`.
+	 * @param ctx the parse tree
+	 */
+	exitDivision?: (ctx: DivisionContext) => void;
+	/**
+	 * Enter a parse tree produced by the `Sum`
+	 * labeled alternative in `arithmeticParser.expression_part`.
+	 * @param ctx the parse tree
+	 */
+	enterSum?: (ctx: SumContext) => void;
+	/**
+	 * Exit a parse tree produced by the `Sum`
+	 * labeled alternative in `arithmeticParser.expression_part`.
+	 * @param ctx the parse tree
+	 */
+	exitSum?: (ctx: SumContext) => void;
+	/**
+	 * Enter a parse tree produced by the `UnaryOnExpression`
+	 * labeled alternative in `arithmeticParser.expression_part`.
+	 * @param ctx the parse tree
+	 */
+	enterUnaryOnExpression?: (ctx: UnaryOnExpressionContext) => void;
+	/**
+	 * Exit a parse tree produced by the `UnaryOnExpression`
+	 * labeled alternative in `arithmeticParser.expression_part`.
+	 * @param ctx the parse tree
+	 */
+	exitUnaryOnExpression?: (ctx: UnaryOnExpressionContext) => void;
+	/**
+	 * Enter a parse tree produced by the `Power`
+	 * labeled alternative in `arithmeticParser.expression_part`.
+	 * @param ctx the parse tree
+	 */
+	enterPower?: (ctx: PowerContext) => void;
+	/**
+	 * Exit a parse tree produced by the `Power`
+	 * labeled alternative in `arithmeticParser.expression_part`.
+	 * @param ctx the parse tree
+	 */
+	exitPower?: (ctx: PowerContext) => void;
+	/**
+	 * Enter a parse tree produced by the `Paren`
+	 * labeled alternative in `arithmeticParser.expression_part`.
+	 * @param ctx the parse tree
+	 */
+	enterParen?: (ctx: ParenContext) => void;
+	/**
+	 * Exit a parse tree produced by the `Paren`
+	 * labeled alternative in `arithmeticParser.expression_part`.
+	 * @param ctx the parse tree
+	 */
+	exitParen?: (ctx: ParenContext) => void;
+	/**
+	 * Enter a parse tree produced by the `UnaryOnAtom`
+	 * labeled alternative in `arithmeticParser.expression_part`.
+	 * @param ctx the parse tree
+	 */
+	enterUnaryOnAtom?: (ctx: UnaryOnAtomContext) => void;
+	/**
+	 * Exit a parse tree produced by the `UnaryOnAtom`
+	 * labeled alternative in `arithmeticParser.expression_part`.
+	 * @param ctx the parse tree
+	 */
+	exitUnaryOnAtom?: (ctx: UnaryOnAtomContext) => void;
+	/**
 	 * Enter a parse tree produced by `arithmeticParser.atom`.
 	 * @param ctx the parse tree
 	 */
@@ -57,26 +135,6 @@ export default class arithmeticListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitAtom?: (ctx: AtomContext) => void;
-	/**
-	 * Enter a parse tree produced by `arithmeticParser.scientific`.
-	 * @param ctx the parse tree
-	 */
-	enterScientific?: (ctx: ScientificContext) => void;
-	/**
-	 * Exit a parse tree produced by `arithmeticParser.scientific`.
-	 * @param ctx the parse tree
-	 */
-	exitScientific?: (ctx: ScientificContext) => void;
-	/**
-	 * Enter a parse tree produced by `arithmeticParser.variable`.
-	 * @param ctx the parse tree
-	 */
-	enterVariable?: (ctx: VariableContext) => void;
-	/**
-	 * Exit a parse tree produced by `arithmeticParser.variable`.
-	 * @param ctx the parse tree
-	 */
-	exitVariable?: (ctx: VariableContext) => void;
 	/**
 	 * Enter a parse tree produced by `arithmeticParser.relop`.
 	 * @param ctx the parse tree

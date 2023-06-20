@@ -6,7 +6,7 @@
   "scripts": {
     "test": "jest",
     "build-typescript": "npx webpack",
-    "build-grammar": "java -jar ~/antlr4.jar -Dlanguage=TypeScript ./src/mathlib/userinput/arithmetic.g4",
+    "build-grammar": "java -jar ~/antlr4.jar -Dlanguage=TypeScript -visitor ./src/mathlib/userinput/arithmetic.g4",
     "start-server": "node index.js"
   },
   "author": "Eric Edlund",

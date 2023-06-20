@@ -28,37 +28,33 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 grammar arithmetic;
 
-file_ : equation* EOF;
-
 equation
    : expression relop expression
    ;
 
 expression
-   :  expression  POW expression
-   |  expression  (TIMES | DIV)  expression
-   |  expression  (PLUS | MINUS) expression
-   |  LPAREN expression RPAREN
-   |  (PLUS | MINUS)* atom
+   : expression_part
+   ;
+
+expression_part
+   :  left=expression_part POW right=expression_part #Power
+   |  left=expression_part DIV right=expression_part #Division
+   |  first=expression_part  TIMES  expression_part #Product
+   |  first=expression_part  (PLUS | MINUS) expression_part #Sum
+   |  LPAREN expression_part RPAREN #Paren
+   |  (PLUS | MINUS) expression_part #UnaryOnExpression
+   |  (PLUS | MINUS)* atom #UnaryOnAtom
    ;
 
 atom
-   : scientific
-   | variable
-   ;
-
-scientific
    : SCIENTIFIC_NUMBER
-   ;
-
-variable
-   : VARIABLE
+   | VARIABLE
    ;
 
 relop
    : EQ
-   | GT
-   | LT
+   //| GT
+   //| LT
    ;
 
 

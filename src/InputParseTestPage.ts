@@ -1,6 +1,6 @@
 import { Expression } from "./mathlib/expressions/Expression";
 import { EditableMathView } from "./mathlib/uielements/EditableMathView";
-import { parse } from "./mathlib/userinput/AntlrMathParser";
+import { parseExpression } from "./mathlib/userinput/AntlrMathParser";
 
 /**
  * Called after DOM is loaded.
@@ -24,24 +24,15 @@ export function loadInputParseTestPage() {
     }
 
     /**
-     * Print the parsed expression.
+     * Print the parsed expression to the page.
      * @param input User input string to parse.
      * @param explanation 
      */
     function expression(input: string, explanation: string | null = null) {
         p("Input:       " + input)
         if (explanation != null) p(explanation)
-        //p(`Parsed: ${parseToLatex(input)}`)
-
-        const ast = getAST(input)
-        ast.forEach((node, path, parent) => {
-            p(`${node} : ${path} : ${parent.type} ${(parent as any).op}`)
-        })
-        //p(`${ast.}`)
         
-        view(parseExpression(input)!)
-
-        parse(input)
+        view(parseExpression(input)! as Expression)
     }
 
     // Expression strings to test
@@ -50,6 +41,7 @@ export function loadInputParseTestPage() {
     expression("-a-b+c")
     expression("-a+-b+c")
     expression("a+b+c")
+    expression("-(a+b)")
     expression("a+(b+c)")
     expression("a-b-c")
     expression("a*b+c")

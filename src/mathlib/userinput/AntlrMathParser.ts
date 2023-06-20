@@ -1,13 +1,18 @@
-import antlr4, { ParseTreeWalker } from "antlr4"
+import antlr4, { ParserRuleContext } from "antlr4"
 import { Expression } from "../expressions/Expression"
 const { CommonTokenStream, CharStream } = antlr4
 import arithmeticLexer from "./arithmeticLexer"
 import arithmeticParser from "./arithmeticParser"
-import { MathListenerImpl } from "./MathListenerImpl"
+import { ExpressionVisitor } from "./MathVisitorImpl"
+import { PrintVisitor } from "./PrintVisitor"
 
+/**
+ * Parses the given input string to an expression.
+ * @param input See the gramar file (.g4)
+ * @returns 
+ */
+export function parseExpression(input: string): Expression {
 
-export function parse(input: string): Expression {
-    
     const stream = new CharStream(input, true)
     const lexer = new arithmeticLexer(stream)
     const tokens = new CommonTokenStream(lexer)
@@ -15,7 +20,8 @@ export function parse(input: string): Expression {
     //parser.buildParseTrees = true
     const tree = parser.expression()
 
-    let result = "";
-    const listener = new MathListenerImpl(result)
-    ParseTreeWalker.DEFAULT.walk(listener, tree);
+    // Print debug info
+    //tree.accept(new PrintVisitor())
+
+    return tree.accept<Expression>(new ExpressionVisitor())
 }
