@@ -1,6 +1,6 @@
-import { ParseTree, TerminalNode } from "antlr4";
+import { ParserRuleContext, ParseTree, TerminalNode } from "antlr4";
 import { remove } from "../ConvenientExpressions";
-import { ClosedContext, ExpressionContext, ImplicitProductContext, ProductContext, SumContext, UnaryOnExpressionContext } from "./arithmeticParser";
+import { ClosedContext, ExpressionContext, ImplicitProductContext, OpenContext, ProductContext, SumContext, UnaryOnExpressionContext } from "./arithmeticParser";
 import arithmeticVisitor from "./arithmeticVisitor";
 
 
@@ -59,8 +59,15 @@ export class Flattener extends arithmeticVisitor<ClosedContext> {
             remove(ctx.children!, child)
             
             // Move the expression up
-            child._right.parentCtx = ctx
-            ctx.children!.unshift(child._right)
+            if (child._right instanceof SumContext) {
+                takeChildren(child._right)
+            } else {
+                child._right.parentCtx = ctx
+                ctx.children!.unshift(child._right)
+            }
+            // TODO: This isn't always correct because negation of sums
+            // Or is is...
+            // Also look at product flattening
 
             // Move the operator up
             if (child.MINUS() != null) {
@@ -73,8 +80,12 @@ export class Flattener extends arithmeticVisitor<ClosedContext> {
                 //remove(child.children!, child.PLUS())
             }
             
-            child._left.parentCtx = ctx
-            ctx.children!.unshift(child._left)
+            if (child._left instanceof SumContext) {
+                takeChildren(child._left)
+            } else {
+                child._left.parentCtx = ctx
+                ctx.children!.unshift(child._left)
+            }
 
             child.parentCtx = undefined
         }
@@ -105,29 +116,42 @@ export class Flattener extends arithmeticVisitor<ClosedContext> {
     private flattenProduct(ctx: ProductContext | ImplicitProductContext): ClosedContext {
         console.log("Flattening product " + ctx.getText() + " to")
 
+        function instanceOfProduct(child: ParserRuleContext): boolean {
+            return child instanceof ProductContext
+                    || child instanceof ImplicitProductContext;
+        }
+
         // Check if children are sums
         // Reach down and take their children
         function takeChildren(child: ProductContext | ImplicitProductContext) {
             remove(ctx.children!, child)
             
-            child._right.parentCtx = ctx
-            ctx.children!.unshift(child._right)
-
+            if (instanceOfProduct(child._right)) {
+                takeChildren(child._right as ProductContext)
+            } else {
+                child._right.parentCtx = ctx
+                ctx.children!.unshift(child._right)
+            }
+            
             // Move the operator up
             if (child instanceof ProductContext) {
                 child.TIMES().parentCtx = ctx
                 ctx.children!.unshift(child.TIMES())
             }
 
-            child._left.parentCtx = ctx
-            ctx.children!.unshift(child._left)
+            if (instanceOfProduct(child._left)) {
+                takeChildren(child._left as ProductContext)
+            } else {
+                child._left.parentCtx = ctx
+                ctx.children!.unshift(child._left)
+            }
 
             child.parentCtx = undefined
         }
-        if (ctx._left instanceof ProductContext) 
-            takeChildren(ctx._left)
-        if (ctx._right instanceof ProductContext) 
-            takeChildren(ctx._right)
+        if (instanceOfProduct(ctx._left))
+            takeChildren(ctx._left as ProductContext)
+        if (instanceOfProduct(ctx._right)) 
+            takeChildren(ctx._right as ProductContext)
 
         console.log(ctx.getText())
         return ctx

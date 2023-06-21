@@ -108,6 +108,9 @@ export function loadInputParseTestPage() {
     expression("log(x)")
 
     twoWay(sum(x, y, a, b, c))
+    twoWay(sum(x, y, negative(a), b, c))
+    twoWay(sum(x, y, negative(a), negative(b), c))
+    twoWay(sum(x, y, negative(a), b, negative(c)))
     twoWay(sum(a, Exponent.of(b, c)))
     twoWay (Exponent.of(sum(a, b), c))
     twoWay(sum(negative(a), negative(b), c))
