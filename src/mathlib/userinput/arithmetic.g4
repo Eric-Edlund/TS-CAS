@@ -39,11 +39,13 @@ expression
 expression_part
    :  left=expression_part POW right=expression_part #Power
    |  left=expression_part DIV right=expression_part #Division
-   |  first=expression_part  TIMES  expression_part #Product
-   |  first=expression_part  (PLUS | MINUS) expression_part #Sum
-   |  LPAREN expression_part RPAREN #Paren
+   |  expression_part  TIMES  expression_part #Product
+   |  left=atom right=atom #ImplicitProduct
+   |  left=atom (LPAREN expression_part RPAREN) #ImplicitProduct
    |  (PLUS | MINUS) expression_part #UnaryOnExpression
    |  (PLUS | MINUS)* atom #UnaryOnAtom
+   |  expression_part  (PLUS | MINUS) expression_part #Sum
+   |  LPAREN expression_part RPAREN #Paren
    ;
 
 atom
@@ -59,18 +61,9 @@ relop
 
 
 VARIABLE
-   : VALID_ID_START VALID_ID_CHAR*
+   : 'a' .. 'z' | 'A' .. 'Z'
    ;
 
-
-fragment VALID_ID_START
-   : 'a' .. 'z' | 'A' .. 'Z' | '_'
-   ;
-
-
-fragment VALID_ID_CHAR
-   : VALID_ID_START | '0' .. '9'
-   ;
 
 //The NUMBER part gets its potential sign from "(PLUS | MINUS)* atom" in the expression rule
 SCIENTIFIC_NUMBER

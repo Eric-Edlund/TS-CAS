@@ -1,5 +1,6 @@
 import antlr4 from "antlr4"
-import { negative } from "../ConvenientExpressions";
+import { sum } from "mathjs";
+import { negative, product } from "../ConvenientExpressions";
 import { Exponent } from "../expressions/Exponent";
 import { Expression } from "../expressions/Expression";
 import { Fraction } from "../expressions/Fraction";
@@ -7,15 +8,22 @@ import { Integer } from "../expressions/Integer";
 import { Product } from "../expressions/Product";
 import { Sum } from "../expressions/Sum";
 import { Variable } from "../expressions/Variable";
-import { Graph } from "../Graph";
 import { assert } from "../util/assert";
-import { AtomContext, DivisionContext, EquationContext, ExpressionContext, ParenContext, PowerContext, ProductContext, RelopContext, SumContext, UnaryOnAtomContext, UnaryOnExpressionContext } from "./arithmeticParser";
+import { AtomContext, DivisionContext, EquationContext, ExpressionContext, Expression_partContext, ImplicitProductContext, ParenContext, PowerContext, ProductContext, RelopContext, SumContext, UnaryOnAtomContext, UnaryOnExpressionContext } from "./arithmeticParser";
 import arithmeticVisitor from "./arithmeticVisitor";
 
 /**
  * Reads out an expression.
  */
 export class ExpressionVisitor extends arithmeticVisitor<Expression> {
+
+    private printChildren(ctx: Expression_partContext): void {
+        let result = ""
+        for (const child of ctx.children!) {
+            result += child.getText() + "  "
+        }
+        console.log(result)
+    }
 
     visitExpression = (ctx: ExpressionContext): Expression => {
         return this.visit(ctx.expression_part())
@@ -49,6 +57,15 @@ export class ExpressionVisitor extends arithmeticVisitor<Expression> {
         ])
     }
 
+    visitImplicitProduct = (ctx: ImplicitProductContext): Expression => {
+        console.log("Implicit product of context")
+        this.printChildren(ctx)
+        return Product.of([
+            this.visit(ctx._left),
+            this.visit(ctx._right)
+        ])
+    }
+
     visitUnaryOnAtom = (ctx: UnaryOnAtomContext): Expression => {
         const isPositive = ctx.MINUS_list.length % 2 == 0
         if (isPositive)
@@ -64,15 +81,24 @@ export class ExpressionVisitor extends arithmeticVisitor<Expression> {
     }
 
     visitSum = (ctx: SumContext): Expression => {
+        // console.log("Visiting sum with " + ctx.children!.length + " children: " + ctx.toStringTree(null, ctx.parser!))
+
+        // this.printChildren(ctx)
+
         // Sum of plus and minus components
-        const terms: Expression[] = [this.visit(ctx._first)];
-        for (let i=1; i < ctx.expression_part_list().length; i++) {
-            if (ctx.children![2*i - 1].getText() == '-')
-                terms.push(negative(this.visit(ctx.expression_part_list()![i])))
+        const terms: Expression[] = [this.visit(ctx.children![0])];
+        for (let i=1; i < ctx.children!.length; i+= 2) {
+            if (ctx.children![i].getText() == '-')
+                terms.push(negative(this.visit(ctx.children![i+1])))
             else {
-                terms.push(this.visit(ctx.expression_part_list()[i]))
-            }
+                terms.push(this.visit(ctx.children![i+1]))
+            }   
         }
+        //console.log("Printing made terms")
+        for(const term of terms) {
+            //console.log("  " + term.toString())
+        }
+        //console.log("done")
         return Sum.of(terms)
     }
 

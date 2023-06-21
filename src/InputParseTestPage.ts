@@ -31,21 +31,24 @@ export function loadInputParseTestPage() {
     function expression(input: string, explanation: string | null = null) {
         p("Input:       " + input)
         if (explanation != null) p(explanation)
-        
         view(parseExpression(input)! as Expression)
     }
 
     // Expression strings to test
     expression("a^b+c", "The +c shouldn't be in the exponent")
+    expression("a+b^c")
+    expression ("(a+b)^c")
 
     expression("-a-b+c")
     expression("-a+-b+c")
     expression("a+b+c")
     expression("-(a+b)")
+    expression("-a(a+b)")
     expression("a+(b+c)")
     expression("a-b-c")
     expression("a*b+c")
     expression("a/b+c")
     expression("a/b/c")
+    expression("abx-d")
     
 }

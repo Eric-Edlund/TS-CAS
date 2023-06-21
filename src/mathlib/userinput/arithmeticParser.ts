@@ -146,21 +146,19 @@ export default class arithmeticParser extends Parser {
 			let _alt: number;
 			this.enterOuterAlt(localctx, 1);
 			{
-			this.state = 30;
+			this.state = 33;
 			this._errHandler.sync(this);
 			switch ( this._interp.adaptivePredict(this._input, 1, this._ctx) ) {
 			case 1:
 				{
-				localctx = new ParenContext(this, localctx);
+				localctx = new ImplicitProductContext(this, localctx);
 				this._ctx = localctx;
 				_prevctx = localctx;
 
 				this.state = 17;
-				this.match(arithmeticParser.LPAREN);
+				(localctx as ImplicitProductContext)._left = this.atom();
 				this.state = 18;
-				this.expression_part(0);
-				this.state = 19;
-				this.match(arithmeticParser.RPAREN);
+				(localctx as ImplicitProductContext)._right = this.atom();
 				}
 				break;
 			case 2:
@@ -168,7 +166,7 @@ export default class arithmeticParser extends Parser {
 				localctx = new UnaryOnExpressionContext(this, localctx);
 				this._ctx = localctx;
 				_prevctx = localctx;
-				this.state = 21;
+				this.state = 20;
 				_la = this._input.LA(1);
 				if(!(_la===5 || _la===6)) {
 				this._errHandler.recoverInline(this);
@@ -177,8 +175,8 @@ export default class arithmeticParser extends Parser {
 					this._errHandler.reportMatch(this);
 				    this.consume();
 				}
-				this.state = 22;
-				this.expression_part(2);
+				this.state = 21;
+				this.expression_part(4);
 				}
 				break;
 			case 3:
@@ -186,13 +184,13 @@ export default class arithmeticParser extends Parser {
 				localctx = new UnaryOnAtomContext(this, localctx);
 				this._ctx = localctx;
 				_prevctx = localctx;
-				this.state = 26;
+				this.state = 25;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
 				while (_la===5 || _la===6) {
 					{
 					{
-					this.state = 23;
+					this.state = 22;
 					_la = this._input.LA(1);
 					if(!(_la===5 || _la===6)) {
 					this._errHandler.recoverInline(this);
@@ -203,17 +201,30 @@ export default class arithmeticParser extends Parser {
 					}
 					}
 					}
-					this.state = 28;
+					this.state = 27;
 					this._errHandler.sync(this);
 					_la = this._input.LA(1);
 				}
-				this.state = 29;
+				this.state = 28;
 				this.atom();
+				}
+				break;
+			case 4:
+				{
+				localctx = new ParenContext(this, localctx);
+				this._ctx = localctx;
+				_prevctx = localctx;
+				this.state = 29;
+				this.match(arithmeticParser.LPAREN);
+				this.state = 30;
+				this.expression_part(0);
+				this.state = 31;
+				this.match(arithmeticParser.RPAREN);
 				}
 				break;
 			}
 			this._ctx.stop = this._input.LT(-1);
-			this.state = 46;
+			this.state = 49;
 			this._errHandler.sync(this);
 			_alt = this._interp.adaptivePredict(this._input, 3, this._ctx);
 			while (_alt !== 2 && _alt !== ATN.INVALID_ALT_NUMBER) {
@@ -223,7 +234,7 @@ export default class arithmeticParser extends Parser {
 					}
 					_prevctx = localctx;
 					{
-					this.state = 44;
+					this.state = 47;
 					this._errHandler.sync(this);
 					switch ( this._interp.adaptivePredict(this._input, 2, this._ctx) ) {
 					case 1:
@@ -231,14 +242,14 @@ export default class arithmeticParser extends Parser {
 						localctx = new PowerContext(this, new Expression_partContext(this, _parentctx, _parentState));
 						(localctx as PowerContext)._left = _prevctx;
 						this.pushNewRecursionContext(localctx, _startState, arithmeticParser.RULE_expression_part);
-						this.state = 32;
-						if (!(this.precpred(this._ctx, 7))) {
-							throw this.createFailedPredicateException("this.precpred(this._ctx, 7)");
+						this.state = 35;
+						if (!(this.precpred(this._ctx, 8))) {
+							throw this.createFailedPredicateException("this.precpred(this._ctx, 8)");
 						}
-						this.state = 33;
+						this.state = 36;
 						this.match(arithmeticParser.POW);
-						this.state = 34;
-						(localctx as PowerContext)._right = this.expression_part(8);
+						this.state = 37;
+						(localctx as PowerContext)._right = this.expression_part(9);
 						}
 						break;
 					case 2:
@@ -246,41 +257,39 @@ export default class arithmeticParser extends Parser {
 						localctx = new DivisionContext(this, new Expression_partContext(this, _parentctx, _parentState));
 						(localctx as DivisionContext)._left = _prevctx;
 						this.pushNewRecursionContext(localctx, _startState, arithmeticParser.RULE_expression_part);
-						this.state = 35;
-						if (!(this.precpred(this._ctx, 6))) {
-							throw this.createFailedPredicateException("this.precpred(this._ctx, 6)");
+						this.state = 38;
+						if (!(this.precpred(this._ctx, 7))) {
+							throw this.createFailedPredicateException("this.precpred(this._ctx, 7)");
 						}
-						this.state = 36;
+						this.state = 39;
 						this.match(arithmeticParser.DIV);
-						this.state = 37;
-						(localctx as DivisionContext)._right = this.expression_part(7);
+						this.state = 40;
+						(localctx as DivisionContext)._right = this.expression_part(8);
 						}
 						break;
 					case 3:
 						{
 						localctx = new ProductContext(this, new Expression_partContext(this, _parentctx, _parentState));
-						(localctx as ProductContext)._first = _prevctx;
 						this.pushNewRecursionContext(localctx, _startState, arithmeticParser.RULE_expression_part);
-						this.state = 38;
-						if (!(this.precpred(this._ctx, 5))) {
-							throw this.createFailedPredicateException("this.precpred(this._ctx, 5)");
+						this.state = 41;
+						if (!(this.precpred(this._ctx, 6))) {
+							throw this.createFailedPredicateException("this.precpred(this._ctx, 6)");
 						}
-						this.state = 39;
+						this.state = 42;
 						this.match(arithmeticParser.TIMES);
-						this.state = 40;
-						this.expression_part(6);
+						this.state = 43;
+						this.expression_part(7);
 						}
 						break;
 					case 4:
 						{
 						localctx = new SumContext(this, new Expression_partContext(this, _parentctx, _parentState));
-						(localctx as SumContext)._first = _prevctx;
 						this.pushNewRecursionContext(localctx, _startState, arithmeticParser.RULE_expression_part);
-						this.state = 41;
-						if (!(this.precpred(this._ctx, 4))) {
-							throw this.createFailedPredicateException("this.precpred(this._ctx, 4)");
+						this.state = 44;
+						if (!(this.precpred(this._ctx, 2))) {
+							throw this.createFailedPredicateException("this.precpred(this._ctx, 2)");
 						}
-						this.state = 42;
+						this.state = 45;
 						_la = this._input.LA(1);
 						if(!(_la===5 || _la===6)) {
 						this._errHandler.recoverInline(this);
@@ -289,14 +298,14 @@ export default class arithmeticParser extends Parser {
 							this._errHandler.reportMatch(this);
 						    this.consume();
 						}
-						this.state = 43;
-						this.expression_part(5);
+						this.state = 46;
+						this.expression_part(3);
 						}
 						break;
 					}
 					}
 				}
-				this.state = 48;
+				this.state = 51;
 				this._errHandler.sync(this);
 				_alt = this._interp.adaptivePredict(this._input, 3, this._ctx);
 			}
@@ -324,7 +333,7 @@ export default class arithmeticParser extends Parser {
 		try {
 			this.enterOuterAlt(localctx, 1);
 			{
-			this.state = 49;
+			this.state = 52;
 			_la = this._input.LA(1);
 			if(!(_la===1 || _la===2)) {
 			this._errHandler.recoverInline(this);
@@ -356,7 +365,7 @@ export default class arithmeticParser extends Parser {
 		try {
 			this.enterOuterAlt(localctx, 1);
 			{
-			this.state = 51;
+			this.state = 54;
 			this.match(arithmeticParser.EQ);
 			}
 		}
@@ -385,33 +394,34 @@ export default class arithmeticParser extends Parser {
 	private expression_part_sempred(localctx: Expression_partContext, predIndex: number): boolean {
 		switch (predIndex) {
 		case 0:
-			return this.precpred(this._ctx, 7);
+			return this.precpred(this._ctx, 8);
 		case 1:
-			return this.precpred(this._ctx, 6);
+			return this.precpred(this._ctx, 7);
 		case 2:
-			return this.precpred(this._ctx, 5);
+			return this.precpred(this._ctx, 6);
 		case 3:
-			return this.precpred(this._ctx, 4);
+			return this.precpred(this._ctx, 2);
 		}
 		return true;
 	}
 
-	public static readonly _serializedATN: number[] = [4,1,14,54,2,0,7,0,2,
+	public static readonly _serializedATN: number[] = [4,1,14,57,2,0,7,0,2,
 	1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,1,0,1,0,1,0,1,0,1,1,1,1,1,2,1,2,1,2,1,2,1,
-	2,1,2,1,2,1,2,5,2,25,8,2,10,2,12,2,28,9,2,1,2,3,2,31,8,2,1,2,1,2,1,2,1,
-	2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,5,2,45,8,2,10,2,12,2,48,9,2,1,3,1,3,1,
-	4,1,4,1,4,0,1,4,5,0,2,4,6,8,0,2,1,0,5,6,1,0,1,2,55,0,10,1,0,0,0,2,14,1,
-	0,0,0,4,30,1,0,0,0,6,49,1,0,0,0,8,51,1,0,0,0,10,11,3,2,1,0,11,12,3,8,4,
-	0,12,13,3,2,1,0,13,1,1,0,0,0,14,15,3,4,2,0,15,3,1,0,0,0,16,17,6,2,-1,0,
-	17,18,5,3,0,0,18,19,3,4,2,0,19,20,5,4,0,0,20,31,1,0,0,0,21,22,7,0,0,0,22,
-	31,3,4,2,2,23,25,7,0,0,0,24,23,1,0,0,0,25,28,1,0,0,0,26,24,1,0,0,0,26,27,
-	1,0,0,0,27,29,1,0,0,0,28,26,1,0,0,0,29,31,3,6,3,0,30,16,1,0,0,0,30,21,1,
-	0,0,0,30,26,1,0,0,0,31,46,1,0,0,0,32,33,10,7,0,0,33,34,5,13,0,0,34,45,3,
-	4,2,8,35,36,10,6,0,0,36,37,5,8,0,0,37,45,3,4,2,7,38,39,10,5,0,0,39,40,5,
-	7,0,0,40,45,3,4,2,6,41,42,10,4,0,0,42,43,7,0,0,0,43,45,3,4,2,5,44,32,1,
-	0,0,0,44,35,1,0,0,0,44,38,1,0,0,0,44,41,1,0,0,0,45,48,1,0,0,0,46,44,1,0,
-	0,0,46,47,1,0,0,0,47,5,1,0,0,0,48,46,1,0,0,0,49,50,7,1,0,0,50,7,1,0,0,0,
-	51,52,5,11,0,0,52,9,1,0,0,0,4,26,30,44,46];
+	2,1,2,1,2,5,2,24,8,2,10,2,12,2,27,9,2,1,2,1,2,1,2,1,2,1,2,3,2,34,8,2,1,
+	2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,5,2,48,8,2,10,2,12,2,51,9,
+	2,1,3,1,3,1,4,1,4,1,4,0,1,4,5,0,2,4,6,8,0,2,1,0,5,6,1,0,1,2,59,0,10,1,0,
+	0,0,2,14,1,0,0,0,4,33,1,0,0,0,6,52,1,0,0,0,8,54,1,0,0,0,10,11,3,2,1,0,11,
+	12,3,8,4,0,12,13,3,2,1,0,13,1,1,0,0,0,14,15,3,4,2,0,15,3,1,0,0,0,16,17,
+	6,2,-1,0,17,18,3,6,3,0,18,19,3,6,3,0,19,34,1,0,0,0,20,21,7,0,0,0,21,34,
+	3,4,2,4,22,24,7,0,0,0,23,22,1,0,0,0,24,27,1,0,0,0,25,23,1,0,0,0,25,26,1,
+	0,0,0,26,28,1,0,0,0,27,25,1,0,0,0,28,34,3,6,3,0,29,30,5,3,0,0,30,31,3,4,
+	2,0,31,32,5,4,0,0,32,34,1,0,0,0,33,16,1,0,0,0,33,20,1,0,0,0,33,25,1,0,0,
+	0,33,29,1,0,0,0,34,49,1,0,0,0,35,36,10,8,0,0,36,37,5,13,0,0,37,48,3,4,2,
+	9,38,39,10,7,0,0,39,40,5,8,0,0,40,48,3,4,2,8,41,42,10,6,0,0,42,43,5,7,0,
+	0,43,48,3,4,2,7,44,45,10,2,0,0,45,46,7,0,0,0,46,48,3,4,2,3,47,35,1,0,0,
+	0,47,38,1,0,0,0,47,41,1,0,0,0,47,44,1,0,0,0,48,51,1,0,0,0,49,47,1,0,0,0,
+	49,50,1,0,0,0,50,5,1,0,0,0,51,49,1,0,0,0,52,53,7,1,0,0,53,7,1,0,0,0,54,
+	55,5,11,0,0,55,9,1,0,0,0,4,25,33,47,49];
 
 	private static __ATN: ATN;
 	public static get _ATN(): ATN {
@@ -509,20 +519,51 @@ export class Expression_partContext extends ParserRuleContext {
 		super.copyFrom(ctx);
 	}
 }
-export class ProductContext extends Expression_partContext {
-	public _first!: Expression_partContext;
+export class ImplicitProductContext extends Expression_partContext {
+	public _left!: AtomContext;
+	public _right!: AtomContext;
 	constructor(parser: arithmeticParser, ctx: Expression_partContext) {
 		super(parser, ctx.parentCtx, ctx.invokingState);
 		super.copyFrom(ctx);
 	}
-	public TIMES(): TerminalNode {
-		return this.getToken(arithmeticParser.TIMES, 0);
+	public atom_list(): AtomContext[] {
+		return this.getTypedRuleContexts(AtomContext) as AtomContext[];
+	}
+	public atom(i: number): AtomContext {
+		return this.getTypedRuleContext(AtomContext, i) as AtomContext;
+	}
+	public enterRule(listener: arithmeticListener): void {
+	    if(listener.enterImplicitProduct) {
+	 		listener.enterImplicitProduct(this);
+		}
+	}
+	public exitRule(listener: arithmeticListener): void {
+	    if(listener.exitImplicitProduct) {
+	 		listener.exitImplicitProduct(this);
+		}
+	}
+	// @Override
+	public accept<Result>(visitor: arithmeticVisitor<Result>): Result {
+		if (visitor.visitImplicitProduct) {
+			return visitor.visitImplicitProduct(this);
+		} else {
+			return visitor.visitChildren(this);
+		}
+	}
+}
+export class ProductContext extends Expression_partContext {
+	constructor(parser: arithmeticParser, ctx: Expression_partContext) {
+		super(parser, ctx.parentCtx, ctx.invokingState);
+		super.copyFrom(ctx);
 	}
 	public expression_part_list(): Expression_partContext[] {
 		return this.getTypedRuleContexts(Expression_partContext) as Expression_partContext[];
 	}
 	public expression_part(i: number): Expression_partContext {
 		return this.getTypedRuleContext(Expression_partContext, i) as Expression_partContext;
+	}
+	public TIMES(): TerminalNode {
+		return this.getToken(arithmeticParser.TIMES, 0);
 	}
 	public enterRule(listener: arithmeticListener): void {
 	    if(listener.enterProduct) {
@@ -579,7 +620,6 @@ export class DivisionContext extends Expression_partContext {
 	}
 }
 export class SumContext extends Expression_partContext {
-	public _first!: Expression_partContext;
 	constructor(parser: arithmeticParser, ctx: Expression_partContext) {
 		super(parser, ctx.parentCtx, ctx.invokingState);
 		super.copyFrom(ctx);
@@ -683,39 +723,6 @@ export class PowerContext extends Expression_partContext {
 		}
 	}
 }
-export class ParenContext extends Expression_partContext {
-	constructor(parser: arithmeticParser, ctx: Expression_partContext) {
-		super(parser, ctx.parentCtx, ctx.invokingState);
-		super.copyFrom(ctx);
-	}
-	public LPAREN(): TerminalNode {
-		return this.getToken(arithmeticParser.LPAREN, 0);
-	}
-	public expression_part(): Expression_partContext {
-		return this.getTypedRuleContext(Expression_partContext, 0) as Expression_partContext;
-	}
-	public RPAREN(): TerminalNode {
-		return this.getToken(arithmeticParser.RPAREN, 0);
-	}
-	public enterRule(listener: arithmeticListener): void {
-	    if(listener.enterParen) {
-	 		listener.enterParen(this);
-		}
-	}
-	public exitRule(listener: arithmeticListener): void {
-	    if(listener.exitParen) {
-	 		listener.exitParen(this);
-		}
-	}
-	// @Override
-	public accept<Result>(visitor: arithmeticVisitor<Result>): Result {
-		if (visitor.visitParen) {
-			return visitor.visitParen(this);
-		} else {
-			return visitor.visitChildren(this);
-		}
-	}
-}
 export class UnaryOnAtomContext extends Expression_partContext {
 	constructor(parser: arithmeticParser, ctx: Expression_partContext) {
 		super(parser, ctx.parentCtx, ctx.invokingState);
@@ -750,6 +757,39 @@ export class UnaryOnAtomContext extends Expression_partContext {
 	public accept<Result>(visitor: arithmeticVisitor<Result>): Result {
 		if (visitor.visitUnaryOnAtom) {
 			return visitor.visitUnaryOnAtom(this);
+		} else {
+			return visitor.visitChildren(this);
+		}
+	}
+}
+export class ParenContext extends Expression_partContext {
+	constructor(parser: arithmeticParser, ctx: Expression_partContext) {
+		super(parser, ctx.parentCtx, ctx.invokingState);
+		super.copyFrom(ctx);
+	}
+	public LPAREN(): TerminalNode {
+		return this.getToken(arithmeticParser.LPAREN, 0);
+	}
+	public expression_part(): Expression_partContext {
+		return this.getTypedRuleContext(Expression_partContext, 0) as Expression_partContext;
+	}
+	public RPAREN(): TerminalNode {
+		return this.getToken(arithmeticParser.RPAREN, 0);
+	}
+	public enterRule(listener: arithmeticListener): void {
+	    if(listener.enterParen) {
+	 		listener.enterParen(this);
+		}
+	}
+	public exitRule(listener: arithmeticListener): void {
+	    if(listener.exitParen) {
+	 		listener.exitParen(this);
+		}
+	}
+	// @Override
+	public accept<Result>(visitor: arithmeticVisitor<Result>): Result {
+		if (visitor.visitParen) {
+			return visitor.visitParen(this);
 		} else {
 			return visitor.visitChildren(this);
 		}
