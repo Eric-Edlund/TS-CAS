@@ -1,8 +1,11 @@
 import { parse } from "mathjs";
-import { a, sum, x, y } from "./mathlib/ConvenientExpressions";
+import { a, b, c, d, fraction, negative, num, product, sum, x, y } from "./mathlib/ConvenientExpressions";
+import { Exponent } from "./mathlib/expressions/Exponent";
 import { Expression } from "./mathlib/expressions/Expression";
+import { Logarithm } from "./mathlib/expressions/Logarithm";
 import { EditableMathView } from "./mathlib/uielements/EditableMathView";
 import { parseExpression } from "./mathlib/userinput/AntlrMathParser";
+import { PowerContext } from "./mathlib/userinput/arithmeticParser";
 
 /**
  * Called after DOM is loaded.
@@ -60,11 +63,11 @@ export function loadInputParseTestPage() {
         data3.style.border = "1px solid black"
 
         data1.appendChild(view(input))
-        const text = p(input.toString())
+        const text = p(input.toUnambigiousString())
         text.style.display = "block"
         text.style.textAlign = "center"
         data2.appendChild(text)
-        const parseResult = parseExpression(input.toString())
+        const parseResult = parseExpression(input.toUnambigiousString())
         data3.appendChild(view(parseResult))
         page.append(table)
 
@@ -72,7 +75,7 @@ export function loadInputParseTestPage() {
         if (input === parseResult) {
             data3.style.backgroundColor = "lightgreen"
         } else {
-            data3.style.backgroundColor = "lightred"
+            data3.style.backgroundColor = "red"
         }
     }
 
@@ -104,6 +107,26 @@ export function loadInputParseTestPage() {
     expression("logx")
     expression("log(x)")
 
-    twoWay(sum(x, y, a))
+    twoWay(sum(x, y, a, b, c))
+    twoWay(sum(a, Exponent.of(b, c)))
+    twoWay (Exponent.of(sum(a, b), c))
+    twoWay(sum(negative(a), negative(b), c))
+    twoWay(sum(a, b, c))
+    twoWay(negative(sum(a, b)))
+    twoWay(product(negative(a), sum(a, b)))
+    twoWay(negative(product(a, sum(a, b))))
+    twoWay(sum(a, sum(b, c)))
+    twoWay(sum(a, negative(b), negative(c)))
+    twoWay(sum(product(a, b), c))
+    twoWay(sum(fraction(a, b), c))
+    twoWay(fraction(fraction(a, b), c))
+    twoWay(sum(product(a, b, x), d))
+    twoWay(sum(negative(product(a, b, x)), negative(d)))
+    twoWay(sum(negative(a), negative(product(b,x)), negative(d)))
+    twoWay(product(a, b, c, d))
+    // twoWay("ab*cd")
+    // twoWay("int4x+2")
+    // twoWay("int(4x+2)")
+    twoWay(Logarithm.of(x, num(10)))
     
 }

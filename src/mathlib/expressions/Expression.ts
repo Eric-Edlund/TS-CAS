@@ -45,6 +45,15 @@ export abstract class Expression extends MathGraphNode implements MathElement {
     public abstract toString(): string;
 
     /**
+     * Produces a string which is exactly what's necessary
+     * to communicate unamgigiously the content of the expression.
+     */
+    public toUnambigiousString(): string {
+        return this.toString()
+        //TODO: Implement
+    }
+
+    /**
      * Produces a string that uniquely identifies 
      * the expression's type and values such that
      * 1. no two subclasses of expression could produce

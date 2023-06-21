@@ -46,7 +46,7 @@ export default class arithmeticParser extends Parser {
 	public static readonly literalNames: (string | null)[] = [ null, null, 
                                                             "'('", "')'", 
                                                             "'+'", "'-'", 
-                                                            "'*'", "'/'", 
+                                                            null, "'/'", 
                                                             "'>'", "'<'", 
                                                             "'='", "'.'", 
                                                             "'^'" ];
