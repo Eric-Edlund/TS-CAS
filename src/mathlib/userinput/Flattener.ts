@@ -114,7 +114,7 @@ export class Flattener extends arithmeticVisitor<ClosedContext> {
     }
 
     private flattenProduct(ctx: ProductContext | ImplicitProductContext): ClosedContext {
-        console.log("Flattening product " + ctx.getText() + " to")
+        //console.log("Flattening product " + ctx.getText() + " to")
 
         function instanceOfProduct(child: ParserRuleContext): boolean {
             return child instanceof ProductContext
@@ -153,7 +153,7 @@ export class Flattener extends arithmeticVisitor<ClosedContext> {
         if (instanceOfProduct(ctx._right)) 
             takeChildren(ctx._right as ProductContext)
 
-        console.log(ctx.getText())
+        //console.log(ctx.getText())
         return ctx
     }
 }

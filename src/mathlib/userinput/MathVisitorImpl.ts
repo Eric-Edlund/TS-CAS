@@ -36,10 +36,10 @@ export class ExpressionVisitor extends arithmeticVisitor<Expression> {
     };
 
     visitPower = (ctx: PowerContext): Expression => {
-        console.log("Power")
-        this.printChildren(ctx)
-        console.log(ctx._left.getText())
-        console.log(ctx._right.getText())
+        //console.log("Power")
+        //this.printChildren(ctx)
+        //console.log(ctx._left.getText())
+        //console.log(ctx._right.getText())
         return Exponent.of(
             this.visit(ctx._left),
             this.visit(ctx._right)
@@ -64,8 +64,8 @@ export class ExpressionVisitor extends arithmeticVisitor<Expression> {
     }
 
     visitImplicitProduct = (ctx: ImplicitProductContext): Expression => {
-        console.log("Implicit product of context")
-        this.printChildren(ctx)
+        //console.log("Implicit product of context")
+        //this.printChildren(ctx)
         return Product.of([
             this.visit(ctx._left),
             this.visit(ctx._right)
@@ -73,8 +73,8 @@ export class ExpressionVisitor extends arithmeticVisitor<Expression> {
     }
 
     visitRight_ClosedImplicitProduct = (ctx: Right_ClosedImplicitProductContext): Expression => {
-        console.log("Right closed implicit product of context")
-        this.printChildren(ctx)
+        //console.log("Right closed implicit product of context")
+        //this.printChildren(ctx)
         return Product.of([
             this.visit(ctx._left),
             this.visit(ctx._right)
