@@ -32,6 +32,9 @@ export class Logarithm extends Expression {
     public toString(): string {
         return `log${this.base.toString()}(${this.exp.toString()})`
     }
+    public toUnambigiousString(): string {
+        return `log(${this.base.toUnambigiousString()})(${this.base.toUnambigiousString()})`
+    }
     public get hash(): string {
         throw new Error("Method not implemented.");
     }

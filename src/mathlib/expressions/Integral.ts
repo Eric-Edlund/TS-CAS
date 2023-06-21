@@ -37,6 +37,9 @@ export class Integral extends Expression {
     public toString(): string {
         return "∫" + this.integrand.toString()
     }
+    public toUnambigiousString(): string {
+        return "∫(" + this.integrand.toUnambigiousString() + ")"+this.relativeTo.toUnambigiousString()
+    }
     public get hash(): string {
         return "∫" + this.integrand.toString() + this.relativeTo.toString()
     }

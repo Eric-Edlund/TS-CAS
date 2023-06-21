@@ -36,6 +36,9 @@ export class Integer extends Expression {
     public toString(): string {
         return "" + this.value
     }
+    public toUnambigiousString(): string {
+        return "" + this.value
+    }
 
     public get hash(): string {
         return "NumberExp" + this.value

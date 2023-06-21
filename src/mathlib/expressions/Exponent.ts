@@ -27,6 +27,9 @@ export class Exponent extends Expression {
     public toString(): string {
         return "(" + this.base + ")^(" + this.power + ")"
     }
+    public toUnambigiousString(): string {
+        return "(" + this.base + ")^(" + this.power + ")"
+    }
 
     public get hash(): string {
         return "Exponent"+this.base.hash+this.power.hash

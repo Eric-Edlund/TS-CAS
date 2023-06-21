@@ -21,6 +21,9 @@ export class Variable extends Expression {
     public toString(): string {
         return this.symbol;
     }
+    public toUnambigiousString(): string {
+        return this.symbol
+    }
 
     public get hash(): string {
         return "Variable"+this.symbol

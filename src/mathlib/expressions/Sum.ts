@@ -88,6 +88,15 @@ export class Sum extends Expression {
         return out
     }
 
+    public toUnambigiousString(): string {
+        let out = ""
+        for (const exp of this.terms) {
+            out += "(" + exp.toUnambigiousString() + ")+"
+        }
+        out = out.substring(0, out.length - 1)
+        return out
+    }
+
     public get hash(): string {
         return "Sum" + this.terms.map<string>(e => e.hash).join()
     }

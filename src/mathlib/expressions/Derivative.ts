@@ -33,6 +33,10 @@ export class Derivative extends Expression {
     public toString(): string {
         return "d/d" + this.relativeTo.toString() + "(" + this.exp.toString() + ")"
     }
+
+    public toUnambigiousString(): string {
+        return "(d/d" + this.relativeTo.toUnambigiousString() + ")" + this.exp.toUnambigiousString()
+    }
     public get hash(): string {
         return this.class + this.exp.hash + this.relativeTo.hash
     }

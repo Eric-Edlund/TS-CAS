@@ -147,6 +147,24 @@ export class Product extends Expression {
         return out
     }
 
+    public toUnambigiousString(): string {
+        if (this.isNegation) 
+            return `-(${this.negation.toUnambigiousString()})`
+        
+
+        let out = ""
+        for (const exp of this.factors) {
+            if (exp instanceof Product) {
+                out += "(" + exp.toString() + ")"
+            } else {
+                out += exp.toString()
+            }
+            out += "·"
+        }
+        out = out.substring(0, out.length - 1)
+        return out
+    }
+
     public get hash(): string {
         return "Product" + this.factors.map<string>(e => e.hash).join()
     }

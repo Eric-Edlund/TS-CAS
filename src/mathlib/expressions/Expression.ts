@@ -48,10 +48,7 @@ export abstract class Expression extends MathGraphNode implements MathElement {
      * Produces a string which is exactly what's necessary
      * to communicate unamgigiously the content of the expression.
      */
-    public toUnambigiousString(): string {
-        return this.toString()
-        //TODO: Implement
-    }
+    public abstract toUnambigiousString(): string;
 
     /**
      * Produces a string that uniquely identifies 
