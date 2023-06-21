@@ -66,8 +66,8 @@ function getSolution(problem: Expression): MathGraphNode[] {
     // I assume that library graph isn't directed
     for (const edge of GraphMinipulator.dropSymmetric(graph.getEdges())) {
         libraryGraph.addLink(edge.n.id, edge.n1.id)
-        if (edge.n instanceof Expression && edge.n1 instanceof Expression)
-            console.log(`edge ${edge.n} AND ${edge.n1}`)
+        // if (edge.n instanceof Expression && edge.n1 instanceof Expression)
+        //     console.log(`edge ${edge.n} AND ${edge.n1}`)
     }
 
     // Do path finding operation on it
