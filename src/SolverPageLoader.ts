@@ -1,7 +1,4 @@
-import { a, b, num, product, sum, x } from "./mathlib/ConvenientExpressions"
 import { Deriver } from "./mathlib/derivations/Deriver"
-import { Exponent } from "./mathlib/expressions/Exponent"
-import { Fraction } from "./mathlib/expressions/Fraction"
 import { Graph, GraphEdge } from "./mathlib/Graph"
 import { EditableMathView } from "./mathlib/uielements/EditableMathView"
 import path from "ngraph.path"
@@ -12,19 +9,45 @@ import { GraphNodeView } from "./mathlib/uielements/GraphNodeView"
 import { Argument } from "./mathlib/Argument"
 import { ArgumentNodeView } from "./mathlib/uielements/ArgumentNodeView"
 import { ExpressionNodeView } from "./mathlib/uielements/ExpressionNodeView"
-import { Derivative } from "./mathlib/expressions/Derivative"
 import { GraphMinipulator } from "./mathlib/GraphMinipulator"
+import { parseExpression } from "./mathlib/userinput/AntlrMathParser"
 
 
 export function loadSolverPage(): void {
-    const page = document.getElementsByTagName('body')[0]
+    const problemView = document.getElementById('problem')! as HTMLTextAreaElement
+    const solutionView = document.getElementById('solution')! as EditableMathView
+    const stepListView = document.getElementById('steps')!
 
-    const root = Derivative.of(sum(a, a, product(num(2), b)), a)
-    //const root = Derivative.of(product(num(3), Exponent.of(x, num(2)), Exponent.of(x, num(3))), x)
-    //const root = product(Exponent.of(x, num(3)), Exponent.of(x, num(4)), x, x)
-    //const root = Derivative.of(Fraction.of(Exponent.of(x, num(2)), x), x)
-    //const root = Fraction.of(product(num(2), x, Exponent.of(x, a), a), product(num(2), a, a, x))
-    const graph = new Graph().addNode(root)
+    problemView.addEventListener("keyup", () => {
+        // Parse input
+        const exp = parseExpression(problemView.value)
+        const steps = getSolution(exp)
+
+        solutionView.value = steps[steps.length - 1] as Expression
+
+        steps.forEach(step => {
+            let view: GraphNodeView
+            if (step instanceof Argument) {
+                view = new ArgumentNodeView(step, view => {})
+            } else if (step instanceof Expression) {
+                view = new ExpressionNodeView(step, view => {})
+            } else throw new Error("Not implemented")
+    
+            stepListView.appendChild(view)
+        })
+    })
+
+    
+    
+}
+
+/**
+ * Simplifies the given expression returning an array
+ * of steps ending in the answer.
+ * The last node will be an expression.
+ */
+function getSolution(problem: Expression): MathGraphNode[] {
+    const graph = new Graph().addNode(problem)
 
     const deriver = new Deriver(graph)
     deriver.expand()
@@ -49,30 +72,13 @@ export function loadSolverPage(): void {
 
     // Do path finding operation on it
     const pathFinder = path.nba<MathGraphNode, GraphEdge>(libraryGraph)
-    const resultPath = pathFinder.find(root.id, simplified!.id).reverse()
+    const resultPath = pathFinder.find(problem.id, simplified!.id).reverse()
 
-    const problemView = document.getElementById('problem')! as HTMLTextAreaElement
-    const solutionView = document.getElementById('solution')! as EditableMathView
-    const stepListView = document.getElementById('steps')!
-
-    console.log(problemView)
-    problemView.addEventListener("change", () => {
-        // Parse input
-        console.log("Parsing")
-    })
-    solutionView.value = simplified!
-
-    console.log("Path length: " + resultPath.length)
-
-    resultPath.forEach(node => {
-        let view: GraphNodeView
-        if (node.data instanceof Argument) {
-            view = new ArgumentNodeView(node.data, view => {})
-        } else if (node.data instanceof Expression) {
-            view = new ExpressionNodeView(node.data, view => {})
-        } else throw new Error("Not implemented")
-
-        stepListView.appendChild(view)
-    })
-    
+    return resultPath.map(node => {
+        if (node.data instanceof Argument)
+            return node.data as Argument
+        else if (node.data instanceof Expression)
+            return node.data as Expression
+        else throw new Error("Not implemented")
+    });
 }

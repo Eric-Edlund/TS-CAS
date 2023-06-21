@@ -4,25 +4,32 @@
     <head>
         <title>Step By Step Solution</title>
         <meta charset="UTF-8">
-        <link rel="stylesheet" href="css/style.css">
+        <link rel="stylesheet" href="css/solver.css">
         <script>var exports = {};</script>
         <script async type="text/js" src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
         <script id="MathJax-script" type="text/js" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>  
         <script src="bundle.js"></script>
 
         <style>
-            body {
-                padding: 2ch;
+            editable-mathview {
+                background-color: green;
+                height: 100px;
+                width: 100px;
+            }
+            #steps {
+                background-color: green;
+                height: 100px;
+                width: 100px;
             }
         </style>
-
     </head>
+
     <body id="body" class="solve_in_steps">
 
         <h1>Solver</h1>
         <textarea id="problem"></textarea>
-        <editable-mathview id="solution"></editable-mathview>
         <div id="steps"></div>
+        <editable-mathview id="solution"></editable-mathview>
 
     </body>
 
