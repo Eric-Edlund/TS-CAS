@@ -51,11 +51,15 @@ export function loadSolverPage(): void {
     const pathFinder = path.nba<MathGraphNode, GraphEdge>(libraryGraph)
     const resultPath = pathFinder.find(root.id, simplified!.id).reverse()
 
-    const problemView = document.getElementById('problem')! as EditableMathView
+    const problemView = document.getElementById('problem')! as HTMLTextAreaElement
     const solutionView = document.getElementById('solution')! as EditableMathView
     const stepListView = document.getElementById('steps')!
 
-    problemView.value = root
+    console.log(problemView)
+    problemView.addEventListener("change", () => {
+        // Parse input
+        console.log("Parsing")
+    })
     solutionView.value = simplified!
 
     console.log("Path length: " + resultPath.length)

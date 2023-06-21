@@ -18,6 +18,10 @@ app.get('/input_parse_test_page', (req, res) => {
     res.sendFile('public/input_parse_test_page.html', {root: __dirname})
 })
 
+app.get('/solver', (req, res) => {
+    res.sendFile('public/solver.html', {root: __dirname})
+})
+
 app.listen(port, () => {            //server starts listening for any attempts from a client to connect at port: {port}
     console.log(`Now listening on port ${port}`); 
 });
