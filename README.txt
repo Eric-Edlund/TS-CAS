@@ -2,10 +2,17 @@ Jesus I hate compilers
 
 [Building]
 
-Run "npm build-typescript" from the project root.
+Run the "npm ____" tasks from the project root. They're listed
+in package.json.
 It will compile all the ts files into a bundle.js in the dist dir.
 
 Then you open the integrator.html file in a browser and it will load it.
+
+There are 3 webpack config files:
+- webpack.common.js (contains common elements)
+- webpack.dev.js (creates a dev bundle with dev stuff)
+- webpack.prod.js (creates a prod bundle with prod optimizations)
+
 
 [Testing]
 
@@ -39,7 +46,7 @@ else.
 [Other]
 
 I'm no javascript expert, but I think npm should get everything it needs from 
-package.json and resolve it's own dependancies.
+package.json and resolve it's own dependencies.
 
 Good luck.
 
