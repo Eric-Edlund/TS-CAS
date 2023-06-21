@@ -5,11 +5,13 @@ import { Exponent } from "../expressions/Exponent";
 import { Expression } from "../expressions/Expression";
 import { Fraction } from "../expressions/Fraction";
 import { Integer } from "../expressions/Integer";
+import { Integral } from "../expressions/Integral";
+import { Logarithm } from "../expressions/Logarithm";
 import { Product } from "../expressions/Product";
 import { Sum } from "../expressions/Sum";
 import { Variable } from "../expressions/Variable";
 import { assert } from "../util/assert";
-import { AtomContext, DivisionContext, EquationContext, ExpressionContext, Expression_partContext, ImplicitProductContext, ParenContext, PowerContext, ProductContext, RelopContext, SumContext, UnaryOnAtomContext, UnaryOnExpressionContext } from "./arithmeticParser";
+import { AtomContext, DivisionContext, EquationContext, ExpressionContext, ClosedContext, ImplicitProductContext, ParenContext, PowerContext, ProductContext, RelopContext, SumContext, UnaryOnExpressionContext, OpenContext, ClosedAtomContext, ClosedIsRight_ClosedContext, Right_ClosedIsOpenContext, Right_ClosedImplicitProductContext, IntegralContext, LogContext } from "./arithmeticParser";
 import arithmeticVisitor from "./arithmeticVisitor";
 
 /**
@@ -17,7 +19,7 @@ import arithmeticVisitor from "./arithmeticVisitor";
  */
 export class ExpressionVisitor extends arithmeticVisitor<Expression> {
 
-    private printChildren(ctx: Expression_partContext): void {
+    private printChildren(ctx: OpenContext): void {
         let result = ""
         for (const child of ctx.children!) {
             result += child.getText() + "  "
@@ -26,7 +28,7 @@ export class ExpressionVisitor extends arithmeticVisitor<Expression> {
     }
 
     visitExpression = (ctx: ExpressionContext): Expression => {
-        return this.visit(ctx.expression_part())
+        return this.visit(ctx.open())
     };
 
 	visitEquation = (ctx: EquationContext): Expression => {
@@ -34,6 +36,10 @@ export class ExpressionVisitor extends arithmeticVisitor<Expression> {
     };
 
     visitPower = (ctx: PowerContext): Expression => {
+        console.log("Power")
+        this.printChildren(ctx)
+        console.log(ctx._left.getText())
+        console.log(ctx._right.getText())
         return Exponent.of(
             this.visit(ctx._left),
             this.visit(ctx._right)
@@ -41,7 +47,7 @@ export class ExpressionVisitor extends arithmeticVisitor<Expression> {
     }
 
     visitParen = (ctx: ParenContext): Expression => {
-        return this.visit(ctx.expression_part())
+        return this.visit(ctx.open())
     }
 
     visitDivision = (ctx: DivisionContext): Expression => {
@@ -53,7 +59,7 @@ export class ExpressionVisitor extends arithmeticVisitor<Expression> {
 
     visitProduct = (ctx: ProductContext): Expression => {
         return Product.of([
-            ...ctx.expression_part_list().map(exp => this.visit(exp))
+            ...ctx.closed_list().map(exp => this.visit(exp))
         ])
     }
 
@@ -66,18 +72,41 @@ export class ExpressionVisitor extends arithmeticVisitor<Expression> {
         ])
     }
 
-    visitUnaryOnAtom = (ctx: UnaryOnAtomContext): Expression => {
-        const isPositive = ctx.MINUS_list.length % 2 == 0
-        if (isPositive)
-            return this.visit(ctx.atom())
-        return negative(this.visit(ctx.atom()))
+    visitRight_ClosedImplicitProduct = (ctx: Right_ClosedImplicitProductContext): Expression => {
+        console.log("Right closed implicit product of context")
+        this.printChildren(ctx)
+        return Product.of([
+            this.visit(ctx._left),
+            this.visit(ctx._right)
+        ])
     }
+
+    visitIntegral = (ctx: IntegralContext): Expression => {
+        return Integral.of(
+            this.visit(ctx._integrand),
+            Variable.of('x')
+        )
+    }
+
+    visitLog = (ctx: LogContext): Expression => {
+        return Logarithm.of(
+            this.visit(ctx._content),
+            ctx._base == undefined ? Integer.of(10) : this.visit(ctx._base)
+        )
+    }
+
+    // visitUnaryOnAtom = (ctx: UnaryOnAtomContext): Expression => {
+    //     const isPositive = ctx.MINUS_list.length % 2 == 0
+    //     if (isPositive)
+    //         return this.visit(ctx.atom())
+    //     return negative(this.visit(ctx.atom()))
+    // }
 
     visitUnaryOnExpression = (ctx: UnaryOnExpressionContext): Expression => {
         const isPositive = ctx.MINUS() == null
         if (isPositive)
-            return this.visit(ctx.expression_part())
-        return negative(this.visit(ctx.expression_part()))
+            return this.visit(ctx.closed())
+        return negative(this.visit(ctx.closed()))
     }
 
     visitSum = (ctx: SumContext): Expression => {
@@ -139,6 +168,18 @@ export class ExpressionVisitor extends arithmeticVisitor<Expression> {
             throw new Error("Not implemented");
         }
     };
+
+    visitClosedAtom = (ctx: ClosedAtomContext): Expression => {
+        return this.visit(ctx.atom())
+    }
+
+    visitClosedIsRight_Closed = (ctx: ClosedIsRight_ClosedContext): Expression => {
+        return this.visit(ctx.closed())
+    }
+
+    visitRight_ClosedIsOpen = (ctx: Right_ClosedIsOpenContext): Expression => {
+        return this.visit(ctx.right_closed())
+    }
 
 	visitRelop = (ctx: RelopContext): Expression => {
         throw new Error("Shouldn't happen with this visitor impl")

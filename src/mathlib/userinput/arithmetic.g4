@@ -33,19 +33,38 @@ equation
    ;
 
 expression
-   : expression_part
+   : open
    ;
 
-expression_part
-   :  left=expression_part POW right=expression_part #Power
-   |  left=expression_part DIV right=expression_part #Division
-   |  expression_part  TIMES  expression_part #Product
-   |  left=atom right=atom #ImplicitProduct
-   |  left=atom (LPAREN expression_part RPAREN) #ImplicitProduct
-   |  (PLUS | MINUS) expression_part #UnaryOnExpression
-   |  (PLUS | MINUS)* atom #UnaryOnAtom
-   |  expression_part  (PLUS | MINUS) expression_part #Sum
-   |  LPAREN expression_part RPAREN #Paren
+// Stuff like 
+// (a + b) and b that can be multiplied
+closed
+   :  LPAREN open RPAREN #Paren
+   |  atom #ClosedAtom
+   |  left=closed DIV right=closed #Division
+   |  left=closed POW right=closed #Power
+   |  left=closed TIMES right=closed #Product
+   |  left=closed right=closed #ImplicitProduct
+   |  LOG base=closed? content=closed #Log
+   ;
+
+// Stuff that can be multiplied if there is a
+// closed expression to the right
+// Like -a and -(b^2)
+// But not a + b
+right_closed
+   :  closed #ClosedIsRight_Closed
+   |  (PLUS | MINUS) closed #UnaryOnExpression
+   |  left=right_closed right=closed #Right_ClosedImplicitProduct
+   ;
+
+// Expressions that can't be multiplied implicitly
+// a + b
+open
+   :  right_closed #Right_ClosedIsOpen
+   //|  (PLUS | MINUS)* atom #UnaryOnAtom
+   |  left=open (PLUS | MINUS) right=right_closed #Sum
+   |  INT integrand=closed #Integral
    ;
 
 atom
@@ -59,11 +78,7 @@ relop
    //| LT
    ;
 
-
-VARIABLE
-   : 'a' .. 'z' | 'A' .. 'Z'
-   ;
-
+// Lexer
 
 //The NUMBER part gets its potential sign from "(PLUS | MINUS)* atom" in the expression rule
 SCIENTIFIC_NUMBER
@@ -82,6 +97,10 @@ fragment UNSIGNED_INTEGER
 fragment E
    : 'E' | 'e'
    ;
+
+fragment L: 'l' | 'L';
+fragment O: 'o' | 'O';
+fragment G: 'g' | 'G';
 
 
 fragment SIGN
@@ -143,6 +162,15 @@ POW
    : '^'
    ;
 
+INT
+   : ('i' | 'I') ('n' | 'N') ('t' | 'T')
+   ;
+
+LOG: L O G;
+
+VARIABLE
+   : 'a' .. 'z' | 'A' .. 'Z'
+   ;
 
 WS
    : [ \r\n\t] + -> skip

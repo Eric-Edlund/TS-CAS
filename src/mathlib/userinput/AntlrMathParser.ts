@@ -2,10 +2,10 @@ import antlr4, { ParserRuleContext } from "antlr4"
 import { Expression } from "../expressions/Expression"
 const { CommonTokenStream, CharStream } = antlr4
 import arithmeticLexer from "./arithmeticLexer"
-import arithmeticParser, { ExpressionContext, Expression_partContext } from "./arithmeticParser"
+import arithmeticParser, { ExpressionContext, OpenContext } from "./arithmeticParser"
 import { ExpressionVisitor } from "./MathVisitorImpl"
 import { PrintVisitor } from "./PrintVisitor"
-import { SumFlattener } from "./SumFlattener"
+import { Flattener } from "./Flattener"
 
 /**
  * Parses the given input string to an expression.
@@ -23,7 +23,7 @@ export function parseExpression(input: string): Expression {
 
     
 
-    tree.accept<Expression_partContext>(new SumFlattener())
+    tree.accept<OpenContext>(new Flattener())
 
     // Print debug info
     //tree.accept(new PrintVisitor())
