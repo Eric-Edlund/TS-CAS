@@ -5,6 +5,7 @@ import { Exponent, ExponentType } from "../expressions/Exponent"
 import { Expression } from "../expressions/Expression"
 import { Fraction, FractionType } from "../expressions/Fraction"
 import { Integer } from "../expressions/Integer"
+import { Integral, IntegralType } from "../expressions/Integral"
 import { Logarithm, LogType } from "../expressions/Logarithm"
 import { Product, ProductType } from "../expressions/Product"
 import { Sum, SumType } from "../expressions/Sum"
@@ -13,15 +14,32 @@ import { Relationship } from "../Relationship"
 import { setOf } from "../util/ThingsThatShouldBeInTheStdLib"
 
 /**
- * Gets all equivalents of the given expression
- * checking it's children's equivalents.
+ * Searches for equivalents of the given
+ * expression with a search depth of 1. 
+ * It does this by reflecting the expression's
+ * type, then disbatching to a type specific equivalents
+ * function. 
  * 
- * (a + a) + (b + b)
- * -> (2a) + (b + b) with inference a + a = 2a
- * @param exp 
- * @param directEquivalents Function that will produce equivalent expressions
- *        without recursion.
- * @returns Array of inferences to equivalent expressions.
+ * The specific functions use the given directEquivalents
+ * function to swap out the component values of their 
+ * expression with equivalents.
+ * 
+ * Ex)
+ *  Given the expression
+ *         (a + a) + (b * b)
+ *  we disbatch to the sum specific function (because
+ *  the outer most operation is addition). This disbatch
+ *  function uses the directEquivalents function to swap out 
+ *  each of the sum's terms individually, yielding results
+ *  like:
+ *      -> (2a) + (b * b) with inference a + a = 2a
+ *      -> (a + a) + b^2
+ * 
+ * @param exp The expression to search for equivalents.
+ * @param directEquivalents Function that takes expressions and finds equivalents.
+ *              This function only needs to look for top level equivalents- recursion
+ *              is handled by the equiv function.
+ * @returns Array of arguments connecting the given expression to equivalents.
  */
  export function equiv(exp: Expression, directEquivalents: (e: Expression) => Set<Argument>): Argument[] {
     if (exp instanceof Variable || exp instanceof Integer) return []
@@ -32,6 +50,7 @@ import { setOf } from "../util/ThingsThatShouldBeInTheStdLib"
         case FractionType: return fractionEquiv(exp as Fraction, directEquivalents)
         case DerivativeType: return derivativeEquiv(exp as Derivative, directEquivalents)
         case LogType: return logarithmEquiv(exp as Logarithm, directEquivalents)
+        case IntegralType: return integralEquiv(exp as Integral, directEquivalents)
         default: throw new Error("Not implemented for " + exp.class)
     }
 }
@@ -203,6 +222,32 @@ function logarithmEquiv(exp: Logarithm, directEquivalents: (e: Expression) => Se
             n: exp,
             r: Relationship.Equal,
             n1: Logarithm.of(exp.exp, alt.claim.n1 as Expression),
+        }, alt.argument))
+    })
+
+    return [...equivalents]
+}
+
+function integralEquiv(exp: Integral, directEquivalents: (e: Expression) => Set<Argument>): Argument[] {
+    const equivalents: Set<Argument> = new Set()
+
+    // Add top level equivalents
+    directEquivalents(exp).forEach(arg => {
+        equivalents.add(arg)
+    })
+
+    equiv(exp.integrand, directEquivalents).forEach(alt => {
+        equivalents.add(new Argument(setOf(exp), {
+            n: exp, 
+            r: Relationship.Equal,
+            n1: Integral.of(alt.claim.n1 as Expression, exp.relativeTo)
+        }, alt.argument))
+    })
+    equiv(exp.relativeTo, directEquivalents).forEach(alt => {
+        equivalents.add(new Argument(setOf(exp), {
+            n: exp,
+            r: Relationship.Equal,
+            n1: Integral.of(exp.integrand, alt.claim.n1 as Expression),
         }, alt.argument))
     })
 
