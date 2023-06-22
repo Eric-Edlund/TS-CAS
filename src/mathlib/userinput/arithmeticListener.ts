@@ -7,6 +7,7 @@ import { EquationContext } from "./arithmeticParser";
 import { ExpressionContext } from "./arithmeticParser";
 import { ImplicitProductContext } from "./arithmeticParser";
 import { LogContext } from "./arithmeticParser";
+import { IntegralContext } from "./arithmeticParser";
 import { ProductContext } from "./arithmeticParser";
 import { DivisionContext } from "./arithmeticParser";
 import { ClosedAtomContext } from "./arithmeticParser";
@@ -16,7 +17,6 @@ import { UnaryOnExpressionContext } from "./arithmeticParser";
 import { ClosedIsRight_ClosedContext } from "./arithmeticParser";
 import { Right_ClosedImplicitProductContext } from "./arithmeticParser";
 import { Right_ClosedIsOpenContext } from "./arithmeticParser";
-import { IntegralContext } from "./arithmeticParser";
 import { SumContext } from "./arithmeticParser";
 import { AtomContext } from "./arithmeticParser";
 import { RelopContext } from "./arithmeticParser";
@@ -71,6 +71,18 @@ export default class arithmeticListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitLog?: (ctx: LogContext) => void;
+	/**
+	 * Enter a parse tree produced by the `Integral`
+	 * labeled alternative in `arithmeticParser.closed`.
+	 * @param ctx the parse tree
+	 */
+	enterIntegral?: (ctx: IntegralContext) => void;
+	/**
+	 * Exit a parse tree produced by the `Integral`
+	 * labeled alternative in `arithmeticParser.closed`.
+	 * @param ctx the parse tree
+	 */
+	exitIntegral?: (ctx: IntegralContext) => void;
 	/**
 	 * Enter a parse tree produced by the `Product`
 	 * labeled alternative in `arithmeticParser.closed`.
@@ -179,18 +191,6 @@ export default class arithmeticListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitRight_ClosedIsOpen?: (ctx: Right_ClosedIsOpenContext) => void;
-	/**
-	 * Enter a parse tree produced by the `Integral`
-	 * labeled alternative in `arithmeticParser.open`.
-	 * @param ctx the parse tree
-	 */
-	enterIntegral?: (ctx: IntegralContext) => void;
-	/**
-	 * Exit a parse tree produced by the `Integral`
-	 * labeled alternative in `arithmeticParser.open`.
-	 * @param ctx the parse tree
-	 */
-	exitIntegral?: (ctx: IntegralContext) => void;
 	/**
 	 * Enter a parse tree produced by the `Sum`
 	 * labeled alternative in `arithmeticParser.open`.

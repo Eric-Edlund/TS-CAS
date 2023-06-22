@@ -46,6 +46,7 @@ closed
    |  left=closed TIMES right=closed #Product
    |  left=closed right=closed #ImplicitProduct
    |  LOG base=closed? content=closed #Log
+   |  INT integrand=closed #Integral
    ;
 
 // Stuff that can be multiplied if there is a
@@ -64,7 +65,6 @@ open
    :  right_closed #Right_ClosedIsOpen
    //|  (PLUS | MINUS)* atom #UnaryOnAtom
    |  left=open (PLUS | MINUS) right=right_closed #Sum
-   |  INT integrand=closed #Integral
    ;
 
 atom

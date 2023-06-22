@@ -176,9 +176,16 @@ export class ExpressionVisitor extends arithmeticVisitor<Expression> {
     visitClosedIsRight_Closed = (ctx: ClosedIsRight_ClosedContext): Expression => {
         return this.visit(ctx.closed())
     }
+    visitClosedIsLeft_Closed = (ctx: ClosedIsLeft_ClosedContext): Expression => {
+        return this.visit(ctx.closed())
+    }
 
     visitRight_ClosedIsOpen = (ctx: Right_ClosedIsOpenContext): Expression => {
         return this.visit(ctx.right_closed())
+    }
+
+    visitLeft_ClosedIsOpen = (ctx: Left_ClosedIsOpenContext): Expression => {
+        return this.visit(ctx.left_closed())
     }
 
 	visitRelop = (ctx: RelopContext): Expression => {

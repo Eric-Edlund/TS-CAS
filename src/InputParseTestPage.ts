@@ -80,6 +80,9 @@ export function loadInputParseTestPage() {
     }
 
     // Expression strings to test
+    expression("int(x)dx+c")
+    expression("a/bintx")
+
     expression("a^b+c", "The +c shouldn't be in the exponent")
     expression("a+b^c")
     expression ("(a+b)^c")
@@ -107,6 +110,18 @@ export function loadInputParseTestPage() {
     expression("logx")
     expression("log(x)")
 
+
+    page.append(p("In these tests, an unambigious expression is written in the " +
+        " source code. It is then converted to an unambigious string " +
+        "representation, and then parsed back into an expression. " +
+        "The goal is that this process preserves the expression. This " +
+        "requires 1) expression -> string is unambigious and accurate and 2) " + 
+        "the parser is working correctly."
+        ))
+    page.append(p("The first column is assumed to be correct, the middle collumn has " + 
+        "the automatically generated string version of the first column, " +
+        "and the last column contains the expression parsed from the second column."
+        ))
     twoWay(sum(x, y, a, b, c))
     twoWay(sum(x, y, negative(a), b, c))
     twoWay(sum(x, y, negative(a), negative(b), c))

@@ -7,6 +7,7 @@ import { EquationContext } from "./arithmeticParser";
 import { ExpressionContext } from "./arithmeticParser";
 import { ImplicitProductContext } from "./arithmeticParser";
 import { LogContext } from "./arithmeticParser";
+import { IntegralContext } from "./arithmeticParser";
 import { ProductContext } from "./arithmeticParser";
 import { DivisionContext } from "./arithmeticParser";
 import { ClosedAtomContext } from "./arithmeticParser";
@@ -16,7 +17,6 @@ import { UnaryOnExpressionContext } from "./arithmeticParser";
 import { ClosedIsRight_ClosedContext } from "./arithmeticParser";
 import { Right_ClosedImplicitProductContext } from "./arithmeticParser";
 import { Right_ClosedIsOpenContext } from "./arithmeticParser";
-import { IntegralContext } from "./arithmeticParser";
 import { SumContext } from "./arithmeticParser";
 import { AtomContext } from "./arithmeticParser";
 import { RelopContext } from "./arithmeticParser";
@@ -56,6 +56,13 @@ export default class arithmeticVisitor<Result> extends ParseTreeVisitor<Result> 
 	 * @return the visitor result
 	 */
 	visitLog?: (ctx: LogContext) => Result;
+	/**
+	 * Visit a parse tree produced by the `Integral`
+	 * labeled alternative in `arithmeticParser.closed`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitIntegral?: (ctx: IntegralContext) => Result;
 	/**
 	 * Visit a parse tree produced by the `Product`
 	 * labeled alternative in `arithmeticParser.closed`.
@@ -119,13 +126,6 @@ export default class arithmeticVisitor<Result> extends ParseTreeVisitor<Result> 
 	 * @return the visitor result
 	 */
 	visitRight_ClosedIsOpen?: (ctx: Right_ClosedIsOpenContext) => Result;
-	/**
-	 * Visit a parse tree produced by the `Integral`
-	 * labeled alternative in `arithmeticParser.open`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitIntegral?: (ctx: IntegralContext) => Result;
 	/**
 	 * Visit a parse tree produced by the `Sum`
 	 * labeled alternative in `arithmeticParser.open`.

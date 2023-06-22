@@ -24,9 +24,11 @@ export function loadSolverPage(): void {
         try {
             exp = parseExpression(problemView.value)
         } catch (e) {
+            stepListView.style.opacity = "0.6"
             return
         }
         // We were able to parse the input
+        stepListView.style.opacity = "1"
 
         // Clear the previous result
         while (stepListView.children.length > 0) {
