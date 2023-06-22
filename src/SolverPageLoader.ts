@@ -18,6 +18,8 @@ export function loadSolverPage(): void {
     const solutionView = document.getElementById('solution')! as EditableMathView
     const stepListView = document.getElementById('steps')!
 
+    problemView.focus()
+
     problemView.addEventListener("keyup", () => {
         // Parse input
         let exp: Expression
