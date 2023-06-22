@@ -11,7 +11,7 @@ import { Product } from "../expressions/Product";
 import { Sum } from "../expressions/Sum";
 import { Variable } from "../expressions/Variable";
 import { assert } from "../util/assert";
-import { AtomContext, DivisionContext, EquationContext, ExpressionContext, ClosedContext, ImplicitProductContext, ParenContext, PowerContext, ProductContext, RelopContext, SumContext, UnaryOnExpressionContext, OpenContext, ClosedAtomContext, ClosedIsRight_ClosedContext, Right_ClosedIsOpenContext, Right_ClosedImplicitProductContext, IntegralContext, LogContext } from "./arithmeticParser";
+import { AtomContext, DivisionContext, EquationContext, ExpressionContext, ClosedContext, ParenContext, PowerContext, ProductContext, RelopContext, SumContext, UnaryOnExpressionContext, OpenContext, ClosedAtomContext, ClosedIsRight_ClosedContext, Right_ClosedIsOpenContext, Right_ClosedImplicitProductContext, IntegralContext, LogContext } from "./arithmeticParser";
 import arithmeticVisitor from "./arithmeticVisitor";
 
 /**
@@ -60,15 +60,6 @@ export class ExpressionVisitor extends arithmeticVisitor<Expression> {
     visitProduct = (ctx: ProductContext): Expression => {
         return Product.of([
             ...ctx.closed_list().map(exp => this.visit(exp))
-        ])
-    }
-
-    visitImplicitProduct = (ctx: ImplicitProductContext): Expression => {
-        //console.log("Implicit product of context")
-        //this.printChildren(ctx)
-        return Product.of([
-            this.visit(ctx._left),
-            this.visit(ctx._right)
         ])
     }
 
@@ -176,16 +167,9 @@ export class ExpressionVisitor extends arithmeticVisitor<Expression> {
     visitClosedIsRight_Closed = (ctx: ClosedIsRight_ClosedContext): Expression => {
         return this.visit(ctx.closed())
     }
-    visitClosedIsLeft_Closed = (ctx: ClosedIsLeft_ClosedContext): Expression => {
-        return this.visit(ctx.closed())
-    }
 
     visitRight_ClosedIsOpen = (ctx: Right_ClosedIsOpenContext): Expression => {
         return this.visit(ctx.right_closed())
-    }
-
-    visitLeft_ClosedIsOpen = (ctx: Left_ClosedIsOpenContext): Expression => {
-        return this.visit(ctx.left_closed())
     }
 
 	visitRelop = (ctx: RelopContext): Expression => {

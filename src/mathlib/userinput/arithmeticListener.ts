@@ -5,7 +5,6 @@ import {ParseTreeListener} from "antlr4";
 
 import { EquationContext } from "./arithmeticParser";
 import { ExpressionContext } from "./arithmeticParser";
-import { ImplicitProductContext } from "./arithmeticParser";
 import { LogContext } from "./arithmeticParser";
 import { IntegralContext } from "./arithmeticParser";
 import { ProductContext } from "./arithmeticParser";
@@ -47,18 +46,6 @@ export default class arithmeticListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitExpression?: (ctx: ExpressionContext) => void;
-	/**
-	 * Enter a parse tree produced by the `ImplicitProduct`
-	 * labeled alternative in `arithmeticParser.closed`.
-	 * @param ctx the parse tree
-	 */
-	enterImplicitProduct?: (ctx: ImplicitProductContext) => void;
-	/**
-	 * Exit a parse tree produced by the `ImplicitProduct`
-	 * labeled alternative in `arithmeticParser.closed`.
-	 * @param ctx the parse tree
-	 */
-	exitImplicitProduct?: (ctx: ImplicitProductContext) => void;
 	/**
 	 * Enter a parse tree produced by the `Log`
 	 * labeled alternative in `arithmeticParser.closed`.

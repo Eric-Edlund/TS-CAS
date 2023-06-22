@@ -5,7 +5,6 @@ import {ParseTreeVisitor} from 'antlr4';
 
 import { EquationContext } from "./arithmeticParser";
 import { ExpressionContext } from "./arithmeticParser";
-import { ImplicitProductContext } from "./arithmeticParser";
 import { LogContext } from "./arithmeticParser";
 import { IntegralContext } from "./arithmeticParser";
 import { ProductContext } from "./arithmeticParser";
@@ -42,13 +41,6 @@ export default class arithmeticVisitor<Result> extends ParseTreeVisitor<Result> 
 	 * @return the visitor result
 	 */
 	visitExpression?: (ctx: ExpressionContext) => Result;
-	/**
-	 * Visit a parse tree produced by the `ImplicitProduct`
-	 * labeled alternative in `arithmeticParser.closed`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitImplicitProduct?: (ctx: ImplicitProductContext) => Result;
 	/**
 	 * Visit a parse tree produced by the `Log`
 	 * labeled alternative in `arithmeticParser.closed`.

@@ -43,8 +43,7 @@ closed
    |  atom #ClosedAtom
    |  left=closed DIV right=closed #Division
    |  left=closed POW right=closed #Power
-   |  left=closed TIMES right=closed #Product
-   |  left=closed right=closed #ImplicitProduct
+   |  left=closed TIMES? right=closed #Product
    |  LOG base=closed? content=closed #Log
    |  INT integrand=closed #Integral
    ;

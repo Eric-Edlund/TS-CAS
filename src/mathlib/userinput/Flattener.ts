@@ -1,6 +1,6 @@
 import { ParserRuleContext, ParseTree, TerminalNode } from "antlr4";
 import { remove } from "../ConvenientExpressions";
-import { ClosedContext, ExpressionContext, ImplicitProductContext, OpenContext, ProductContext, SumContext, UnaryOnExpressionContext } from "./arithmeticParser";
+import { ClosedContext, ExpressionContext, OpenContext, ProductContext, SumContext, UnaryOnExpressionContext } from "./arithmeticParser";
 import arithmeticVisitor from "./arithmeticVisitor";
 
 
@@ -105,25 +105,16 @@ export class Flattener extends arithmeticVisitor<ClosedContext> {
         return flattened
     }
 
-    visitImplicitProduct = (ctx: ImplicitProductContext): ClosedContext => {
-        const flattened = this.flattenProduct(ctx)
-        for (const child of flattened.children!) {
-            this.visit(child)
-        }
-        return flattened
-    }
-
-    private flattenProduct(ctx: ProductContext | ImplicitProductContext): ClosedContext {
+    private flattenProduct(ctx: ProductContext): ClosedContext {
         //console.log("Flattening product " + ctx.getText() + " to")
 
         function instanceOfProduct(child: ParserRuleContext): boolean {
-            return child instanceof ProductContext
-                    || child instanceof ImplicitProductContext;
+            return child instanceof ProductContext;
         }
 
         // Check if children are sums
         // Reach down and take their children
-        function takeChildren(child: ProductContext | ImplicitProductContext) {
+        function takeChildren(child: ProductContext) {
             remove(ctx.children!, child)
             
             if (instanceOfProduct(child._right)) {
@@ -134,7 +125,7 @@ export class Flattener extends arithmeticVisitor<ClosedContext> {
             }
             
             // Move the operator up
-            if (child instanceof ProductContext) {
+            if (child.TIMES() != null) {
                 child.TIMES().parentCtx = ctx
                 ctx.children!.unshift(child.TIMES())
             }
