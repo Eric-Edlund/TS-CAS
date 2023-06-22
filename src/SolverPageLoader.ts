@@ -20,11 +20,24 @@ export function loadSolverPage(): void {
 
     problemView.addEventListener("keyup", () => {
         // Parse input
-        const exp = parseExpression(problemView.value)
+        let exp: Expression
+        try {
+            exp = parseExpression(problemView.value)
+        } catch (e) {
+            return
+        }
+        // We were able to parse the input
+
+        // Clear the previous result
+        while (stepListView.children.length > 0) {
+            stepListView.removeChild(stepListView.children[0])
+        }
+        
+
         const steps = getSolution(exp)
 
+        // Display new result
         solutionView.value = steps[steps.length - 1] as Expression
-
         steps.forEach(step => {
             let view: GraphNodeView
             if (step instanceof Argument) {
@@ -56,7 +69,7 @@ function getSolution(problem: Expression): MathGraphNode[] {
     for (const node of graph.getNodes()) {
         if (node instanceof Expression)
             if (deriver.isSimplified(node)) 
-            simplified = node as Expression
+                simplified = node as Expression
     }
 
     // Copy the resulting graph into a library implementation of graph
