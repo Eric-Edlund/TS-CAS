@@ -14,19 +14,26 @@ import { parseExpression } from "./mathlib/userinput/AntlrMathParser"
 
 
 export function loadSolverPage(): void {
-    const problemView = document.getElementById('problem')! as HTMLTextAreaElement
+    const inputView = document.getElementById('problem')! as HTMLTextAreaElement
+    const problemViewDiv = document.getElementById('expressionViewDiv') as HTMLDivElement
     const solutionView = document.getElementById('solution')! as EditableMathView
     const stepListView = document.getElementById('steps')!
 
-    problemView.focus()
+    // Populate ui
+    const problemView = new EditableMathView()
+    problemViewDiv.appendChild(problemView)
 
-    problemView.addEventListener("keyup", () => {
+    inputView.focus()
+
+    inputView.addEventListener("keyup", () => {
         // Parse input
         let exp: Expression
         try {
-            exp = parseExpression(problemView.value)
+            exp = parseExpression(inputView.value)
+            problemView.value = exp
         } catch (e) {
             stepListView.style.opacity = "0.6"
+            problemView.value = null
             return
         }
         // We were able to parse the input
@@ -36,7 +43,6 @@ export function loadSolverPage(): void {
         while (stepListView.children.length > 0) {
             stepListView.removeChild(stepListView.children[0])
         }
-        
 
         const steps = getSolution(exp)
 
@@ -78,11 +84,17 @@ function getSolution(problem: Expression): MathGraphNode[] {
 
     // Copy the resulting graph into a library implementation of graph
     const libraryGraph = createGraph<MathGraphNode, GraphEdge>()
-    graph.getNodes().forEach(n => libraryGraph.addNode(n.id, n))
+    graph.getNodes().forEach(n => {
+        libraryGraph.addNode(n.id, n)
+    })
 
     // I assume that library graph isn't directed
     for (const edge of GraphMinipulator.dropSymmetric(graph.getEdges())) {
-        libraryGraph.addLink(edge.n.id, edge.n1.id)
+        if (edge.e instanceof Argument) {
+            libraryGraph.addLink(edge.n.id, edge.e.id)
+            libraryGraph.addLink(edge.e.id, edge.n1.id)
+        }
+            
         // if (edge.n instanceof Expression && edge.n1 instanceof Expression)
         //     console.log(`edge ${edge.n} AND ${edge.n1}`)
     }

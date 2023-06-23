@@ -21,6 +21,7 @@ export class ExpressionNodeView extends GraphNodeView {
     }
 
     public connectedCallback(): void {
+        this.classList.add("expression")
     }
 
     protected readonly node: Expression;

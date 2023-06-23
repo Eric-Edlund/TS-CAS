@@ -13,6 +13,7 @@ import { GraphNodeView } from "./GraphNodeView";
 
     public connectedCallback(): void {
         this.textContent = this.argument.argument
+        this.classList.add("argument")
     }
 
     private readonly argument: Argument;
