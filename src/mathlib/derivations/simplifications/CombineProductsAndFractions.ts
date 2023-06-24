@@ -43,7 +43,7 @@ export class CombineProductsAndFractions extends NoContextExpressionSimplificati
             const remainingFractionFactors = product.factors.filter(f => f instanceof Fraction)
             remove(remainingFractionFactors, firstFraction)
             
-            assert(remainingFractionFactors.length > 0, exp.toString())
+            assert(remainingFractionFactors.length > 0)
 
             result = productOf(
                 Fraction.of(
@@ -53,8 +53,6 @@ export class CombineProductsAndFractions extends NoContextExpressionSimplificati
                 ...remainingFractionFactors
             )
         }
-
-        console.log(exp.toString() + " -> " + result.toString())
 
         return setOf(new Argument(setOf(exp), {
             n: exp,
