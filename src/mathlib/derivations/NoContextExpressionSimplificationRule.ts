@@ -11,7 +11,11 @@ import { assert } from "../util/assert";
  * These rules are also contextless: they're only given the expression,
  * no other information about the problem.
  * 
- * All of these rules need to converge to a simplified answer.
+ * All of these rules need to converge to a simplified answer. They can't
+ * form loops. Thinking about this, there are two simplified forms to 
+ * converge to:
+ *  - Factored form c(a+b)
+ *  - Polynomial form ac + bc
  */
 export abstract class NoContextExpressionSimplificationRule {
     /**

@@ -12,6 +12,7 @@ import { CombineCommonFactorsMultiplication } from "./simplifications/CombineCom
 import { CombineCommonTermsAddition } from "./simplifications/CombineCommonTermsAddition"
 import { CombineIntegerFactors } from "./simplifications/CombineIntegerFactors"
 import { CombineProductsAndFractions } from "./simplifications/CombineProductsAndFractions"
+import { DistributiveProperty } from "./simplifications/DistributiveProperty"
 import { DivideFractions } from "./simplifications/DivideFractions"
 import { DivisionIdentity } from "./simplifications/DivisionIdentity"
 import { EvaluateSums } from "./simplifications/EvaluateSums"
@@ -81,4 +82,5 @@ export const simplificationOrder: NoContextExpressionSimplificationRule[][] = [
     evaluativeRules,
     combinatoricRules,
     remainingNoContextSimplificationRules,
+    [new DistributiveProperty()],
 ]
