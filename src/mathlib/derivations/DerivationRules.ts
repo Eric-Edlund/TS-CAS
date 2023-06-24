@@ -11,6 +11,7 @@ import { CancelNegatives } from "./simplifications/CancelNegatives"
 import { CombineCommonFactorsMultiplication } from "./simplifications/CombineCommonFactorsMultiplication"
 import { CombineCommonTermsAddition } from "./simplifications/CombineCommonTermsAddition"
 import { CombineIntegerFactors } from "./simplifications/CombineIntegerFactors"
+import { CombineProductsAndFractions } from "./simplifications/CombineProductsAndFractions"
 import { DivideFractions } from "./simplifications/DivideFractions"
 import { DivisionIdentity } from "./simplifications/DivisionIdentity"
 import { EvaluateSums } from "./simplifications/EvaluateSums"
@@ -46,6 +47,7 @@ const combinatoricRules = [
     new CombineCommonFactorsMultiplication(),
     new MultiplyExponentPowers(),
     new SubtractExponentsOnFractions(),
+    new CombineProductsAndFractions(),
 ]
 
 const remainingNoContextSimplificationRules: NoContextExpressionSimplificationRule[] = [
