@@ -1,7 +1,9 @@
 import { assert } from "../util/assert";
+import { Exponent } from "./Exponent";
 import { Expression } from "./Expression";
 import { Integer, IntegerType } from "./Integer";
 import { SumType } from "./Sum";
+import { Variable } from "./Variable";
 
 /**
  * A mathematical product with 2 or more factors.
@@ -191,6 +193,19 @@ export function factorOrder(a: Expression, b: Expression): number {
     if (a instanceof Integer && b instanceof Integer) return 0
     if (a instanceof Integer) {
         return aFirst
+    }
+
+    // Alphabetical
+    const symbA: string | null = a instanceof Variable ? a.symbol
+                        : a instanceof Exponent ? 
+                        a.base instanceof Variable ? a.base.symbol : null : null
+
+    const symbB: string | null = b instanceof Variable ? b.symbol
+                        : b instanceof Exponent ? 
+                        b.base instanceof Variable ? b.base.symbol : null : null
+
+    if (symbA != null && symbB != null) {
+        return symbA > symbB ? aFirst : aAfter
     }
     
     return 0
