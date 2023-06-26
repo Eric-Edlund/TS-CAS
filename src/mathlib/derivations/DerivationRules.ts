@@ -6,6 +6,7 @@ import { QuotientRule } from "./calculus/QuotientRule"
 import { USubstitution } from "./calculus/USubstitution"
 import { NoContextExpressionSimplificationRule } from "./NoContextExpressionSimplificationRule"
 import { AdditiveIdentity } from "./simplifications/AdditiveIdentity"
+import { AnythingTimesZero } from "./simplifications/AnythingTimesZero"
 import { AssociativePropertyOfProductsAndSums } from "./simplifications/AssociativePropertyOfProductsAndSums"
 import { CancelNegatives } from "./simplifications/CancelNegatives"
 import { CombineCommonFactorsMultiplication } from "./simplifications/CombineCommonFactorsMultiplication"
@@ -73,6 +74,7 @@ const remainingNoContextSimplificationRules: NoContextExpressionSimplificationRu
  */
 export const simplificationOrder: NoContextExpressionSimplificationRule[][] = [
     // Identity rules first
+    [new AnythingTimesZero()],
     [new ExponentToZero()],
     [new MultiplicativeIdentity()],
     [new ExponentialIdentity()],
