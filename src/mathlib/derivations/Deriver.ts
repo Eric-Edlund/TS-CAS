@@ -1,4 +1,5 @@
 import { Argument } from "../Argument";
+import { v } from "../ConvenientExpressions";
 import { Expression } from "../expressions/Expression";
 import { GivenEdge, Graph } from "../Graph";
 import { GraphMinipulator } from "../GraphMinipulator";
@@ -32,6 +33,13 @@ export class Deriver {
     public expand(): void {
         // Simplify all the expressions using the contextless simplifying rules
         // Do this until there's nothing more to simplify
+        this.simplifyNoContext()
+        this.simplifyNoContext()
+        this.simplifyNoContext()
+        this.simplifyNoContext()
+        this.simplifyNoContext()
+        this.simplifyNoContext()
+        this.simplifyNoContext()
         this.simplifyNoContext()
 
         //this.algebraicExpansion()
@@ -71,7 +79,7 @@ export class Deriver {
             this.notSimplifiable.add(e)
         })
 
-        if (shouldDoAgain) this.simplifyNoContext()
+        //if (shouldDoAgain) this.simplifyNoContext()
     }
 
     /**
