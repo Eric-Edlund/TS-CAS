@@ -8,6 +8,7 @@ import { Variable } from "./expressions/Variable";
 import { Argument } from "./Argument";
 import { Relationship } from "./Relationship";
 import { assert } from "./util/assert";
+import { Exponent } from "./expressions/Exponent";
 
 export function fraction(num: Expression, den: Expression): Fraction {
     return Fraction.of(num, den)
@@ -132,6 +133,16 @@ export function sumOrNot(...terms: Expression[]): Expression {
 export function orderedProduct(...factors: Expression[]): Product {
     factors.sort(factorOrder)
     return product(...factors)
+}
+
+/**
+ * Convenience wrapper function for Exponent.of
+ * @param base 
+ * @param power 
+ * @returns 
+ */
+export function pow(base: Expression, power: Expression): Exponent {
+    return Exponent.of(base, power)
 }
 
 /**

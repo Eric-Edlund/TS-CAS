@@ -1,3 +1,4 @@
+import { max } from "mathjs";
 import { Argument } from "../Argument";
 import { v } from "../ConvenientExpressions";
 import { Expression } from "../expressions/Expression";
@@ -21,80 +22,53 @@ export class Deriver {
      */
     public constructor(graph: Graph) {
         this.graph = graph
-        this.simplifiedInIsolation = new Set()
-        this.notSimplifiable = new Set()
+        this.simplified = new Set()
     }
 
     /**
      * Expands the graph arbitrarily.
      * This function is still poorly defined,
      * very experemental.
+     * @param maxDepth The maximum number of iterations the
+     *      deriver will do before returning. Non-negative.
      */
-    public expand(): void {
+    public expand(maxDepth: number | null = null): void {
         // Simplify all the expressions using the contextless simplifying rules
         // Do this until there's nothing more to simplify
-        this.simplifyNoContext()
-        this.simplifyNoContext()
-        this.simplifyNoContext()
-        this.simplifyNoContext()
-        this.simplifyNoContext()
-        this.simplifyNoContext()
-        this.simplifyNoContext()
-        this.simplifyNoContext()
-        this.simplifyNoContext()
-        this.simplifyNoContext()
-        this.simplifyNoContext()
-        this.simplifyNoContext()
-        this.simplifyNoContext()
-        this.simplifyNoContext()
-        this.simplifyNoContext()
-        this.simplifyNoContext()
-        this.simplifyNoContext()
-        this.simplifyNoContext()
-        this.simplifyNoContext()
-        this.simplifyNoContext()
-        this.simplifyNoContext()
-        this.simplifyNoContext()
-        this.simplifyNoContext()
-        this.simplifyNoContext()
-        this.simplifyNoContext()
-        this.simplifyNoContext()
-        this.simplifyNoContext()
-        this.simplifyNoContext()
-        this.simplifyNoContext()
-        this.simplifyNoContext()
-        this.simplifyNoContext()
-        this.simplifyNoContext()
-        this.simplifyNoContext()
-        this.simplifyNoContext()
-        this.simplifyNoContext()
-        this.simplifyNoContext()
-        this.simplifyNoContext()
-        this.simplifyNoContext()
-        this.simplifyNoContext()
-        this.simplifyNoContext()
-        this.simplifyNoContext()
-        this.simplifyNoContext()
-        this.simplifyNoContext()
+        
+        if (maxDepth == null) {
+            while (this.simplifyNoContext());
+        }
+        else
+        {
+            for (let i=0; i < maxDepth; i++) {
 
+                this.simplifyNoContext()
+            }
+        }
 
         //this.algebraicExpansion()
+
     }
 
     /**
-     * Recursively makes sure that every node in the graph
-     * is either simplified (meaning there is no contextless
-     * rule that can simplify it further) or is marked down
-     * as unsimplifiable.
+     * Gets a list of expressions which couldn't be simplified further.
      */
-    private simplifyNoContext(): void {
+    public get simplifiedExpressions(): Expression[] {
+        return [...this.simplified]
+    }
+
+    /**
+     * Applies simplification rules to expand the graph.
+     * @returns True if there is more to simplify and this should
+     *          be called again.
+     */
+    private simplifyNoContext(): boolean {
         const unsimplified = [...this.graph.getNodes()].filter(n => n instanceof Expression)
                             .map<Expression>(n => n as Expression)
-                            .filter(e => !this.simplifiedInIsolation.has(e))
 
         let shouldDoAgain = false
         unsimplified.forEach(e => {
-            this.simplifiedInIsolation.add(e)
 
             // Try to find equivalents using every set of rules.
             // If a set finds equivalents, move on to the next
@@ -114,10 +88,10 @@ export class Deriver {
             }
 
             // If none of the rules we have worked, the expression isn't simplifiable.
-            this.notSimplifiable.add(e)
+            this.simplified.add(e)
         })
 
-        //if (shouldDoAgain) this.simplifyNoContext()
+        return shouldDoAgain
     }
 
     /**
@@ -135,7 +109,7 @@ export class Deriver {
         components.forEach(component => {
             const equation: Expression[] = []
             for (const node of component) {
-                if (node instanceof Expression && this.notSimplifiable.has(node))
+                if (node instanceof Expression && this.simplified.has(node))
                     equation.push(node)
             }
                    
@@ -156,15 +130,13 @@ export class Deriver {
      * done to it and cannot be further simplified.
      */
     public isSimplified(exp: Expression): boolean {
-        return this.notSimplifiable.has(exp)
+        return this.simplified.has(exp)
     }
-    // A set of nodes in the graph which have had all simplification 
-    // operations done to them.
-    private readonly simplifiedInIsolation: Set<Expression>
+
     // The set of nodes in the graph that have had contextless
     // simplification operations run on them and aren't further
     // simplifiable
-    private readonly notSimplifiable: Set<Expression>
+    private readonly simplified: Set<Expression>
 }
 
 /**

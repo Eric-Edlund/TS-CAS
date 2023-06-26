@@ -18,6 +18,10 @@ app.get('/input_parse_test_page', (req, res) => {
     res.sendFile('public/input_parse_test_page.html', {root: __dirname})
 })
 
+app.get('/simplify_test_page', (req, res) => {
+    res.sendFile('public/simplification_tests.html', {root: __dirname})
+})
+
 app.get('/solver', (req, res) => {
     res.sendFile('public/solver.html', {root: __dirname})
 })
