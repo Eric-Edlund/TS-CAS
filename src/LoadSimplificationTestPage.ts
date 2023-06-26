@@ -1,4 +1,3 @@
-import { parse } from "mathjs";
 import { a, b, c, d, fraction, negative, num, pow, product, sum, x, y } from "./mathlib/ConvenientExpressions";
 import { Deriver } from "./mathlib/derivations/Deriver";
 import { Exponent } from "./mathlib/expressions/Exponent";
@@ -49,25 +48,27 @@ export function loadSimplificationTestPage() {
     function simplify(start: Expression, answ: Expression): void {
         const table = document.createElement('table')
         table.style.border = "1px solid black"
-        table.style.width = '70%'
+        table.style.width = '80%'
         const row = document.createElement('tr')
         table.appendChild(row)
+
+        function append(cell: HTMLTableCellElement): void {
+            cell.style.border = "1px solid black"
+            row.appendChild(cell)
+        }
 
         const data1 = document.createElement('td')
         const data2 = document.createElement('td')
         const data3 = document.createElement('td')
-        row.appendChild(data1)
-        row.appendChild(data2)
-        row.appendChild(data3)
-        data1.style.border = "1px solid black"
-        data2.style.border = "1px solid black"
-        data3.style.border = "1px solid black"
+        append(data1)
+        append(data2)
+        append(data3)
 
         data1.appendChild(view(start))
         const graph = new Graph();
         graph.addNode(start)
         const deriver = new Deriver(graph)
-        deriver.expand(10)
+        deriver.expand(40)
 
         const results = deriver.simplifiedExpressions
         console.log(results.length)
@@ -81,11 +82,37 @@ export function loadSimplificationTestPage() {
             data2.style.backgroundColor = "lightgreen"
         } else {
             data2.style.backgroundColor = "red"
+            const data4 = document.createElement('td')
+            const data5 = document.createElement('td')
+            const data6 = document.createElement('td')
+            append(data4)
+            append(data5)
+            append(data6)
+            data4.innerHTML = results[0].toUnambigiousString() + "<br>" + answ.toUnambigiousString()
+            data5.innerHTML = "Hashes: <br>" + results[0].hash + "<br>" + answ.hash
+            data6.innerHTML = "IDs: " + results[0].id + "<br>" + answ.id 
         }
+    }
+
+    /**
+     * Wrapper for simplify that parses strings
+     * @param input 
+     * @param answ 
+     */
+    function pSimp(input: string, answ: string) {
+        const inputExp = parseExpression(input)
+        const answExp = parseExpression(answ)
+        simplify(inputExp, answExp)
     }
 
     // Expressions and their correct simplifications
     simplify(sum(x, x), product(num(2), x))
     simplify(product(x, x), pow(x, num(2)))
+    simplify(sum(a, a, b), sum(product(num(2), a), b))
+    simplify(product(pow(a, b), pow(c, b)), product(pow(a, b), pow(c, b)))
+    simplify(product(pow(a, b), pow(a, c)), pow(a, sum(b, c)))
+    simplify(product(pow(a, b), pow(a, b)), pow(a, product(num(2), b)))
+    pSimp("(a+b)(a+b)", "(a+b)^2")
+    pSimp("(a+b)(a-b)", "a^2-b^2")
     
 }

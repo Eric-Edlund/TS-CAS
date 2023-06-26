@@ -32,7 +32,7 @@ export class Exponent extends Expression {
     }
 
     public get hash(): string {
-        return "Exponent"+this.base.hash+this.power.hash
+        return "Pow"+this.base.hash+this.power.hash
     }
 
     private constructor(base: Expression, power: Expression) {

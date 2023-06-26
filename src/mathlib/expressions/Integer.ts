@@ -41,7 +41,7 @@ export class Integer extends Expression {
     }
 
     public get hash(): string {
-        return "NumberExp" + this.value
+        return "Int" + this.value
     }
 
     public readonly value: number;

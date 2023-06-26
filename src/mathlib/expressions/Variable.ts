@@ -26,7 +26,7 @@ export class Variable extends Expression {
     }
 
     public get hash(): string {
-        return "Variable"+this.symbol
+        return "Var"+this.symbol
     }
     
     public readonly symbol: string;
