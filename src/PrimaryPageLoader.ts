@@ -1,4 +1,4 @@
-import { a, b, num, product, sum, x } from "./mathlib/ConvenientExpressions";
+import { a, b, negative, num, product, sum, x } from "./mathlib/ConvenientExpressions";
 import { WebGraphView, WebGraphViewInitSettings } from "./mathlib/uielements/WebGraphView";
 import { Graph } from "./mathlib/Graph";
 import { Deriver } from "./mathlib/derivations/Deriver";
@@ -28,7 +28,7 @@ export function loadPrimaryPage(): void {
     //const root = product(Exponent.of(x, num(3)), Exponent.of(x, num(4)), x, x)
     //const root = Derivative.of(Fraction.of(Exponent.of(x, num(2)), x), x)
     //const root = Fraction.of(product(num(2), x, Exponent.of(x, a), a), product(num(2), a, a, x))
-    const root = Logarithm.of(num(1), a)
+    const root = product(sum(a, b), sum(a, negative(b)), a, a)
     const graph = new Graph().addNode(root)
 
     const deriver = new Deriver(graph)

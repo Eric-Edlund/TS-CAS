@@ -23,15 +23,19 @@ export class CancelNegatives extends NoContextExpressionSimplificationRule {
 
         for (const f of product.factors) {
             if (f instanceof Product && f.isNegation) {
-                negatedFactors.push(f)
+                negatedFactors.push(f.negation)
             } else {
                 others.push(f)
             }
         }
 
-        if (negatedFactors.length < 1) return setOf()
+        const isNegation = product.isNegation
 
-        const resultIsNegative = negatedFactors.length % 2 == 1
+        const negations = negatedFactors.length + (isNegation ? 1 : 0)
+
+        if (negations < 2) return setOf()
+
+        const resultIsNegative = negations % 2 == 1
         const result = productOf(...negatedFactors, ...others)
         const negatedResult = resultIsNegative ? negative(result) : result
 

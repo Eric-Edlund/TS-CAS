@@ -33,7 +33,8 @@ export class FOIL extends NoContextExpressionSimplificationRule {
             return terms
         }).flat()
 
-        const result = productOrNot(...nonSums, sum(...foiled), ...sums.splice(0, 2))
+        sums.splice(0, 2)
+        const result = productOrNot(...nonSums, sum(...foiled), ...sums)
         
         return setOf(new Argument(setOf(exp), {
             n: exp,

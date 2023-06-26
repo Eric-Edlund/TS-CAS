@@ -83,5 +83,5 @@ export const simplificationOrder: NoContextExpressionSimplificationRule[][] = [
     evaluativeRules,
     combinatoricRules,
     remainingNoContextSimplificationRules,
-    [/*new DistributiveProperty(), new FOIL()*/],
+    [new DistributiveProperty(), new FOIL()],
 ]
