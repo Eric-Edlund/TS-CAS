@@ -25,14 +25,14 @@ test("graph correctly finds/counts neighbors", () => {
     graph.addArgument(equivalenceArgument(a, d, ""))
     graph.addNode(e)
 
-    assert(graph.getNeighbors(a, "both")!.size == 2, "" + [...graph.getNeighbors(a, "both")!])
-    assert(graph.getNeighbors(a, "in")!.size == 1)
-    assert(graph.getNeighbors(a, "out")!.size == 2)
-    assert(graph.getNeighbors(b, "both")!.size == 2)
-    assert(graph.getNeighbors(b, "in")!.size == 1)
-    assert(graph.getNeighbors(b, "out")!.size == 2)
+    assert(graph.getNeighbors(a, "both")!.length == 2, "" + [...graph.getNeighbors(a, "both")!])
+    assert(graph.getNeighbors(a, "in")!.length == 1)
+    assert(graph.getNeighbors(a, "out")!.length == 2)
+    assert(graph.getNeighbors(b, "both")!.length == 2)
+    assert(graph.getNeighbors(b, "in")!.length == 1)
+    assert(graph.getNeighbors(b, "out")!.length == 2)
     
-    assert(graph.getNeighbors(e, "both")!.size == 0)
+    assert(graph.getNeighbors(e, "both")!.length == 0)
     assert(graph.getDegree(e, "both") == 0)
 
     assert(graph.getNeighbors(f, "both") == undefined)

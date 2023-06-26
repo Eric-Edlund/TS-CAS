@@ -5,6 +5,7 @@ import { uiPreferences } from "./UIPreferences"
 import { WebGraphView } from "./WebGraphView"
 import { GivenEdge } from "../Graph"
 import { MathGraphNode } from "../MathGraphNode"
+import { assert } from "../util/assert"
 
 /**
  * Represents an edge in a graph.
@@ -39,6 +40,8 @@ export class EdgeView extends HTMLParagraphElement {
         this.addEventListener("mouseout", event => {
             
         })
+
+        this.repOk();
     }
 
     /**
@@ -68,6 +71,11 @@ export class EdgeView extends HTMLParagraphElement {
         } else if (this.edge instanceof GivenEdge) {
             this.textContent = "" + this.edge.r
         } else throw new Error("Not implemented for " + this.edge)
+    }
+
+    private repOk(): void {
+        assert(this.first != undefined)
+        assert(this.second != undefined)
     }
 
     private readonly owner: WebGraphView

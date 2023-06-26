@@ -92,26 +92,26 @@ export class Graph {
     }
 
     /**
-     * Get the neighbors of a node.
+     * Get the set of neighbors of a node.
      * @param node 
      * @param direction Nodes that are adjacent to this node, from this node, or either.
      * @returns Undefined if the node isn't in this graph. Otherwise, a set of connected nodes.
      *          If the node is in the graph but isn't connected to anything, returns empty set.
      */
-    public getNeighbors(node: MathGraphNode, direction: "in" | "out" | "both"): Set<MathGraphNode> | undefined {
+    public getNeighbors(node: MathGraphNode, direction: "in" | "out" | "both"): MathGraphNode[] | undefined {
         if (!this.nodes.has(node)) return undefined;
         if (direction == "out") {
-            return new Set<MathGraphNode>(this.connections.get(node))
+            return [...this.connections.get(node)!]
         }
         let adjacentTo = new Set<MathGraphNode>()
         for (const n of this.nodes) {
             if (this.connections.get(n)?.has(node)) adjacentTo.add(n)
         }
-        if (direction == "in") return adjacentTo
+        if (direction == "in") return [...adjacentTo]
 
         for (const n of this.connections.get(node) ?? []) adjacentTo.add(n)
 
-        return adjacentTo
+        return [...adjacentTo]
     }
 
     /**

@@ -262,7 +262,7 @@ export class WebGraphView extends HTMLDivElement {
             ring.style.border = "lightgray solid 0.3ch"
             ring.style.borderRadius = "100%"
             ring.style.position = "absolute"
-            ring.style.zIndex = "-10"
+            ring.style.zIndex = RING_Z
             this.appendChild(ring)
             this.ringElements.add(ring)
             this.ringPositions.set(ring, {radius: radius})
@@ -405,11 +405,47 @@ export class WebGraphView extends HTMLDivElement {
             this.append(popup)
             this.updateOffset()
         }
+
+        this.reorderViewStack(view)
+        this.repOk()
+    }
+
+    /**
+     * Set the z-index of all the elements in the graph
+     * putting the given root on top and it's neighbors
+     * right beneath it etc.
+     * @param root 
+     */
+    private reorderViewStack(root: EdgeView | GraphNodeView): void {
+        if (root instanceof GraphNodeView) throw new Error("Not implemented")
+
+        if (root instanceof EdgeView) {
+            const roots = [root.first, root.second]
+            const stackingOrder = GraphMinipulator.getLevels(this.graph, roots)
+            stackingOrder.forEach((nodeSet, depth) => {
+                nodeSet.forEach(node => {
+                    if (!this.showArguments && node instanceof Argument) return
+
+                    console.log("Adjusting")
+                    const nodeView = this.nodes.get(node)!
+                    nodeView.style.zIndex = (NODE_MAX_Z - 0.0001 * depth).toString()
+                    
+                    // Edges
+                    this.edges.forEach((edge, key) => {
+                        if (edge.first === node || edge.second === node) {
+                            edge.style.zIndex = (EDGE_MAX_Z - 0.0001 * depth).toString()
+                        }
+                    })
+                    
+                })
+            })
+        }
     }
 
     private repOk(): void {
         assert (this.rootNodes.size > 0)
         assert(GraphMinipulator.isConnected(this.graph), "Graph not connected")
+        if (this.showArguments) assert(this.graph.getNodes().size == this.nodes.size)
     }
 
     private graph: Graph;
@@ -428,6 +464,7 @@ export class WebGraphView extends HTMLDivElement {
 
     private scale: number = 1;
 
+    // These nodes are the root of the graph
     private readonly rootNodes: Set<MathGraphNode>;
 
     private readonly ringElements: Set<HTMLElement>;
@@ -453,7 +490,7 @@ export class WebGraphView extends HTMLDivElement {
     private readonly baseNodeStyle = (view: GraphNodeView): void => {
         view.style.borderRadius = "1ch"
         view.style.backgroundColor = "lightblue"
-        view.style.zIndex = "5"
+        view.style.zIndex = "" + NODE_MAX_Z;
     }
 }
 
@@ -494,3 +531,11 @@ function Point(x: number, y: number, angle: number | undefined = undefined): Poi
         angle: angle,
     }
 }
+
+// Z Index constants
+const DEBUG_WINDOW_Z = "100";
+const NODE_MAX_Z = 5;
+const NODE_MIN_Z = "4.000001";
+const EDGE_MAX_Z = 4;
+const EDGE_MIN_Z = "3.000001";
+const RING_Z = "-10";
