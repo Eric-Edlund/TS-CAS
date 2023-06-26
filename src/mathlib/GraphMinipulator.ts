@@ -1,3 +1,4 @@
+import { Argument } from "./Argument";
 import { GraphEdge, Graph } from "./Graph";
 import { MathGraphNode } from "./MathGraphNode";
 import { Relationship } from "./Relationship";
@@ -146,6 +147,34 @@ export class GraphMinipulator {
 
         for (const edge of edges) {
             if (!alreadyHas(edge)) out.push(edge)
+        }
+        
+        return out;
+    }
+
+    /**
+     * Creates a new graph with only the edges which passed the
+     * filter function. The resulting graph may or may not be connected.
+     * All the nodes of the original graph are kept.
+     * @param edgeFilter Returns true if the given edge should be included in 
+     *      the resulting graph.
+     * NOTE: NOT TESTED
+     */
+     public static dropEdges(graph: Graph, edgeFilter: (e: {n: MathGraphNode, n1: MathGraphNode, e: GraphEdge}) => Boolean): Graph {
+        const out = new Graph()
+
+        for (const node of graph.getNodes()) {
+            out.addNode(node)
+        }
+
+        for (const edge of graph.getEdges()) {
+            if (edgeFilter(edge)) {
+                if (edge instanceof Argument) {
+                    out.addArgument(edge)
+                } else {
+                    throw new Error("Not implemented")
+                }
+            }
         }
         
         return out;

@@ -105,6 +105,8 @@ export class Deriver {
                 if (derivedSimplifications.length > 0) {
                     shouldDoAgain = true
                     derivedSimplifications.forEach(a => {
+                        if (this.graph.contains(a.claim.n) 
+                        && this.graph.contains(a.claim.n1)) return
                         this.graph.addArgument(a)
                     })
                     return // To next expression
