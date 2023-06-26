@@ -1,7 +1,7 @@
-import { loadPrimaryPage } from "./PrimaryPageLoader";
-import { loadExpressionsTestPage } from "./ExpressionTestPageLoader"
-import { loadInputParseTestPage } from "./InputParseTestPage";
-import { loadSolverPage } from "./SolverPageLoader";
+import { loadPrimaryPage } from "./LoadPrimaryPage";
+import { loadExpressionsTestPage } from "./LoadExpressionTestPage"
+import { loadInputParseTestPage } from "./LoadInputParseTestPage";
+import { loadSolverPage } from "./LoadSolverPage";
 
 window.onload = () => {
     setTimeout(
