@@ -1,5 +1,6 @@
 import { inParen, inRow } from "../util/MathMLHelpers";
 import { Expression } from "./Expression";
+import { FractionType } from "./Fraction";
 import { Integer, IntegerType } from "./Integer";
 import { ProductType } from "./Product";
 import { SumType } from "./Sum";
@@ -18,7 +19,7 @@ export class Exponent extends Expression {
     public class: string = ExponentType;
     public toMathXML(): string {
         function wrapIfNeeded(exp: Expression): string {
-            if (exp.class == SumType || exp.class == ProductType)
+            if (exp.class == SumType || exp.class == ProductType || exp.class == FractionType)
                 return inRow(inParen(exp.toMathXML()))
             return exp.toMathXML()
         }
