@@ -109,6 +109,8 @@ export function loadInputParseTestPage() {
 
     expression("logx")
     expression("log(x)")
+    expression("(5/(2x-3)-(3/((2x-3)^2))")
+    expression("(5/(2x-3)-(3/(2x-3)^2)")
 
 
     page.append(p("In these tests, an unambigious expression is written in the " +

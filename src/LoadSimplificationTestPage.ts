@@ -30,17 +30,6 @@ export function loadSimplificationTestPage() {
     }
 
     /**
-     * Print the parsed expression to the page.
-     * @param input User input string to parse.
-     * @param explanation 
-     */
-    function expression(input: string, explanation: string | null = null) {
-        page.append(p("Input:       " + input))
-        if (explanation != null) page.append(p(explanation))
-        page.append(view(parseExpression(input)! as Expression))
-    }
-
-    /**
      * Adds a test column to the page.
      * @param start 
      * @param answ The correct simplification of the expression.
@@ -114,5 +103,13 @@ export function loadSimplificationTestPage() {
     simplify(product(pow(a, b), pow(a, b)), pow(a, product(num(2), b)))
     pSimp("(a+b)(a+b)", "(a+b)^2")
     pSimp("(a+b)(a-b)", "a^2-b^2")
+    pSimp("b^2*b", "b^3")
+    // Random online problems
+    pSimp("(-(1/x)+1)((x^2)/(x-1))", "x")
+    pSimp("(3x+27y+15z)/(x+9y+5z)", "3")
+    pSimp("(x^2-9)/(x+3)", "(x-3)")
+    pSimp("x+3*(10+y)-7x-y", "-6x+2y+30")
+    pSimp("(5/(2x-3)-(3/((2x-3)^2))", "(2(5x-9))/((2x-3)^2)")
+
     
 }
