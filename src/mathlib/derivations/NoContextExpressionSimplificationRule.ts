@@ -70,8 +70,9 @@ export abstract class NoContextExpressionSimplificationRule {
  * @param e2 
  */
 function fuzzyEquivalenceTest(e1: Expression, e2: Expression): boolean {
+    const LIMIT = 0.001;
     for (const value of values) {
-        if (e1.evaluate(value) != e2.evaluate(value)) return false;
+        if (Math.abs(e1.evaluate(value) - e2.evaluate(value)) > LIMIT) return false;
     }
     return true;
 }
