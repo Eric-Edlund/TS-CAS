@@ -46,6 +46,20 @@ export abstract class NoContextExpressionSimplificationRule {
         return result;
     }
 
+    /**
+     * Returns the type of expression this rule's 
+     * results approach.
+     */
+    public get convergenceType(): ConvergenceTarget {
+        return ConvergenceTarget.None;
+    }
+
     protected abstract appliesImpl(exp: Expression): boolean;
     protected abstract applyImpl(exp: Expression): Set<Argument>
+}
+
+export enum ConvergenceTarget {
+    Factored,
+    Polynomial,
+    None,
 }

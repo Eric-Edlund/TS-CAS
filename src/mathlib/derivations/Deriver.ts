@@ -43,7 +43,7 @@ export class Deriver {
         {
             for (let i=0; i < maxDepth; i++) {
 
-                this.simplifyNoContext()
+                if (!this.simplifyNoContext()) return
             }
         }
 

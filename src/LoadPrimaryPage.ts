@@ -32,7 +32,7 @@ export function loadPrimaryPage(): void {
     const graph = new Graph().addNode(root)
 
     const deriver = new Deriver(graph)
-    deriver.expand()
+    deriver.expand(10)
 
     //console.log("Result: " + graph)
 

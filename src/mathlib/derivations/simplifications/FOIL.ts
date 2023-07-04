@@ -4,7 +4,7 @@ import { Product } from "../../expressions/Product";
 import { product as productOf, productOrNot, sum } from "../../ConvenientExpressions";
 import { Sum } from "../../expressions/Sum";
 import { setOf } from "../../util/ThingsThatShouldBeInTheStdLib";
-import { NoContextExpressionSimplificationRule } from "../NoContextExpressionSimplificationRule";
+import { ConvergenceTarget, NoContextExpressionSimplificationRule } from "../NoContextExpressionSimplificationRule";
 import { Relationship } from "../../Relationship";
 
 /**
@@ -41,6 +41,10 @@ export class FOIL extends NoContextExpressionSimplificationRule {
             r: Relationship.Equal,
             n1: result
         }, "Foil that shit"))
+    }
+
+    public get convergenceType(): ConvergenceTarget {
+        return ConvergenceTarget.Polynomial
     }
 
 }

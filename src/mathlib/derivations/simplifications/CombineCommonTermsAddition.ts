@@ -3,7 +3,7 @@ import { Argument } from "../../Argument";
 import { Expression } from "../../expressions/Expression";
 import { Product } from "../../expressions/Product";
 import { Relationship } from "../../Relationship";
-import { NoContextExpressionSimplificationRule } from "../NoContextExpressionSimplificationRule";
+import { ConvergenceTarget, NoContextExpressionSimplificationRule } from "../NoContextExpressionSimplificationRule";
 import { Sum } from "../../expressions/Sum";
 import { addAll, has, setOf } from "../../util/ThingsThatShouldBeInTheStdLib";
 
@@ -91,5 +91,9 @@ export class CombineCommonTermsAddition extends NoContextExpressionSimplificatio
         }
 
         return args
+    }
+
+    public get convergenceType(): ConvergenceTarget {
+        return ConvergenceTarget.Factored
     }
 }

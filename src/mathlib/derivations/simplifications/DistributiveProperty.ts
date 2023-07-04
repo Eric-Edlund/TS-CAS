@@ -6,10 +6,12 @@ import { Sum } from "../../expressions/Sum";
 import { Relationship } from "../../Relationship";
 import { assert } from "../../util/assert";
 import { setOf } from "../../util/ThingsThatShouldBeInTheStdLib";
-import { NoContextExpressionSimplificationRule } from "../NoContextExpressionSimplificationRule";
+import { ConvergenceTarget, NoContextExpressionSimplificationRule } from "../NoContextExpressionSimplificationRule";
 
 /**
  * Distributes multiplication over addition.
+ * 
+ * a(b+c) = ab + ac
  */
 export class DistributiveProperty extends NoContextExpressionSimplificationRule {
     protected appliesImpl(exp: Expression): boolean {
@@ -49,5 +51,9 @@ export class DistributiveProperty extends NoContextExpressionSimplificationRule 
             r: Relationship.Equal,
             n1: result
         }, `Distribute ${productOrNot(...nonSums).toUnambigiousString()}`))
+    }
+
+    public get convergenceType(): ConvergenceTarget {
+        return ConvergenceTarget.Polynomial
     }
 }
