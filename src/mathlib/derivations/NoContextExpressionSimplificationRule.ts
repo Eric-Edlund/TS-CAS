@@ -83,11 +83,11 @@ export enum ConvergenceTarget {
 }
 
 const values: Set<VariableValueMap> = setOf(
-    buildVariableValueMap(-2),
-    buildVariableValueMap(-1),
-    buildVariableValueMap(0),
-    buildVariableValueMap(1),
-    buildVariableValueMap(2),
+    buildVariableValueMap(-2.1),
+    buildVariableValueMap(-1.1),
+    buildVariableValueMap(0.1),
+    buildVariableValueMap(1.1),
+    buildVariableValueMap(2.1),
 {
     valueOf(v: Variable): number {
         return v.symbol.codePointAt(0) ?? 0
