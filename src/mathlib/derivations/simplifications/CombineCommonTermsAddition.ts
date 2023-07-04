@@ -25,26 +25,24 @@ export class CombineCommonTermsAddition extends NoContextExpressionSimplificatio
 
     protected applyImpl(exp: Expression): Set<Argument> {
         const sum = exp as Sum;
-        const uniqueFactors = new Set<Expression>()
-
         const args = new Set<Argument>()
 
+        const uniqueFactors = new Set<Expression>()
+
         // Find all unique factors in all terms
-        // Don't consider the -1 in negations
-        // Consider the factors of negated products separately
+        // Assume products have been flattened already (associative property)
         for (const term of sum.terms) {
             if (term instanceof Product) {
-                if (term.isNegation)
-                    if (term.negation instanceof Product) {
-                        addAll(uniqueFactors, ...term.negation.factors)
-                    } else uniqueFactors.add(term.negation)
-                else addAll(uniqueFactors, ...term.factors)//TODO: Capture all combinations of factors
+                addAll(uniqueFactors, ...term.factors) 
+                //TODO: Capture all combinations of factors
+                //TODO: Capture integer factors
+                
             } else uniqueFactors.add(term)
         }
         
         // Create an argument for pulling out each factor
         for (const factor of uniqueFactors) {
-            // Don't waste time with unhealthy factors
+
             if (factor.isReducibleOrInt) continue
 
             // Figure out which terms contain it
@@ -52,34 +50,24 @@ export class CombineCommonTermsAddition extends NoContextExpressionSimplificatio
             const otherTerms: Expression[] = []
             for (const term of sum.terms) {
                 if (term instanceof Product) {
-                    if (term.isNegation) {
-                        // If it's a negation, check if the negation has it
-                        if (term.negation === factor) relaventTerms.push(term)
-                        else if (term.negation instanceof Product) {
-                            if (has(term.negation.factors, factor)) relaventTerms.push(term)
-                            else otherTerms.push(term)
-                        }
-                    } else if (has(term.factors, factor))
+                    if (has(term.factors, factor)) 
                         relaventTerms.push(term)
-                    else otherTerms.push(term)
+                    else 
+                        otherTerms.push(term)
                 } else {
-                    if (term === factor) relaventTerms.push(Product.of([num(1), term]))
-                    else otherTerms.push(term)
+                    if (term === factor) 
+                        relaventTerms.push(Product.of([num(1), term]))
+                    else 
+                        otherTerms.push(term)
                 }
             }
 
+            if (relaventTerms.length < 2) continue
+
             // Pull it out of those terms
             const coefficients: Expression[] = []
-            if (relaventTerms.length < 2) continue
             for (const term of relaventTerms) {
-                if (term.isNegation) {
-                    if (term.negation instanceof Product) {
-                        coefficients.push(negative(term.negation.without(factor)))
-                    } else
-                        coefficients.push(negative(num(1)))
-                } else {
-                    coefficients.push(term.without(factor))
-                }
+                coefficients.push(term.without(factor))
             }
             const pulled = sumOrNot(orderedProduct(Sum.of(coefficients), factor), ...otherTerms)
 
