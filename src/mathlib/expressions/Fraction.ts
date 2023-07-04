@@ -37,7 +37,7 @@ export class Fraction extends Expression {
         return this.numerator.toString() + " / " + this.denominator.toString()
     }
     public toUnambigiousString(): string {
-        return `${this.numerator.toUnambigiousString()}/${this.denominator.toUnambigiousString()}`
+        return `(${this.numerator.toUnambigiousString()})/(${this.denominator.toUnambigiousString()})`
     }
     public get hash(): string {
         return FractionType + this.numerator.hash + this.denominator.hash
