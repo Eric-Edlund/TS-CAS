@@ -45,7 +45,9 @@ export abstract class NoContextExpressionSimplificationRule {
             assert(e.claim.n1 !== exp, "Rule " + this.constructor.name + " produced result equivalent to ground")
             // TODO: This fuzzy test is inconlusive and can fail when two expressions are equal.
             // Don't leave it in production.
-            assert(fuzzyEquivalenceTest(exp, e.claim.n1), "Failed fuzzy equivalence test " + exp.toUnambigiousString() + "/=" + e.claim.n1.toUnambigiousString())
+            assert(fuzzyEquivalenceTest(exp, e.claim.n1), "Failed fuzzy equivalence test " 
+                        + exp.toUnambigiousString() + "/=" + e.claim.n1.toUnambigiousString()
+                        + " during argument " + e.argument)
         });
         return result;
     }
