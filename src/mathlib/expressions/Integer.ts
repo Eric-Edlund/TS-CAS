@@ -1,4 +1,5 @@
 import { assert } from "../util/assert";
+import { VariableValueMap } from "../VariableValueMap";
 import { Expression } from "./Expression";
 
 /**
@@ -42,6 +43,10 @@ export class Integer extends Expression {
 
     public get hash(): string {
         return "Int" + this.value
+    }
+
+    public evaluate(values: VariableValueMap): number {
+        return this.value;
     }
 
     public readonly value: number;

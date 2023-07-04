@@ -1,4 +1,5 @@
 import { assert } from "../util/assert";
+import { VariableValueMap } from "../VariableValueMap";
 import { Exponent } from "./Exponent";
 import { Expression } from "./Expression";
 import { Integer, IntegerType } from "./Integer";
@@ -169,6 +170,10 @@ export class Product extends Expression {
 
     public get hash(): string {
         return "Product" + this.factors.map<string>(e => e.hash).join()
+    }
+
+    public evaluate(values: VariableValueMap): number {
+        return this.factors.map<number>(f => f.evaluate(values)).reduce((a, b) => a * b)
     }
 
     // At least 2 elements, order matters

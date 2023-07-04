@@ -1,3 +1,4 @@
+import { VariableValueMap } from "../VariableValueMap";
 import { Expression } from "./Expression";
 
 
@@ -33,11 +34,15 @@ export class Logarithm extends Expression {
         return `log${this.base.toString()}(${this.exp.toString()})`
     }
     public toUnambigiousString(): string {
-        return `log(${this.base.toUnambigiousString()})(${this.base.toUnambigiousString()})`
+        return `log(${this.base.toUnambigiousString()})(${this.exp.toUnambigiousString()})`
     }
     public get hash(): string {
         throw new Error("Method not implemented.");
     }
+    public evaluate(values: VariableValueMap): number {
+        return Math.log(this.exp.evaluate(values)) / Math.log(this.base.evaluate(values))
+    }
+    
     public readonly isConstant: boolean;
     public readonly childCount: number;
     

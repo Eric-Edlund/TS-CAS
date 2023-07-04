@@ -1,4 +1,5 @@
 import { assert } from "../util/assert";
+import { VariableValueMap } from "../VariableValueMap";
 import { Expression } from "./Expression";
 import { Integer, IntegerType } from "./Integer";
 import { Product } from "./Product";
@@ -99,6 +100,10 @@ export class Sum extends Expression {
 
     public get hash(): string {
         return "Sum" + this.terms.map<string>(e => e.hash).join()
+    }
+
+    public evaluate(values: VariableValueMap): number {
+        return this.terms.map<number>(t => t.evaluate(values)).reduce((a, b) => a + b)
     }
     
     public readonly class = SumType;

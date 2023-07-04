@@ -1,3 +1,4 @@
+import { VariableValueMap } from "../VariableValueMap";
 import { Expression } from "./Expression";
 import { Integer } from "./Integer";
 import { Product, ProductType } from "./Product";
@@ -49,6 +50,12 @@ export class Derivative extends Expression {
         }
         return "<mfrac><mn>d</mn><mrow><mn>d</mn>" + wrapIfNeeded(this.relativeTo) + "</mrow></mfrac>" + wrapIfNeeded(this.exp)
     }
+
+    public evaluate(values: VariableValueMap): number {
+        // Maybe later
+        return NaN;
+    }
+    
     public readonly isConstant: boolean;
     public readonly childCount: number
 }

@@ -1,3 +1,4 @@
+import { VariableValueMap } from "../VariableValueMap";
 import { Expression } from "./Expression";
 import { Integer } from "./Integer";
 
@@ -45,6 +46,10 @@ export class Fraction extends Expression {
     public toMathXML(): string {
         return "<mfrac><mrow>" + this.numerator.toMathXML() + "</mrow><mrow>" + this.denominator.toMathXML() + "</mrow></mfrac>"
     }
+    public evaluate(values: VariableValueMap): number {
+        return this.numerator.evaluate(values) / this.denominator.evaluate(values);
+    }
+    
     public readonly childCount: number
 
 }

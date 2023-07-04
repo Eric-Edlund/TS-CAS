@@ -1,4 +1,5 @@
 import { inParen, inRow } from "../util/MathMLHelpers";
+import { VariableValueMap } from "../VariableValueMap";
 import { Expression } from "./Expression";
 import { FractionType } from "./Fraction";
 import { Integer, IntegerType } from "./Integer";
@@ -34,6 +35,10 @@ export class Exponent extends Expression {
 
     public get hash(): string {
         return "Pow"+this.base.hash+this.power.hash
+    }
+
+    public evaluate(values: VariableValueMap): number {
+        return Math.pow(this.base.evaluate(values), this.power.evaluate(values));
     }
 
     private constructor(base: Expression, power: Expression) {

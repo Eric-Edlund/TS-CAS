@@ -1,6 +1,9 @@
 import { Argument } from "../Argument";
 import { Expression } from "../expressions/Expression";
+import { Variable } from "../expressions/Variable";
 import { assert } from "../util/assert";
+import { setOf } from "../util/ThingsThatShouldBeInTheStdLib";
+import { VariableValueMap } from "../VariableValueMap";
 
 /**
  * A rule that takes an expression and produces one or more equivalent expressions.
@@ -40,8 +43,9 @@ export abstract class NoContextExpressionSimplificationRule {
         result.forEach(e => {
             assert(e != null && e != undefined)
             assert(e.claim.n1 !== exp, "Rule " + this.constructor.name + " produced result equivalent to ground")
-            //if (this.constructor.name == "CombineCommonTermsMultiplication")
-                //console.log(this.constructor.name + exp.toString() + "\n -> " + e.claim.n1.toString())
+            // TODO: This fuzzy test is inconlusive and can fail when two expressions are equal.
+            // Don't leave it in production.
+            assert(fuzzyEquivalenceTest(exp, e.claim.n1), "Failed fuzzy equivalence test " + exp.toUnambigiousString() + "/=" + e.claim.n1.toUnambigiousString())
         });
         return result;
     }
@@ -58,8 +62,45 @@ export abstract class NoContextExpressionSimplificationRule {
     protected abstract applyImpl(exp: Expression): Set<Argument>
 }
 
+/**
+ * Plugs in some values to see if they're equivalent.
+ * @param e1 
+ * @param e2 
+ */
+function fuzzyEquivalenceTest(e1: Expression, e2: Expression): boolean {
+    for (const value of values) {
+        if (e1.evaluate(value) != e2.evaluate(value)) return false;
+    }
+    return true;
+}
+
 export enum ConvergenceTarget {
     Factored,
     Polynomial,
     None,
+}
+
+const values: Set<VariableValueMap> = setOf(
+    buildVariableValueMap(-2),
+    buildVariableValueMap(-1),
+    buildVariableValueMap(0),
+    buildVariableValueMap(1),
+    buildVariableValueMap(2),
+{
+    valueOf(v: Variable): number {
+        return v.symbol.codePointAt(0) ?? 0
+    }
+},
+{
+    valueOf(v: Variable): number {
+        return v.symbol.charCodeAt(0)
+    }
+})
+
+function buildVariableValueMap(val: number): VariableValueMap {
+    return {
+        valueOf(v: Variable): number {
+            return val
+        }
+    }
 }

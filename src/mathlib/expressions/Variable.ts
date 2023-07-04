@@ -1,3 +1,4 @@
+import { VariableValueMap } from "../VariableValueMap";
 import { Expression } from "./Expression";
 import { Integer } from "./Integer";
 
@@ -27,6 +28,10 @@ export class Variable extends Expression {
 
     public get hash(): string {
         return "Var"+this.symbol
+    }
+
+    public evaluate(values: VariableValueMap): number {
+        return values.valueOf(this)
     }
     
     public readonly symbol: string;

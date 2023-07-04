@@ -1,6 +1,8 @@
 import { MathGraphNode } from "../MathGraphNode";
+import { VariableValueMap } from "../VariableValueMap";
 import { Integer, IntegerType } from "./Integer";
 import { MathElement } from "./MathElement";
+import { Variable } from "./Variable";
 
 /**
  * Base of all mathematical expressions.
@@ -60,7 +62,6 @@ export abstract class Expression extends MathGraphNode implements MathElement {
      */
     public abstract get hash(): string;
 
-
     /**
      * True if this expression contains no variables.
      */
@@ -72,4 +73,12 @@ export abstract class Expression extends MathGraphNode implements MathElement {
      *  plus the total complexity of all children.
      */
     public abstract readonly childCount: number
+
+    /**
+     * Evaluate the expression recursively substituting any variables
+     * with the supplied values.
+     * @param values The values to substitute variables with when
+     *          evaluating the expression.
+     */
+    public abstract evaluate(values: VariableValueMap): number;
 }

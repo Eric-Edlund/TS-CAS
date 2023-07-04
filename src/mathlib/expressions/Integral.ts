@@ -1,4 +1,5 @@
 import { inParen } from "../util/MathMLHelpers";
+import { VariableValueMap } from "../VariableValueMap";
 import { Expression } from "./Expression";
 import { Integer } from "./Integer";
 import { ProductType } from "./Product";
@@ -53,6 +54,12 @@ export class Integral extends Expression {
 
         return "<mrow><mo>∫</mo>" + wrapIfNeeded(this.integrand) + "<mn>d</mn>" + wrapIfNeeded(this.relativeTo) + "</mrow>"
     }
+
+    public evaluate(values: VariableValueMap): number {
+        // Nah fuck this bro
+        return NaN;
+    }
+
     public readonly childCount: number;
 
 }
