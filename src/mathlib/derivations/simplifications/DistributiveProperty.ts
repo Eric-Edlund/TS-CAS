@@ -28,12 +28,8 @@ export class DistributiveProperty extends NoContextExpressionSimplificationRule 
         if (firstSum == undefined) return setOf()
         // There is at least one sum
 
-        console.log("In: " + product.toString())
-
         const remainingSums = product.factors.filter(f => f instanceof Sum)
         remove(remainingSums, firstSum)
-
-        console.log("Remaining Sums: " + remainingSums.length)
 
         const toDistribute = productOrNot(...nonSums)
 
@@ -43,8 +39,6 @@ export class DistributiveProperty extends NoContextExpressionSimplificationRule 
             distributed,
             ...remainingSums
         )
-
-        console.log("Out: " + result.toString())
 
         return setOf(new Argument(setOf(exp), {
             n: exp,

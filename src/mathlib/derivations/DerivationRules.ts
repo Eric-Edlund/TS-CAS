@@ -46,7 +46,6 @@ const evaluativeRules = [
 
 const combinatoricRules = [
     new SumCoefficientsOfAddedTerms(),
-    new CombineCommonTermsAddition(),
     new CombineCommonFactorsMultiplication(),
     new MultiplyExponentPowers(),
     new SubtractExponentsOnFractions(),
@@ -66,24 +65,38 @@ const remainingNoContextSimplificationRules: NoContextExpressionSimplificationRu
 ]
 
 /**
- * A list of lists of simplification rules.
- * Earlier lists should be tried first.
- * If and only if an earlier list fails to 
+ * A list of simplification rules.
+ * If and only if an earlier rule fails to 
  * produce equivalent expressions should later lists
  * be used.
+ * This list only contains rules which converge to one answer.
  */
-export const simplificationOrder: NoContextExpressionSimplificationRule[][] = [
+export const convergentSimplificationRules: NoContextExpressionSimplificationRule[] = [
     // Identity rules first
-    [new AnythingTimesZero()],
-    [new ExponentToZero()],
-    [new MultiplicativeIdentity()],
-    [new ExponentialIdentity()],
-    [new DivisionIdentity()],
-    [new AdditiveIdentity()],
-    [new LogOfOne()],
-    beautifyingRules,
-    evaluativeRules,
-    combinatoricRules,
-    remainingNoContextSimplificationRules,
-    [new DistributiveProperty(), new FOIL()],
+    new AnythingTimesZero(),
+    new ExponentToZero(),
+    new MultiplicativeIdentity(),
+    new ExponentialIdentity(),
+    new DivisionIdentity(),
+    new AdditiveIdentity(),
+    new LogOfOne(),
+    ...beautifyingRules,
+    ...evaluativeRules,
+    ...combinatoricRules,
+    ...remainingNoContextSimplificationRules,
+]
+
+/**
+ * These rules converge to factored form.
+ */
+export const factoringSimplificationRules : NoContextExpressionSimplificationRule[] = [
+    new CombineCommonTermsAddition(),
+]
+
+/**
+ * These rules converge to polynomial form.
+ */
+export const polynomialSimplificationRules : NoContextExpressionSimplificationRule[] = [
+    new DistributiveProperty(), 
+    new FOIL(),
 ]

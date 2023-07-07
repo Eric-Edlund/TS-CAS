@@ -11,6 +11,7 @@ import { Exponent } from "./mathlib/expressions/Exponent";
 import { Fraction } from "./mathlib/expressions/Fraction";
 import { Derivative } from "./mathlib/expressions/Derivative";
 import { Logarithm } from "./mathlib/expressions/Logarithm";
+import { Product } from "./mathlib/expressions/Product";
 
 
 RelationalDerivationRule.rules.add(new SubtractFromBothSides())
@@ -32,7 +33,7 @@ export function loadPrimaryPage(): void {
     const graph = new Graph().addNode(root)
 
     const deriver = new Deriver(graph)
-    deriver.expand(10)
+    deriver.expand(15, false)
 
     //console.log("Result: " + graph)
 
@@ -53,9 +54,16 @@ export function loadPrimaryPage(): void {
     const graphView = new WebGraphView(graph, new Set([root]), config)
     graphView.setNodeColoringScheme(n => {
         if (n instanceof Expression) {
-            if (!deriver.isSimplified(n)) return "lightgray"
-            else if (n instanceof Variable) return "orange"
-            else return "lightblue"
+            
+
+            if (n instanceof Product)
+                if (deriver.passedFactoringSimplification.has(n)) return "coral"
+            if (deriver.passedConvergentSimplification.has(n)) return "lightgreen"
+            if (deriver.isSimplified(n)) return "lightblue"
+
+            if (n instanceof Variable) return "orange"
+
+            return "lightgray"
         }
         return "black"
     })
