@@ -31,7 +31,6 @@ export class AssociativePropertyOfProductsAndSums extends NoContextExpressionSim
                 n1: sum(...newTerms)
             }, "Associative property of addition"))
         } else {
-            if ((exp as Product).isNegation) return setOf()
             const newFactors = (exp as Product).factors.map<Expression[]>(t => {
                 if (t instanceof Product) {
                     return [...t.factors]
