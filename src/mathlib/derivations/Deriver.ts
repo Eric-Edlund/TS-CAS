@@ -150,9 +150,9 @@ export class Deriver {
     }
 
     /**
-     * For each given argument, adds to the graph
-     * if one or both endpoints aren't already in 
-     * the graph.
+     * For each given argument, adds to the graph.
+     * If both end points of all arguments are already in the graph,
+     * returns false.
      * @param args 
      * @effects this.graph
      * @returns True if one or more of the arguments
@@ -162,9 +162,12 @@ export class Deriver {
         let atLeastOne = false;
         args.forEach(a => {
             if (this.graph.contains(a.claim.n) 
-            && this.graph.contains(a.claim.n1)) return
-            this.graph.addArgument(a)
-            atLeastOne = true
+            && this.graph.contains(a.claim.n1)) this.graph.addArgument(a)
+            else {
+                this.graph.addArgument(a)
+                atLeastOne = true
+            }
+           
         })
         return atLeastOne;
     }
