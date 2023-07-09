@@ -78,7 +78,6 @@ export class Deriver {
                     this.addToGraph([derivedSimplification])
                     shouldDoAgain = true
                     
-                    this.notSimplified.add(e)
                     return // To next expression
                 }
             }
@@ -96,44 +95,36 @@ export class Deriver {
     private simplifyNoContextDivergent(): boolean {
 
         // Only operate on expressions which have passed convergent simplification
-        const unsimplified = [...this.passedConvergentSimplification]
+        const candidates = [...this.passedConvergentSimplification]
 
+        // True if more expressions were added to the graph
         let shouldDoAgain = false
-        unsimplified.forEach(e => {
-
-            let canBeSimplified = false;
+        
+        candidates.forEach(e => {
 
             // Try to find equivalents using divergent rules.
 
             for (const rule of factoringSimplificationRules) {
                 const derivedSimplifications = equiv(e, equivalentsFnUsing([rule]))
-                this.addToGraph(derivedSimplifications)
-                if (derivedSimplifications.length > 0) {
-                    shouldDoAgain = true
-                    canBeSimplified = true
+
+                shouldDoAgain ||= this.addToGraph(derivedSimplifications)
+
+                if (derivedSimplifications.length == 0) {
+                    if (e instanceof Product) 
+                        this.passedFactoringSimplification.add(e)
                 }
-                else if (e instanceof Product) {
-                    this.passedFactoringSimplification.add(e)
-                }
-                // If expression is a polynomial, it may be a simplified polynomial
             }
 
             for (const rule of polynomialSimplificationRules) {
                 const derivedSimplifications = equiv(e, equivalentsFnUsing([rule]))
-                this.addToGraph(derivedSimplifications)
+
+                shouldDoAgain ||= this.addToGraph(derivedSimplifications)
+
                 if (derivedSimplifications.length > 0) {
-                    shouldDoAgain = true
-                    canBeSimplified = true
-                    // If expression is a product, it may be a simplified product
-                }
-                else if (e instanceof Sum) {
-                    this.passedPolynomialSimplification.add(e)
+                    if (e instanceof Sum) 
+                        this.passedPolynomialSimplification.add(e)
                 }
             }
-
-            // If none of the rules we have worked, the expression isn't simplifiable.
-            if (canBeSimplified)
-                this.notSimplified.add(e)
         })
 
         return shouldDoAgain
@@ -203,9 +194,6 @@ export class Deriver {
         
         return true
     }
-
-    // Set of expressions that we know can be simplified more.
-    public readonly notSimplified = new Set<Expression>()
 
     // All the expressions which could not be simplified further by
     // convergent simplification rules.
