@@ -231,7 +231,7 @@ export class WebGraphView extends HTMLDivElement {
             
             // The starting angular offset to add the stepsize to
             // Making it non-constant stops things from aligning
-            const stepOffset = 0.2
+            const stepOffset = 0
             /**
              * Calculating the radius of the circle
              * Suppose every root node on the starting circle requires
@@ -267,11 +267,12 @@ export class WebGraphView extends HTMLDivElement {
 
                 assert(idealAngles.size == nodes.size)
 
-                // Now assign real angles
                 for(let i = 0; i < nodes.size; i++) {
                     for (const pair of idealAngles) {
+                        let a=1
                         while (for_some(ns, p => Math.abs(p[1] - pair[1]) < stepSize)) {
-                            pair[1] += stepSize
+                            pair[1] += stepSize * a * ((-1) ** a)
+                            a++
                         }
                         ns.set(pair[0], pair[1])
                     }
