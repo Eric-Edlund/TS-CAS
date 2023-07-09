@@ -73,7 +73,7 @@ function getSolution(problem: Expression): MathGraphNode[] {
     const graph = new Graph().addNode(problem)
 
     const deriver = new Deriver(graph)
-    deriver.expand()
+    deriver.expand(50, true)
 
     let simplified: Expression | null = null
     for (const node of graph.getNodes()) {

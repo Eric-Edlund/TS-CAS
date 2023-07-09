@@ -29,30 +29,21 @@ export class Deriver {
      * @param skipConvergentSimplifications If true, convergent simplification operations
      *          aren't counted when calculating depth.
      */
-    public expand(maxDepth: number | null = null, skipConvergentSimplifications: boolean = false): void {
+    public expand(maxDepth: number, skipConvergentSimplifications: boolean = false): void {
         // Simplify all the expressions using the contextless simplifying rules
         // Do this until there's nothing more to simplify
         
-        if (maxDepth == null) {
-            while (true) {
+        for (let i=0; i < maxDepth; i++) {
+            if (skipConvergentSimplifications) {
                 while (this.simplifyNoContextConvergent());
-                if (!this.simplifyNoContextDivergent()) break;
-            }
-        }
-        else
-        {
-            for (let i=0; i < maxDepth; i++) {
-                if (skipConvergentSimplifications) {
-                    while (this.simplifyNoContextConvergent());
-                    if (!this.simplifyNoContextDivergent()) return
-                } else {
-                    if (!this.simplifyNoContextConvergent()) {
-                        if (!this.simplifyNoContextDivergent()) 
-                            return
-                    }
-                        
-                }    
-            }
+                if (!this.simplifyNoContextDivergent()) return
+            } else {
+                if (!this.simplifyNoContextConvergent()) {
+                    if (!this.simplifyNoContextDivergent()) 
+                        return
+                }
+                    
+            }    
         }
 
         //this.algebraicExpansion()
