@@ -228,10 +228,7 @@ export class WebGraphView extends HTMLDivElement {
         let lastPositions: Map<MathGraphNode, number> | null = null
         for (let depth = 0; depth < maxDepth + 1; depth++) {
             const nodes = levels.get(depth)!
-            
-            // The starting angular offset to add the stepsize to
-            // Making it non-constant stops things from aligning
-            const stepOffset = 0
+
             /**
              * Calculating the radius of the circle
              * Suppose every root node on the starting circle requires
@@ -269,9 +266,9 @@ export class WebGraphView extends HTMLDivElement {
 
                 for(let i = 0; i < nodes.size; i++) {
                     for (const pair of idealAngles) {
-                        let a=1
+                        let a=0
                         while (for_some(ns, p => Math.abs(p[1] - pair[1]) < stepSize)) {
-                            pair[1] += stepSize * a * ((-1) ** a)
+                            pair[1] += stepSize * a * ((-1) ** (a))
                             a++
                         }
                         ns.set(pair[0], pair[1])
@@ -280,7 +277,7 @@ export class WebGraphView extends HTMLDivElement {
             } else {
                 const temp = [...nodes]
                 for(let i=0; i < nodes.size; i++) {
-                    ns.set(temp[i], stepOffset + i * stepSize)
+                    ns.set(temp[i], i * stepSize)
                 }
             }
             
@@ -291,11 +288,11 @@ export class WebGraphView extends HTMLDivElement {
                 const view = this.nodes.get(node)!;
                 //view.style.width = "" + smallR + "px"
                 //view.style.height = "" + smallR + "px"
-                lastPositions!.set(node, angle + stepOffset)
+                lastPositions!.set(node, angle)
 
                 // Get the cartesian point from the radius and angle
-                const x = radius * Math.cos(angle + stepOffset) + center.x
-                const y = radius * Math.sin(angle + stepOffset) + center.y
+                const x = radius * Math.cos(angle) + center.x
+                const y = radius * Math.sin(angle) + center.y
                 this.nodePositions.set(view, Point(x, y))
             })
             assert(for_all(lastPositions.values(), pos => pos != undefined && pos != null))
