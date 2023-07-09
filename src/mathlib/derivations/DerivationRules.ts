@@ -23,6 +23,7 @@ import { FOIL } from "./simplifications/FOIL"
 import { LogOfOne } from "./simplifications/LogOfOne"
 import { MultiplicativeIdentity } from "./simplifications/MultiplicativeIdentity"
 import { MultiplyExponentPowers } from "./simplifications/MultiplyExponentPowers"
+import { OrderProducts } from "./simplifications/OrderProducts"
 import { OrderSums } from "./simplifications/OrderSums"
 import { RemoveCommonFactorsFromTopAndBottomOfFraction } from "./simplifications/RemoveCommonFactorsOnTopAndBottomOfFraction"
 import { SubtractExponentsOnFractions } from "./simplifications/SubtractExponentsOnFractions"
@@ -33,6 +34,7 @@ import { SumCoefficientsOfAddedTerms } from "./simplifications/SumCoefficientsOf
  */
  const beautifyingRules = [
     new OrderSums(),
+    new OrderProducts(),
 ]
 
 /**
