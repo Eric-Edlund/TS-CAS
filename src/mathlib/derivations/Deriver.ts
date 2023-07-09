@@ -81,9 +81,10 @@ export class Deriver {
 
             // Try to find equivalents using general convergent rules.
             for (const rule of convergentSimplificationRules) {
-                const derivedSimplifications = equiv(e, equivalentsFnUsing([rule]))
-                this.addToGraph(derivedSimplifications)
-                if (derivedSimplifications.length > 0) {
+                const derivedSimplification = equiv(e, equivalentsFnUsing([rule]))[0]
+                
+                if (derivedSimplification != undefined) {
+                    this.addToGraph([derivedSimplification])
                     shouldDoAgain = true
                     
                     this.notSimplified.add(e)
