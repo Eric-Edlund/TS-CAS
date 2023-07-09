@@ -82,7 +82,8 @@ export class Deriver {
             // Try to find equivalents using general convergent rules.
             for (const rule of convergentSimplificationRules) {
                 const derivedSimplifications = equiv(e, equivalentsFnUsing([rule]))
-                if (this.addToGraph(derivedSimplifications)) {
+                this.addToGraph(derivedSimplifications)
+                if (derivedSimplifications.length > 0) {
                     shouldDoAgain = true
                     
                     this.notSimplified.add(e)
@@ -114,7 +115,8 @@ export class Deriver {
 
             for (const rule of factoringSimplificationRules) {
                 const derivedSimplifications = equiv(e, equivalentsFnUsing([rule]))
-                if (this.addToGraph(derivedSimplifications)) {
+                this.addToGraph(derivedSimplifications)
+                if (derivedSimplifications.length > 0) {
                     shouldDoAgain = true
                     canBeSimplified = true
                 }
@@ -126,7 +128,8 @@ export class Deriver {
 
             for (const rule of polynomialSimplificationRules) {
                 const derivedSimplifications = equiv(e, equivalentsFnUsing([rule]))
-                if (this.addToGraph(derivedSimplifications)) {
+                this.addToGraph(derivedSimplifications)
+                if (derivedSimplifications.length > 0) {
                     shouldDoAgain = true
                     canBeSimplified = true
                     // If expression is a product, it may be a simplified product
