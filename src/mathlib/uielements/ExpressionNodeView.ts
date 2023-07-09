@@ -16,7 +16,7 @@ export class ExpressionNodeView extends GraphNodeView {
         this.appendChild(this.editableMathView)
 
         this.addEventListener("click", () => {
-            console.log(this.node.toString())
+            console.log(this.node.toUnambigiousString())
         })
     }
 
