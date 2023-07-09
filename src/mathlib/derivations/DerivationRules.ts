@@ -31,10 +31,11 @@ import { SumCoefficientsOfAddedTerms } from "./simplifications/SumCoefficientsOf
 
 /**
  * 1 input, 1 output
+ * Rewrite expressions to follow math conventions
  */
- const beautifyingRules = [
-    new OrderSums(),
+ const conventionRules = [
     new OrderProducts(),
+    new OrderSums(),
 ]
 
 /**
@@ -82,9 +83,9 @@ export const convergentSimplificationRules: NoContextExpressionSimplificationRul
     new DivisionIdentity(),
     new AdditiveIdentity(),
     new LogOfOne(),
-    ...beautifyingRules,
     ...evaluativeRules,
     ...combinatoricRules,
+    ...conventionRules,
     ...remainingNoContextSimplificationRules,
 ]
 
