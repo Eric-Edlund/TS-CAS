@@ -34,7 +34,7 @@ export function loadPrimaryPage(): void {
     const graph = new Graph().addNode(root)
 
     const deriver = new Deriver(graph)
-    deriver.expand(30, false)
+    deriver.expand(30, true)
 
     //console.log("Result: " + graph)
 

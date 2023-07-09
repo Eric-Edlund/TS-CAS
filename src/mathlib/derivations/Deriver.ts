@@ -142,7 +142,8 @@ export class Deriver {
         let atLeastOne = false;
         args.forEach(a => {
             if (!this.graph.contains(a.claim.n) 
-            || !this.graph.contains(a.claim.n1)) {
+            || !this.graph.contains(a.claim.n1)
+            ) {
                 this.graph.addArgument(a)
                 atLeastOne = true
             }

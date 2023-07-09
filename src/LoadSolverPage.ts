@@ -11,6 +11,7 @@ import { ArgumentNodeView } from "./mathlib/uielements/ArgumentNodeView"
 import { ExpressionNodeView } from "./mathlib/uielements/ExpressionNodeView"
 import { GraphMinipulator } from "./mathlib/GraphMinipulator"
 import { parseExpression } from "./mathlib/userinput/AntlrMathParser"
+import { Sum } from "./mathlib/expressions/Sum"
 
 
 export function loadSolverPage(): void {
@@ -78,8 +79,10 @@ function getSolution(problem: Expression): MathGraphNode[] {
     let simplified: Expression | null = null
     for (const node of graph.getNodes()) {
         if (node instanceof Expression)
-            if (deriver.isSimplified(node)) 
-                simplified = node as Expression
+            if (deriver.isSimplified(node))
+                if (simplified == null || simplified.childCount > node.childCount)
+                    if (node instanceof Sum && deriver.passedPolynomialSimplification.has(node))
+                    simplified = node as Expression
     }
 
     // Copy the resulting graph into a library implementation of graph
