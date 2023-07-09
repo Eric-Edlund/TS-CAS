@@ -45,7 +45,9 @@ export class ProductRule extends NoContextExpressionSimplificationRule {
             n: d,
             r: Relationship.Equal,
             n1: sum(...terms) as Expression
-        }, "Product Rule"))
+        }, "Product Rule", RULE_ID))
     }
 
 }
+
+export const RULE_ID = "Product Rule"

@@ -24,10 +24,11 @@ export class PullConstantsFromDerivatives extends NoContextExpressionSimplificat
                 n: d,
                 r: Relationship.Equal,
                 n1: productAndNotTimesOne(factor, Derivative.of(productOrNot(...removeNew(p.factors, factor)), d.relativeTo))
-            }, "Pull constant factor from derivative"))
+            }, "Pull constant factor from derivative", RULE_ID))
         }
 
         return out
     }
-
 }
+
+export const RULE_ID = "Pull Constants from Derivs"

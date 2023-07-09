@@ -23,6 +23,8 @@ export class OrderProducts extends NoContextExpressionSimplificationRule {
             n: exp,
             r: Relationship.Equal,
             n1: result
-        }, "Reorder product factors to match math convention"))
+        }, "Reorder product factors to match math convention", RULE_ID))
     }
 }
+
+export const RULE_ID = "Order products"

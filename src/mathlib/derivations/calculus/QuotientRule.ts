@@ -28,7 +28,8 @@ export class QuotientRule extends NoContextExpressionSimplificationRule {
                     ),
                     Exponent.of(b, num(2))
                 )
-        }, "Quotient Rule"))
+        }, "Quotient Rule", RULE_ID))
     }
-    
 }
+
+export const RULE_ID = "Quotient Rule"

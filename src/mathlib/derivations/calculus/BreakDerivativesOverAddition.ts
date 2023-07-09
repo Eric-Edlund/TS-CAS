@@ -23,7 +23,9 @@ export class BreakDerivativesOverAddition extends NoContextExpressionSimplificat
             n: d,
             r: Relationship.Equal,
             n1: Sum.of(wrapped),
-        }, "Split derivative over addition"))
+        }, "Split derivative over addition", RULE_ID))
     }
 
 }
+
+export const RULE_ID = "Break Derivatives over Addition"

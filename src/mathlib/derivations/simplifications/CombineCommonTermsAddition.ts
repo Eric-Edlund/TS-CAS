@@ -75,7 +75,7 @@ export class CombineCommonTermsAddition extends NoContextExpressionSimplificatio
                 n: exp,
                 r: Relationship.Equal,
                 n1: pulled
-            }, "Combine like terms"))
+            }, "Combine like terms", RULE_ID))
         }
 
         return args
@@ -85,3 +85,5 @@ export class CombineCommonTermsAddition extends NoContextExpressionSimplificatio
         return ConvergenceTarget.Factored
     }
 }
+
+export const RULE_ID = "CCTerms Add"

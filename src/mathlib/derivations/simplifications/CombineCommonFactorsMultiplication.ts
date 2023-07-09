@@ -88,10 +88,12 @@ export class CombineCommonFactorsMultiplication extends NoContextExpressionSimpl
                 n: product,
                 r: Relationship.Equal,
                 n1: e,
-            }, "Combine common factors multiplication"))
+            }, "Combine common factors multiplication", RULE_ID))
         })
         
         return args;
     }
 
 }
+
+export const RULE_ID = "CCFactors Mult"

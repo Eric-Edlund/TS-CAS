@@ -42,7 +42,7 @@ export class SubtractFromBothSides extends RelationalDerivationRule {
                     second = [other]
                 }
                 const claim = {n: s.without(term), n1: sumIntuitive(...second, negative(term)), r: Relationship.Equal}
-                out.push(new Argument(new Set([s, other]), claim, "a=b & c=d => a-c = b-d"))
+                out.push(new Argument(new Set([s, other]), claim, "a=b & c=d => a-c = b-d", RULE_ID))
             })
         })
         return out
@@ -65,3 +65,5 @@ export class SubtractFromBothSides extends RelationalDerivationRule {
     }
     return out
 }
+
+export const RULE_ID = "Sub from both sides"

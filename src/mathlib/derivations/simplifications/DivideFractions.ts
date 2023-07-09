@@ -93,7 +93,9 @@ export class DivideFractions extends NoContextExpressionSimplificationRule {
             n: exp,
             r: Relationship.Equal,
             n1: result
-        }, "Cancel out fractions"))
+        }, "Cancel out fractions", RULE_ID))
     }
 
 }
+
+export const RULE_ID = "Cancel out fractions"

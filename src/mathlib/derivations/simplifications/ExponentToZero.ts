@@ -18,7 +18,9 @@ export class ExponentToZero extends NoContextExpressionSimplificationRule {
             n: exp,
             r: Relationship.Equal,
             n1: num(1)
-        }, "Anything to zero is zero"))
+        }, "Anything to zero is zero", RULE_ID))
     }
 
 }
+
+export const RULE_ID = "Pow of Zero"

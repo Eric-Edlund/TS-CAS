@@ -60,7 +60,8 @@ export class RemoveCommonFactorsFromTopAndBottomOfFraction extends NoContextExpr
             n: frac,
             r: Relationship.Equal,
             n1: Fraction.of(newTop, newBottom),
-        }, "Divide top and bottom by same thing"))
+        }, "Divide top and bottom by same thing", RULE_ID))
     }
-
 }
+
+export const RULE_ID = "Div top and bottom by same thing"

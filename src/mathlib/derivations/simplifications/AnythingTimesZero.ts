@@ -27,7 +27,9 @@ export class AnythingTimesZero extends NoContextExpressionSimplificationRule {
             n: exp,
             r: Relationship.Equal,
             n1: Integer.of(0)
-        }, "Anything times zero is zero"))
+        }, "Anything times zero is zero", RULE_ID))
     }
     
 }
+
+export const RULE_ID = "AnythingTimesZero"

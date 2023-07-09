@@ -33,7 +33,9 @@ export class CombineIntegerFactors extends NoContextExpressionSimplificationRule
             n: exp,
             r: Relationship.Equal,
             n1: productOrNot(num(coefficient), ...remainingFactors)
-        }, "Multiply integer terms"))
+        }, "Multiply integer terms", RULE_ID))
     }
 
 }
+
+export const RULE_ID = "CombIntFacts"

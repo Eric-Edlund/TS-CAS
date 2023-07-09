@@ -12,3 +12,5 @@ export class USubstitution extends NoContextExpressionSimplificationRule {
     }
 
 }
+
+export const RULE_ID = "USubstitution"

@@ -19,7 +19,9 @@ export class LogOfOne extends NoContextExpressionSimplificationRule {
             n: exp,
             r: Relationship.Equal,
             n1: num(0)
-        }, "Log in any base of 1 is 0"))
+        }, "Log in any base of 1 is 0", RULE_ID))
     }
 
 }
+
+export const RULE_ID = "Log of 1"

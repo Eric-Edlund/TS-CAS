@@ -26,7 +26,7 @@ export class DivideOnBothSides extends RelationalDerivationRule {
                     second = [other]
                 }
                 const claim = {n: p.without(factor), n1: fraction(productOrNot(...second), factor), r: Relationship.Equal}
-                out.push(new Argument(new Set([p, other]), claim, "a=b & c=d => a/c = b/d"))
+                out.push(new Argument(new Set([p, other]), claim, "a=b & c=d => a/c = b/d", RULE_ID))
             })
         })
 
@@ -50,3 +50,5 @@ export class DivideOnBothSides extends RelationalDerivationRule {
     }
     return out
 }
+
+export const RULE_ID = "Div on both sides"

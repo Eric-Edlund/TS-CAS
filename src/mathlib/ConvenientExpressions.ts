@@ -209,7 +209,7 @@ export function equivalenceArgument(first: Expression, second: Expression, expla
         n: first,
         r: Relationship.Equal,
         n1: second,
-    }, explanation)
+    }, explanation, "TEST_ARGUMENT")
 }
 
 /**

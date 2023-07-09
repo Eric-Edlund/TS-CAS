@@ -44,10 +44,12 @@ export class DistributiveProperty extends NoContextExpressionSimplificationRule 
             n: exp,
             r: Relationship.Equal,
             n1: result
-        }, `Distribute ${productOrNot(...nonSums).toUnambigiousString()}`))
+        }, `Distribute ${productOrNot(...nonSums).toUnambigiousString()}`, RULE_ID))
     }
 
     public get convergenceType(): ConvergenceTarget {
         return ConvergenceTarget.Polynomial
     }
 }
+
+export const RULE_ID = "Distributive Property"

@@ -20,6 +20,8 @@ import { NoContextExpressionSimplificationRule } from "../NoContextExpressionSim
             n: exp,
             r: Relationship.Equal,
             n1: orderedSum(exp as Sum),
-        }, "Reordered")])
+        }, "Reordered", RULE_ID)])
     }
 }
+
+export const RULE_ID = "Order Sums"

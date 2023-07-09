@@ -91,7 +91,9 @@ export class SubtractExponentsOnFractions extends NoContextExpressionSimplificat
             n: frac,
             r: Relationship.Equal,
             n1: Fraction.of(productOrNot(...resultingTopExponents, ...uneffectedTopFactors), productOrNot(...uneffectedBottomFactors)),
-        }, "Sum exponents in both numerator and denominator"))
+        }, "Sum exponents in both numerator and denominator", RULE_ID))
     }
 
 }
+
+export const RULE_ID = "Sum exponents in num and den in fractions"

@@ -22,7 +22,9 @@ export class DivisionIdentity extends NoContextExpressionSimplificationRule {
             n: frac,
             r: Relationship.Equal,
             n1: frac.numerator,
-        }, "Division identity is 1"))
+        }, "Division identity is 1", RULE_ID))
     }
 
 }
+
+export const RULE_ID = "Division Identity"

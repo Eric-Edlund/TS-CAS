@@ -58,7 +58,9 @@ export class CombineProductsAndFractions extends NoContextExpressionSimplificati
             n: exp,
             r: Relationship.Equal,
             n1: result
-        }, "Combine products into fraction"))
+        }, "Combine products into fraction", RULE_ID))
     }
 
 }
+
+export const RULE_ID = "Prod=>Frac"

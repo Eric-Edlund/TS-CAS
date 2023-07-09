@@ -81,7 +81,7 @@ function sumEquiv(exp: Sum, directEquivalents: (e: Expression) => Set<Argument>)
             equivalentSums.add(new Argument(setOf(exp), {
                 n: exp, 
                 r: Relationship.Equal, 
-                n1: swap(exp, i, a.claim.n1 as Expression)}, a.argument))
+                n1: swap(exp, i, a.claim.n1 as Expression)}, a.argument, a.ruleId))
         })
 
     }
@@ -113,7 +113,7 @@ function productEquiv(exp: Product, directEquivalents: (e: Expression) => Set<Ar
                 n: exp,
                 r: Relationship.Equal,
                 n1: swap(exp, i, alt.claim.n1 as Expression),
-            }, alt.argument))
+            }, alt.argument, alt.ruleId))
         })
     }
 
@@ -138,14 +138,14 @@ function exponentEquiv(exp: Exponent, directEquivalents: (e: Expression) => Set<
         equivalents.add(new Argument(setOf(exp), {
             n: exp, 
             r: Relationship.Equal,
-            n1: Exponent.of(alt.claim.n1 as Expression, exp.power)}, alt.argument))
+            n1: Exponent.of(alt.claim.n1 as Expression, exp.power)}, alt.argument, alt.ruleId))
     })
     equiv(exp.power, directEquivalents).forEach(alt => {
         equivalents.add(new Argument(setOf(exp), {
             n: exp,
             r: Relationship.Equal,
             n1: Exponent.of(exp.base, alt.claim.n1 as Expression),
-        }, alt.argument))
+        }, alt.argument, alt.ruleId))
     })
 
     return [...equivalents]
@@ -163,14 +163,14 @@ function fractionEquiv(exp: Fraction, directEquivalents: (e: Expression) => Set<
         equivalents.add(new Argument(setOf(exp), {
             n: exp, 
             r: Relationship.Equal,
-            n1: Fraction.of(alt.claim.n1 as Expression, exp.denominator)}, alt.argument))
+            n1: Fraction.of(alt.claim.n1 as Expression, exp.denominator)}, alt.argument, alt.ruleId))
     })
     equiv(exp.denominator, directEquivalents).forEach(alt => {
         equivalents.add(new Argument(setOf(exp), {
             n: exp,
             r: Relationship.Equal,
             n1: Fraction.of(exp.numerator, alt.claim.n1 as Expression),
-        }, alt.argument))
+        }, alt.argument, alt.ruleId))
     })
 
     return [...equivalents]
@@ -189,14 +189,14 @@ function derivativeEquiv(exp: Derivative, directEquivalents: (e: Expression) => 
             n: exp, 
             r: Relationship.Equal,
             n1: Derivative.of(alt.claim.n1 as Expression, exp.relativeTo)
-        }, alt.argument))
+        }, alt.argument, alt.ruleId))
     })
     equiv(exp.relativeTo, directEquivalents).forEach(alt => {
         equivalents.add(new Argument(setOf(exp), {
             n: exp,
             r: Relationship.Equal,
             n1: Derivative.of(exp.exp, alt.claim.n1 as Expression),
-        }, alt.argument))
+        }, alt.argument, alt.ruleId))
     })
 
     return [...equivalents]
@@ -215,14 +215,14 @@ function logarithmEquiv(exp: Logarithm, directEquivalents: (e: Expression) => Se
             n: exp, 
             r: Relationship.Equal,
             n1: Logarithm.of(alt.claim.n1 as Expression, exp.base)
-        }, alt.argument))
+        }, alt.argument, alt.ruleId))
     })
     equiv(exp.base, directEquivalents).forEach(alt => {
         equivalents.add(new Argument(setOf(exp), {
             n: exp,
             r: Relationship.Equal,
             n1: Logarithm.of(exp.exp, alt.claim.n1 as Expression),
-        }, alt.argument))
+        }, alt.argument, alt.ruleId))
     })
 
     return [...equivalents]
@@ -241,14 +241,14 @@ function integralEquiv(exp: Integral, directEquivalents: (e: Expression) => Set<
             n: exp, 
             r: Relationship.Equal,
             n1: Integral.of(alt.claim.n1 as Expression, exp.relativeTo)
-        }, alt.argument))
+        }, alt.argument, alt.ruleId))
     })
     equiv(exp.relativeTo, directEquivalents).forEach(alt => {
         equivalents.add(new Argument(setOf(exp), {
             n: exp,
             r: Relationship.Equal,
             n1: Integral.of(exp.integrand, alt.claim.n1 as Expression),
-        }, alt.argument))
+        }, alt.argument, alt.ruleId))
     })
 
     return [...equivalents]

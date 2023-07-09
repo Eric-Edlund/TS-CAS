@@ -38,7 +38,8 @@ export class EvaluateSums extends NoContextExpressionSimplificationRule {
             n: sum,
             r: Relationship.Equal,
             n1: sumOrNot(...otherTerms, newInt)
-        }, "Evaluated Addition"))
+        }, "Evaluated Addition", RULE_ID))
     }
 }
 
+export const RULE_ID = "Eval Addition"

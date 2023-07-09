@@ -40,7 +40,7 @@ export class FOIL extends NoContextExpressionSimplificationRule {
             n: exp,
             r: Relationship.Equal,
             n1: result
-        }, "Foil that shit"))
+        }, "Foil that shit", RULE_ID))
     }
 
     public get convergenceType(): ConvergenceTarget {
@@ -48,3 +48,5 @@ export class FOIL extends NoContextExpressionSimplificationRule {
     }
 
 }
+
+export const RULE_ID = "FOIL"

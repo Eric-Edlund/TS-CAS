@@ -68,7 +68,7 @@ export class SumCoefficientsOfAddedTerms extends NoContextExpressionSimplificati
                 n: exp,
                 r: Relationship.Equal,
                 n1: sumOrNot(productAndNotTimesOne(num(obj.coefficient), group), ...nonProductTerms, ...productTermsNotCombined)
-            },"Combining like terms"))
+            },"Combining like terms", RULE_ID))
             
         })
 
@@ -76,3 +76,5 @@ export class SumCoefficientsOfAddedTerms extends NoContextExpressionSimplificati
     }
 
 }
+
+export const RULE_ID = "SumCoefficients of added terms"

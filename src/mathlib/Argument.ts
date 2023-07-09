@@ -9,12 +9,13 @@ import { assert } from "./util/assert";
  * Contains an explanation/argument for the connection.
  */
 export class Argument extends MathGraphNode {
-    constructor(grounds: Set<Expression>, claim: {n: Expression, r: Relationship, n1: Expression}, argument: string) {
+    constructor(grounds: Set<Expression>, claim: {n: Expression, r: Relationship, n1: Expression}, argument: string, ruleId: string) {
         super()
         this.grounds = grounds
         Object.freeze(this.grounds)
         this.claim = claim
         this.argument = argument
+        this.ruleId = ruleId
         this.repOk()
     }
     expressionEdge: true = true
@@ -40,6 +41,11 @@ export class Argument extends MathGraphNode {
      * Nodes that have an edge pointing to this argument.
      */
     public readonly grounds: Set<Expression>;
+
+    /**
+     * The id of the rule which generated this argument.
+     */
+    public readonly ruleId: string;
 
     private repOk() {
         assert(this.grounds != null)

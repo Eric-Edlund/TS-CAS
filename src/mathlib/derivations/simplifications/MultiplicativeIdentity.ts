@@ -31,7 +31,9 @@ export class MultiplicativeIdentity extends NoContextExpressionSimplificationRul
             n: exp,
             r: Relationship.Equal,
             n1: productOrNot(...newFactors)
-        }, "Multiplicative Identity"))
+        }, "Multiplicative Identity", RULE_ID))
     }
 
 }
+
+export const RULE_ID = "Mult Identity"

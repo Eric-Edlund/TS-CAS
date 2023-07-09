@@ -20,7 +20,9 @@ export class MultiplyExponentPowers extends NoContextExpressionSimplificationRul
             n: exp,
             r: Relationship.Equal,
             n1: Exponent.of(inner.base, product(inner.power, outer.power))
-        }, "Exponents to exponents multiply"))
+        }, "Exponents to exponents multiply", RULE_ID))
     }
 
 }
+
+export const RULE_ID = "Exp to exp"

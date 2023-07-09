@@ -43,6 +43,8 @@ export class CancelNegatives extends NoContextExpressionSimplificationRule {
             n: exp,
             r: Relationship.Equal,
             n1: negatedResult
-        }, "Cancel negatives"))
+        }, "Cancel negatives", RULE_ID))
     }
 }
+
+export const RULE_ID = "Cancel Negatives"

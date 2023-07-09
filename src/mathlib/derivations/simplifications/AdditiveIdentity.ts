@@ -22,7 +22,9 @@ export class AdditiveIdentity extends NoContextExpressionSimplificationRule {
             n: exp,
             r: Relationship.Equal,
             n1: sumOrNot(...termsWithoutZero)
-        }, "Additive identity"))
+        }, "Additive identity", RULE_ID))
     }
 
 }
+
+export const RULE_ID = "Additive Identity"

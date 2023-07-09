@@ -39,8 +39,9 @@ export class PowerRule extends NoContextExpressionSimplificationRule {
             n: exp,
             r: Relationship.Equal,
             n1: result
-        }, "Power rule"))
+        }, "Power rule", RULE_ID))
 
     }
-
 }
+
+export const RULE_ID = "Power Rule"

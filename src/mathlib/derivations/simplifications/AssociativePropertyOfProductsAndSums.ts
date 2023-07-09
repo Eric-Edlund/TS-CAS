@@ -31,7 +31,7 @@ export class AssociativePropertyOfProductsAndSums extends NoContextExpressionSim
                 n: exp,
                 r: Relationship.Equal,
                 n1: sum(...newTerms)
-            }, "Associative property of addition"))
+            }, "Associative property of addition", RULE_ID))
         } else {
             const newFactors = (exp as Product).factors.map<Expression[]>(t => {
                 if (t instanceof Product) {
@@ -45,8 +45,10 @@ export class AssociativePropertyOfProductsAndSums extends NoContextExpressionSim
                 n: exp,
                 r: Relationship.Equal,
                 n1: product(...newFactors)
-            }, "Associative property of multiplication"))
+            }, "Associative property of multiplication",  RULE_ID))
         }
     }
 
 }
+
+export const RULE_ID = "Associative Property"

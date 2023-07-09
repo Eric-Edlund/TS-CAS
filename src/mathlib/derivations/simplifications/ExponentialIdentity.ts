@@ -22,7 +22,9 @@ export class ExponentialIdentity extends NoContextExpressionSimplificationRule {
             n: e,
             r: Relationship.Equal,
             n1: e.base,
-        }, "Exponential Identity is 1"))
+        }, "Exponential Identity is 1", RULE_ID))
     }
 
 }
+
+export const RULE_ID = "Exponential Identity"
