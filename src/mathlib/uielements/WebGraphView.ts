@@ -4,7 +4,7 @@ import { GraphEdge, Graph } from "../Graph";
 import { Relationship } from "../Relationship";
 import { num } from "../ConvenientExpressions";
 import { GraphMinipulator } from "../GraphMinipulator";
-import { assert } from "../util/assert";
+import { assert, for_all, for_some } from "../util/assert";
 import { TouchGestureRecognizer } from "./TouchGestureRecognizer";
 import { EdgeView } from "./EdgeView";
 import { ExpressionNodeView } from "./ExpressionNodeView";
@@ -12,6 +12,7 @@ import { ArgumentNodeView } from "./ArgumentNodeView";
 import { GraphNodeView } from "./GraphNodeView";
 import { ExplanationPopup } from "./ExplanationPopup";
 import { MathGraphNode } from "../MathGraphNode";
+import { nthRootDependencies, number } from "mathjs";
 
 /**
  * A ui element that will display a math graph in a web.
@@ -208,7 +209,7 @@ export class WebGraphView extends HTMLDivElement {
         this.ringElements.clear()
      
         // Place nodes on a series of rings from the center using their depth in the graph
-        const levels = GraphMinipulator.getLevels(this.graph, this.rootNodes, (node) => {
+        const levels = GraphMinipulator.getLevels(this.graph, this.rootNodes, node => {
             if (node instanceof Expression) return true
             else if (node instanceof Argument) return this.showArguments
             else throw new Error("New type of node")
@@ -221,14 +222,16 @@ export class WebGraphView extends HTMLDivElement {
 
         const center = {x: (this.clientWidth / 2), y: this.clientHeight / 2};
         let lastRadius = 0 //px
+        // Record the positions of the last ring so that we can
+        // make the graph appear planar-ish. Maps nodes to angle
+        // offset in radians. Angle must be < 2*Pi
+        let lastPositions: Map<MathGraphNode, number> | null = null
         for (let depth = 0; depth < maxDepth + 1; depth++) {
             const nodes = levels.get(depth)!
             
-            // Organize the root nodes on a circle around the center
-            const stepSize = (2 * Math.PI) / nodes.size;
             // The starting angular offset to add the stepsize to
-            // Making it non-zero stops things from aligning
-            const stepOffset = (Math.PI / 3.5) * depth
+            // Making it non-constant stops things from aligning
+            const stepOffset = 0.2
             /**
              * Calculating the radius of the circle
              * Suppose every root node on the starting circle requires
@@ -244,19 +247,59 @@ export class WebGraphView extends HTMLDivElement {
             let radius = Math.max(nodes.size * nodeRadius / Math.PI, lastRadius + (3*nodeRadius))
             if (depth == 0 && nodes.size == 1) radius = 0
             lastRadius = radius;
-    
-            const ns = [...nodes]// TODO, assign a meaningful ordering
 
-            ns.forEach((node, index) => {
+            // Minimum radians necessary to keep nodes necessarily spaced at the given depth
+            const stepSize = (2 * Math.PI) / Math.max(nodes.size, radius*2*Math.PI / (2*1.2*nodeRadius));
+    
+            // Maps nodes to angles (rad)
+            const ns = new Map<MathGraphNode, number>();
+
+            if (lastPositions != null) {
+                const idealAngles = new Map<MathGraphNode, number>();
+                for (const n of nodes) {
+                    // We do not assume the graph is a tree
+                    // Assume the node has a parent
+                    const parent = this.graph.getNeighbors(n, "in")!
+                    .filter(n => levels.get(depth-1)!.has(n) && lastPositions!.has(n))[0]
+                    const idealAngle = lastPositions.get(parent)!
+                    idealAngles.set(n, idealAngle)
+                }
+
+                assert(idealAngles.size == nodes.size)
+
+                // Now assign real angles
+                for(let i = 0; i < nodes.size; i++) {
+                    for (const pair of idealAngles) {
+                        while (for_some(ns, p => Math.abs(p[1] - pair[1]) < stepSize)) {
+                            pair[1] += stepSize
+                        }
+                        ns.set(pair[0], pair[1])
+                    }
+                }
+            } else {
+                const temp = [...nodes]
+                for(let i=0; i < nodes.size; i++) {
+                    ns.set(temp[i], stepOffset + i * stepSize)
+                }
+            }
+            
+            assert(ns.size == nodes.size, "Only produced " + ns.size + " nodes instead of " + nodes.size)
+            
+            lastPositions = new Map()
+            ns.forEach((angle, node) => {
                 const view = this.nodes.get(node)!;
                 //view.style.width = "" + smallR + "px"
                 //view.style.height = "" + smallR + "px"
+                lastPositions!.set(node, angle + stepOffset)
 
                 // Get the cartesian point from the radius and angle
-                const x = radius * Math.cos(stepSize * index + stepOffset) + center.x
-                const y = radius * Math.sin(stepSize * index + stepOffset) + center.y
+                const x = radius * Math.cos(angle + stepOffset) + center.x
+                const y = radius * Math.sin(angle + stepOffset) + center.y
                 this.nodePositions.set(view, Point(x, y))
             })
+            assert(for_all(lastPositions.values(), pos => pos != undefined && pos != null))
+            //assert(lastPositions.size > 0)
+            //assert(for_all(nodes, lastPositions.has))
 
             const ring = document.createElement("div")
             ring.style.border = "lightgray solid 0.3ch"

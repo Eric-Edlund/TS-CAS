@@ -93,6 +93,22 @@ export class Graph {
     }
 
     /**
+     * Adds the given directed edge to the graph. If either node
+     * is missing from the graph, adds it.
+     * @param n 
+     * @param n1 
+     * @param e 
+     * @returns This.
+     */
+    public addEdge(n: MathGraphNode, n1: MathGraphNode, e: GraphEdge): Graph {
+        this.addNode(n)
+        this.addNode(n1)
+        this.internalAdd(n, n1, e)
+
+        return this
+    }
+
+    /**
      * Get the set of neighbors of a node.
      * @param node 
      * @param direction Nodes that are adjacent to this node, from this node, or either.

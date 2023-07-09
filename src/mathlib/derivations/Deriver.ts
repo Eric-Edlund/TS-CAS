@@ -46,16 +46,13 @@ export class Deriver {
                     while (this.simplifyNoContextConvergent());
                     if (!this.simplifyNoContextDivergent()) return
                 } else {
-                    console.log("+1")
                     if (!this.simplifyNoContextConvergent()) {
-                        console.log("No convergent simping left")
                         if (!this.simplifyNoContextDivergent()) 
                             return
                     }
                         
                 }    
             }
-            console.log("Ran out of depth")
         }
 
         //this.algebraicExpansion()
@@ -104,7 +101,6 @@ export class Deriver {
      * @returns True if the function expanded the graph.
      */
     private simplifyNoContextDivergent(): boolean {
-        console.log("simping")
 
         // Only operate on expressions which have passed convergent simplification
         const unsimplified = [...this.passedConvergentSimplification]
@@ -123,7 +119,6 @@ export class Deriver {
                     canBeSimplified = true
                 }
                 else if (e instanceof Product) {
-                    console.log("Passed Divergent Factoring " + e.toUnambigiousString())
                     this.passedFactoringSimplification.add(e)
                 }
                 // If expression is a polynomial, it may be a simplified polynomial
@@ -150,20 +145,18 @@ export class Deriver {
     }
 
     /**
-     * For each given argument, adds to the graph.
+     * For each given argument, adds to the graph if at least
+     * one of its claim's endpoints isn't already in the graph.
      * If both end points of all arguments are already in the graph,
      * returns false.
      * @param args 
      * @effects this.graph
-     * @returns True if one or more of the arguments
-     * were added to the graph.
      */
     private addToGraph(args: Argument[]): boolean {
         let atLeastOne = false;
         args.forEach(a => {
-            if (this.graph.contains(a.claim.n) 
-            && this.graph.contains(a.claim.n1)) this.graph.addArgument(a)
-            else {
+            if (!this.graph.contains(a.claim.n) 
+            || !this.graph.contains(a.claim.n1)) {
                 this.graph.addArgument(a)
                 atLeastOne = true
             }

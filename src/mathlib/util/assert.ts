@@ -7,3 +7,17 @@
 export function assert(exp: boolean, msg: string = "Failed assert"): void {
     if (!exp) throw new Error(msg);
 }
+
+export function for_all<T>(iterable: Iterable<T>, exp: (val: T) => boolean): boolean {
+    for (const i of iterable) {
+        if (!exp(i)) return false
+    }
+    return true
+}
+
+export function for_some<T>(iterable: Iterable<T>, exp: (val: T) => boolean): boolean {
+    for (const i of iterable) {
+        if (exp(i)) return true
+    }
+    return false
+}

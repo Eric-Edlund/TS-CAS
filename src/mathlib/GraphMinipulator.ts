@@ -52,6 +52,24 @@ export class GraphMinipulator {
     }
 
     /**
+     * Returns a new graph with only the nodes which pass the provided
+     * filter function. Edges connected to removed nodes are removed.
+     * 
+     * @param graph 
+     * @param included 
+     */
+    public static dropNodes(graph: Graph, included: (node: MathGraphNode) => boolean): Graph {
+        const result = new Graph();
+        graph.getNodes().forEach(n => {
+            if (included(n)) result.addNode(n)
+        })
+        graph.getEdges().forEach(e => {
+            if (included(e.n) && included(e.n1)) result.addEdge(e.n, e.n1, e.e)
+        })
+        return result
+    }
+
+    /**
      * Gets every edge in the graph.
      * @param input 
      * @returns 
