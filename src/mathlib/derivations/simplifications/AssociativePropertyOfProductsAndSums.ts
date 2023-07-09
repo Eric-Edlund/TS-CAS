@@ -8,7 +8,9 @@ import { setOf } from "../../util/ThingsThatShouldBeInTheStdLib";
 import { NoContextExpressionSimplificationRule } from "../NoContextExpressionSimplificationRule";
 
 /**
- * Flattens products in products and sums in sums
+ * Flattens products in products and sums in sums.
+ * 
+ * Only returns one simplification of an input. 
  */
 export class AssociativePropertyOfProductsAndSums extends NoContextExpressionSimplificationRule {
     protected appliesImpl(exp: Expression): boolean {
