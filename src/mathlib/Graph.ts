@@ -58,6 +58,8 @@ export class Graph {
     /**
      * Adds a node representing an acumulation of facts
      * that leads to a conclusion.
+     * The relationship claimed by the argument is directed
+     * from n to n1 with the argument as the edge.
      * @param a 
      * @returns the same graph for chaining.
      */
@@ -77,7 +79,6 @@ export class Graph {
         this.internalAdd(a, claim.n, ArgumentEdge.From)
         this.internalAdd(a, claim.n1, ArgumentEdge.From)
         this.internalAdd(claim.n, claim.n1, a)
-        this.internalAdd(claim.n1, claim.n, a)
 
         this.repOk()
         return this
