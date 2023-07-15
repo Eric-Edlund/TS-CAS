@@ -13,6 +13,7 @@ import { GraphNodeView } from "./GraphNodeView";
 import { ExplanationPopup } from "./ExplanationPopup";
 import { MathGraphNode } from "../MathGraphNode";
 import { nthRootDependencies, number } from "mathjs";
+import { Interpreter } from "../interpreting/Interpreter";
 
 /**
  * A ui element that will display a math graph in a web.
@@ -22,7 +23,7 @@ export class WebGraphView extends HTMLDivElement {
      * @param graph Must be fully connected.
      * @param roots Non-empty.
      */
-    public constructor(graph: Graph, roots: Set<MathGraphNode>, config: WebGraphViewInitSettings | undefined = undefined){
+    public constructor(graph: Graph, roots: Set<MathGraphNode>, interpreter: Interpreter, config: WebGraphViewInitSettings | undefined = undefined){
         super();
         this.graph = graph;
         this.nodes = new Map<MathGraphNode, GraphNodeView>();
@@ -35,6 +36,7 @@ export class WebGraphView extends HTMLDivElement {
         this.ringElements = new Set();
         this.ringPositions = new Map();
         this.explanationPopups = []
+        this.interpreter = interpreter
 
         if (config != undefined) {
             this.showArguments = config.showArguments
@@ -490,6 +492,7 @@ export class WebGraphView extends HTMLDivElement {
     }
 
     private graph: Graph;
+    private readonly interpreter: Interpreter;
     private readonly nodes: Map<MathGraphNode, GraphNodeView>;
     // The Position of the center of the node.
     private readonly nodePositions: Map<GraphNodeView, Point>;

@@ -14,6 +14,8 @@ import { Logarithm } from "./mathlib/expressions/Logarithm";
 import { Product } from "./mathlib/expressions/Product";
 import { Sum } from "./mathlib/expressions/Sum";
 import { Interpreter } from "./mathlib/interpreting/Interpreter";
+import { RULE_ID as Evaluate_Sums_Rule } from "./mathlib/derivations/simplifications/EvaluateSums";
+import { setOf } from "./mathlib/util/ThingsThatShouldBeInTheStdLib";
 
 
 RelationalDerivationRule.rules.add(new SubtractFromBothSides())
@@ -38,11 +40,10 @@ export function loadPrimaryPage(): void {
     deriver.expand(30, true)
 
     const interpreter = new Interpreter({
-        skips: [
-
-        ]
+        skips: setOf(
+            Evaluate_Sums_Rule
+        )
     })
-    interpreter.process(graph)
 
     //console.log("Result: " + graph)
 
@@ -60,7 +61,7 @@ export function loadPrimaryPage(): void {
         debugCornerEnabled: true,
     }
 
-    const graphView = new WebGraphView(graph, new Set([root]), config)
+    const graphView = new WebGraphView(graph, new Set([root]), interpreter, config)
     graphView.setNodeColoringScheme(n => {
         if (n instanceof Expression) {
             if (!deriver.isSimplified(n)) return "lightgray"
