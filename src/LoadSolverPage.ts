@@ -81,7 +81,6 @@ function getSolution(problem: Expression): MathGraphNode[] {
         if (node instanceof Expression)
             if (deriver.isSimplified(node))
                 if (simplified == null || simplified.childCount > node.childCount)
-                    if (node instanceof Sum && deriver.passedPolynomialSimplification.has(node))
                     simplified = node as Expression
     }
 
