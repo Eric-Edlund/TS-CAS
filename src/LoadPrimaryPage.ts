@@ -13,6 +13,7 @@ import { Derivative } from "./mathlib/expressions/Derivative";
 import { Logarithm } from "./mathlib/expressions/Logarithm";
 import { Product } from "./mathlib/expressions/Product";
 import { Sum } from "./mathlib/expressions/Sum";
+import { Interpreter } from "./mathlib/interpreting/Interpreter";
 
 
 RelationalDerivationRule.rules.add(new SubtractFromBothSides())
@@ -35,6 +36,13 @@ export function loadPrimaryPage(): void {
 
     const deriver = new Deriver(graph)
     deriver.expand(30, true)
+
+    const interpreter = new Interpreter({
+        skips: [
+
+        ]
+    })
+    interpreter.process(graph)
 
     //console.log("Result: " + graph)
 
