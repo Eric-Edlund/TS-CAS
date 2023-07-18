@@ -56,7 +56,7 @@ export function loadSolverPage(): void {
                 Evaluate_Sums_Rule
             )
         })
-        const skipSet = interpreter.process(steps)
+        //const skipSet = interpreter.process(steps)
 
         // Display new result
         solutionView.value = steps[steps.length - 1] as Expression
@@ -71,11 +71,11 @@ export function loadSolverPage(): void {
     
             stepListView.appendChild(view)
             
-            if (skipSet.next(step as Expression) == null) {
-                step = steps[steps.indexOf(step) + 1]
-            } else {
-                step = skipSet.next(step as Expression)!
-            }
+            // if (skipSet.next(step as Expression) == null) {
+            //     step = steps[steps.indexOf(step) + 1]
+            // } else {
+                // step = skipSet.next(step as Expression)!
+            // }
         }
 
     })
