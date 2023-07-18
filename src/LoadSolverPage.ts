@@ -12,6 +12,9 @@ import { ExpressionNodeView } from "./mathlib/uielements/ExpressionNodeView"
 import { GraphMinipulator } from "./mathlib/GraphMinipulator"
 import { parseExpression } from "./mathlib/userinput/AntlrMathParser"
 import { Sum } from "./mathlib/expressions/Sum"
+import { Interpreter } from "./mathlib/interpreting/Interpreter"
+import { setOf } from "./mathlib/util/ThingsThatShouldBeInTheStdLib"
+import { RULE_ID as Evaluate_Sums_Rule } from "./mathlib/derivations/simplifications/EvaluateSums"
 
 
 export function loadSolverPage(): void {
@@ -47,9 +50,18 @@ export function loadSolverPage(): void {
 
         const steps = getSolution(exp)
 
+        // Interpret the solution
+        const interpreter = new Interpreter({
+            skips: setOf(
+                Evaluate_Sums_Rule
+            )
+        })
+        const skipSet = interpreter.process(steps)
+
         // Display new result
         solutionView.value = steps[steps.length - 1] as Expression
-        steps.forEach(step => {
+        let step = steps[0]
+        while (step != steps[steps.length - 1]) {
             let view: GraphNodeView
             if (step instanceof Argument) {
                 view = new ArgumentNodeView(step, view => {})
@@ -58,7 +70,14 @@ export function loadSolverPage(): void {
             } else throw new Error("Not implemented")
     
             stepListView.appendChild(view)
-        })
+            
+            if (skipSet.next(step as Expression) == null) {
+                step = steps[steps.indexOf(step) + 1]
+            } else {
+                step = skipSet.next(step as Expression)!
+            }
+        }
+
     })
 
     

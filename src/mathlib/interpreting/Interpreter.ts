@@ -49,6 +49,8 @@ export class Interpreter {
         return result
     }
 
+    //public process(path: MathGraphNode[])
+
     private hasOneOutEdge(node: MathGraphNode): boolean {
         return this.graph?.getDegree(node, "out") == 1
     }
