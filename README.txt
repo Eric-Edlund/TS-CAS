@@ -4,7 +4,7 @@ Jesus I hate compilers
 
 Run the "npm ____" tasks from the project root. They're listed
 in package.json.
-It will compile all the ts files into a bundle.js in the dist dir.
+It will compile all the ts files into a bundle.js in the public dir.
 
 Then you open the integrator.html file in a browser and it will load it.
 
