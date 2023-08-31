@@ -6,6 +6,7 @@ import arithmeticParser, { ExpressionContext, OpenContext } from "./arithmeticPa
 import { ExpressionVisitor } from "./MathVisitorImpl"
 import { PrintVisitor } from "./PrintVisitor"
 import { Flattener } from "./Flattener"
+import { assert } from "../util/assert"
 
 /**
  * Parses the given input string to an expression.
@@ -28,5 +29,7 @@ export function parseExpression(input: string): Expression {
     // Print debug info
     //tree.accept(new PrintVisitor())
 
-    return tree.accept<Expression>(new ExpressionVisitor())
+    const result = tree.accept<Expression>(new ExpressionVisitor())
+    assert(result != null && result != undefined)
+    return result
 }

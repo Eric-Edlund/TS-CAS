@@ -2,6 +2,7 @@ import { Argument } from "../Argument";
 import { Expression } from "../expressions/Expression";
 import { Graph } from "../Graph"
 import { MathGraphNode } from "../MathGraphNode"
+import { Path } from "./Path";
 
 
 /**
@@ -12,44 +13,41 @@ export class Interpreter {
         this.config = config
     }
 
-    /**
-     * Creates a SkipSet for the given graph following
-     * the rules assigned to the Interpreter.
-     * @effects nothing
-     */
-    public process(graph: Graph): SkipSet {
-        this.graph = graph
+    public processPath(path: Path<Expression>): SkipSet {
+        this.graph = path.graph
         const result = new SkipSet();
 
-        for (const n of graph.getNodes()) {
-            if (n !instanceof Expression) continue
-            const node = n as Expression
-
-            let next: Expression = node
-            // Get the longest path we can
-            while (this.hasOneOutEdge(next)) {
-                const old = next
-                const neighbor = this.graph.getNeighbors(next, "out")![0]
-                if (neighbor !instanceof Expression) break
-                const edge = this.graph.getEdge(old, next)!
-
-                if (edge instanceof Argument 
-                    && this.config.skips.has(edge.ruleId)
-                    && next instanceof Expression) {
-                    next = neighbor as Expression
-                } else {
-                    break
-                } 
-            }
-
-            result.addSkip(node, next)
+        const shouldSkip = (arg: Argument) => {
+            return this.config.skips.has(arg.ruleId)
         }
+        const graph = this.graph
+
+        function recursiveAdd(node: Expression): void {
+            const next = findNext(node)
+            if (next != null) {
+                const argument = graph.getEdge(node, path.nodes[path.nodes.indexOf(node) + 1]) as Argument
+                result.addSkip(node, {e: next, a: argument})
+                recursiveAdd(next)
+            }
+        }
+
+        // Gets the next expression to show or null if there
+        // isn't one. Never returns the given expression
+        function findNext(node: Expression): Expression | null {
+            let index = path.nodes.indexOf(node)
+            const next = path.nodes[index + 1]
+            if (next == undefined) return null
+
+            if (shouldSkip(graph.getEdge(node, next) as Argument)) {
+                return findNext(next) ?? next
+            } else return next
+        }
+
+        recursiveAdd(path.nodes[0])
 
         this.graph = null
         return result
     }
-
-    //public process(path: MathGraphNode[])
 
     private hasOneOutEdge(node: MathGraphNode): boolean {
         return this.graph?.getDegree(node, "out") == 1
@@ -69,6 +67,11 @@ export interface InterpreterSettings {
     skips: Set<string>
 }
 
+interface Skip {
+    readonly a: Argument
+    readonly e: Expression
+}
+
 /**
  * Currently only supports expressions.
  * TODO: Figure out arguments.
@@ -78,7 +81,8 @@ export class SkipSet {
     /**
      * Finds the next expression that should be displayed.
      * The input and result expression should be displayed as
-     * connected by the input's out argument. 
+     * connected by the input's out argument, which is provided
+     * in the result.
      * 
      * There will be
      * exactly one simple path connecting the output and
@@ -86,7 +90,7 @@ export class SkipSet {
      * @param input 
      * @return Null if the input has no skip mapped to it.
      */
-    public next(input: Expression): Expression | null {
+    public next(input: Expression): Skip | null {
         if (this.skips.has(input)) return this.skips.get(input)!
         return null
     }
@@ -99,11 +103,11 @@ export class SkipSet {
      * @param start 
      * @param end 
      */
-    public addSkip(start: Expression, end: Expression): void {
-        if (start == end) return
+    public addSkip(start: Expression, end: Skip): void {
+        if (start == end.e) return
         if (this.skips.has(start) && this.skips.get(start)! != end) throw new Error("Adding another end to SkipSet")
         this.skips.set(start, end)
     }
 
-    private skips = new Map<Expression, Expression>()
+    private skips = new Map<Expression, {e: Expression, a: Argument}>()
 }

@@ -15,6 +15,7 @@ import { Sum } from "./mathlib/expressions/Sum"
 import { Interpreter } from "./mathlib/interpreting/Interpreter"
 import { setOf } from "./mathlib/util/ThingsThatShouldBeInTheStdLib"
 import { RULE_ID as Evaluate_Sums_Rule } from "./mathlib/derivations/simplifications/EvaluateSums"
+import { Path } from "./mathlib/interpreting/Path"
 
 
 export function loadSolverPage(): void {
@@ -56,28 +57,25 @@ export function loadSolverPage(): void {
                 Evaluate_Sums_Rule
             )
         })
-        //const skipSet = interpreter.process(steps)
+        const skipSet = interpreter.processPath(steps)
 
         // Display new result
-        solutionView.value = steps[steps.length - 1] as Expression
-        let step = steps[0]
-        while (step != steps[steps.length - 1]) {
-            let view: GraphNodeView
-            if (step instanceof Argument) {
-                view = new ArgumentNodeView(step, view => {})
-            } else if (step instanceof Expression) {
-                view = new ExpressionNodeView(step, view => {})
-            } else throw new Error("Not implemented")
-    
-            stepListView.appendChild(view)
-            
-            // if (skipSet.next(step as Expression) == null) {
-            //     step = steps[steps.indexOf(step) + 1]
-            // } else {
-                // step = skipSet.next(step as Expression)!
-            // }
-        }
+        solutionView.value = steps.nodes[steps.nodes.length - 1] as Expression
 
+        function recursiveAdd(node: Expression): void {
+
+            stepListView.appendChild(new ExpressionNodeView(node, view => {}))
+
+            const next = skipSet.next(node)
+    
+            if (next == null) return
+            
+            const arg = next.a
+            stepListView.appendChild(new ArgumentNodeView(arg, view => {}))
+            recursiveAdd(next.e)
+        }    
+
+        recursiveAdd(steps.nodes[0])
     })
 
     
@@ -89,7 +87,7 @@ export function loadSolverPage(): void {
  * of steps ending in the answer.
  * The last node will be an expression.
  */
-function getSolution(problem: Expression): MathGraphNode[] {
+function getSolution(problem: Expression): Path<Expression> {
     const graph = new Graph().addNode(problem)
 
     const deriver = new Deriver(graph)
@@ -124,11 +122,15 @@ function getSolution(problem: Expression): MathGraphNode[] {
     const pathFinder = path.nba<MathGraphNode, GraphEdge>(libraryGraph)
     const resultPath = pathFinder.find(problem.id, simplified!.id).reverse()
 
-    return resultPath.map(node => {
+    const typedResultPath = resultPath.map(node => {
         if (node.data instanceof Argument)
             return node.data as Argument
         else if (node.data instanceof Expression)
             return node.data as Expression
         else throw new Error("Not implemented")
-    });
+    }).filter(node => node instanceof Expression) as Expression[]
+
+    return new Path(graph, ...typedResultPath)
+
+    
 }

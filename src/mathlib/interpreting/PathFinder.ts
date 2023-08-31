@@ -1,4 +1,5 @@
 import { Graph } from "../Graph";
+import { MathGraphNode } from "../MathGraphNode";
 import { Path } from "./Path";
 
 /**
@@ -8,6 +9,6 @@ import { Path } from "./Path";
  */
 export interface PathFinder {
 
-    findPaths(graph: Graph): Path[]
+    findPaths(graph: Graph): Path<MathGraphNode>[]
 }
 

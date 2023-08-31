@@ -1,25 +1,20 @@
+import { Graph } from "../Graph"
 import { MathGraphNode } from "../MathGraphNode"
 
 /**
  * Represents a path of graphs.
  * Immutable
  */
-export class Path {
-    public constructor(...nodes: MathGraphNode[]) {
+export class Path<T extends MathGraphNode> implements Iterable<MathGraphNode> {
+    public constructor(graph: Graph, ...nodes: T[]) {
         this.nodes = nodes
+        this.graph = graph
+    }
+    
+    [Symbol.iterator](): Iterator<MathGraphNode, any, undefined> {
+        throw new Error("Method not implemented.")
     }
 
-    public readonly nodes: MathGraphNode[]
-}
-
-export class MutiblePath {
-    public constructor(...nodes: MathGraphNode[]) {
-        this.nodes = nodes
-    }
-
-    public getImmutible(): Path {
-        return new Path(...this.nodes)
-    }
-
-    public readonly nodes: MathGraphNode[]
+    public readonly nodes: T[]
+    public readonly graph: Graph
 }
