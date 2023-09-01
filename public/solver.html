@@ -21,7 +21,7 @@
                 background-color: gray;
             }
 
-            #steps {
+            /* #steps {
 
             }
 
@@ -31,6 +31,11 @@
 
             .expression {
 
+            } */
+
+            #inputZone {
+                display: flex;
+
             }
 
         </style>
@@ -39,8 +44,11 @@
     <body id="body" class="solve_in_steps">
 
         <h1>Solver</h1>
-        <textarea id="problem"></textarea>
-        <div id="expressionViewDiv"></div>
+        <div id="inputZone">
+            <textarea id="problem"></textarea>
+            <div id="expressionViewDiv"></div>
+        </div>
+        
         <div id="steps"></div>
         <editable-mathview id="solution"></editable-mathview>
 
