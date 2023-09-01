@@ -16,6 +16,9 @@ import { RULE_ID as Evaluate_Sums_Rule } from "./mathlib/derivations/simplificat
 import { Path } from "./mathlib/interpreting/Path"
 
 
+let controller = new AbortController();
+let solverThread: Promise<Path<Expression>> | null
+
 export function loadSolverPage(): void {
     const inputView = document.getElementById('problem')! as HTMLTextAreaElement
     const problemViewDiv = document.getElementById('expressionViewDiv') as HTMLDivElement
@@ -47,42 +50,44 @@ export function loadSolverPage(): void {
             stepListView.removeChild(stepListView.children[0])
         }
 
-        const steps = getSolution(exp)
+        console.log("New Task")
+        controller.abort()
+        controller = new AbortController()
+        solverThread = getSolution(exp, controller.signal)
+        
+        solverThread.then(steps => {
+            if (steps.nodes.length == 0) {
+                stepListView.textContent = "Cannot Simplify"
+                return
+            }
 
-        if (steps.nodes.length == 0) {
-            stepListView.textContent = "Cannot Simplify"
-            return
-        }
+            // Interpret the solution
+            const interpreter = new Interpreter({
+                skips: setOf(
+                    Evaluate_Sums_Rule
+                )
+            })
+            const skipSet = interpreter.processPath(steps)
 
-        // Interpret the solution
-        const interpreter = new Interpreter({
-            skips: setOf(
-                Evaluate_Sums_Rule
-            )
+            // Display new result
+            solutionView.value = steps.nodes[steps.nodes.length - 1] as Expression
+
+            function recursiveAdd(node: Expression): void {
+
+                stepListView.appendChild(new ExpressionNodeView(node, view => {}))
+
+                const next = skipSet.next(node)
+        
+                if (next == null) return
+                
+                const arg = next.a
+                stepListView.appendChild(new ArgumentNodeView(arg, view => {}))
+                recursiveAdd(next.e)
+            }    
+
+            recursiveAdd(steps.nodes[0])
         })
-        const skipSet = interpreter.processPath(steps)
-
-        // Display new result
-        solutionView.value = steps.nodes[steps.nodes.length - 1] as Expression
-
-        function recursiveAdd(node: Expression): void {
-
-            stepListView.appendChild(new ExpressionNodeView(node, view => {}))
-
-            const next = skipSet.next(node)
-    
-            if (next == null) return
-            
-            const arg = next.a
-            stepListView.appendChild(new ArgumentNodeView(arg, view => {}))
-            recursiveAdd(next.e)
-        }    
-
-        recursiveAdd(steps.nodes[0])
     })
-
-    
-    
 }
 
 /**
@@ -91,11 +96,13 @@ export function loadSolverPage(): void {
  * The last node will be an expression.
  * Result path will have no nodes if there is no solution.
  */
-function getSolution(problem: Expression): Path<Expression> {
+async function getSolution(problem: Expression, abort: AbortSignal): Promise<Path<Expression>> {
     const graph = new Graph().addNode(problem)
 
     const deriver = new Deriver(graph)
-    deriver.expand(50, true)
+    console.log("Pre Expand")
+    deriver.expand(50, true, abort)
+    console.log("Post expand")
 
     let simplified: Expression = problem
     for (const node of graph.getNodes()) {
