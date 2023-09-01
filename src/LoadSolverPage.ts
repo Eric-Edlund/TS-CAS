@@ -5,13 +5,11 @@ import path from "ngraph.path"
 import createGraph from "ngraph.graph"
 import { Expression } from "./mathlib/expressions/Expression"
 import { MathGraphNode } from "./mathlib/MathGraphNode"
-import { GraphNodeView } from "./mathlib/uielements/GraphNodeView"
 import { Argument } from "./mathlib/Argument"
 import { ArgumentNodeView } from "./mathlib/uielements/ArgumentNodeView"
 import { ExpressionNodeView } from "./mathlib/uielements/ExpressionNodeView"
 import { GraphMinipulator } from "./mathlib/GraphMinipulator"
 import { parseExpression } from "./mathlib/userinput/AntlrMathParser"
-import { Sum } from "./mathlib/expressions/Sum"
 import { Interpreter } from "./mathlib/interpreting/Interpreter"
 import { setOf } from "./mathlib/util/ThingsThatShouldBeInTheStdLib"
 import { RULE_ID as Evaluate_Sums_Rule } from "./mathlib/derivations/simplifications/EvaluateSums"
@@ -51,6 +49,11 @@ export function loadSolverPage(): void {
 
         const steps = getSolution(exp)
 
+        if (steps.nodes.length == 0) {
+            stepListView.textContent = "Cannot Simplify"
+            return
+        }
+
         // Interpret the solution
         const interpreter = new Interpreter({
             skips: setOf(
@@ -86,6 +89,7 @@ export function loadSolverPage(): void {
  * Simplifies the given expression returning an array
  * of steps ending in the answer.
  * The last node will be an expression.
+ * Result path will have no nodes if there is no solution.
  */
 function getSolution(problem: Expression): Path<Expression> {
     const graph = new Graph().addNode(problem)
@@ -93,11 +97,11 @@ function getSolution(problem: Expression): Path<Expression> {
     const deriver = new Deriver(graph)
     deriver.expand(50, true)
 
-    let simplified: Expression | null = null
+    let simplified: Expression = problem
     for (const node of graph.getNodes()) {
         if (node instanceof Expression)
             if (deriver.isSimplified(node))
-                if (simplified == null || simplified.childCount > node.childCount)
+                if (simplified.childCount > node.childCount)
                     simplified = node as Expression
     }
 
@@ -130,7 +134,5 @@ function getSolution(problem: Expression): Path<Expression> {
         else throw new Error("Not implemented")
     }).filter(node => node instanceof Expression) as Expression[]
 
-    return new Path(graph, ...typedResultPath)
-
-    
+    return new Path(graph, ...typedResultPath)    
 }
