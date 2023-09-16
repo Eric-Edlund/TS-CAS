@@ -53,6 +53,8 @@ export function loadSolverPage(): void {
         if (steps.nodes.length == 0) {
             stepListView.textContent = "Cannot Simplify"
             return
+        } else {
+            stepListView.textContent = ""
         }
 
         // Interpret the solution
@@ -94,9 +96,7 @@ function getSolution(problem: Expression): Path<Expression> {
     const graph = new Graph().addNode(problem)
 
     const deriver = new Deriver(graph)
-    console.log("Pre Expand")
     deriver.expand(50, true)
-    console.log("Post expand")
 
     let simplified: Expression = problem
     for (const node of graph.getNodes()) {
