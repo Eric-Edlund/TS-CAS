@@ -30,23 +30,13 @@ export class Deriver {
      *          aren't counted when calculating depth.
      * @param abort A signal used to prematurely abort the operation.
      */
-    public expand(maxDepth: number, skipConvergentSimplifications: boolean = false, abort: AbortSignal = new AbortSignal()): void {
+    public expand(maxDepth: number, skipConvergentSimplifications: boolean = false): void {
         // Simplify all the expressions using the contextless simplifying rules
         // Do this until there's nothing more to simplify
         
-        console.log(abort.aborted + " cancelled?")
-
         for (let i=0; i < maxDepth; i++) {
-            if (abort.aborted) {
-                console.log("Aborted early")
-                return
-            }
             if (skipConvergentSimplifications) {
                 while (this.simplifyNoContextConvergent()) {
-                    if (abort.aborted) {
-                        console.log("Aborted early")
-                        return
-                    }
                 }
                 if (!this.simplifyNoContextDivergent()) return
             } else {
