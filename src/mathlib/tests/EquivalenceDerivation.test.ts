@@ -46,7 +46,7 @@ testFn("x/x",              30,     ["1"])
 testFn("int(x)",           30,     ["(1/2)x^2", "b"])
 testFn("(a+b)(a-b)aa", 5, ["a^2(a+b)(a-b)", "(a^3+a^2b)(a-b)"])
 testFn(Derivative.of(num(1), v("x")), 5, ["0"])
-testFn(Integral.of(Exponent.of(x, num(2)), x), 5, ["x/2"])
+testFn(Integral.of(Exponent.of(x, num(2)), x), 5, ["x^3/3"])
 testFn(Integral.of(x, x), 5, ["x^2"])
 
 testFn(Integral.of(product(num(10), Exponent.of(x, num(2))), x), 10, ["10int(x^2)", "(x^3 10)/(3)"])
