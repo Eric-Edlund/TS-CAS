@@ -40,8 +40,9 @@ export function loadPrimaryPage(): void {
     })
 
     const input = document.getElementById("input") as HTMLTextAreaElement
-    input!.addEventListener("keyup", (e) => {
-        if (e.key != "Enter") return
+    input!.addEventListener("keydown", (e) => {
+        if (e.key !== "Enter") return
+        e.preventDefault()
 
         input.value = input.value.trimEnd()
 
