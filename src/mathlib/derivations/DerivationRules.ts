@@ -1,4 +1,5 @@
 import { BreakDerivativesOverAddition } from "./calculus/BreakDerivativesOverAddition"
+import { ConstantDerivaties } from "./calculus/ConstantDerivative"
 import { PowerRule } from "./calculus/PowerRule"
 import { ProductRule } from "./calculus/ProductRule"
 import { PullConstantsFromDerivatives } from "./calculus/PullConstantsFromDerivatives"
@@ -67,6 +68,7 @@ const remainingNoContextSimplificationRules: NoContextExpressionSimplificationRu
     new DivideFractions(),
     new RemoveCommonFactorsFromTopAndBottomOfFraction(),
     new BreakDerivativesOverAddition(),
+    new ConstantDerivaties(),
 ]
 
 /**

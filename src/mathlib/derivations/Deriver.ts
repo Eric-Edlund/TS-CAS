@@ -101,12 +101,15 @@ class DerivationResult {
 
             // Try to find equivalents using general convergent rules.
             for (const rule of convergentSimplificationRules) {
-                const derivedSimplification = equiv(e, equivalentsFnUsing([rule]))[0]
+                const results = equiv(e, equivalentsFnUsing([rule]))
+                const derivedSimplification = results[0]
                 
+                for (const r of results) {
+                    this.addToGraph([r])
+                }
+
                 if (derivedSimplification != undefined) {
-                    this.addToGraph([derivedSimplification])
                     shouldDoAgain = true
-                    
                     return // To next expression
                 }
             }
