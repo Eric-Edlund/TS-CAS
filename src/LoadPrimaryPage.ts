@@ -49,7 +49,7 @@ export function loadPrimaryPage(): void {
             return
         }
 
-        derivationResult = deriveExpand(wrapInGraph(root), 30, true)
+        derivationResult = deriveExpand(wrapInGraph(root), 5, true)
         const graph = derivationResult.graph
 
         graphView.setGraph(graph, setOf(root))

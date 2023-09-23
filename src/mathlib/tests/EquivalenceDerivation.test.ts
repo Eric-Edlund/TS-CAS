@@ -2,9 +2,12 @@
  * Test that the deriver is deriving the expected true statements.
  */
 
+//@ts-nocheck
+
+import { num, v } from "../ConvenientExpressions"
 import { deriveExpand, wrapInGraph } from "../derivations/Deriver"
+import { Derivative } from "../expressions/Derivative"
 import { Expression } from "../expressions/Expression"
-import { Integer } from "../expressions/Integer"
 import { parseExpression } from "../userinput/AntlrMathParser"
 
 
@@ -15,7 +18,7 @@ import { parseExpression } from "../userinput/AntlrMathParser"
  * @param expected A mixed list of expressions and expression strings.
  *              The expression strings will be parsed.
  */
-function testFn(exp: string, depth: number, expected: Expression[] | String[]): void {
+function testFn(exp: string | Expression, depth: number, expected: Expression[] | String[]): void {
 
     expected = expected.map(val => {
         if (typeof val === "string") {
@@ -23,17 +26,21 @@ function testFn(exp: string, depth: number, expected: Expression[] | String[]): 
         } else return val
     }) as Expression[]
 
-    test(exp, () => {
-        const derivationResult = deriveExpand(wrapInGraph(parseExpression(exp)), depth)
+    if (typeof exp === "string") {
+        exp = parseExpression(exp)
+    }
+
+    test(exp.toString(), () => {
+        const derivationResult = deriveExpand(wrapInGraph(exp as Expression), depth)
         for (const e of expected) {
             expect(derivationResult.graph.getNodes()).toContain(e)
         }
     })
 }
 
-testFn("1/2(1/3)", 30, ["1/6"])
-
-
-// test("1/2(1/3)", () => {
-//     const derivationResult = deriveExpand(wrapInGraph(parseExpression("1/2(1/3)")), 30)
-// })
+testFn("x+x", 30, ["2x"])
+testFn("1/2(1/3)",         30,     ["1/6"])
+testFn(Derivative.of(v("x"), v("X")),        30,     [num(1)])
+testFn("xx",               30,     ["x^2"])
+testFn("x/x",              30,     ["1"])
+testFn("int(x)",           30,     ["(1/2)x^2", "b"])

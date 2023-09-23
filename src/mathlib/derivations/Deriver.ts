@@ -57,19 +57,25 @@ class DerivationResult {
         // Simplify all the expressions using the contextless simplifying rules
         // Do this until there's nothing more to simplify
         
-        for (let i=0; i < maxDepth; i++) {
-            if (skipConvergentSimplifications) {
-                while (this.simplifyNoContextConvergent()) {
-                }
-                if (!this.simplifyNoContextDivergent()) return
-            } else {
-                if (!this.simplifyNoContextConvergent()) {
-                    if (!this.simplifyNoContextDivergent()) 
-                        return
-                }
-                    
-            }    
+        for (let i=0; i<maxDepth; i++) {
+            this.simplifyNoContextConvergent()
+            this.simplifyNoContextDivergent()
         }
+
+        //TODO: Optimize later, lets just make it work first
+        // for (let i=0; i < maxDepth; i++) {
+        //     if (skipConvergentSimplifications) {
+        //         while (this.simplifyNoContextConvergent()) {
+        //         }
+        //         if (!this.simplifyNoContextDivergent()) return
+        //     } else {
+        //         if (!this.simplifyNoContextConvergent()) {
+        //             if (!this.simplifyNoContextDivergent()) 
+        //                 return
+        //         }
+                    
+        //     }    
+        // }
     }
 
     /**
@@ -117,8 +123,12 @@ class DerivationResult {
      */
     private simplifyNoContextDivergent(): boolean {
 
-        // Only operate on expressions which have passed convergent simplification
-        const candidates = [...this.passedConvergentSimplification]
+        // Only operate on expressions which have not been previously done
+        const candidates = [...this.graph.getNodes()].filter(n => n instanceof Expression)
+            .map<Expression>(n => n as Expression)
+            .filter(e => 
+                !this.processedByDivergentSimplification.has(e)
+                && this.passedConvergentSimplification.has(e))
 
         // True if more expressions were added to the graph
         let shouldDoAgain = false
@@ -200,10 +210,14 @@ class DerivationResult {
     /// regardless of the result.
     public readonly processedByConvergentSimplification = new Set<Expression>()
 
+    private readonly processedByDivergentSimplification = new Set<Expression>()
+
     // All expressions which are products and could not be further
     // simplified by factoring simplification rules. A subset of
     // passedConvergentSimplification.
     public readonly passedFactoringSimplification = new Set<Product>()
+
+
 
     // All expressions which are sums and could not be further
     // simplified by polynomial simplification rules. A subset of
