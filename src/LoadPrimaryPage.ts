@@ -16,6 +16,7 @@ import { Sum } from "./mathlib/expressions/Sum";
 import { Interpreter } from "./mathlib/interpreting/Interpreter";
 import { RULE_ID as Evaluate_Sums_Rule } from "./mathlib/derivations/simplifications/EvaluateSums";
 import { setOf } from "./mathlib/util/ThingsThatShouldBeInTheStdLib";
+import { parseExpression } from "./mathlib/userinput/AntlrMathParser";
 
 
 RelationalDerivationRule.rules.add(new SubtractFromBothSides())
@@ -33,10 +34,10 @@ export function loadPrimaryPage(): void {
     //const root = product(Exponent.of(x, num(3)), Exponent.of(x, num(4)), x, x)
     //const root = Derivative.of(Fraction.of(Exponent.of(x, num(2)), x), x)
     //const root = Fraction.of(product(num(2), x, Exponent.of(x, a), a), product(num(2), a, a, x))
-    const root = product(sum(a, b), sum(a, negative(b)), a, a)
+    let root: Expression | null = product(sum(a, b), sum(a, negative(b)), a, a)
     const graph = new Graph().addNode(root)
 
-    const deriver = new Deriver(graph)
+    let deriver = new Deriver(graph)
     deriver.expand(30, true)
 
     const interpreter = new Interpreter({
@@ -48,8 +49,31 @@ export function loadPrimaryPage(): void {
     //console.log("Result: " + graph)
 
     const input = document.getElementById("input")
-    input!.addEventListener("keyup", () => {
-        //parse((input! as HTMLTextAreaElement).value)
+    input!.addEventListener("keyup", (e) => {
+        if (e.key != "Enter") return
+
+        try {
+            root = parseExpression((input! as HTMLTextAreaElement).value)
+        } catch (e) {
+            root = null;
+        }
+
+        if (root == null) {
+            alert("Not a valid input")
+            return
+        }
+
+        const graph = new Graph().addNode(root)
+        deriver = new Deriver(graph)
+        deriver.expand(30, true)
+        const interpreter = new Interpreter({
+            skips: setOf(
+                Evaluate_Sums_Rule
+            )
+        })
+
+        graphView.setGraph(graph, setOf(root))
+        console.log(root?.toString())
     })
 
 

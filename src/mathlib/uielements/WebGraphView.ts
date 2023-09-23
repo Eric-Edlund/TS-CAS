@@ -25,14 +25,13 @@ export class WebGraphView extends HTMLDivElement {
      */
     public constructor(graph: Graph, roots: Set<MathGraphNode>, interpreter: Interpreter, config: WebGraphViewInitSettings | undefined = undefined){
         super();
-        this.graph = graph;
+        
         this.nodes = new Map<MathGraphNode, GraphNodeView>();
         this.offsetX = 0;
         this.offsetY = 0;
         this.nodePositions = new Map();
         this.edgePositions = new Map();
         this.edges = new Map();
-        this.rootNodes = new Set(roots);
         this.ringElements = new Set();
         this.ringPositions = new Map();
         this.explanationPopups = []
@@ -85,7 +84,19 @@ export class WebGraphView extends HTMLDivElement {
         this.gestureRecognizer.addPinchListener((center, scaleDelta, fingers) => {
 
         })
+
+        this.setGraph(graph, roots)
+
         this.repOk()
+    }
+
+    public setGraph(graph: Graph, roots: Set<MathGraphNode>): void {
+        this.graph = graph;
+        this.rootNodes = new Set(roots);
+
+        this.readGraph()
+        this.arrange()
+        this.updateOffset()
     }
 
     /**
@@ -509,7 +520,7 @@ export class WebGraphView extends HTMLDivElement {
     private scale: number = 1;
 
     // These nodes are the root of the graph
-    private readonly rootNodes: Set<MathGraphNode>;
+    private rootNodes: Set<MathGraphNode>;
 
     private readonly ringElements: Set<HTMLElement>;
     private readonly ringPositions: Map<HTMLElement, {radius: number}>;
