@@ -1,5 +1,5 @@
-import { Deriver } from "./mathlib/derivations/Deriver"
-import { Graph, GraphEdge } from "./mathlib/Graph"
+import { deriveExpand, wrapInGraph } from "./mathlib/derivations/Deriver"
+import { GraphEdge } from "./mathlib/Graph"
 import { EditableMathView } from "./mathlib/uielements/EditableMathView"
 import path from "ngraph.path"
 import createGraph from "ngraph.graph"
@@ -93,15 +93,13 @@ export function loadSolverPage(): void {
  * Result path will have no nodes if there is no solution.
  */
 function getSolution(problem: Expression): Path<Expression> {
-    const graph = new Graph().addNode(problem)
-
-    const deriver = new Deriver(graph)
-    deriver.expand(50, true)
+    const graph = wrapInGraph(problem)
+    const derivationResult = deriveExpand(graph, 50, true)
 
     let simplified: Expression = problem
     for (const node of graph.getNodes()) {
         if (node instanceof Expression)
-            if (deriver.isSimplified(node))
+            if (derivationResult.isSimplified(node))
                 if (simplified.childCount > node.childCount)
                     simplified = node as Expression
     }

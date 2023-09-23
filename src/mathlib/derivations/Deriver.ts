@@ -1,16 +1,39 @@
 import { Argument } from "../Argument";
 import { Expression } from "../expressions/Expression";
-import { Product, ProductType } from "../expressions/Product";
+import { Product } from "../expressions/Product";
 import { Sum } from "../expressions/Sum";
-import { GivenEdge, Graph } from "../Graph";
+import { Graph } from "../Graph";
 import { convergentSimplificationRules, factoringSimplificationRules, polynomialSimplificationRules } from "./DerivationRules";
-import { ConvergenceTarget, NoContextExpressionSimplificationRule } from "./NoContextExpressionSimplificationRule";
+import { NoContextExpressionSimplificationRule } from "./NoContextExpressionSimplificationRule";
 import { equiv } from "./recursion";
+
+/**
+ * Creates a new graph contianing the given node.
+ */
+export function wrapInGraph(exp: Expression): Graph {
+    return new Graph().addNode(exp)
+}
+
+/**
+ * Expands the given graph using derivation rules to find 
+ * equivalent expressions.
+ */
+export function deriveExpand(
+    graph: Graph,
+    maxDepth: number, 
+    skipConvergentSimplifications: boolean = false
+    ): DerivationResult {
+
+    const result = new DerivationResult(graph)
+    
+    result.expand(maxDepth, skipConvergentSimplifications)
+    return result;
+}
 
 /**
  * Holds a single graph and expands it using rules.
  */
-export class Deriver {
+class DerivationResult {
     /**
      * Give it the graph you're going to expand.
      * @param graph 

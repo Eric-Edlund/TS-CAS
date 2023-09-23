@@ -1,12 +1,8 @@
 import { a, b, c, d, fraction, negative, num, pow, product, sum, x, y } from "./mathlib/ConvenientExpressions";
-import { Deriver } from "./mathlib/derivations/Deriver";
-import { Exponent } from "./mathlib/expressions/Exponent";
+import { deriveExpand, wrapInGraph } from "./mathlib/derivations/Deriver";
 import { Expression } from "./mathlib/expressions/Expression";
-import { Logarithm } from "./mathlib/expressions/Logarithm";
-import { Graph } from "./mathlib/Graph";
 import { EditableMathView } from "./mathlib/uielements/EditableMathView";
 import { parseExpression } from "./mathlib/userinput/AntlrMathParser";
-import { PowerContext } from "./mathlib/userinput/arithmeticParser";
 
 /**
  * Called after DOM is loaded.
@@ -54,12 +50,9 @@ export function loadSimplificationTestPage() {
         append(data3)
 
         data1.appendChild(view(start))
-        const graph = new Graph();
-        graph.addNode(start)
-        const deriver = new Deriver(graph)
-        deriver.expand(40)
+        const derivationResult = deriveExpand(wrapInGraph(start), 40)
 
-        const results = deriver.simplifiedExpressions
+        const results = derivationResult.simplifiedExpressions
         console.log(results.length)
         if (results.length == 0) {
             table.style.backgroundColor = "red"
