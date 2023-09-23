@@ -1,6 +1,6 @@
 import { MathGraphNode } from "../MathGraphNode";
 import { VariableValueMap } from "../VariableValueMap";
-import { Integer, IntegerType } from "./Integer";
+import { IntegerType } from "./Integer";
 import { MathElement } from "./MathElement";
 import { Variable } from "./Variable";
 
