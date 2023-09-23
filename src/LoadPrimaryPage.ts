@@ -13,6 +13,8 @@ import { RULE_ID as Evaluate_Sums_Rule } from "./mathlib/derivations/simplificat
 import { setOf } from "./mathlib/util/ThingsThatShouldBeInTheStdLib";
 import { parseExpression } from "./mathlib/userinput/AntlrMathParser";
 import { Derivative } from "./mathlib/expressions/Derivative";
+import { Integral } from "./mathlib/expressions/Integral";
+import { Exponent } from "./mathlib/expressions/Exponent";
 
 
 RelationalDerivationRule.rules.add(new SubtractFromBothSides())
@@ -26,7 +28,7 @@ RelationalDerivationRule.rules.add(new DivideOnBothSides())
 export function loadPrimaryPage(): void {
 
     //product(sum(a, b), sum(a, negative(b)), a, a)
-    let root: Expression | null = Derivative.of(num(1), x)
+    let root: Expression | null = Integral.of(product(x,x), x)
 
     let derivationResult = deriveExpand(wrapInGraph(root), 30, true)
     const graph = derivationResult.graph

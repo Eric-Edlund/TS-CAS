@@ -4,6 +4,7 @@ import { PowerRule } from "./calculus/PowerRule"
 import { ProductRule } from "./calculus/ProductRule"
 import { PullConstantsFromDerivatives } from "./calculus/PullConstantsFromDerivatives"
 import { QuotientRule } from "./calculus/QuotientRule"
+import { ReversePowerRule } from "./calculus/ReversePowerRule"
 import { USubstitution } from "./calculus/USubstitution"
 import { NoContextExpressionSimplificationRule } from "./NoContextExpressionSimplificationRule"
 import { AdditiveIdentity } from "./simplifications/AdditiveIdentity"
@@ -69,6 +70,7 @@ const remainingNoContextSimplificationRules: NoContextExpressionSimplificationRu
     new RemoveCommonFactorsFromTopAndBottomOfFraction(),
     new BreakDerivativesOverAddition(),
     new ConstantDerivaties(),
+    new ReversePowerRule(),
 ]
 
 /**

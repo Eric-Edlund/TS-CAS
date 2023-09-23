@@ -2,10 +2,12 @@
  * Test that the deriver is deriving the expected true statements.
  */
 
-import { num, v } from "../ConvenientExpressions"
+import { num, v, x } from "../ConvenientExpressions"
 import { deriveExpand, wrapInGraph } from "../derivations/Deriver"
 import { Derivative } from "../expressions/Derivative"
+import { Exponent } from "../expressions/Exponent"
 import { Expression } from "../expressions/Expression"
+import { Integral } from "../expressions/Integral"
 import { parseExpression } from "../userinput/AntlrMathParser"
 
 
@@ -44,3 +46,5 @@ testFn("x/x",              30,     ["1"])
 testFn("int(x)",           30,     ["(1/2)x^2", "b"])
 testFn("(a+b)(a-b)aa", 5, ["a^2(a+b)(a-b)", "(a^3+a^2b)(a-b)"])
 testFn(Derivative.of(num(1), v("x")), 5, ["0"])
+testFn(Integral.of(Exponent.of(x, num(2)), x), 5, ["x/2"])
+testFn(Integral.of(x, x), 5, ["x^2"])
