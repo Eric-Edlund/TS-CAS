@@ -61,6 +61,11 @@ export function loadSimplificationTestPage() {
 
         const results = deriver.simplifiedExpressions
         console.log(results.length)
+        if (results.length == 0) {
+            table.style.backgroundColor = "red"
+            page.append(table)
+            return
+        }
         data2.appendChild(view(results[0]))
         data3.appendChild(view(answ))
 
