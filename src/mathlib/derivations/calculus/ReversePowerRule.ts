@@ -26,7 +26,7 @@ export class ReversePowerRule extends NoContextExpressionSimplificationRule {
         let result: Expression
 
         if (integrand instanceof Exponent) {
-            result = Fraction.of(Exponent.of(integrand.base, sum(integrand.power, negative(num(1)))), integrand.power)
+            result = Fraction.of(Exponent.of(integrand.base, sum(integrand.power, num(1))), sum(integrand.power, num(1)))
         } else {
             result = Exponent.of(integrand, num(2))
         }
