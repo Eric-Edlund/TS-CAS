@@ -3,6 +3,7 @@ import { ConstantDerivaties } from "./calculus/ConstantDerivative"
 import { PowerRule } from "./calculus/PowerRule"
 import { ProductRule } from "./calculus/ProductRule"
 import { PullConstantsFromDerivatives } from "./calculus/PullConstantsFromDerivatives"
+import { PullConstantsFromIntegrals } from "./calculus/PullConstantsFromIntegrals"
 import { QuotientRule } from "./calculus/QuotientRule"
 import { ReversePowerRule } from "./calculus/ReversePowerRule"
 import { USubstitution } from "./calculus/USubstitution"
@@ -63,6 +64,7 @@ const remainingNoContextSimplificationRules: NoContextExpressionSimplificationRu
     new USubstitution(),
     new PowerRule(),
     new PullConstantsFromDerivatives(),
+    new PullConstantsFromIntegrals(),
     new AssociativePropertyOfProductsAndSums(),
     new ProductRule(),
     new QuotientRule(),

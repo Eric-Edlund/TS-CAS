@@ -28,7 +28,7 @@ RelationalDerivationRule.rules.add(new DivideOnBothSides())
 export function loadPrimaryPage(): void {
 
     //product(sum(a, b), sum(a, negative(b)), a, a)
-    let root: Expression | null = Integral.of(product(x,x), x)
+    let root: Expression | null = Integral.of(product(num(10), Exponent.of(x, num(2))), x)
 
     let derivationResult = deriveExpand(wrapInGraph(root), 30, true)
     const graph = derivationResult.graph
