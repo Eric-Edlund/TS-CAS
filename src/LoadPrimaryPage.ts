@@ -48,12 +48,14 @@ export function loadPrimaryPage(): void {
 
     //console.log("Result: " + graph)
 
-    const input = document.getElementById("input")
+    const input = document.getElementById("input") as HTMLTextAreaElement
     input!.addEventListener("keyup", (e) => {
         if (e.key != "Enter") return
 
+        input.value = input.value.trimEnd()
+
         try {
-            root = parseExpression((input! as HTMLTextAreaElement).value)
+            root = parseExpression(input.value)
         } catch (e) {
             root = null;
         }
