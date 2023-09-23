@@ -1,6 +1,5 @@
 import { VariableValueMap } from "../VariableValueMap";
 import { Expression } from "./Expression";
-import { Integer } from "./Integer";
 
 export class Fraction extends Expression {
     public static of(numerator: Expression, denominator: Expression): Fraction {

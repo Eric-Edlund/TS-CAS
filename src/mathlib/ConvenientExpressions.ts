@@ -224,6 +224,16 @@ export function productOrNot(...expressions: Expression[]): Expression {
 }
 
 /**
+ * Takes the product of the given expressions. If none are
+ * given, 1. If one is given, that one.
+ */
+export function productOrOne(...expressions: Expression[]): Expression {
+    if (expressions.length === 0) {
+        return num(1)
+    } else return productOrNot(...expressions)
+}
+
+/**
  * @returns The product of the given terms exlcuding the first if 
  *          it's one. If the resulting terms list is only one term,
  *          returns the only term.

@@ -2,7 +2,6 @@ import { MathGraphNode } from "../MathGraphNode";
 import { VariableValueMap } from "../VariableValueMap";
 import { IntegerType } from "./Integer";
 import { MathElement } from "./MathElement";
-import { Variable } from "./Variable";
 
 /**
  * Base of all mathematical expressions.
@@ -29,12 +28,6 @@ export abstract class Expression extends MathGraphNode implements MathElement {
      * pi
      */
     public abstract readonly isReducible: boolean;
-    /**
-     * True if the expression is reducible or is an integer.
-     */
-    public get isReducibleOrInt(): boolean {
-        return this.isReducible || this.class == IntegerType
-    }
     /**
      * The class name of the expression.
      * For reflection.

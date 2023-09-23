@@ -23,6 +23,7 @@ import { FOIL } from "./simplifications/FOIL"
 import { LogOfOne } from "./simplifications/LogOfOne"
 import { MultiplicativeIdentity } from "./simplifications/MultiplicativeIdentity"
 import { MultiplyExponentPowers } from "./simplifications/MultiplyExponentPowers"
+import { MultiplyFractions } from "./simplifications/MultiplyFractions"
 import { OrderProducts } from "./simplifications/OrderProducts"
 import { OrderSums } from "./simplifications/OrderSums"
 import { RemoveCommonFactorsFromTopAndBottomOfFraction } from "./simplifications/RemoveCommonFactorsOnTopAndBottomOfFraction"
@@ -53,6 +54,7 @@ const combinatoricRules = [
     new MultiplyExponentPowers(),
     new SubtractExponentsOnFractions(),
     new CombineProductsAndFractions(),
+    new MultiplyFractions(),
 ]
 
 const remainingNoContextSimplificationRules: NoContextExpressionSimplificationRule[] = [

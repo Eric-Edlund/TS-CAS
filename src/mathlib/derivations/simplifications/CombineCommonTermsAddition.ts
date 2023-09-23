@@ -6,6 +6,7 @@ import { Relationship } from "../../Relationship";
 import { ConvergenceTarget, NoContextExpressionSimplificationRule } from "../NoContextExpressionSimplificationRule";
 import { Sum } from "../../expressions/Sum";
 import { addAll, has, setOf } from "../../util/ThingsThatShouldBeInTheStdLib";
+import { IntegerType } from "../../../mathlib/expressions/Integer";
 
 /**
  * a + a = 2a
@@ -43,7 +44,7 @@ export class CombineCommonTermsAddition extends NoContextExpressionSimplificatio
         // Create an argument for pulling out each factor
         for (const factor of uniqueFactors) {
 
-            if (factor.isReducibleOrInt) continue
+            if (factor.isReducible || factor.class === IntegerType) continue
 
             // Figure out which terms contain it
             const relaventTerms: Product[] = []
