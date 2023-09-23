@@ -7,6 +7,7 @@ import { Fraction, FractionType } from "../../../mathlib/expressions/Fraction";
 import { productOrNot, productOrOne } from "../../../mathlib/ConvenientExpressions";
 import { Relationship } from "../../../mathlib/Relationship";
 import { setOf } from "../../../mathlib/util/ThingsThatShouldBeInTheStdLib";
+import { Integer } from "../../../mathlib/expressions/Integer";
 
 
 export class MultiplyFractions extends NoContextExpressionSimplificationRule {
@@ -28,6 +29,7 @@ export class MultiplyFractions extends NoContextExpressionSimplificationRule {
             return f.class === FractionType
         }).map(f => (f as Fraction).denominator))
 
+        if (den instanceof Integer && den.value == 1) return setOf()
 
         return setOf(new Argument(setOf(exp), {
             n: exp,
