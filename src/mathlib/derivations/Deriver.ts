@@ -70,8 +70,6 @@ class DerivationResult {
                     
             }    
         }
-
-        //this.algebraicExpansion()
     }
 
     /**
@@ -175,33 +173,6 @@ class DerivationResult {
            
         })
         return atLeastOne;
-    }
-
-    /**
-     * Expands the graph using algebra rules.
-     * Only simplified rules are used.
-     */
-    private algebraicExpansion(): void {
-        // const rules = [...RelationalDerivationRule.rules]
-
-        // const components = [...GraphMinipulator.getComponentNodes(this.graph, edge => {
-        //     return (edge instanceof Argument && edge.relationship == Relationship.Equal)
-        //         || (edge instanceof GivenEdge && edge.r == Relationship.Equal)
-        // })]
-
-        // components.forEach(component => {
-        //     const equation: Expression[] = []
-        //     for (const node of component) {
-        //         if (node instanceof Expression && this.simplified.has(node))
-        //             equation.push(node)
-        //     }
-                   
-        //     rules.forEach(r => {
-        //         r.apply(setOf(...equation)).forEach(a => {
-        //             this.graph.addArgument(a)
-        //         })
-        //     })
-        // })
     }
 
     public readonly graph: Graph
