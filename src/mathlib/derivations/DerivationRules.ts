@@ -1,5 +1,6 @@
 import { BreakDerivativesOverAddition } from "./calculus/BreakDerivativesOverAddition"
 import { ConstantDerivaties } from "./calculus/ConstantDerivative"
+import { LogIntegralRule } from "./calculus/LogIntegralRule"
 import { PowerRule } from "./calculus/PowerRule"
 import { ProductRule } from "./calculus/ProductRule"
 import { PullConstantsFromDerivatives } from "./calculus/PullConstantsFromDerivatives"
@@ -73,6 +74,7 @@ const remainingNoContextSimplificationRules: NoContextExpressionSimplificationRu
     new BreakDerivativesOverAddition(),
     new ConstantDerivaties(),
     new ReversePowerRule(),
+    new LogIntegralRule(),
 ]
 
 /**
