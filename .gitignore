@@ -1,10 +1,7 @@
-node_modules/*
-dist/*
+node_modules
 package-lock.json
 **/.antlr/
 **/auto-generated/
-dist/bundle.js
-node_modules/**
-out/
-.webpack/
+out
+.webpack
 public/bundle.js
