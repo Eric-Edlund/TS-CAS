@@ -1,6 +1,9 @@
-Jesus I hate compilers
+# A Computer Algebra System built in TypeScript
 
-[Building the Website]
+Does integrals so I don't have to. Also has a UI.
+
+
+## Building the Website
 
 Run the "npm ____" tasks from the project root. They're listed
 in package.json.
@@ -13,13 +16,13 @@ There are 3 webpack config files:
 - webpack.dev.js (creates a dev bundle with dev stuff)
 - webpack.prod.js (creates a prod bundle with prod optimizations)
 
-[Building the Electron App]
+## Building the Electron App
 
 I asked ChatGPT to set up the project, I have no clue how it works.
 There are two scripts in package.json, "build-electron" and "run-electron".
 
 
-[Testing]
+## Testing
 
 The project uses jest.
 Test files should go in the 'tests' directory, although it 
@@ -28,12 +31,13 @@ doesn't matter where you put them. Test files must end in '.test.ts'.
 To do the tests, run "npm test"
 You have to have 'jest' installed on your system.
 
-[How it Works]
+## How it Works
+
 Equation rendering is done with MathJax
 Read the theory document in mathlib directory.
 Expression parsing is done with ANTLR.
 
-[ANTLR]
+## ANTLR
 The ANTLR runtime is a dependancy of the project. The way this work is
 in the src files there is a grammar file (ending in .g) which describes
 the grammar for parsing math expressions. We use the commandline tool
@@ -48,7 +52,7 @@ runtime files. The generated js files require these runtime files
 to work. They will be shipped to the client browser along with everything 
 else.
 
-[Other]
+## Other
 
 I'm no javascript expert, but I think npm should get everything it needs from 
 package.json and resolve it's own dependencies.
