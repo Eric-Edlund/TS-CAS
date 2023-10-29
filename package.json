@@ -5,10 +5,11 @@
   "main": ".webpack/main",
   "scripts": {
     "test": "jest",
+    "clean": "rm -rf out; rm public/bundle.js",
     "build-dev": "npx webpack --config webpack.dev.js",
+    "build-prod": "npx webpack --config webpack.prod.js",
     "build-grammar": "java -jar ~/antlr4.jar -Dlanguage=TypeScript -visitor ./src/mathlib/userinput/arithmetic.g4",
     "start-server": "node index.js",
-    "build-prod": "npx webpack --config webpack.prod.js",
     "start-electron": "electron-forge start",
     "package-electron": "electron-forge package",
     "make-electron": "electron-forge make"
@@ -30,15 +31,15 @@
     "css-loader": "^6.8.1",
     "electron": "^25.3.0",
     "electron-build": "^0.0.3",
-    "jest": "^29.5.0",
     "fork-ts-checker-webpack-plugin": "^7.3.0",
+    "jest": "^29.5.0",
     "node-loader": "^2.0.0",
     "style-loader": "^3.3.3",
     "ts-jest": "^29.0.5",
     "ts-loader": "^5.4.5",
     "ts-node": "^10.9.1",
     "typescript": "^5.0.0",
-    "webpack-cli": "^5.1.1",
+    "webpack-cli": "^5.1.4",
     "webpack-merge": "^5.9.0"
   },
   "dependencies": {
