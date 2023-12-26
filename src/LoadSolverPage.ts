@@ -15,12 +15,15 @@ import { setOf } from "./mathlib/util/ThingsThatShouldBeInTheStdLib"
 import { RULE_ID as Evaluate_Sums_Rule } from "./mathlib/derivations/simplifications/EvaluateSums"
 import { Path } from "./mathlib/interpreting/Path"
 
-
 export function loadSolverPage(): void {
-    const inputView = document.getElementById('problem')! as HTMLTextAreaElement
-    const problemViewDiv = document.getElementById('expressionViewDiv') as HTMLDivElement
-    const solutionView = document.getElementById('solution')! as EditableMathView
-    const stepListView = document.getElementById('steps')!
+    const inputView = document.getElementById("problem")! as HTMLTextAreaElement
+    const problemViewDiv = document.getElementById(
+        "expressionViewDiv"
+    ) as HTMLDivElement
+    const solutionView = document.getElementById(
+        "solution"
+    )! as EditableMathView
+    const stepListView = document.getElementById("steps")!
 
     // Populate ui
     const problemView = new EditableMathView()
@@ -48,8 +51,7 @@ export function loadSolverPage(): void {
         }
 
         const steps = getSolution(exp)
-        
-        
+
         if (steps.nodes.length == 0) {
             stepListView.textContent = "Cannot Simplify"
             return
@@ -59,9 +61,7 @@ export function loadSolverPage(): void {
 
         // Interpret the solution
         const interpreter = new Interpreter({
-            skips: setOf(
-                Evaluate_Sums_Rule
-            )
+            skips: setOf(Evaluate_Sums_Rule)
         })
         const skipSet = interpreter.processPath(steps)
 
@@ -69,20 +69,18 @@ export function loadSolverPage(): void {
         solutionView.value = steps.nodes[steps.nodes.length - 1] as Expression
 
         function recursiveAdd(node: Expression): void {
-
             stepListView.appendChild(new ExpressionNodeView(node, view => {}))
 
             const next = skipSet.next(node)
-    
+
             if (next == null) return
-            
+
             const arg = next.a
             stepListView.appendChild(new ArgumentNodeView(arg, view => {}))
             recursiveAdd(next.e)
-        }    
+        }
 
         recursiveAdd(steps.nodes[0])
-        
     })
 }
 
@@ -116,7 +114,7 @@ function getSolution(problem: Expression): Path<Expression> {
             libraryGraph.addLink(edge.n.id, edge.e.id)
             libraryGraph.addLink(edge.e.id, edge.n1.id)
         }
-            
+
         // if (edge.n instanceof Expression && edge.n1 instanceof Expression)
         //     console.log(`edge ${edge.n} AND ${edge.n1}`)
     }
@@ -125,13 +123,14 @@ function getSolution(problem: Expression): Path<Expression> {
     const pathFinder = path.nba<MathGraphNode, GraphEdge>(libraryGraph)
     const resultPath = pathFinder.find(problem.id, simplified!.id).reverse()
 
-    const typedResultPath = resultPath.map(node => {
-        if (node.data instanceof Argument)
-            return node.data as Argument
-        else if (node.data instanceof Expression)
-            return node.data as Expression
-        else throw new Error("Not implemented")
-    }).filter(node => node instanceof Expression) as Expression[]
+    const typedResultPath = resultPath
+        .map(node => {
+            if (node.data instanceof Argument) return node.data as Argument
+            else if (node.data instanceof Expression)
+                return node.data as Expression
+            else throw new Error("Not implemented")
+        })
+        .filter(node => node instanceof Expression) as Expression[]
 
-    return new Path(graph, ...typedResultPath)    
+    return new Path(graph, ...typedResultPath)
 }

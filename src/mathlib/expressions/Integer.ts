@@ -1,25 +1,27 @@
-import { assert } from "../util/assert";
-import { VariableValueMap } from "../VariableValueMap";
-import { Expression } from "./Expression";
+import { assert } from "../util/assert"
+import { VariableValueMap } from "../VariableValueMap"
+import { Expression } from "./Expression"
 
 /**
  * Integer
  * Positive or negative
  */
 export class Integer extends Expression {
-
     public static of(value: number): Integer {
         if (!Integer.instances.has(value)) {
             Integer.instances.set(value, new Integer(value))
         }
         return Integer.instances.get(value)!
     }
-    private static instances: Map<number, Integer> = new Map();
+    private static instances: Map<number, Integer> = new Map()
 
     private constructor(value: number) {
         super()
         this.value = value
-        assert(this.value % 1 == 0, "Creating non-integer integer " + this.value)
+        assert(
+            this.value % 1 == 0,
+            "Creating non-integer integer " + this.value
+        )
     }
 
     /**
@@ -46,15 +48,14 @@ export class Integer extends Expression {
     }
 
     public evaluate(values: VariableValueMap): number {
-        return this.value;
+        return this.value
     }
 
-    public readonly value: number;
-    public readonly isReducible: boolean = false;
+    public readonly value: number
+    public readonly isReducible: boolean = false
 
-    public readonly isConstant = true;
+    public readonly isConstant = true
     public readonly childCount = 0
-    
 }
 
 export const IntegerType = "Integer"

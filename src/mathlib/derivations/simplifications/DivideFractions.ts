@@ -1,18 +1,26 @@
-import { Argument } from "../../Argument";
-import { removeNew, num as numOf, negative, sumOrNot, productOrNot } from "../../ConvenientExpressions";
-import { Exponent } from "../../expressions/Exponent";
-import { Expression } from "../../expressions/Expression";
-import { Fraction } from "../../expressions/Fraction";
-import { Product } from "../../expressions/Product";
-import { Relationship } from "../../Relationship";
-import { has, setOf } from "../../util/ThingsThatShouldBeInTheStdLib";
-import { NoContextExpressionSimplificationRule } from "../NoContextExpressionSimplificationRule";
+import { Argument } from "../../Argument"
+import {
+    removeNew,
+    num as numOf,
+    negative,
+    sumOrNot,
+    productOrNot
+} from "../../ConvenientExpressions"
+import { Exponent } from "../../expressions/Exponent"
+import { Expression } from "../../expressions/Expression"
+import { Fraction } from "../../expressions/Fraction"
+import { Product } from "../../expressions/Product"
+import { Relationship } from "../../Relationship"
+import { has, setOf } from "../../util/ThingsThatShouldBeInTheStdLib"
+import { NoContextExpressionSimplificationRule } from "../NoContextExpressionSimplificationRule"
 
 export class DivideFractions extends NoContextExpressionSimplificationRule {
     protected appliesImpl(exp: Expression): boolean {
-        return exp instanceof Fraction
-            && exp.numerator instanceof Product
-            && exp.denominator instanceof Product
+        return (
+            exp instanceof Fraction &&
+            exp.numerator instanceof Product &&
+            exp.denominator instanceof Product
+        )
     }
     protected applyImpl(exp: Expression): Set<Argument> {
         const frac = exp as Fraction
@@ -20,16 +28,16 @@ export class DivideFractions extends NoContextExpressionSimplificationRule {
         const den = frac.denominator as Product
 
         // Take the factors of the negation of any negations
-        const numFactors = num.isNegation ? 
-            num.negation instanceof Product ?
-                num.negation.factors // Get factors if the negation is a product
-                : [num.negation]  // If negation isn't a product, return the negation as a list of 1
-                : num.factors   // If not a negation, return the factors
-        const denFactors = !den.isNegation ? den.factors
-                : den.negation instanceof Product ?
-                    den.negation.factors
-                    : [den.negation]
-
+        const numFactors = num.isNegation
+            ? num.negation instanceof Product
+                ? num.negation.factors // Get factors if the negation is a product
+                : [num.negation] // If negation isn't a product, return the negation as a list of 1
+            : num.factors // If not a negation, return the factors
+        const denFactors = !den.isNegation
+            ? den.factors
+            : den.negation instanceof Product
+              ? den.negation.factors
+              : [den.negation]
 
         // If there are any repeats, give up
         if (new Set(numFactors).size < numFactors.length) return setOf()
@@ -61,11 +69,17 @@ export class DivideFractions extends NoContextExpressionSimplificationRule {
 
         // Any base which is in the numerator and denominator
         // will only be in the numerator
-        const newNumExponentPowers = new Map<Expression, Expression[]>(numExponentPowers)
-        const newDenExponentPowers = new Map<Expression, Expression[]>(denExponentPowers)
+        const newNumExponentPowers = new Map<Expression, Expression[]>(
+            numExponentPowers
+        )
+        const newDenExponentPowers = new Map<Expression, Expression[]>(
+            denExponentPowers
+        )
         denExponentPowers.forEach((powers, base) => {
             if (numExponentPowers.has(base)) {
-                newNumExponentPowers.get(base)!.push(negative(sumOrNot(...powers)))
+                newNumExponentPowers
+                    .get(base)!
+                    .push(negative(sumOrNot(...powers)))
                 newDenExponentPowers.delete(base)
             }
         })
@@ -81,7 +95,10 @@ export class DivideFractions extends NoContextExpressionSimplificationRule {
         })
 
         const top = productOrNot(...newNumExponents)
-        const bottom = newDenExponents.length != 0 ? productOrNot(...newDenExponents) : numOf(1)
+        const bottom =
+            newDenExponents.length != 0
+                ? productOrNot(...newDenExponents)
+                : numOf(1)
 
         // Preserve the negations removed earlier
         const result = Fraction.of(
@@ -89,13 +106,19 @@ export class DivideFractions extends NoContextExpressionSimplificationRule {
             den.isNegation ? negative(bottom) : bottom
         )
 
-        return setOf(new Argument(setOf(exp), {
-            n: exp,
-            r: Relationship.Equal,
-            n1: result
-        }, "Cancel out fractions", RULE_ID))
+        return setOf(
+            new Argument(
+                setOf(exp),
+                {
+                    n: exp,
+                    r: Relationship.Equal,
+                    n1: result
+                },
+                "Cancel out fractions",
+                RULE_ID
+            )
+        )
     }
-
 }
 
 export const RULE_ID = "Cancel out fractions"

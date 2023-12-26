@@ -11,7 +11,10 @@ import { assert } from "../util/assert"
  * Represents an edge in a graph.
  */
 export class EdgeView extends HTMLParagraphElement {
-    public constructor(owner: WebGraphView, edge: {n: MathGraphNode, n1: MathGraphNode, e: GraphEdge}) {
+    public constructor(
+        owner: WebGraphView,
+        edge: { n: MathGraphNode; n1: MathGraphNode; e: GraphEdge }
+    ) {
         super()
         this.owner = owner
         this.edge = edge.e
@@ -33,21 +36,19 @@ export class EdgeView extends HTMLParagraphElement {
         uiPreferences.onUpdate(() => {
             this.style.backgroundColor = uiPreferences.edgeEqualsBackgroundColor
         })
-        
+
         this.addEventListener("click", event => {
             this.owner.edgeClicked(this, event)
         })
-        this.addEventListener("mouseout", event => {
-            
-        })
+        this.addEventListener("mouseout", event => {})
 
-        this.repOk();
+        this.repOk()
     }
 
     /**
      * Sets rotation angle of view while also
      * letting it know the angle has changed.
-     * @param rad 
+     * @param rad
      */
     public setAngle(rad: number): void {
         this.style.rotate = "" + rad + "rad"
@@ -79,9 +80,9 @@ export class EdgeView extends HTMLParagraphElement {
     }
 
     private readonly owner: WebGraphView
-    public readonly edge: GraphEdge;
-    public readonly first: MathGraphNode;
-    public readonly second: MathGraphNode;
+    public readonly edge: GraphEdge
+    public readonly first: MathGraphNode
+    public readonly second: MathGraphNode
 }
 
-customElements.define("edge-view", EdgeView, {extends: "p"});
+customElements.define("edge-view", EdgeView, { extends: "p" })

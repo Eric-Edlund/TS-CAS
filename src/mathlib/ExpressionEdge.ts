@@ -1,10 +1,10 @@
-import { Relationship } from "./Relationship";
+import { Relationship } from "./Relationship"
 
 /**
  * An edge in a math graph between two expressions.
  */
 export interface ExpressionEdge {
-    get relationship(): Relationship;
+    get relationship(): Relationship
 
-    expressionEdge: true;
+    expressionEdge: true
 }

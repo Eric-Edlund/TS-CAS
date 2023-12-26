@@ -1,12 +1,11 @@
-import { Argument } from "../../Argument";
-import { negative } from "../../ConvenientExpressions";
-import { Expression } from "../../expressions/Expression";
-import { Product } from "../../expressions/Product";
-import { Relationship } from "../../Relationship";
-import { setOf } from "../../util/ThingsThatShouldBeInTheStdLib";
-import { NoContextExpressionSimplificationRule } from "../NoContextExpressionSimplificationRule";
-import { product as productOf } from "../../ConvenientExpressions";
-
+import { Argument } from "../../Argument"
+import { negative } from "../../ConvenientExpressions"
+import { Expression } from "../../expressions/Expression"
+import { Product } from "../../expressions/Product"
+import { Relationship } from "../../Relationship"
+import { setOf } from "../../util/ThingsThatShouldBeInTheStdLib"
+import { NoContextExpressionSimplificationRule } from "../NoContextExpressionSimplificationRule"
+import { product as productOf } from "../../ConvenientExpressions"
 
 /**
  * Makes sure a product doesn't contain any negations.
@@ -39,11 +38,18 @@ export class CancelNegatives extends NoContextExpressionSimplificationRule {
         const result = productOf(...negatedFactors, ...others)
         const negatedResult = resultIsNegative ? negative(result) : result
 
-        return setOf(new Argument(setOf(exp), {
-            n: exp,
-            r: Relationship.Equal,
-            n1: negatedResult
-        }, "Cancel negatives", RULE_ID))
+        return setOf(
+            new Argument(
+                setOf(exp),
+                {
+                    n: exp,
+                    r: Relationship.Equal,
+                    n1: negatedResult
+                },
+                "Cancel negatives",
+                RULE_ID
+            )
+        )
     }
 }
 

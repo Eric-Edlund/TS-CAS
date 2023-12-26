@@ -1,18 +1,17 @@
-import { Argument } from "./Argument";
-import { Expression } from "./expressions/Expression";
-import { MathGraphNode } from "./MathGraphNode";
-import { Relationship } from "./Relationship";
-import { assert } from "./util/assert";
+import { Argument } from "./Argument"
+import { Expression } from "./expressions/Expression"
+import { MathGraphNode } from "./MathGraphNode"
+import { Relationship } from "./Relationship"
+import { assert } from "./util/assert"
 
 /**
  * Class representing a graph of expressions and statements
  * including everything we know about a problem.
  * Connects GraphNodes via Inferences for edges.
- * 
+ *
  * It's a digraph. TODO: It may also need to be a multigraph...
  */
 export class Graph {
-
     public constructor() {
         this.nodes = new Set<MathGraphNode>()
         this.connections = new Map<MathGraphNode, Set<MathGraphNode>>()
@@ -22,7 +21,7 @@ export class Graph {
 
     /**
      * Adds an expression to the problem.
-     * @param node 
+     * @param node
      * @returns the same graph for chaining.
      */
     public addNode(node: MathGraphNode): Graph {
@@ -38,12 +37,16 @@ export class Graph {
      * Add a relationship between two elements given by the user to the graph.
      * Should not be called to add derived truths bc this won't store an explanation.
      * Adds given nodes if they aren't already on the graph.
-     * @param n 
-     * @param n1 
-     * @param r 
+     * @param n
+     * @param n1
+     * @param r
      * @returns self for chaining
      */
-    public addRelationship(n: MathGraphNode, n1: MathGraphNode, r: Relationship): Graph {
+    public addRelationship(
+        n: MathGraphNode,
+        n1: MathGraphNode,
+        r: Relationship
+    ): Graph {
         this.addNode(n)
         this.addNode(n1)
 
@@ -60,7 +63,7 @@ export class Graph {
      * that leads to a conclusion.
      * The relationship claimed by the argument is directed
      * from n to n1 with the argument as the edge.
-     * @param a 
+     * @param a
      * @returns the same graph for chaining.
      */
     public addArgument(a: Argument): Graph {
@@ -95,9 +98,9 @@ export class Graph {
     /**
      * Adds the given directed edge to the graph. If either node
      * is missing from the graph, adds it.
-     * @param n 
-     * @param n1 
-     * @param e 
+     * @param n
+     * @param n1
+     * @param e
      * @returns This.
      */
     public addEdge(n: MathGraphNode, n1: MathGraphNode, e: GraphEdge): Graph {
@@ -110,13 +113,16 @@ export class Graph {
 
     /**
      * Get the set of neighbors of a node.
-     * @param node 
+     * @param node
      * @param direction Nodes that are adjacent to this node, from this node, or either.
      * @returns Undefined if the node isn't in this graph. Otherwise, a set of connected nodes.
      *          If the node is in the graph but isn't connected to anything, returns empty set.
      */
-    public getNeighbors(node: MathGraphNode, direction: "in" | "out" | "both"): MathGraphNode[] | undefined {
-        if (!this.nodes.has(node)) return undefined;
+    public getNeighbors(
+        node: MathGraphNode,
+        direction: "in" | "out" | "both"
+    ): MathGraphNode[] | undefined {
+        if (!this.nodes.has(node)) return undefined
         if (direction == "out") {
             return [...this.connections.get(node)!]
         }
@@ -134,11 +140,14 @@ export class Graph {
     /**
      * Determines the number of edges this node has.
      * @param node The node being consdered.
-     * @param direction Count only the edges going towards this node, away from 
+     * @param direction Count only the edges going towards this node, away from
      *          it, or both.
      * @returns >= 0, undefined if the given node isn't in the graph.
      */
-    public getDegree(node: MathGraphNode, direction: "in" | "out" | "both"): number | undefined {
+    public getDegree(
+        node: MathGraphNode,
+        direction: "in" | "out" | "both"
+    ): number | undefined {
         if (!this.nodes.has(node)) return undefined
         if (direction == "out") {
             return this.connections.get(node)?.size ?? 0
@@ -148,9 +157,8 @@ export class Graph {
             if (this.connections.get(n) == undefined) return
             if (this.connections.get(n)!.has(node)) degIn++
         })
-        
-        if (direction == "in")
-            return degIn
+
+        if (direction == "in") return degIn
 
         return degIn + (this.connections.get(node)?.size ?? 0)
     }
@@ -162,7 +170,7 @@ export class Graph {
      * connected.
      */
     public getEdge(n: MathGraphNode, n1: MathGraphNode): GraphEdge | undefined {
-        return this.edges.get(n)?.get(n1);
+        return this.edges.get(n)?.get(n1)
     }
 
     public contains(node: MathGraphNode): boolean {
@@ -176,11 +184,19 @@ export class Graph {
         return new Set<MathGraphNode>(this.nodes)
     }
 
-    public getEdges(): Set<{n: MathGraphNode, n1: MathGraphNode, e: GraphEdge}> {
-        const out = new Set<{n: MathGraphNode, n1: MathGraphNode, e: GraphEdge}>()
+    public getEdges(): Set<{
+        n: MathGraphNode
+        n1: MathGraphNode
+        e: GraphEdge
+    }> {
+        const out = new Set<{
+            n: MathGraphNode
+            n1: MathGraphNode
+            e: GraphEdge
+        }>()
         this.edges.forEach((map, first) => {
             map.forEach((edge, second) => {
-                out.add({n: first, n1: second, e: edge})
+                out.add({ n: first, n1: second, e: edge })
             })
         })
         return out
@@ -192,7 +208,7 @@ export class Graph {
 
     /**
      * Adds all graph nodes and edges to this one.
-     * @param graph 
+     * @param graph
      * @returns the same graph for chaining.
      */
     public addGraph(graph: Graph): Graph {
@@ -201,14 +217,12 @@ export class Graph {
         })
         graph.edges.forEach((map, node1) => {
             map.forEach((edge, node2) => {
-                if (edge instanceof Argument) 
-                    this.addArgument(edge)
+                if (edge instanceof Argument) this.addArgument(edge)
                 else if (edge == "supports") {
                     this.internalAdd(node1, node2, ArgumentEdge.To)
                 } else if (edge == "claims") {
                     this.internalAdd(node1, node2, ArgumentEdge.From)
-                }
-                else throw new Error("Unknown Edge Type")
+                } else throw new Error("Unknown Edge Type")
             })
         })
         this.repOk()
@@ -216,7 +230,7 @@ export class Graph {
     }
 
     public toString(): string {
-        let out = "Graph(V = {";
+        let out = "Graph(V = {"
         for (const node of this.nodes) {
             out += node.toString() + ","
         }
@@ -228,11 +242,15 @@ export class Graph {
             })
         })
         out += "} Edge Count: " + this.connections.size
-        
-        return out;
+
+        return out
     }
 
-    private internalAdd(n: MathGraphNode, n1: MathGraphNode, e: GraphEdge): void {
+    private internalAdd(
+        n: MathGraphNode,
+        n1: MathGraphNode,
+        e: GraphEdge
+    ): void {
         if (this.connections.get(n) == null) {
             this.connections.set(n, new Set<MathGraphNode>())
         }
@@ -240,12 +258,12 @@ export class Graph {
         if (this.edges.get(n) == undefined) {
             this.edges.set(n, new Map<Expression, GraphEdge>())
         }
-        this.edges.get(n)!.set(n1, e);
+        this.edges.get(n)!.set(n1, e)
         this.repOk()
     }
 
     private repOk() {
-        this.nodes.forEach((value) => {
+        this.nodes.forEach(value => {
             assert(value != null && value != undefined)
         })
 
@@ -265,7 +283,7 @@ export class Graph {
             })
         })
     }
-    
+
     private readonly nodes: Set<MathGraphNode>
     // Quickly access all connections of a node
     private readonly connections: Map<MathGraphNode, Set<MathGraphNode>>

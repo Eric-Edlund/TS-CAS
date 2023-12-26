@@ -2,9 +2,8 @@
  * An html element that represents a math graph node.
  */
 export abstract class GraphNodeView extends HTMLDivElement {
-
     /**
-     * 
+     *
      * @param setStyle Function that when called
      *  should set the style for this view.
      */
@@ -23,5 +22,5 @@ export abstract class GraphNodeView extends HTMLDivElement {
         this.style.backgroundColor = value
     }
 
-    public abstract connectedCallback(): void;
+    public abstract connectedCallback(): void
 }

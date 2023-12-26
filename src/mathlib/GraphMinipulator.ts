@@ -1,8 +1,8 @@
-import { Argument } from "./Argument";
-import { GraphEdge, Graph } from "./Graph";
-import { MathGraphNode } from "./MathGraphNode";
-import { Relationship } from "./Relationship";
-import { assert } from "./util/assert";
+import { Argument } from "./Argument"
+import { GraphEdge, Graph } from "./Graph"
+import { MathGraphNode } from "./MathGraphNode"
+import { Relationship } from "./Relationship"
+import { assert } from "./util/assert"
 
 /**
  * Tool to do operations on graphs.
@@ -11,10 +11,13 @@ export class GraphMinipulator {
     /**
      * Find nodes of components of a graph where only edges for which
      * the callback function returns true are considered.
-     * @param 
-     * @param isConnected 
+     * @param
+     * @param isConnected
      */
-    public static getComponentNodes(input: Graph, isConnected: (e: GraphEdge) => boolean): Set<Set<MathGraphNode>> {
+    public static getComponentNodes(
+        input: Graph,
+        isConnected: (e: GraphEdge) => boolean
+    ): Set<Set<MathGraphNode>> {
         const includedNodes = new Set<MathGraphNode>()
         const components = new Set<Set<MathGraphNode>>()
 
@@ -24,7 +27,7 @@ export class GraphMinipulator {
             }
 
             const component = new Set<MathGraphNode>()
-            
+
             function getAllConnected(n: MathGraphNode): void {
                 includedNodes.add(n)
                 if (component.has(n)) {
@@ -54,12 +57,15 @@ export class GraphMinipulator {
     /**
      * Returns a new graph with only the nodes which pass the provided
      * filter function. Edges connected to removed nodes are removed.
-     * 
-     * @param graph 
-     * @param included 
+     *
+     * @param graph
+     * @param included
      */
-    public static dropNodes(graph: Graph, included: (node: MathGraphNode) => boolean): Graph {
-        const result = new Graph();
+    public static dropNodes(
+        graph: Graph,
+        included: (node: MathGraphNode) => boolean
+    ): Graph {
+        const result = new Graph()
         graph.getNodes().forEach(n => {
             if (included(n)) result.addNode(n)
         })
@@ -71,14 +77,24 @@ export class GraphMinipulator {
 
     /**
      * Gets every edge in the graph.
-     * @param input 
-     * @returns 
+     * @param input
+     * @returns
      */
-    public static getRelations(input: Graph): {first: MathGraphNode, second: MathGraphNode, e: GraphEdge}[] {
-        const out: {first: MathGraphNode, second: MathGraphNode, e: GraphEdge}[] = []
-        for (const node of input.getNodes()) {            
+    public static getRelations(
+        input: Graph
+    ): { first: MathGraphNode; second: MathGraphNode; e: GraphEdge }[] {
+        const out: {
+            first: MathGraphNode
+            second: MathGraphNode
+            e: GraphEdge
+        }[] = []
+        for (const node of input.getNodes()) {
             for (const other of input.getNeighbors(node, "out")!) {
-                out.push({first: node, second: other, e: input.getEdge(node, other)!})
+                out.push({
+                    first: node,
+                    second: other,
+                    e: input.getEdge(node, other)!
+                })
             }
         }
         return out
@@ -90,19 +106,23 @@ export class GraphMinipulator {
      * Assumes the graph is connected.
      * @param rootNodes Contains at least one node in the graph.
      * @param count Function that determines if any given node should be
-     * included in the depth count. Defaults to counting all nodes. Nodes that 
+     * included in the depth count. Defaults to counting all nodes. Nodes that
      * aren't included won't be in the returned value.
      * @returns Map from depth in graph to a set of nodes at that depth.
-     * 
+     *
      */
-    public static getLevels(input: Graph, rootNodes: Iterable<MathGraphNode>, count: (n: MathGraphNode) => boolean = () => true): Map<number, Set<MathGraphNode>> {
+    public static getLevels(
+        input: Graph,
+        rootNodes: Iterable<MathGraphNode>,
+        count: (n: MathGraphNode) => boolean = () => true
+    ): Map<number, Set<MathGraphNode>> {
         const roots = new Set(rootNodes)
-        const depths = new Map<MathGraphNode, number>();
+        const depths = new Map<MathGraphNode, number>()
 
         /**
          * Recursively maps out all nodes in the graph,
          * puttin them in the depths map.
-         * @param node 
+         * @param node
          */
         function mapNode(node: MathGraphNode, depth: number = 0): void {
             if (roots.has(node)) {
@@ -111,16 +131,22 @@ export class GraphMinipulator {
             if (depth < (depths.get(node) ?? Number.MAX_VALUE)) {
                 depths.set(node, depth)
             }
-            const neighbors = [...input.getNeighbors(node, "both")!];
-            neighbors.filter(value => {
-                // If we have found a shorter path to it or there was no found path to it
-                return (depths.get(value) == undefined || depths.get(value)! > depth) && value !== node
-            }).forEach(n => {
-                mapNode(n, count(node) ? depth + 1 : depth)
-            })
+            const neighbors = [...input.getNeighbors(node, "both")!]
+            neighbors
+                .filter(value => {
+                    // If we have found a shorter path to it or there was no found path to it
+                    return (
+                        (depths.get(value) == undefined ||
+                            depths.get(value)! > depth) &&
+                        value !== node
+                    )
+                })
+                .forEach(n => {
+                    mapNode(n, count(node) ? depth + 1 : depth)
+                })
         }
 
-        mapNode([...roots][0]);
+        mapNode([...roots][0])
 
         const out = new Map<number, Set<MathGraphNode>>()
         depths.forEach((depth, node) => {
@@ -131,8 +157,7 @@ export class GraphMinipulator {
             out.get(depth)!.add(node)
         })
 
-        
-        return out;
+        return out
     }
 
     /**
@@ -141,9 +166,13 @@ export class GraphMinipulator {
      */
     public static isConnected(input: Graph): boolean {
         // Check every node has a degree of 1 or more or graph only has 1 or 0 elements
-        return [...input.getNodes()].map<boolean>(node => {
-            return input.getDegree(node, "both")! > 0
-        }).reduce((a, b) => a && b) || input.numNodes() < 2
+        return (
+            [...input.getNodes()]
+                .map<boolean>(node => {
+                    return input.getDegree(node, "both")! > 0
+                })
+                .reduce((a, b) => a && b) || input.numNodes() < 2
+        )
     }
 
     /**
@@ -151,34 +180,46 @@ export class GraphMinipulator {
      * from any edge loops is included.
      * For example if the input edges are a -> b and b -> a,
      * the result will only contain a -> b.
-     * @param edges 
+     * @param edges
      */
-    public static dropSymmetric(edges: Iterable<{n: MathGraphNode, n1: MathGraphNode, e: GraphEdge}>): {n: MathGraphNode, n1: MathGraphNode, e: GraphEdge}[] {
-        const out: {n: MathGraphNode, n1: MathGraphNode, e: GraphEdge}[] = []
+    public static dropSymmetric(
+        edges: Iterable<{ n: MathGraphNode; n1: MathGraphNode; e: GraphEdge }>
+    ): { n: MathGraphNode; n1: MathGraphNode; e: GraphEdge }[] {
+        const out: { n: MathGraphNode; n1: MathGraphNode; e: GraphEdge }[] = []
 
-        function alreadyHas(edge: {n: MathGraphNode, n1: MathGraphNode, e: GraphEdge}): boolean {
-            for (const e of out) 
-                if (edge.n == e.n1 && edge.n1 == e.n) 
-                    return true
+        function alreadyHas(edge: {
+            n: MathGraphNode
+            n1: MathGraphNode
+            e: GraphEdge
+        }): boolean {
+            for (const e of out)
+                if (edge.n == e.n1 && edge.n1 == e.n) return true
             return false
         }
 
         for (const edge of edges) {
             if (!alreadyHas(edge)) out.push(edge)
         }
-        
-        return out;
+
+        return out
     }
 
     /**
      * Creates a new graph with only the edges which passed the
      * filter function. The resulting graph may or may not be connected.
      * All the nodes of the original graph are kept.
-     * @param edgeFilter Returns true if the given edge should be included in 
+     * @param edgeFilter Returns true if the given edge should be included in
      *      the resulting graph.
      * NOTE: NOT TESTED
      */
-     public static dropEdges(graph: Graph, edgeFilter: (e: {n: MathGraphNode, n1: MathGraphNode, e: GraphEdge}) => Boolean): Graph {
+    public static dropEdges(
+        graph: Graph,
+        edgeFilter: (e: {
+            n: MathGraphNode
+            n1: MathGraphNode
+            e: GraphEdge
+        }) => Boolean
+    ): Graph {
         const out = new Graph()
 
         for (const node of graph.getNodes()) {
@@ -194,7 +235,7 @@ export class GraphMinipulator {
                 }
             }
         }
-        
-        return out;
+
+        return out
     }
 }

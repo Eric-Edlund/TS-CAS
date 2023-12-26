@@ -1,15 +1,15 @@
 {
-  "name": "tryingstuff",
-  "type": "module",
-  "version": "1.0.0",
-  "description": "Goofing around with ANTLR",
-  "main": "main.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "Eric Edlund",
-  "license": "ISC",
-  "dependencies": {
-    "antlr4": "^4.13.0"
-  }
+    "name": "tryingstuff",
+    "type": "module",
+    "version": "1.0.0",
+    "description": "Goofing around with ANTLR",
+    "main": "main.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "Eric Edlund",
+    "license": "ISC",
+    "dependencies": {
+        "antlr4": "^4.13.0"
+    }
 }

@@ -1,11 +1,11 @@
-import { VariableValueMap } from "../VariableValueMap";
-import { Expression } from "./Expression";
-import { Integer } from "./Integer";
-import { Product, ProductType } from "./Product";
-import { SumType } from "./Sum";
+import { VariableValueMap } from "../VariableValueMap"
+import { Expression } from "./Expression"
+import { Integer } from "./Integer"
+import { Product, ProductType } from "./Product"
+import { SumType } from "./Sum"
 
 /**
- * 
+ *
  */
 export class Derivative extends Expression {
     public static of(exp: Expression, relativeTo: Expression): Derivative {
@@ -14,7 +14,7 @@ export class Derivative extends Expression {
             this.instances.set(hash, new Derivative(exp, relativeTo))
         return this.instances.get(hash)!
     }
-    private static instances: Map<string, Derivative> = new Map();
+    private static instances: Map<string, Derivative> = new Map()
     private constructor(exp: Expression, relativeTo: Expression) {
         super()
         this.exp = exp
@@ -26,17 +26,24 @@ export class Derivative extends Expression {
         this.childCount = 2 + exp.childCount + relativeTo.childCount
     }
 
-    public readonly exp: Expression;
-    public readonly relativeTo: Expression;
+    public readonly exp: Expression
+    public readonly relativeTo: Expression
 
-    public readonly isReducible: boolean;
-    public readonly class: string = DerivativeType;
+    public readonly isReducible: boolean
+    public readonly class: string = DerivativeType
     public toString(): string {
-        return "d/d" + this.relativeTo.toString() + "(" + this.exp.toString() + ")"
+        return (
+            "d/d" + this.relativeTo.toString() + "(" + this.exp.toString() + ")"
+        )
     }
 
     public toUnambigiousString(): string {
-        return "(d/d" + this.relativeTo.toUnambigiousString() + ")" + this.exp.toUnambigiousString()
+        return (
+            "(d/d" +
+            this.relativeTo.toUnambigiousString() +
+            ")" +
+            this.exp.toUnambigiousString()
+        )
     }
     public get hash(): string {
         return this.class + this.exp.hash + this.relativeTo.hash
@@ -48,15 +55,20 @@ export class Derivative extends Expression {
                 return "<mo>(</mo>" + exp.toMathXML() + "<mo>)</mo>"
             return exp.toMathXML()
         }
-        return "<mfrac><mn>d</mn><mrow><mn>d</mn>" + wrapIfNeeded(this.relativeTo) + "</mrow></mfrac>" + wrapIfNeeded(this.exp)
+        return (
+            "<mfrac><mn>d</mn><mrow><mn>d</mn>" +
+            wrapIfNeeded(this.relativeTo) +
+            "</mrow></mfrac>" +
+            wrapIfNeeded(this.exp)
+        )
     }
 
     public evaluate(values: VariableValueMap): number {
         // Maybe later
-        return NaN;
+        return NaN
     }
-    
-    public readonly isConstant: boolean;
+
+    public readonly isConstant: boolean
     public readonly childCount: number
 }
 

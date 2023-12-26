@@ -1,11 +1,23 @@
-import { parse } from "mathjs";
-import { a, b, c, d, fraction, negative, num, product, sum, x, y } from "./mathlib/ConvenientExpressions";
-import { Exponent } from "./mathlib/expressions/Exponent";
-import { Expression } from "./mathlib/expressions/Expression";
-import { Logarithm } from "./mathlib/expressions/Logarithm";
-import { EditableMathView } from "./mathlib/uielements/EditableMathView";
-import { parseExpression } from "./mathlib/userinput/AntlrMathParser";
-import { PowerContext } from "./mathlib/userinput/arithmeticParser";
+import { parse } from "mathjs"
+import {
+    a,
+    b,
+    c,
+    d,
+    fraction,
+    negative,
+    num,
+    product,
+    sum,
+    x,
+    y
+} from "./mathlib/ConvenientExpressions"
+import { Exponent } from "./mathlib/expressions/Exponent"
+import { Expression } from "./mathlib/expressions/Expression"
+import { Logarithm } from "./mathlib/expressions/Logarithm"
+import { EditableMathView } from "./mathlib/uielements/EditableMathView"
+import { parseExpression } from "./mathlib/userinput/AntlrMathParser"
+import { PowerContext } from "./mathlib/userinput/arithmeticParser"
 
 /**
  * Called after DOM is loaded.
@@ -13,11 +25,11 @@ import { PowerContext } from "./mathlib/userinput/arithmeticParser";
  * with the primary integrator view.
  */
 export function loadInputParseTestPage() {
-    const page = document.getElementsByTagName('body')[0] as HTMLBodyElement
+    const page = document.getElementsByTagName("body")[0] as HTMLBodyElement
     page.style.padding = "8ch"
 
     function p(content: string): HTMLElement {
-        const e = document.createElement('p')
+        const e = document.createElement("p")
         e.innerText = content
         return e
     }
@@ -31,7 +43,7 @@ export function loadInputParseTestPage() {
     /**
      * Print the parsed expression to the page.
      * @param input User input string to parse.
-     * @param explanation 
+     * @param explanation
      */
     function expression(input: string, explanation: string | null = null) {
         page.append(p("Input:       " + input))
@@ -41,20 +53,20 @@ export function loadInputParseTestPage() {
 
     /**
      * Takes an internal expression, converts it
-     * to a string, then parses that string into 
+     * to a string, then parses that string into
      * an expression.
-     * @param input 
+     * @param input
      */
     function twoWay(input: Expression): void {
-        const table = document.createElement('table')
+        const table = document.createElement("table")
         table.style.border = "1px solid black"
-        table.style.width = '70%'
-        const row = document.createElement('tr')
+        table.style.width = "70%"
+        const row = document.createElement("tr")
         table.appendChild(row)
 
-        const data1 = document.createElement('td')
-        const data2 = document.createElement('td')
-        const data3 = document.createElement('td')
+        const data1 = document.createElement("td")
+        const data2 = document.createElement("td")
+        const data3 = document.createElement("td")
         row.appendChild(data1)
         row.appendChild(data2)
         row.appendChild(data3)
@@ -85,7 +97,7 @@ export function loadInputParseTestPage() {
 
     expression("a^b+c", "The +c shouldn't be in the exponent")
     expression("a+b^c")
-    expression ("(a+b)^c")
+    expression("(a+b)^c")
 
     expression("-a-b+c")
     expression("-a+-b+c")
@@ -112,24 +124,29 @@ export function loadInputParseTestPage() {
     expression("(5/(2x-3)-(3/((2x-3)^2))")
     expression("(5/(2x-3)-(3/(2x-3)^2)")
 
-
-    page.append(p("In these tests, an unambigious expression is written in the " +
-        " source code. It is then converted to an unambigious string " +
-        "representation, and then parsed back into an expression. " +
-        "The goal is that this process preserves the expression. This " +
-        "requires 1) expression -> string is unambigious and accurate and 2) " + 
-        "the parser is working correctly."
-        ))
-    page.append(p("The first column is assumed to be correct, the middle collumn has " + 
-        "the automatically generated string version of the first column, " +
-        "and the last column contains the expression parsed from the second column."
-        ))
+    page.append(
+        p(
+            "In these tests, an unambigious expression is written in the " +
+                " source code. It is then converted to an unambigious string " +
+                "representation, and then parsed back into an expression. " +
+                "The goal is that this process preserves the expression. This " +
+                "requires 1) expression -> string is unambigious and accurate and 2) " +
+                "the parser is working correctly."
+        )
+    )
+    page.append(
+        p(
+            "The first column is assumed to be correct, the middle collumn has " +
+                "the automatically generated string version of the first column, " +
+                "and the last column contains the expression parsed from the second column."
+        )
+    )
     twoWay(sum(x, y, a, b, c))
     twoWay(sum(x, y, negative(a), b, c))
     twoWay(sum(x, y, negative(a), negative(b), c))
     twoWay(sum(x, y, negative(a), b, negative(c)))
     twoWay(sum(a, Exponent.of(b, c)))
-    twoWay (Exponent.of(sum(a, b), c))
+    twoWay(Exponent.of(sum(a, b), c))
     twoWay(sum(negative(a), negative(b), c))
     twoWay(sum(a, b, c))
     twoWay(negative(sum(a, b)))
@@ -142,11 +159,10 @@ export function loadInputParseTestPage() {
     twoWay(fraction(fraction(a, b), c))
     twoWay(sum(product(a, b, x), d))
     twoWay(sum(negative(product(a, b, x)), negative(d)))
-    twoWay(sum(negative(a), negative(product(b,x)), negative(d)))
+    twoWay(sum(negative(a), negative(product(b, x)), negative(d)))
     twoWay(product(a, b, c, d))
     // twoWay("ab*cd")
     // twoWay("int4x+2")
     // twoWay("int(4x+2)")
     twoWay(Logarithm.of(x, num(10)))
-    
 }

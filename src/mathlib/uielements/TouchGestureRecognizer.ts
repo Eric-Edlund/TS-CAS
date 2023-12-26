@@ -2,14 +2,13 @@
  * Interpret complicated touch gesture data.
  */
 export class TouchGestureRecognizer {
-
     public constructor() {
-        this.moveListeners = [];
-        this.pinchListeners = [];
+        this.moveListeners = []
+        this.pinchListeners = []
     }
 
     public addMoveListener(callback: MoveListener): void {
-        this.moveListeners.push(callback);
+        this.moveListeners.push(callback)
     }
 
     /**
@@ -19,46 +18,47 @@ export class TouchGestureRecognizer {
      *              and the number of fingers in the gesture (an integer).
      */
     public addPinchListener(callback: PinchListener): void {
-        this.pinchListeners.push(callback);
+        this.pinchListeners.push(callback)
     }
 
     /**
      * Should take all touch events from the view using it.
-     * @param event 
+     * @param event
      */
-    public processTouchDown(event: Event): void {
-
-    }
+    public processTouchDown(event: Event): void {}
     /**
      * Should take all touch events from the view using it.
-     * @param event 
+     * @param event
      */
-     public processTouchMove(event: TouchEvent): void {
+    public processTouchMove(event: TouchEvent): void {
         for (const changed of event.changedTouches) {
             changed.clientX
         }
-
     }
     /**
      * Should take all touch events from the view using it.
-     * @param event 
+     * @param event
      */
-     public processTouchEnd(event: TouchEvent): void {
-
-    }
+    public processTouchEnd(event: TouchEvent): void {}
     /**
      * Should take all touch events from the view using it.
-     * @param event 
+     * @param event
      */
-     public processTouchCancel(event: TouchEvent): void {
-
-    }
+    public processTouchCancel(event: TouchEvent): void {}
 
     //private lastX: Map<Touch
 
-    private readonly moveListeners: MoveListener[];
-    private readonly pinchListeners: PinchListener[];
+    private readonly moveListeners: MoveListener[]
+    private readonly pinchListeners: PinchListener[]
 }
 
-export type MoveListener = (deltaX: number, deltaY: number, fingers: number) => void;
-export type PinchListener = (center: {x: number, y: number}, scaleDelta: number, fingers: number) => void;
+export type MoveListener = (
+    deltaX: number,
+    deltaY: number,
+    fingers: number
+) => void
+export type PinchListener = (
+    center: { x: number; y: number },
+    scaleDelta: number,
+    fingers: number
+) => void

@@ -16,12 +16,6 @@ There are 3 webpack config files:
 - webpack.dev.js (creates a dev bundle with dev stuff)
 - webpack.prod.js (creates a prod bundle with prod optimizations)
 
-## Building the Electron App
-
-I asked ChatGPT to set up the project, I have no clue how it works.
-There are two scripts in package.json, "build-electron" and "run-electron".
-
-
 ## Testing
 
 The project uses jest.

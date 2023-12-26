@@ -10,7 +10,7 @@ export class Path<T extends MathGraphNode> implements Iterable<MathGraphNode> {
         this.nodes = nodes
         this.graph = graph
     }
-    
+
     [Symbol.iterator](): Iterator<MathGraphNode, any, undefined> {
         throw new Error("Method not implemented.")
     }

@@ -1,4 +1,3 @@
-
 /**
  * Checks that we are drawing valid algebraic conclusions.
  */
@@ -13,18 +12,21 @@ import { Graph } from "../Graph"
 import { GraphMinipulator } from "../GraphMinipulator"
 import { assert } from "../util/assert"
 
-const a = Variable.of('a')
-const b = Variable.of('b')
-const c = Variable.of('c')
+const a = Variable.of("a")
+const b = Variable.of("b")
+const c = Variable.of("c")
 
 test("a + b = c => a = c - b", () => {
-
     const leftHand = Sum.of([a, b])
     const rightHand = c
     const startGraph = new Graph()
     startGraph.addNode(leftHand)
-    startGraph.addArgument(equivalenceArgument(leftHand, rightHand, "Given by problem"))
-    startGraph.addArgument(equivalenceArgument(rightHand, leftHand, "Given by problem"))
+    startGraph.addArgument(
+        equivalenceArgument(leftHand, rightHand, "Given by problem")
+    )
+    startGraph.addArgument(
+        equivalenceArgument(rightHand, leftHand, "Given by problem")
+    )
 
     ///const expansion = Algebra.expand(startGraph)
     const expected = Sum.of([c, Product.of([Integer.of(-1), b])])
@@ -34,7 +36,7 @@ test("a + b = c => a = c - b", () => {
 })
 
 test("Algebraic Expansion produces a connected resultant graph", () => {
-    const graph = new Graph();
+    const graph = new Graph()
     graph.addArgument(equivalenceArgument(sum(a, b), c, "given"))
     //graph.addGraph(Algebra.expand(graph));
     //assert(GraphMinipulator.isConnected(graph), "graph isn't connected")
@@ -43,13 +45,13 @@ test("Algebraic Expansion produces a connected resultant graph", () => {
 })
 
 test("Algebraic Expansion produces a connected resultant graph 2", () => {
-    const graph = new Graph();
-    const left = sum(v('x'), num(2), num(2))
-    const right = sum(v('y'), num(2))
+    const graph = new Graph()
+    const left = sum(v("x"), num(2), num(2))
+    const right = sum(v("y"), num(2))
     graph.addNode(left)
     graph.addNode(right)
     graph.addArgument(equivalenceArgument(left, right, "Given by problem"))
-    
+
     //const result = Algebra.expand(graph)
     //graph.addGraph(result);
 

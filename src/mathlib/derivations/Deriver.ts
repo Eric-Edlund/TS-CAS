@@ -1,11 +1,15 @@
-import { Argument } from "../Argument";
-import { Expression } from "../expressions/Expression";
-import { Product } from "../expressions/Product";
-import { Sum } from "../expressions/Sum";
-import { Graph } from "../Graph";
-import { convergentSimplificationRules, factoringSimplificationRules, polynomialSimplificationRules } from "./DerivationRules";
-import { NoContextExpressionSimplificationRule } from "./NoContextExpressionSimplificationRule";
-import { equiv } from "./recursion";
+import { Argument } from "../Argument"
+import { Expression } from "../expressions/Expression"
+import { Product } from "../expressions/Product"
+import { Sum } from "../expressions/Sum"
+import { Graph } from "../Graph"
+import {
+    convergentSimplificationRules,
+    factoringSimplificationRules,
+    polynomialSimplificationRules
+} from "./DerivationRules"
+import { NoContextExpressionSimplificationRule } from "./NoContextExpressionSimplificationRule"
+import { equiv } from "./recursion"
 
 /**
  * Creates a new graph contianing the given node.
@@ -15,19 +19,18 @@ export function wrapInGraph(exp: Expression): Graph {
 }
 
 /**
- * Expands the given graph using derivation rules to find 
+ * Expands the given graph using derivation rules to find
  * equivalent expressions.
  */
 export function deriveExpand(
     graph: Graph,
-    maxDepth: number, 
+    maxDepth: number,
     skipConvergentSimplifications: boolean = false
-    ): DerivationResult {
-
+): DerivationResult {
     const result = new DerivationResult(graph)
-    
+
     result.expand(maxDepth, skipConvergentSimplifications)
-    return result;
+    return result
 }
 
 /**
@@ -36,7 +39,7 @@ export function deriveExpand(
 class DerivationResult {
     /**
      * Give it the graph you're going to expand.
-     * @param graph 
+     * @param graph
      */
     public constructor(graph: Graph) {
         this.graph = graph
@@ -53,11 +56,14 @@ class DerivationResult {
      *          aren't counted when calculating depth.
      * @param abort A signal used to prematurely abort the operation.
      */
-    public expand(maxDepth: number, skipConvergentSimplifications: boolean = false): void {
+    public expand(
+        maxDepth: number,
+        skipConvergentSimplifications: boolean = false
+    ): void {
         // Simplify all the expressions using the contextless simplifying rules
         // Do this until there's nothing more to simplify
-        
-        for (let i=0; i<maxDepth; i++) {
+
+        for (let i = 0; i < maxDepth; i++) {
             this.simplifyNoContextConvergent()
             this.simplifyNoContextDivergent()
         }
@@ -70,11 +76,11 @@ class DerivationResult {
         //         if (!this.simplifyNoContextDivergent()) return
         //     } else {
         //         if (!this.simplifyNoContextConvergent()) {
-        //             if (!this.simplifyNoContextDivergent()) 
+        //             if (!this.simplifyNoContextDivergent())
         //                 return
         //         }
-                    
-        //     }    
+
+        //     }
         // }
     }
 
@@ -82,7 +88,10 @@ class DerivationResult {
      * Gets a list of expressions which couldn't be simplified further.
      */
     public get simplifiedExpressions(): Expression[] {
-        return [...this.passedFactoringSimplification, ...this.passedPolynomialSimplification]
+        return [
+            ...this.passedFactoringSimplification,
+            ...this.passedPolynomialSimplification
+        ]
     }
 
     /**
@@ -91,9 +100,10 @@ class DerivationResult {
      *          be called again. Will be called a finite number of times.
      */
     private simplifyNoContextConvergent(): boolean {
-        const unsimplified = [...this.graph.getNodes()].filter(n => n instanceof Expression)
-                            .map<Expression>(n => n as Expression)
-                            .filter(e => !this.processedByConvergentSimplification.has(e))
+        const unsimplified = [...this.graph.getNodes()]
+            .filter(n => n instanceof Expression)
+            .map<Expression>(n => n as Expression)
+            .filter(e => !this.processedByConvergentSimplification.has(e))
 
         let shouldDoAgain = false
         unsimplified.forEach(e => {
@@ -103,7 +113,7 @@ class DerivationResult {
             for (const rule of convergentSimplificationRules) {
                 const results = equiv(e, equivalentsFnUsing([rule]))
                 const derivedSimplification = results[0]
-                
+
                 for (const r of results) {
                     this.addToGraph([r])
                 }
@@ -125,39 +135,46 @@ class DerivationResult {
      * @returns True if the function expanded the graph.
      */
     private simplifyNoContextDivergent(): boolean {
-
         // Only operate on expressions which have not been previously done
-        const candidates = [...this.graph.getNodes()].filter(n => n instanceof Expression)
+        const candidates = [...this.graph.getNodes()]
+            .filter(n => n instanceof Expression)
             .map<Expression>(n => n as Expression)
-            .filter(e => 
-                !this.processedByDivergentSimplification.has(e)
-                && this.passedConvergentSimplification.has(e))
+            .filter(
+                e =>
+                    !this.processedByDivergentSimplification.has(e) &&
+                    this.passedConvergentSimplification.has(e)
+            )
 
         // True if more expressions were added to the graph
         let shouldDoAgain = false
-        
-        candidates.forEach(e => {
 
+        candidates.forEach(e => {
             // Try to find equivalents using divergent rules.
 
             for (const rule of factoringSimplificationRules) {
-                const derivedSimplifications = equiv(e, equivalentsFnUsing([rule]))
+                const derivedSimplifications = equiv(
+                    e,
+                    equivalentsFnUsing([rule])
+                )
 
                 shouldDoAgain ||= this.addToGraph(derivedSimplifications)
 
                 if (derivedSimplifications.length == 0) {
-                    if (e instanceof Product) 
+                    if (e instanceof Product)
                         this.passedFactoringSimplification.add(e)
                 }
             }
 
             for (const rule of polynomialSimplificationRules) {
-                const derivedSimplifications = equiv(e, equivalentsFnUsing([rule]))
+                const derivedSimplifications = equiv(
+                    e,
+                    equivalentsFnUsing([rule])
+                )
 
                 shouldDoAgain ||= this.addToGraph(derivedSimplifications)
 
                 if (derivedSimplifications.length > 0) {
-                    if (e instanceof Sum) 
+                    if (e instanceof Sum)
                         this.passedPolynomialSimplification.add(e)
                 }
             }
@@ -171,27 +188,27 @@ class DerivationResult {
      * one of its claim's endpoints isn't already in the graph.
      * If both end points of all arguments are already in the graph,
      * returns false.
-     * @param args 
+     * @param args
      * @effects this.graph
      */
     private addToGraph(args: Argument[]): boolean {
-        let atLeastOne = false;
+        let atLeastOne = false
         args.forEach(a => {
-            if (!this.graph.contains(a.claim.n) 
-            || !this.graph.contains(a.claim.n1)
+            if (
+                !this.graph.contains(a.claim.n) ||
+                !this.graph.contains(a.claim.n1)
             ) {
                 this.graph.addArgument(a)
                 atLeastOne = true
             }
-           
         })
-        return atLeastOne;
+        return atLeastOne
     }
 
     public readonly graph: Graph
 
     /**
-     * 
+     *
      * @returns true if the given expression is in the graph
      * and has already had the contextless simplification operations
      * done to it and cannot be further simplified.
@@ -199,9 +216,11 @@ class DerivationResult {
     public isSimplified(exp: Expression): boolean {
         if (!this.passedConvergentSimplification.has(exp)) return false
 
-        if (exp instanceof Product) return this.passedFactoringSimplification.has(exp)
-        if (exp instanceof Sum) return this.passedPolynomialSimplification.has(exp)
-        
+        if (exp instanceof Product)
+            return this.passedFactoringSimplification.has(exp)
+        if (exp instanceof Sum)
+            return this.passedPolynomialSimplification.has(exp)
+
         return true
     }
 
@@ -220,8 +239,6 @@ class DerivationResult {
     // passedConvergentSimplification.
     public readonly passedFactoringSimplification = new Set<Product>()
 
-
-
     // All expressions which are sums and could not be further
     // simplified by polynomial simplification rules. A subset of
     // passedConvergentSimplification.
@@ -231,19 +248,23 @@ class DerivationResult {
 /**
  * Function that makes a function that gets the equivalent
  * expressions for a given one.
- * @param rules What rules the resulting function should use to 
+ * @param rules What rules the resulting function should use to
  *      find equivalents.
  * @returns A function which will use the given rules to
  *      find direct equivalents.
  */
-function equivalentsFnUsing(rules: NoContextExpressionSimplificationRule[]): (exp: Expression) => Set<Argument> {
+function equivalentsFnUsing(
+    rules: NoContextExpressionSimplificationRule[]
+): (exp: Expression) => Set<Argument> {
     return function (exp: Expression): Set<Argument> {
         const out: Set<Argument> = new Set()
-        rules.filter(r => r.applies(exp)).forEach(rule => {
-            rule.apply(exp).forEach(i => {
-                out.add(i)
+        rules
+            .filter(r => r.applies(exp))
+            .forEach(rule => {
+                rule.apply(exp).forEach(i => {
+                    out.add(i)
+                })
             })
-        })
         return out
     }
 }

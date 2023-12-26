@@ -1,4 +1,15 @@
-import { a, b, c, int, negative, num, product, sum, x, y } from "./mathlib/ConvenientExpressions"
+import {
+    a,
+    b,
+    c,
+    int,
+    negative,
+    num,
+    product,
+    sum,
+    x,
+    y
+} from "./mathlib/ConvenientExpressions"
 import { Derivative } from "./mathlib/expressions/Derivative"
 import { Exponent } from "./mathlib/expressions/Exponent"
 import { Expression } from "./mathlib/expressions/Expression"
@@ -12,10 +23,10 @@ import { EditableMathView } from "./mathlib/uielements/EditableMathView"
  * with the test expressions page
  */
 export function loadExpressionsTestPage(): void {
-    const page = document.getElementsByTagName('body')[0] as HTMLBodyElement
+    const page = document.getElementsByTagName("body")[0] as HTMLBodyElement
 
     function p(content: string) {
-        const e = document.createElement('p')
+        const e = document.createElement("p")
         e.innerText = content
         page.append(e)
     }
@@ -39,13 +50,42 @@ export function loadExpressionsTestPage(): void {
     view(Integral.of(Fraction.of(Fraction.of(Fraction.of(a, a), a), b), c))
 
     p("Integral of (((a over a) over a) over a) over b with respect to c")
-    view(Integral.of(Fraction.of(Fraction.of(Fraction.of(Fraction.of(a, a), a), a), b), c))
+    view(
+        Integral.of(
+            Fraction.of(Fraction.of(Fraction.of(Fraction.of(a, a), a), a), b),
+            c
+        )
+    )
 
-    p("Integral of ((((a over a) over a) over a) over a) over b with respect to c")
-    view(Integral.of(Fraction.of(Fraction.of(Fraction.of(Fraction.of(Fraction.of(a, a), a), a), a), b), c))
-    
+    p(
+        "Integral of ((((a over a) over a) over a) over a) over b with respect to c"
+    )
+    view(
+        Integral.of(
+            Fraction.of(
+                Fraction.of(
+                    Fraction.of(Fraction.of(Fraction.of(a, a), a), a),
+                    a
+                ),
+                b
+            ),
+            c
+        )
+    )
+
     p("")
-    view(int(Fraction.of(sum(negative(b), Exponent.of(sum(x, a), Fraction.of(num(1), num(2)))), product(num(2), a)), x))
+    view(
+        int(
+            Fraction.of(
+                sum(
+                    negative(b),
+                    Exponent.of(sum(x, a), Fraction.of(num(1), num(2)))
+                ),
+                product(num(2), a)
+            ),
+            x
+        )
+    )
 
     p("Product of x and y")
     view(product(x, y))
@@ -79,5 +119,4 @@ export function loadExpressionsTestPage(): void {
 
     p("")
     view(num(1))
-
 }

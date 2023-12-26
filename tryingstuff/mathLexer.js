@@ -1,9 +1,9 @@
 // Generated from math.g4 by ANTLR 4.7.2
 // jshint ignore: start
-var antlr4 = require('antlr4/index');
+var antlr4 = require("antlr4/index")
 
-
-var serializedATN = ["\u0003\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964",
+var serializedATN = [
+    "\u0003\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964",
     "\u0002\fB\b\u0001\u0004\u0002\t\u0002\u0004\u0003\t\u0003\u0004\u0004",
     "\t\u0004\u0004\u0005\t\u0005\u0004\u0006\t\u0006\u0004\u0007\t\u0007",
     "\u0004\b\t\b\u0004\t\t\t\u0004\n\t\n\u0004\u000b\t\u000b\u0004\f\t\f",
@@ -23,14 +23,14 @@ var serializedATN = ["\u0003\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964",
     "\u0002\u0019\u0003\u0002\u0002\u0002\u0003\u001b\u0003\u0002\u0002\u0002",
     "\u0005\u001d\u0003\u0002\u0002\u0002\u0007\u001f\u0003\u0002\u0002\u0002",
     "\t!\u0003\u0002\u0002\u0002\u000b#\u0003\u0002\u0002\u0002\r%\u0003",
-    "\u0002\u0002\u0002\u000f\'\u0003\u0002\u0002\u0002\u0011)\u0003\u0002",
+    "\u0002\u0002\u0002\u000f'\u0003\u0002\u0002\u0002\u0011)\u0003\u0002",
     "\u0002\u0002\u0013-\u0003\u0002\u0002\u0002\u00151\u0003\u0002\u0002",
     "\u0002\u00174\u0003\u0002\u0002\u0002\u0019@\u0003\u0002\u0002\u0002",
     "\u001b\u001c\t\u0002\u0002\u0002\u001c\u0004\u0003\u0002\u0002\u0002",
     "\u001d\u001e\t\u0003\u0002\u0002\u001e\u0006\u0003\u0002\u0002\u0002",
-    "\u001f \u0007/\u0002\u0002 \b\u0003\u0002\u0002\u0002!\"\u0007-\u0002",
-    "\u0002\"\n\u0003\u0002\u0002\u0002#$\u0007z\u0002\u0002$\f\u0003\u0002",
-    "\u0002\u0002%&\u00071\u0002\u0002&\u000e\u0003\u0002\u0002\u0002\'(",
+    '\u001f \u0007/\u0002\u0002 \b\u0003\u0002\u0002\u0002!"\u0007-\u0002',
+    '\u0002"\n\u0003\u0002\u0002\u0002#$\u0007z\u0002\u0002$\f\u0003\u0002',
+    "\u0002\u0002%&\u00071\u0002\u0002&\u000e\u0003\u0002\u0002\u0002'(",
     "\u0007`\u0002\u0002(\u0010\u0003\u0002\u0002\u0002)*\u0007n\u0002\u0002",
     "*+\u0007q\u0002\u0002+,\u0007i\u0002\u0002,\u0012\u0003\u0002\u0002",
     "\u0002-.\u0007c\u0002\u0002./\u0007d\u0002\u0002/0\u0007u\u0002\u0002",
@@ -42,58 +42,92 @@ var serializedATN = ["\u0003\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964",
     "\u0002\u0002<=\u0003\u0002\u0002\u0002=?\u0003\u0002\u0002\u0002>8\u0003",
     "\u0002\u0002\u0002>?\u0003\u0002\u0002\u0002?\u0018\u0003\u0002\u0002",
     "\u0002@A\t\u0005\u0002\u0002A\u001a\u0003\u0002\u0002\u0002\u0006\u0002",
-    "6<>\u0002"].join("");
+    "6<>\u0002"
+].join("")
 
+var atn = new antlr4.atn.ATNDeserializer().deserialize(serializedATN)
 
-var atn = new antlr4.atn.ATNDeserializer().deserialize(serializedATN);
-
-var decisionsToDFA = atn.decisionToState.map( function(ds, index) { return new antlr4.dfa.DFA(ds, index); });
+var decisionsToDFA = atn.decisionToState.map(function (ds, index) {
+    return new antlr4.dfa.DFA(ds, index)
+})
 
 function mathLexer(input) {
-	antlr4.Lexer.call(this, input);
-    this._interp = new antlr4.atn.LexerATNSimulator(this, atn, decisionsToDFA, new antlr4.PredictionContextCache());
-    return this;
+    antlr4.Lexer.call(this, input)
+    this._interp = new antlr4.atn.LexerATNSimulator(
+        this,
+        atn,
+        decisionsToDFA,
+        new antlr4.PredictionContextCache()
+    )
+    return this
 }
 
-mathLexer.prototype = Object.create(antlr4.Lexer.prototype);
-mathLexer.prototype.constructor = mathLexer;
+mathLexer.prototype = Object.create(antlr4.Lexer.prototype)
+mathLexer.prototype.constructor = mathLexer
 
 Object.defineProperty(mathLexer.prototype, "atn", {
-        get : function() {
-                return atn;
-        }
-});
+    get: function () {
+        return atn
+    }
+})
 
-mathLexer.EOF = antlr4.Token.EOF;
-mathLexer.MINUS = 1;
-mathLexer.PLUS = 2;
-mathLexer.TIMES = 3;
-mathLexer.DIV = 4;
-mathLexer.POW = 5;
-mathLexer.LOG = 6;
-mathLexer.ABS = 7;
-mathLexer.EQ = 8;
-mathLexer.NUMBER = 9;
-mathLexer.VARIABLE = 10;
+mathLexer.EOF = antlr4.Token.EOF
+mathLexer.MINUS = 1
+mathLexer.PLUS = 2
+mathLexer.TIMES = 3
+mathLexer.DIV = 4
+mathLexer.POW = 5
+mathLexer.LOG = 6
+mathLexer.ABS = 7
+mathLexer.EQ = 8
+mathLexer.NUMBER = 9
+mathLexer.VARIABLE = 10
 
-mathLexer.prototype.channelNames = [ "DEFAULT_TOKEN_CHANNEL", "HIDDEN" ];
+mathLexer.prototype.channelNames = ["DEFAULT_TOKEN_CHANNEL", "HIDDEN"]
 
-mathLexer.prototype.modeNames = [ "DEFAULT_MODE" ];
+mathLexer.prototype.modeNames = ["DEFAULT_MODE"]
 
-mathLexer.prototype.literalNames = [ null, "'-'", "'+'", "'x'", "'/'", "'^'", 
-                                     "'log'", "'abs'", "'='" ];
+mathLexer.prototype.literalNames = [
+    null,
+    "'-'",
+    "'+'",
+    "'x'",
+    "'/'",
+    "'^'",
+    "'log'",
+    "'abs'",
+    "'='"
+]
 
-mathLexer.prototype.symbolicNames = [ null, "MINUS", "PLUS", "TIMES", "DIV", 
-                                      "POW", "LOG", "ABS", "EQ", "NUMBER", 
-                                      "VARIABLE" ];
+mathLexer.prototype.symbolicNames = [
+    null,
+    "MINUS",
+    "PLUS",
+    "TIMES",
+    "DIV",
+    "POW",
+    "LOG",
+    "ABS",
+    "EQ",
+    "NUMBER",
+    "VARIABLE"
+]
 
-mathLexer.prototype.ruleNames = [ "DIGIT", "E", "MINUS", "PLUS", "TIMES", 
-                                  "DIV", "POW", "LOG", "ABS", "EQ", "NUMBER", 
-                                  "VARIABLE" ];
+mathLexer.prototype.ruleNames = [
+    "DIGIT",
+    "E",
+    "MINUS",
+    "PLUS",
+    "TIMES",
+    "DIV",
+    "POW",
+    "LOG",
+    "ABS",
+    "EQ",
+    "NUMBER",
+    "VARIABLE"
+]
 
-mathLexer.prototype.grammarFileName = "math.g4";
+mathLexer.prototype.grammarFileName = "math.g4"
 
-
-
-exports.mathLexer = mathLexer;
-
+exports.mathLexer = mathLexer

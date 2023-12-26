@@ -5,5 +5,5 @@ export interface MathElement {
     /**
      * Get mathml text for this expression.
      */
-    toMathXML(): string;
+    toMathXML(): string
 }

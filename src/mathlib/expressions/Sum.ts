@@ -1,16 +1,14 @@
-import { assert } from "../util/assert";
-import { VariableValueMap } from "../VariableValueMap";
-import { Expression } from "./Expression";
-import { Integer, IntegerType } from "./Integer";
-import { Product } from "./Product";
-import { VariableType } from "./Variable";
-
+import { assert } from "../util/assert"
+import { VariableValueMap } from "../VariableValueMap"
+import { Expression } from "./Expression"
+import { Integer, IntegerType } from "./Integer"
+import { Product } from "./Product"
+import { VariableType } from "./Variable"
 
 /**
  * Expression representing the sum of 2 or more terms.
  */
 export class Sum extends Expression {
-
     /**
      * Factory method consntructor.
      * @param terms Contains at least 2 elements
@@ -22,30 +20,36 @@ export class Sum extends Expression {
         }
         return Sum.instances.get(hash)!
     }
-    private static readonly instances: Map<string, Sum> = new Map();
+    private static readonly instances: Map<string, Sum> = new Map()
 
-    private constructor(terms: Expression[]){
+    private constructor(terms: Expression[]) {
         super()
         assert(terms.length >= 2, "Creating sum with less than 2 terms.")
-        this.terms = terms;
-        this.isReducible = this.terms.map<boolean>(t => t.isReducible || t.class == IntegerType).reduce((a, b) => a && b)
+        this.terms = terms
+        this.isReducible = this.terms
+            .map<boolean>(t => t.isReducible || t.class == IntegerType)
+            .reduce((a, b) => a && b)
 
-        this.isConstant = this.terms.map<boolean>(t => t.isConstant).reduce((a, b) => a && b)
+        this.isConstant = this.terms
+            .map<boolean>(t => t.isConstant)
+            .reduce((a, b) => a && b)
         Object.freeze(this.terms)
-        this.childCount = terms.length + terms.map<number>(t => t.childCount).reduce((a, b) => a + b)
+        this.childCount =
+            terms.length +
+            terms.map<number>(t => t.childCount).reduce((a, b) => a + b)
     }
 
     /**
      * Returns a new Expression without the given term.
-     * If the sum contains the term multiple times, 
-     * only removes one. If it doesn't contain the term, 
+     * If the sum contains the term multiple times,
+     * only removes one. If it doesn't contain the term,
      * returns itself.
      * @param term A term in this sum.
      */
     public without(term: Expression): Expression {
         const newTerms = [...this.terms]
-        
-        const index = newTerms.findIndex((value) => {
+
+        const index = newTerms.findIndex(value => {
             return value === term
         })
         if (index == -1) return this
@@ -57,7 +61,6 @@ export class Sum extends Expression {
         return Sum.of(newTerms)
     }
 
-
     public toMathXML(): string {
         function wrapIfNeeded(exp: Expression): string {
             if (exp.class == SumType)
@@ -66,18 +69,18 @@ export class Sum extends Expression {
         }
 
         let out = wrapIfNeeded(this.terms[0])
-        for (let i=1; i < this.terms.length; i++) {
+        for (let i = 1; i < this.terms.length; i++) {
             const term = this.terms[i]
             // Subtract negative terms instead of adding negatives
             if (term instanceof Product && term.isNegation) {
                 out += "<mo>-</mo>" + wrapIfNeeded(term.negation)
-            } else if (term instanceof Integer && term.value <  0) {
+            } else if (term instanceof Integer && term.value < 0) {
                 out += "<mo>-</mo>" + wrapIfNeeded(term.butPositive())
             } else {
                 out += "<mo>+</mo>" + wrapIfNeeded(this.terms[i])
             }
         }
-        return out;
+        return out
     }
 
     public toString(): string {
@@ -103,18 +106,20 @@ export class Sum extends Expression {
     }
 
     public evaluate(values: VariableValueMap): number {
-        return this.terms.map<number>(t => t.evaluate(values)).reduce((a, b) => a + b)
+        return this.terms
+            .map<number>(t => t.evaluate(values))
+            .reduce((a, b) => a + b)
     }
-    
-    public readonly class = SumType;
+
+    public readonly class = SumType
     /**
      * Ordered, immutable
      */
-    public readonly terms: Expression[];
-    public readonly isReducible: boolean;
+    public readonly terms: Expression[]
+    public readonly isReducible: boolean
 
     public readonly isConstant: boolean
-    public readonly childCount: number;
+    public readonly childCount: number
 }
 
 export const SumType = "Sum"
@@ -122,17 +127,29 @@ export const SumType = "Sum"
 /**
  * Returns the given terms ordered correctly to
  * be placed in a Sum. Alters the given array.
- * @param terms 
+ * @param terms
  */
 export function orderTerms(...terms: Expression[]): Expression[] {
     // A note about the sort function bc the documentation is cryptic
     // If a should be put before b in the sum, return a negative value
     return terms.sort((a, b) => {
         // Variables before Integers
-        if (a.class == IntegerType && (b.class == VariableType || (b instanceof Product && b.isNegation && b.negation.class == VariableType))) {
+        if (
+            a.class == IntegerType &&
+            (b.class == VariableType ||
+                (b instanceof Product &&
+                    b.isNegation &&
+                    b.negation.class == VariableType))
+        ) {
             return 1
         }
-        if ((a.class == VariableType || (a instanceof Product && a.isNegation && a.negation.class == VariableType)) && b.class == IntegerType) {
+        if (
+            (a.class == VariableType ||
+                (a instanceof Product &&
+                    a.isNegation &&
+                    a.negation.class == VariableType)) &&
+            b.class == IntegerType
+        ) {
             return -1
         }
 

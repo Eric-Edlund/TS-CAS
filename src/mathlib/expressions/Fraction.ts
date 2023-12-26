@@ -1,5 +1,5 @@
-import { VariableValueMap } from "../VariableValueMap";
-import { Expression } from "./Expression";
+import { VariableValueMap } from "../VariableValueMap"
+import { Expression } from "./Expression"
 
 export class Fraction extends Expression {
     public static of(numerator: Expression, denominator: Expression): Fraction {
@@ -30,8 +30,8 @@ export class Fraction extends Expression {
     public readonly numerator: Expression
     public readonly denominator: Expression
 
-    public readonly isReducible: boolean;
-    public readonly class: string = FractionType;
+    public readonly isReducible: boolean
+    public readonly class: string = FractionType
     public toString(): string {
         return this.numerator.toString() + " / " + this.denominator.toString()
     }
@@ -41,16 +41,23 @@ export class Fraction extends Expression {
     public get hash(): string {
         return FractionType + this.numerator.hash + this.denominator.hash
     }
-    public readonly isConstant: boolean;
+    public readonly isConstant: boolean
     public toMathXML(): string {
-        return "<mfrac><mrow>" + this.numerator.toMathXML() + "</mrow><mrow>" + this.denominator.toMathXML() + "</mrow></mfrac>"
+        return (
+            "<mfrac><mrow>" +
+            this.numerator.toMathXML() +
+            "</mrow><mrow>" +
+            this.denominator.toMathXML() +
+            "</mrow></mfrac>"
+        )
     }
     public evaluate(values: VariableValueMap): number {
-        return this.numerator.evaluate(values) / this.denominator.evaluate(values);
+        return (
+            this.numerator.evaluate(values) / this.denominator.evaluate(values)
+        )
     }
-    
-    public readonly childCount: number
 
+    public readonly childCount: number
 }
 
 export const FractionType = "Fraction"

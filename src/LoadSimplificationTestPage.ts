@@ -1,8 +1,21 @@
-import { a, b, c, d, fraction, negative, num, pow, product, sum, x, y } from "./mathlib/ConvenientExpressions";
-import { deriveExpand, wrapInGraph } from "./mathlib/derivations/Deriver";
-import { Expression } from "./mathlib/expressions/Expression";
-import { EditableMathView } from "./mathlib/uielements/EditableMathView";
-import { parseExpression } from "./mathlib/userinput/AntlrMathParser";
+import {
+    a,
+    b,
+    c,
+    d,
+    fraction,
+    negative,
+    num,
+    pow,
+    product,
+    sum,
+    x,
+    y
+} from "./mathlib/ConvenientExpressions"
+import { deriveExpand, wrapInGraph } from "./mathlib/derivations/Deriver"
+import { Expression } from "./mathlib/expressions/Expression"
+import { EditableMathView } from "./mathlib/uielements/EditableMathView"
+import { parseExpression } from "./mathlib/userinput/AntlrMathParser"
 
 /**
  * Called after DOM is loaded.
@@ -10,11 +23,11 @@ import { parseExpression } from "./mathlib/userinput/AntlrMathParser";
  * with the primary integrator view.
  */
 export function loadSimplificationTestPage() {
-    const page = document.getElementsByTagName('body')[0] as HTMLBodyElement
+    const page = document.getElementsByTagName("body")[0] as HTMLBodyElement
     page.style.padding = "8ch"
 
     function p(content: string): HTMLElement {
-        const e = document.createElement('p')
+        const e = document.createElement("p")
         e.innerText = content
         return e
     }
@@ -27,14 +40,14 @@ export function loadSimplificationTestPage() {
 
     /**
      * Adds a test column to the page.
-     * @param start 
+     * @param start
      * @param answ The correct simplification of the expression.
      */
     function simplify(start: Expression, answ: Expression): void {
-        const table = document.createElement('table')
+        const table = document.createElement("table")
         table.style.border = "1px solid black"
-        table.style.width = '80%'
-        const row = document.createElement('tr')
+        table.style.width = "80%"
+        const row = document.createElement("tr")
         table.appendChild(row)
 
         function append(cell: HTMLTableCellElement): void {
@@ -42,9 +55,9 @@ export function loadSimplificationTestPage() {
             row.appendChild(cell)
         }
 
-        const data1 = document.createElement('td')
-        const data2 = document.createElement('td')
-        const data3 = document.createElement('td')
+        const data1 = document.createElement("td")
+        const data2 = document.createElement("td")
+        const data3 = document.createElement("td")
         append(data1)
         append(data2)
         append(data3)
@@ -69,22 +82,26 @@ export function loadSimplificationTestPage() {
             data2.style.backgroundColor = "lightgreen"
         } else {
             data2.style.backgroundColor = "red"
-            const data4 = document.createElement('td')
-            const data5 = document.createElement('td')
-            const data6 = document.createElement('td')
+            const data4 = document.createElement("td")
+            const data5 = document.createElement("td")
+            const data6 = document.createElement("td")
             append(data4)
             append(data5)
             append(data6)
-            data4.innerHTML = results[0].toUnambigiousString() + "<br>" + answ.toUnambigiousString()
-            data5.innerHTML = "Hashes: <br>" + results[0].hash + "<br>" + answ.hash
-            data6.innerHTML = "IDs: " + results[0].id + "<br>" + answ.id 
+            data4.innerHTML =
+                results[0].toUnambigiousString() +
+                "<br>" +
+                answ.toUnambigiousString()
+            data5.innerHTML =
+                "Hashes: <br>" + results[0].hash + "<br>" + answ.hash
+            data6.innerHTML = "IDs: " + results[0].id + "<br>" + answ.id
         }
     }
 
     /**
      * Wrapper for simplify that parses strings
-     * @param input 
-     * @param answ 
+     * @param input
+     * @param answ
      */
     function pSimp(input: string, answ: string) {
         const inputExp = parseExpression(input)
@@ -108,6 +125,4 @@ export function loadSimplificationTestPage() {
     pSimp("(x^2-9)/(x+3)", "(x-3)")
     pSimp("x+3*(10+y)-7x-y", "-6x+2y+30")
     pSimp("(5/(2x-3)-(3/((2x-3)^2))", "(2(5x-9))/((2x-3)^2)")
-
-    
 }

@@ -1,5 +1,3 @@
-
-
 export abstract class MathGraphNode {
     constructor() {
         this.id = MathGraphNode.nextId
@@ -7,5 +5,5 @@ export abstract class MathGraphNode {
     }
     private static nextId = 1
 
-    public readonly id: number;
+    public readonly id: number
 }

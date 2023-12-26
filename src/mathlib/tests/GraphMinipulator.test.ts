@@ -1,4 +1,3 @@
-
 /**
  * Tests the graph minipulator functions.
  */

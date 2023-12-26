@@ -1,15 +1,11 @@
-
-
 class UIPreferences {
-
     /**
      * @param callback Function called whenever a ui preference
      * is changed.
      */
-     public onUpdate(callback: () => void) {
+    public onUpdate(callback: () => void) {
         this.callbacks.push(callback)
     }
-    
 
     // Getters and Setters
 
@@ -25,7 +21,6 @@ class UIPreferences {
         this._edgeEqualsBackgroundColor = val
         this.callbacks.forEach(c => c())
     }
-
 
     // Preference Values
     private _edgeEqualsBackgroundColor: string = "none"

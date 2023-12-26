@@ -1,19 +1,19 @@
-import { Argument } from "../Argument";
-import { Expression } from "../expressions/Expression";
-import { GraphEdge, Graph } from "../Graph";
-import { Relationship } from "../Relationship";
-import { num } from "../ConvenientExpressions";
-import { GraphMinipulator } from "../GraphMinipulator";
-import { assert, for_all, for_some } from "../util/assert";
-import { TouchGestureRecognizer } from "./TouchGestureRecognizer";
-import { EdgeView } from "./EdgeView";
-import { ExpressionNodeView } from "./ExpressionNodeView";
-import { ArgumentNodeView } from "./ArgumentNodeView";
-import { GraphNodeView } from "./GraphNodeView";
-import { ExplanationPopup } from "./ExplanationPopup";
-import { MathGraphNode } from "../MathGraphNode";
-import { nthRootDependencies, number } from "mathjs";
-import { Interpreter } from "../interpreting/Interpreter";
+import { Argument } from "../Argument"
+import { Expression } from "../expressions/Expression"
+import { GraphEdge, Graph } from "../Graph"
+import { Relationship } from "../Relationship"
+import { num } from "../ConvenientExpressions"
+import { GraphMinipulator } from "../GraphMinipulator"
+import { assert, for_all, for_some } from "../util/assert"
+import { TouchGestureRecognizer } from "./TouchGestureRecognizer"
+import { EdgeView } from "./EdgeView"
+import { ExpressionNodeView } from "./ExpressionNodeView"
+import { ArgumentNodeView } from "./ArgumentNodeView"
+import { GraphNodeView } from "./GraphNodeView"
+import { ExplanationPopup } from "./ExplanationPopup"
+import { MathGraphNode } from "../MathGraphNode"
+import { nthRootDependencies, number } from "mathjs"
+import { Interpreter } from "../interpreting/Interpreter"
 
 /**
  * A ui element that will display a math graph in a web.
@@ -23,17 +23,22 @@ export class WebGraphView extends HTMLDivElement {
      * @param graph Must be fully connected.
      * @param roots Non-empty.
      */
-    public constructor(graph: Graph, roots: Set<MathGraphNode>, interpreter: Interpreter, config: WebGraphViewInitSettings | undefined = undefined){
-        super();
-        
-        this.nodes = new Map<MathGraphNode, GraphNodeView>();
-        this.offsetX = 0;
-        this.offsetY = 0;
-        this.nodePositions = new Map();
-        this.edgePositions = new Map();
-        this.edges = new Map();
-        this.ringElements = new Set();
-        this.ringPositions = new Map();
+    public constructor(
+        graph: Graph,
+        roots: Set<MathGraphNode>,
+        interpreter: Interpreter,
+        config: WebGraphViewInitSettings | undefined = undefined
+    ) {
+        super()
+
+        this.nodes = new Map<MathGraphNode, GraphNodeView>()
+        this.offsetX = 0
+        this.offsetY = 0
+        this.nodePositions = new Map()
+        this.edgePositions = new Map()
+        this.edges = new Map()
+        this.ringElements = new Set()
+        this.ringPositions = new Map()
         this.explanationPopups = []
         this.interpreter = interpreter
 
@@ -43,7 +48,7 @@ export class WebGraphView extends HTMLDivElement {
             this.debugCornerEnabled = config.debugCornerEnabled
         }
 
-        this.style.clipPath = "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)";
+        this.style.clipPath = "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)"
         this.style.position = "relative"
         this.style.overflow = "hidden"
 
@@ -66,7 +71,7 @@ export class WebGraphView extends HTMLDivElement {
 
         this.resizeObserver.observe(this)
 
-        this.addEventListener("wheel", (event) => {
+        this.addEventListener("wheel", event => {
             const mousePos = Point(event.offsetX, event.offsetY)
 
             const scaleDelta = Math.pow(0.8, event.deltaY / 360)
@@ -76,14 +81,26 @@ export class WebGraphView extends HTMLDivElement {
             return true
         })
 
-        this.gestureRecognizer = new TouchGestureRecognizer();
-        this.addEventListener("touchdown", this.gestureRecognizer.processTouchDown)
-        this.addEventListener("touchend", this.gestureRecognizer.processTouchEnd)
-        this.addEventListener("touchcancel", this.gestureRecognizer.processTouchCancel)
-        this.addEventListener("touchmove", this.gestureRecognizer.processTouchMove)
-        this.gestureRecognizer.addPinchListener((center, scaleDelta, fingers) => {
-
-        })
+        this.gestureRecognizer = new TouchGestureRecognizer()
+        this.addEventListener(
+            "touchdown",
+            this.gestureRecognizer.processTouchDown
+        )
+        this.addEventListener(
+            "touchend",
+            this.gestureRecognizer.processTouchEnd
+        )
+        this.addEventListener(
+            "touchcancel",
+            this.gestureRecognizer.processTouchCancel
+        )
+        this.addEventListener(
+            "touchmove",
+            this.gestureRecognizer.processTouchMove
+        )
+        this.gestureRecognizer.addPinchListener(
+            (center, scaleDelta, fingers) => {}
+        )
 
         this.setGraph(graph, roots)
 
@@ -91,8 +108,8 @@ export class WebGraphView extends HTMLDivElement {
     }
 
     public setGraph(graph: Graph, roots: Set<MathGraphNode>): void {
-        this.graph = graph;
-        this.rootNodes = new Set(roots);
+        this.graph = graph
+        this.rootNodes = new Set(roots)
 
         this.readGraph()
         this.arrange()
@@ -101,13 +118,13 @@ export class WebGraphView extends HTMLDivElement {
 
     /**
      * Set a function that determines the color of a node.
-     * @param colorFn 
+     * @param colorFn
      */
     public setNodeColoringScheme(colorFn: (n: MathGraphNode) => string) {
         this.nodeColorFn = colorFn
         this.propogateSettingsToNodes()
     }
-    private nodeColorFn: (n: MathGraphNode) => string = (n) => "lightblue"
+    private nodeColorFn: (n: MathGraphNode) => string = n => "lightblue"
 
     private propogateSettingsToNodes(): void {
         this.nodes.forEach((view, node) => {
@@ -118,7 +135,7 @@ export class WebGraphView extends HTMLDivElement {
     /**
      * Sets if the view should show argument nodes as nodes.
      * False by default.
-     * @param val 
+     * @param val
      */
     public setShowArguments(val: boolean) {
         this.showArguments = true
@@ -127,10 +144,10 @@ export class WebGraphView extends HTMLDivElement {
         this.updateOffset()
     }
 
-    private get center(): {x: number, y: number} {
+    private get center(): { x: number; y: number } {
         return {
             x: this.offsetWidth / 2,
-            y: this.offsetHeight / 2,
+            y: this.offsetHeight / 2
         }
     }
 
@@ -160,35 +177,47 @@ export class WebGraphView extends HTMLDivElement {
                 this.nodes.set(node, view)
                 this.append(view)
             } else if (node instanceof Argument) {
-                if (!this.showArguments) return;
+                if (!this.showArguments) return
                 const view = new ArgumentNodeView(node, this.baseNodeStyle)
                 view.style.position = "absolute"
                 this.nodes.set(node, view)
                 this.append(view)
-                
-            } else throw new Error("Graph contains node WebGraphView can't process.")
-            
+            } else
+                throw new Error(
+                    "Graph contains node WebGraphView can't process."
+                )
         })
 
         // Fetch edges
-        GraphMinipulator.dropSymmetric(this.graph.getEdges()).filter(edge => {
-            // Only consider edges for which we have both endpoints on the view
-            return this.nodes.has(edge.n) && this.nodes.has(edge.n1);
-        }).forEach(edge => {
-            const view = new EdgeView(this, edge)
-            view.style.position = "absolute"
-            this.edges.set(edge, view)
-            this.append(view)
-        })
+        GraphMinipulator.dropSymmetric(this.graph.getEdges())
+            .filter(edge => {
+                // Only consider edges for which we have both endpoints on the view
+                return this.nodes.has(edge.n) && this.nodes.has(edge.n1)
+            })
+            .forEach(edge => {
+                const view = new EdgeView(this, edge)
+                view.style.position = "absolute"
+                this.edges.set(edge, view)
+                this.append(view)
+            })
 
         this.propogateSettingsToNodes()
 
         if (this.debugCornerEnabled) {
-            const corner = document.createElement('p')
-            corner.innerHTML = "Graph Nodes: " + this.graph.getNodes().size + "<br>"
-                             + "Visible Nodes: " + this.nodes.size + "<br>"
-                             + "Graph Edges: " + this.graph.getEdges().size + "<br>"
-                             + "Visible Edges: " + this.edges.size + "<br>"
+            const corner = document.createElement("p")
+            corner.innerHTML =
+                "Graph Nodes: " +
+                this.graph.getNodes().size +
+                "<br>" +
+                "Visible Nodes: " +
+                this.nodes.size +
+                "<br>" +
+                "Graph Edges: " +
+                this.graph.getEdges().size +
+                "<br>" +
+                "Visible Edges: " +
+                this.edges.size +
+                "<br>"
             corner.style.zIndex = "100"
             corner.style.backgroundColor = "white"
             corner.style.width = "fit-content"
@@ -196,7 +225,7 @@ export class WebGraphView extends HTMLDivElement {
             corner.style.padding = "1ch"
             corner.style.border = "black 1px solid"
             corner.style.position = "absolute"
-            this.append(corner)            
+            this.append(corner)
         }
 
         this.repOk()
@@ -220,20 +249,24 @@ export class WebGraphView extends HTMLDivElement {
             this.removeChild(e)
         })
         this.ringElements.clear()
-     
-        // Place nodes on a series of rings from the center using their depth in the graph
-        const levels = GraphMinipulator.getLevels(this.graph, this.rootNodes, node => {
-            if (node instanceof Expression) return true
-            else if (node instanceof Argument) return this.showArguments
-            else throw new Error("New type of node")
-        })
 
-        let maxDepth = 0;
+        // Place nodes on a series of rings from the center using their depth in the graph
+        const levels = GraphMinipulator.getLevels(
+            this.graph,
+            this.rootNodes,
+            node => {
+                if (node instanceof Expression) return true
+                else if (node instanceof Argument) return this.showArguments
+                else throw new Error("New type of node")
+            }
+        )
+
+        let maxDepth = 0
         levels.forEach((_, depth) => {
             maxDepth = Math.max(maxDepth, depth)
         })
 
-        const center = {x: (this.clientWidth / 2), y: this.clientHeight / 2};
+        const center = { x: this.clientWidth / 2, y: this.clientHeight / 2 }
         let lastRadius = 0 //px
         // Record the positions of the last ring so that we can
         // make the graph appear planar-ish. Maps nodes to angle
@@ -246,42 +279,60 @@ export class WebGraphView extends HTMLDivElement {
              * Calculating the radius of the circle
              * Suppose every root node on the starting circle requires
              * a circular space to be drawn with radius nodeRadius
-             * A starting circle with n of these nodes would require a 
+             * A starting circle with n of these nodes would require a
              * circumference of n * 2nodeRadius.
              * The circumference of a circle can be expressed
              * as 2*pi*r
              * => r = n * 2 * smallR / (2 * pi)
              *      = n * smallR / pi
              */
-            const nodeRadius = 70; // pixels
-            let radius = Math.max(nodes.size * nodeRadius / Math.PI, lastRadius + (3*nodeRadius))
+            const nodeRadius = 70 // pixels
+            let radius = Math.max(
+                (nodes.size * nodeRadius) / Math.PI,
+                lastRadius + 3 * nodeRadius
+            )
             if (depth == 0 && nodes.size == 1) radius = 0
-            lastRadius = radius;
+            lastRadius = radius
 
             // Minimum radians necessary to keep nodes necessarily spaced at the given depth
-            const stepSize = (2 * Math.PI) / Math.max(nodes.size, radius*2*Math.PI / (2*1.2*nodeRadius));
-    
+            const stepSize =
+                (2 * Math.PI) /
+                Math.max(
+                    nodes.size,
+                    (radius * 2 * Math.PI) / (2 * 1.2 * nodeRadius)
+                )
+
             // Maps nodes to angles (rad)
-            const ns = new Map<MathGraphNode, number>();
+            const ns = new Map<MathGraphNode, number>()
 
             if (lastPositions != null) {
-                const idealAngles = new Map<MathGraphNode, number>();
+                const idealAngles = new Map<MathGraphNode, number>()
                 for (const n of nodes) {
                     // We do not assume the graph is a tree
                     // Assume the node has a parent
-                    const parent = this.graph.getNeighbors(n, "in")!
-                    .filter(n => levels.get(depth-1)!.has(n) && lastPositions!.has(n))[0]
+                    const parent = this.graph
+                        .getNeighbors(n, "in")!
+                        .filter(
+                            n =>
+                                levels.get(depth - 1)!.has(n) &&
+                                lastPositions!.has(n)
+                        )[0]
                     const idealAngle = lastPositions.get(parent)!
                     idealAngles.set(n, idealAngle)
                 }
 
                 assert(idealAngles.size == nodes.size)
 
-                for(let i = 0; i < nodes.size; i++) {
+                for (let i = 0; i < nodes.size; i++) {
                     for (const pair of idealAngles) {
-                        let a=0
-                        while (for_some(ns, p => Math.abs(p[1] - pair[1]) < stepSize)) {
-                            pair[1] += stepSize * a * ((-1) ** (a))
+                        let a = 0
+                        while (
+                            for_some(
+                                ns,
+                                p => Math.abs(p[1] - pair[1]) < stepSize
+                            )
+                        ) {
+                            pair[1] += stepSize * a * (-1) ** a
                             a++
                         }
                         ns.set(pair[0], pair[1])
@@ -289,16 +340,19 @@ export class WebGraphView extends HTMLDivElement {
                 }
             } else {
                 const temp = [...nodes]
-                for(let i=0; i < nodes.size; i++) {
+                for (let i = 0; i < nodes.size; i++) {
                     ns.set(temp[i], i * stepSize)
                 }
             }
-            
-            assert(ns.size == nodes.size, "Only produced " + ns.size + " nodes instead of " + nodes.size)
-            
+
+            assert(
+                ns.size == nodes.size,
+                "Only produced " + ns.size + " nodes instead of " + nodes.size
+            )
+
             lastPositions = new Map()
             ns.forEach((angle, node) => {
-                const view = this.nodes.get(node)!;
+                const view = this.nodes.get(node)!
                 //view.style.width = "" + smallR + "px"
                 //view.style.height = "" + smallR + "px"
                 lastPositions!.set(node, angle)
@@ -308,7 +362,12 @@ export class WebGraphView extends HTMLDivElement {
                 const y = radius * Math.sin(angle) + center.y
                 this.nodePositions.set(view, Point(x, y))
             })
-            assert(for_all(lastPositions.values(), pos => pos != undefined && pos != null))
+            assert(
+                for_all(
+                    lastPositions.values(),
+                    pos => pos != undefined && pos != null
+                )
+            )
             //assert(lastPositions.size > 0)
             //assert(for_all(nodes, lastPositions.has))
 
@@ -319,20 +378,20 @@ export class WebGraphView extends HTMLDivElement {
             ring.style.zIndex = RING_Z
             this.appendChild(ring)
             this.ringElements.add(ring)
-            this.ringPositions.set(ring, {radius: radius})
+            this.ringPositions.set(ring, { radius: radius })
         }
 
         // Now arange the edges
         this.edges.forEach((view, edge) => {
             // Find the middle of the two endpts
-            const firstX = this.nodePositions.get(this.nodes.get(edge.n)!)!.x;
-            const firstY = this.nodePositions.get(this.nodes.get(edge.n)!)!.y;
-            const secondX = this.nodePositions.get(this.nodes.get(edge.n1)!)!.x;
-            const secondY = this.nodePositions.get(this.nodes.get(edge.n1)!)!.y;
+            const firstX = this.nodePositions.get(this.nodes.get(edge.n)!)!.x
+            const firstY = this.nodePositions.get(this.nodes.get(edge.n)!)!.y
+            const secondX = this.nodePositions.get(this.nodes.get(edge.n1)!)!.x
+            const secondY = this.nodePositions.get(this.nodes.get(edge.n1)!)!.y
             const x = (firstX + secondX) / 2
             const y = (firstY + secondY) / 2
             const angle = Math.atan2(secondY - firstY, secondX - firstX)
-            this.edgePositions.set(view, {x: x, y: y, angle: angle})
+            this.edgePositions.set(view, { x: x, y: y, angle: angle })
         })
 
         this.repOk()
@@ -342,35 +401,46 @@ export class WebGraphView extends HTMLDivElement {
      * Update the draw position of the nodes on the screen
      * to match the offset in rep. Assumes all views have a position
      * stored in the rep. Call arrange() first.
-     * Also applies the scale factor to the final draw positions, 
+     * Also applies the scale factor to the final draw positions,
      * invisible to everyone else.
      */
     private updateOffset(): void {
-        const center = this.center;
+        const center = this.center
         const scale = this.scale
 
         function applyScale(i: Point): Point {
             return Point(
-                ((i.x)-center.x) * scale + center.x,
-                ((i.y)-center.y) * scale + center.y
+                (i.x - center.x) * scale + center.x,
+                (i.y - center.y) * scale + center.y
             )
         }
 
         this.nodePositions.forEach((pos, view) => {
             const adjusted = applyScale({
                 x: pos.x + this.offsetX,
-                y: pos.y + this.offsetY,
+                y: pos.y + this.offsetY
             })
-            view.style.left = "" + (adjusted.x - (0.5 * view.offsetWidth)) + "px"
-            view.style.top = "" + (adjusted.y - (0.5 * view.offsetHeight)) + "px"
+            view.style.left = "" + (adjusted.x - 0.5 * view.offsetWidth) + "px"
+            view.style.top = "" + (adjusted.y - 0.5 * view.offsetHeight) + "px"
         })
 
         this.edgePositions.forEach((pos, view) => {
             view.setAngle(pos.angle)
             if (this.drawEdgeLines) {
-                const firstPos = this.nodePositions.get(this.nodes.get(view.first)!)!
-                const secondPos = this.nodePositions.get(this.nodes.get(view.second)!)!
-                view.width = "" +  (scale * Math.hypot(secondPos.x - firstPos.x, secondPos.y - firstPos.y)) + "px"
+                const firstPos = this.nodePositions.get(
+                    this.nodes.get(view.first)!
+                )!
+                const secondPos = this.nodePositions.get(
+                    this.nodes.get(view.second)!
+                )!
+                view.width =
+                    "" +
+                    scale *
+                        Math.hypot(
+                            secondPos.x - firstPos.x,
+                            secondPos.y - firstPos.y
+                        ) +
+                    "px"
                 view.style.borderBottom = "black 0.1ch solid"
                 view.style.borderTop = "black 0.1ch solid"
             } else {
@@ -378,24 +448,26 @@ export class WebGraphView extends HTMLDivElement {
                 view.style.borderBottom = "none"
                 view.style.borderTop = "none"
             }
-            
+
             const adjusted = applyScale({
                 x: pos.x + this.offsetX,
-                y: pos.y + this.offsetY,
+                y: pos.y + this.offsetY
             })
 
-            view.style.left = "" + (adjusted.x  - (0.5 * view.offsetWidth)) + "px"
-            view.style.top = "" + (adjusted.y  - (0.5 * view.offsetHeight)) + "px"
+            view.style.left = "" + (adjusted.x - 0.5 * view.offsetWidth) + "px"
+            view.style.top = "" + (adjusted.y - 0.5 * view.offsetHeight) + "px"
         })
-    
+
         // Overlay elements change size with scale
         this.ringPositions.forEach((pos, view) => {
             const adjustedCenterPos = applyScale({
                 x: center.x + this.offsetX,
-                y: center.y + this.offsetY,
+                y: center.y + this.offsetY
             })
-            view.style.left = "" + (adjustedCenterPos.x - (pos.radius * scale)) + "px"
-            view.style.top = "" + (adjustedCenterPos.y - (pos.radius * scale)) + "px"
+            view.style.left =
+                "" + (adjustedCenterPos.x - pos.radius * scale) + "px"
+            view.style.top =
+                "" + (adjustedCenterPos.y - pos.radius * scale) + "px"
             view.style.width = "" + pos.radius * 2 * scale + "px"
             view.style.aspectRatio = "1"
         })
@@ -405,10 +477,10 @@ export class WebGraphView extends HTMLDivElement {
             const pos = val.pos
             const adjusted = applyScale({
                 x: pos.x + this.offsetX,
-                y: pos.y + this.offsetY,
+                y: pos.y + this.offsetY
             })
-            view.style.left = "" + (adjusted.x  - (0.5 * view.offsetWidth)) + "px"
-            view.style.top = "" + (adjusted.y  - (0.5 * view.offsetHeight)) + "px"
+            view.style.left = "" + (adjusted.x - 0.5 * view.offsetWidth) + "px"
+            view.style.top = "" + (adjusted.y - 0.5 * view.offsetHeight) + "px"
         })
         this.repOk()
     }
@@ -418,12 +490,12 @@ export class WebGraphView extends HTMLDivElement {
      * to the internal coordinate system we're using.
      */
     private getInternalPos(pixelPos: Point): Point {
-        const center = this.center;
+        const center = this.center
         const scale = this.scale
-        
-        return Point (
+
+        return Point(
             (pixelPos.x - center.x) / scale + center.x - this.offsetX,
-            (pixelPos.y - center.y) / scale + center.y - this.offsetY,
+            (pixelPos.y - center.y) / scale + center.y - this.offsetY
         )
     }
 
@@ -434,26 +506,26 @@ export class WebGraphView extends HTMLDivElement {
      */
     public edgeClicked(view: EdgeView, event: MouseEvent): void {
         // TODO: Don't allow dupliate explanation popups
-        
+
         if (view.edge instanceof Argument) {
             const popup = new ExplanationPopup(view.edge, () => {
                 this.removeChild(popup)
-                for(let i=0; i < this.explanationPopups.length; i++) {
+                for (let i = 0; i < this.explanationPopups.length; i++) {
                     if (this.explanationPopups[i].e === popup) {
                         this.explanationPopups.splice(i, 1)
                         break
-                    }     
+                    }
                 }
             })
-            const rect = this.getBoundingClientRect();
-            const realtiveX = event.clientX - rect.left;
-            const relativeY = event.clientY - rect.top;
+            const rect = this.getBoundingClientRect()
+            const realtiveX = event.clientX - rect.left
+            const relativeY = event.clientY - rect.top
             //TODO: The position isn't correct
             //TODO: Algorithm for picking where we should put the popup so it stays out
             // of the way of the graph
             this.explanationPopups.push({
-                e: popup, 
-                pos: this.getInternalPos(Point(realtiveX, relativeY)),
+                e: popup,
+                pos: this.getInternalPos(Point(realtiveX, relativeY))
             })
             popup.style.position = "absolute"
             this.append(popup)
@@ -468,7 +540,7 @@ export class WebGraphView extends HTMLDivElement {
      * Set the z-index of all the elements in the graph
      * putting the given root on top and it's neighbors
      * right beneath it etc.
-     * @param root 
+     * @param root
      */
     private reorderViewStack(root: EdgeView | GraphNodeView): void {
         if (root instanceof GraphNodeView) throw new Error("Not implemented")
@@ -482,60 +554,69 @@ export class WebGraphView extends HTMLDivElement {
 
                     console.log("Adjusting")
                     const nodeView = this.nodes.get(node)!
-                    nodeView.style.zIndex = (NODE_MAX_Z - 0.0001 * depth).toString()
-                    
+                    nodeView.style.zIndex = (
+                        NODE_MAX_Z -
+                        0.0001 * depth
+                    ).toString()
+
                     // Edges
                     this.edges.forEach((edge, key) => {
                         if (edge.first === node || edge.second === node) {
-                            edge.style.zIndex = (EDGE_MAX_Z - 0.0001 * depth).toString()
+                            edge.style.zIndex = (
+                                EDGE_MAX_Z -
+                                0.0001 * depth
+                            ).toString()
                         }
                     })
-                    
                 })
             })
         }
     }
 
     private repOk(): void {
-        assert (this.rootNodes.size > 0)
+        assert(this.rootNodes.size > 0)
         assert(GraphMinipulator.isConnected(this.graph), "Graph not connected")
-        if (this.showArguments) assert(this.graph.getNodes().size == this.nodes.size)
+        if (this.showArguments)
+            assert(this.graph.getNodes().size == this.nodes.size)
     }
 
-    private graph: Graph;
-    private readonly interpreter: Interpreter;
-    private readonly nodes: Map<MathGraphNode, GraphNodeView>;
+    private graph: Graph
+    private readonly interpreter: Interpreter
+    private readonly nodes: Map<MathGraphNode, GraphNodeView>
     // The Position of the center of the node.
-    private readonly nodePositions: Map<GraphNodeView, Point>;
-    private readonly edges: Map<{n: MathGraphNode, n1: MathGraphNode, e: GraphEdge}, EdgeView>;
-    private readonly edgePositions: Map<EdgeView, AnglePoint>;
+    private readonly nodePositions: Map<GraphNodeView, Point>
+    private readonly edges: Map<
+        { n: MathGraphNode; n1: MathGraphNode; e: GraphEdge },
+        EdgeView
+    >
+    private readonly edgePositions: Map<EdgeView, AnglePoint>
     // Amt to add to left coordinate
-    private offsetX: number;
+    private offsetX: number
     // Added to top coordinate of nodes
-    private offsetY: number;
+    private offsetY: number
     // if the mouse is down
-    private mouseDown: boolean = false;
-    private touchDown: boolean = false;
+    private mouseDown: boolean = false
+    private touchDown: boolean = false
 
-    private scale: number = 1;
+    private scale: number = 1
 
     // These nodes are the root of the graph
-    private rootNodes: Set<MathGraphNode>;
+    private rootNodes: Set<MathGraphNode>
 
-    private readonly ringElements: Set<HTMLElement>;
-    private readonly ringPositions: Map<HTMLElement, {radius: number}>;
+    private readonly ringElements: Set<HTMLElement>
+    private readonly ringPositions: Map<HTMLElement, { radius: number }>
 
     /**
      * Position of top left of popup
      */
-    private readonly explanationPopups: {e: ExplanationPopup, pos: Point}[]
+    private readonly explanationPopups: { e: ExplanationPopup; pos: Point }[]
 
-    private readonly gestureRecognizer: TouchGestureRecognizer;
+    private readonly gestureRecognizer: TouchGestureRecognizer
 
     // If the graph should draw argument nodes.
-    private showArguments: boolean = false;
-    private drawEdgeLines: boolean = false;
-    private debugCornerEnabled: boolean = false;
+    private showArguments: boolean = false
+    private drawEdgeLines: boolean = false
+    private debugCornerEnabled: boolean = false
 
     private readonly resizeObserver = new ResizeObserver(_ => {
         this.arrange()
@@ -545,52 +626,56 @@ export class WebGraphView extends HTMLDivElement {
     private readonly baseNodeStyle = (view: GraphNodeView): void => {
         view.style.borderRadius = "1ch"
         view.style.backgroundColor = "lightblue"
-        view.style.zIndex = "" + NODE_MAX_Z;
+        view.style.zIndex = "" + NODE_MAX_Z
     }
 }
 
-customElements.define("web-graphview", WebGraphView, {extends: "div"});
+customElements.define("web-graphview", WebGraphView, { extends: "div" })
 
 export interface WebGraphViewInitSettings {
     /**
      * If the view should display argument nodes as nodes.
      * Helpful for debugging.
      */
-    showArguments: boolean;
+    showArguments: boolean
 
     /**
      * If true, draws a line for every edge connecting
      * its two end points. (Notates direction of connection)
      */
-    drawEdgeLines: boolean;
+    drawEdgeLines: boolean
 
     /**
      * If true, shows a box in the corner of the view
      * that gives debug info about the graph.
      */
-    debugCornerEnabled: boolean;
+    debugCornerEnabled: boolean
 }
 
-type Point = {x: number, y: number}
-type AnglePoint = Point & {angle: number/*Radians */}
+type Point = { x: number; y: number }
+type AnglePoint = Point & { angle: number /*Radians */ }
 
-function Point(x: number, y: number, angle: number | undefined = undefined): Point | AnglePoint {
+function Point(
+    x: number,
+    y: number,
+    angle: number | undefined = undefined
+): Point | AnglePoint {
     if (angle == undefined)
         return {
             x: x,
-            y: y,
+            y: y
         }
     return {
         x: x,
         y: y,
-        angle: angle,
+        angle: angle
     }
 }
 
 // Z Index constants
-const DEBUG_WINDOW_Z = "100";
-const NODE_MAX_Z = 5;
-const NODE_MIN_Z = "4.000001";
-const EDGE_MAX_Z = 4;
-const EDGE_MIN_Z = "3.000001";
-const RING_Z = "-10";
+const DEBUG_WINDOW_Z = "100"
+const NODE_MAX_Z = 5
+const NODE_MIN_Z = "4.000001"
+const EDGE_MAX_Z = 4
+const EDGE_MIN_Z = "3.000001"
+const RING_Z = "-10"

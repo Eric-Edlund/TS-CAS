@@ -3,11 +3,17 @@
 <html>
     <head>
         <title>Step By Step Solution</title>
-        <meta charset="UTF-8">
-        <link rel="stylesheet" href="css/solver.css">
-        <script>var exports = {};</script>
-        <script async type="text/js" src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-        <script id="MathJax-script" src="mathjax/tex-mml-chtml.js"></script>    
+        <meta charset="UTF-8" />
+        <link rel="stylesheet" href="css/solver.css" />
+        <script>
+            var exports = {}
+        </script>
+        <script
+            async
+            type="text/js"
+            src="https://polyfill.io/v3/polyfill.min.js?features=es6"
+        ></script>
+        <script id="MathJax-script" src="mathjax/tex-mml-chtml.js"></script>
         <script src="bundle.js"></script>
 
         <style>
@@ -35,23 +41,18 @@
 
             #inputZone {
                 display: flex;
-
             }
-
         </style>
     </head>
 
     <body id="body" class="solve_in_steps">
-
         <h1>Solver</h1>
         <div id="inputZone">
             <textarea id="problem"></textarea>
             <div id="expressionViewDiv"></div>
         </div>
-        
+
         <div id="steps"></div>
         <editable-mathview id="solution"></editable-mathview>
-
     </body>
-
 </html>

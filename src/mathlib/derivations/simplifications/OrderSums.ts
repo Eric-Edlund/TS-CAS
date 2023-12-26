@@ -10,17 +10,23 @@ import { NoContextExpressionSimplificationRule } from "../NoContextExpressionSim
  * Turns sums that are unhealthy because their term order
  * is wrong into correctly ordered sums.
  */
- export class OrderSums extends NoContextExpressionSimplificationRule {
-
+export class OrderSums extends NoContextExpressionSimplificationRule {
     protected appliesImpl(exp: Expression): boolean {
         return exp instanceof Sum && orderedSum(exp) !== exp
     }
     protected applyImpl(exp: Expression): Set<Argument> {
-        return new Set<Argument>([new Argument(setOf(exp), {
-            n: exp,
-            r: Relationship.Equal,
-            n1: orderedSum(exp as Sum),
-        }, "Reordered", RULE_ID)])
+        return new Set<Argument>([
+            new Argument(
+                setOf(exp),
+                {
+                    n: exp,
+                    r: Relationship.Equal,
+                    n1: orderedSum(exp as Sum)
+                },
+                "Reordered",
+                RULE_ID
+            )
+        ])
     }
 }
 

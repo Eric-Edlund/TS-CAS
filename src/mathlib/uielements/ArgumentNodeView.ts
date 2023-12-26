@@ -1,11 +1,10 @@
-import { Argument } from "../Argument";
-import { GraphNodeView } from "./GraphNodeView";
+import { Argument } from "../Argument"
+import { GraphNodeView } from "./GraphNodeView"
 
 /**
  * Represents an argument node.
  */
- export class ArgumentNodeView extends GraphNodeView {
-
+export class ArgumentNodeView extends GraphNodeView {
     constructor(arg: Argument, setStyle: (view: GraphNodeView) => void) {
         super(setStyle)
         this.argument = arg
@@ -16,7 +15,7 @@ import { GraphNodeView } from "./GraphNodeView";
         this.classList.add("argument")
     }
 
-    private readonly argument: Argument;
+    private readonly argument: Argument
 }
 
-customElements.define("argument-nodeview", ArgumentNodeView, {extends: "div"});
+customElements.define("argument-nodeview", ArgumentNodeView, { extends: "div" })

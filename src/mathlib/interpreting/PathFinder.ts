@@ -1,6 +1,6 @@
-import { Graph } from "../Graph";
-import { MathGraphNode } from "../MathGraphNode";
-import { Path } from "./Path";
+import { Graph } from "../Graph"
+import { MathGraphNode } from "../MathGraphNode"
+import { Path } from "./Path"
 
 /**
  * Extracts relevant information from a graph.
@@ -8,7 +8,5 @@ import { Path } from "./Path";
  * we're using a class.
  */
 export interface PathFinder {
-
     findPaths(graph: Graph): Path<MathGraphNode>[]
 }
-

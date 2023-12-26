@@ -15,56 +15,71 @@ import { setOf } from "../util/ThingsThatShouldBeInTheStdLib"
 
 /**
  * Searches for equivalents of the given
- * expression with a search depth of 1. 
+ * expression with a search depth of 1.
  * It does this by reflecting the expression's
  * type, then disbatching to a type specific equivalents
- * function. 
- * 
+ * function.
+ *
  * The specific functions use the given directEquivalents
- * function to swap out the component values of their 
+ * function to swap out the component values of their
  * expression with equivalents.
- * 
+ *
  * Ex)
  *  Given the expression
  *         (a + a) + (b * b)
  *  we disbatch to the sum specific function (because
  *  the outer most operation is addition). This disbatch
- *  function uses the directEquivalents function to swap out 
+ *  function uses the directEquivalents function to swap out
  *  each of the sum's terms individually, yielding results
  *  like:
  *      -> (2a) + (b * b) with inference a + a = 2a
  *      -> (a + a) + b^2
- * 
+ *
  * @param exp The expression to search for equivalents.
  * @param directEquivalents Function that takes expressions and finds equivalents.
  *              This function only needs to look for top level equivalents- recursion
  *              is handled by the equiv function.
  * @returns Array of arguments connecting the given expression to equivalents.
  */
- export function equiv(exp: Expression, directEquivalents: (e: Expression) => Set<Argument>): Argument[] {
+export function equiv(
+    exp: Expression,
+    directEquivalents: (e: Expression) => Set<Argument>
+): Argument[] {
     if (exp instanceof Variable || exp instanceof Integer) return []
-    else switch(exp.class) {
-        case SumType: return sumEquiv(exp as Sum, directEquivalents)
-        case ProductType: return productEquiv(exp as Product, directEquivalents)
-        case ExponentType: return exponentEquiv(exp as Exponent, directEquivalents)
-        case FractionType: return fractionEquiv(exp as Fraction, directEquivalents)
-        case DerivativeType: return derivativeEquiv(exp as Derivative, directEquivalents)
-        case LogType: return logarithmEquiv(exp as Logarithm, directEquivalents)
-        case IntegralType: return integralEquiv(exp as Integral, directEquivalents)
-        default: throw new Error("Not implemented for " + exp.class)
-    }
+    else
+        switch (exp.class) {
+            case SumType:
+                return sumEquiv(exp as Sum, directEquivalents)
+            case ProductType:
+                return productEquiv(exp as Product, directEquivalents)
+            case ExponentType:
+                return exponentEquiv(exp as Exponent, directEquivalents)
+            case FractionType:
+                return fractionEquiv(exp as Fraction, directEquivalents)
+            case DerivativeType:
+                return derivativeEquiv(exp as Derivative, directEquivalents)
+            case LogType:
+                return logarithmEquiv(exp as Logarithm, directEquivalents)
+            case IntegralType:
+                return integralEquiv(exp as Integral, directEquivalents)
+            default:
+                throw new Error("Not implemented for " + exp.class)
+        }
 }
 
 /**
  * Gets all equivalents of the given expression
  * by swapping out it's children individually.
- * 
+ *
  * (a + a) + (b + b)
  * -> (2a) + (b + b) with inference a + a = 2a
- * @param exp 
+ * @param exp
  * @returns Array of inferences to equivalent expressions.
  */
-function sumEquiv(exp: Sum, directEquivalents: (e: Expression) => Set<Argument>): Argument[] {
+function sumEquiv(
+    exp: Sum,
+    directEquivalents: (e: Expression) => Set<Argument>
+): Argument[] {
     const equivalentSums: Set<Argument> = new Set()
 
     // Add top level equivalents
@@ -78,12 +93,19 @@ function sumEquiv(exp: Sum, directEquivalents: (e: Expression) => Set<Argument>)
 
         // Substitute term for each equivalent
         equiv(term, directEquivalents).forEach(a => {
-            equivalentSums.add(new Argument(setOf(exp), {
-                n: exp, 
-                r: Relationship.Equal, 
-                n1: swap(exp, i, a.claim.n1 as Expression)}, a.argument, a.ruleId))
+            equivalentSums.add(
+                new Argument(
+                    setOf(exp),
+                    {
+                        n: exp,
+                        r: Relationship.Equal,
+                        n1: swap(exp, i, a.claim.n1 as Expression)
+                    },
+                    a.argument,
+                    a.ruleId
+                )
+            )
         })
-
     }
 
     function swap(s: Sum, i: number, e: Expression): Sum {
@@ -95,7 +117,10 @@ function sumEquiv(exp: Sum, directEquivalents: (e: Expression) => Set<Argument>)
     return [...equivalentSums]
 }
 
-function productEquiv(exp: Product, directEquivalents: (e: Expression) => Set<Argument>): Argument[] {
+function productEquiv(
+    exp: Product,
+    directEquivalents: (e: Expression) => Set<Argument>
+): Argument[] {
     const equivalentProducts: Set<Argument> = new Set()
 
     // Add top level equivalents
@@ -109,11 +134,18 @@ function productEquiv(exp: Product, directEquivalents: (e: Expression) => Set<Ar
 
         // Substitute term for each equivalent
         equiv(factor, directEquivalents).forEach(alt => {
-            equivalentProducts.add(new Argument(setOf(exp), {
-                n: exp,
-                r: Relationship.Equal,
-                n1: swap(exp, i, alt.claim.n1 as Expression),
-            }, alt.argument, alt.ruleId))
+            equivalentProducts.add(
+                new Argument(
+                    setOf(exp),
+                    {
+                        n: exp,
+                        r: Relationship.Equal,
+                        n1: swap(exp, i, alt.claim.n1 as Expression)
+                    },
+                    alt.argument,
+                    alt.ruleId
+                )
+            )
         })
     }
 
@@ -126,7 +158,10 @@ function productEquiv(exp: Product, directEquivalents: (e: Expression) => Set<Ar
     return [...equivalentProducts]
 }
 
-function exponentEquiv(exp: Exponent, directEquivalents: (e: Expression) => Set<Argument>): Argument[] {
+function exponentEquiv(
+    exp: Exponent,
+    directEquivalents: (e: Expression) => Set<Argument>
+): Argument[] {
     const equivalents: Set<Argument> = new Set()
 
     // Add top level equivalents
@@ -135,23 +170,41 @@ function exponentEquiv(exp: Exponent, directEquivalents: (e: Expression) => Set<
     })
 
     equiv(exp.base, directEquivalents).forEach(alt => {
-        equivalents.add(new Argument(setOf(exp), {
-            n: exp, 
-            r: Relationship.Equal,
-            n1: Exponent.of(alt.claim.n1 as Expression, exp.power)}, alt.argument, alt.ruleId))
+        equivalents.add(
+            new Argument(
+                setOf(exp),
+                {
+                    n: exp,
+                    r: Relationship.Equal,
+                    n1: Exponent.of(alt.claim.n1 as Expression, exp.power)
+                },
+                alt.argument,
+                alt.ruleId
+            )
+        )
     })
     equiv(exp.power, directEquivalents).forEach(alt => {
-        equivalents.add(new Argument(setOf(exp), {
-            n: exp,
-            r: Relationship.Equal,
-            n1: Exponent.of(exp.base, alt.claim.n1 as Expression),
-        }, alt.argument, alt.ruleId))
+        equivalents.add(
+            new Argument(
+                setOf(exp),
+                {
+                    n: exp,
+                    r: Relationship.Equal,
+                    n1: Exponent.of(exp.base, alt.claim.n1 as Expression)
+                },
+                alt.argument,
+                alt.ruleId
+            )
+        )
     })
 
     return [...equivalents]
 }
 
-function fractionEquiv(exp: Fraction, directEquivalents: (e: Expression) => Set<Argument>): Argument[] {
+function fractionEquiv(
+    exp: Fraction,
+    directEquivalents: (e: Expression) => Set<Argument>
+): Argument[] {
     const equivalents: Set<Argument> = new Set()
 
     // Add top level equivalents
@@ -160,23 +213,41 @@ function fractionEquiv(exp: Fraction, directEquivalents: (e: Expression) => Set<
     })
 
     equiv(exp.numerator, directEquivalents).forEach(alt => {
-        equivalents.add(new Argument(setOf(exp), {
-            n: exp, 
-            r: Relationship.Equal,
-            n1: Fraction.of(alt.claim.n1 as Expression, exp.denominator)}, alt.argument, alt.ruleId))
+        equivalents.add(
+            new Argument(
+                setOf(exp),
+                {
+                    n: exp,
+                    r: Relationship.Equal,
+                    n1: Fraction.of(alt.claim.n1 as Expression, exp.denominator)
+                },
+                alt.argument,
+                alt.ruleId
+            )
+        )
     })
     equiv(exp.denominator, directEquivalents).forEach(alt => {
-        equivalents.add(new Argument(setOf(exp), {
-            n: exp,
-            r: Relationship.Equal,
-            n1: Fraction.of(exp.numerator, alt.claim.n1 as Expression),
-        }, alt.argument, alt.ruleId))
+        equivalents.add(
+            new Argument(
+                setOf(exp),
+                {
+                    n: exp,
+                    r: Relationship.Equal,
+                    n1: Fraction.of(exp.numerator, alt.claim.n1 as Expression)
+                },
+                alt.argument,
+                alt.ruleId
+            )
+        )
     })
 
     return [...equivalents]
 }
 
-function derivativeEquiv(exp: Derivative, directEquivalents: (e: Expression) => Set<Argument>): Argument[] {
+function derivativeEquiv(
+    exp: Derivative,
+    directEquivalents: (e: Expression) => Set<Argument>
+): Argument[] {
     const equivalents: Set<Argument> = new Set()
 
     // Add top level equivalents
@@ -185,24 +256,44 @@ function derivativeEquiv(exp: Derivative, directEquivalents: (e: Expression) => 
     })
 
     equiv(exp.exp, directEquivalents).forEach(alt => {
-        equivalents.add(new Argument(setOf(exp), {
-            n: exp, 
-            r: Relationship.Equal,
-            n1: Derivative.of(alt.claim.n1 as Expression, exp.relativeTo)
-        }, alt.argument, alt.ruleId))
+        equivalents.add(
+            new Argument(
+                setOf(exp),
+                {
+                    n: exp,
+                    r: Relationship.Equal,
+                    n1: Derivative.of(
+                        alt.claim.n1 as Expression,
+                        exp.relativeTo
+                    )
+                },
+                alt.argument,
+                alt.ruleId
+            )
+        )
     })
     equiv(exp.relativeTo, directEquivalents).forEach(alt => {
-        equivalents.add(new Argument(setOf(exp), {
-            n: exp,
-            r: Relationship.Equal,
-            n1: Derivative.of(exp.exp, alt.claim.n1 as Expression),
-        }, alt.argument, alt.ruleId))
+        equivalents.add(
+            new Argument(
+                setOf(exp),
+                {
+                    n: exp,
+                    r: Relationship.Equal,
+                    n1: Derivative.of(exp.exp, alt.claim.n1 as Expression)
+                },
+                alt.argument,
+                alt.ruleId
+            )
+        )
     })
 
     return [...equivalents]
 }
 
-function logarithmEquiv(exp: Logarithm, directEquivalents: (e: Expression) => Set<Argument>): Argument[] {
+function logarithmEquiv(
+    exp: Logarithm,
+    directEquivalents: (e: Expression) => Set<Argument>
+): Argument[] {
     const equivalents: Set<Argument> = new Set()
 
     // Add top level equivalents
@@ -211,24 +302,41 @@ function logarithmEquiv(exp: Logarithm, directEquivalents: (e: Expression) => Se
     })
 
     equiv(exp.exp, directEquivalents).forEach(alt => {
-        equivalents.add(new Argument(setOf(exp), {
-            n: exp, 
-            r: Relationship.Equal,
-            n1: Logarithm.of(alt.claim.n1 as Expression, exp.base)
-        }, alt.argument, alt.ruleId))
+        equivalents.add(
+            new Argument(
+                setOf(exp),
+                {
+                    n: exp,
+                    r: Relationship.Equal,
+                    n1: Logarithm.of(alt.claim.n1 as Expression, exp.base)
+                },
+                alt.argument,
+                alt.ruleId
+            )
+        )
     })
     equiv(exp.base, directEquivalents).forEach(alt => {
-        equivalents.add(new Argument(setOf(exp), {
-            n: exp,
-            r: Relationship.Equal,
-            n1: Logarithm.of(exp.exp, alt.claim.n1 as Expression),
-        }, alt.argument, alt.ruleId))
+        equivalents.add(
+            new Argument(
+                setOf(exp),
+                {
+                    n: exp,
+                    r: Relationship.Equal,
+                    n1: Logarithm.of(exp.exp, alt.claim.n1 as Expression)
+                },
+                alt.argument,
+                alt.ruleId
+            )
+        )
     })
 
     return [...equivalents]
 }
 
-function integralEquiv(exp: Integral, directEquivalents: (e: Expression) => Set<Argument>): Argument[] {
+function integralEquiv(
+    exp: Integral,
+    directEquivalents: (e: Expression) => Set<Argument>
+): Argument[] {
     const equivalents: Set<Argument> = new Set()
 
     // Add top level equivalents
@@ -237,18 +345,32 @@ function integralEquiv(exp: Integral, directEquivalents: (e: Expression) => Set<
     })
 
     equiv(exp.integrand, directEquivalents).forEach(alt => {
-        equivalents.add(new Argument(setOf(exp), {
-            n: exp, 
-            r: Relationship.Equal,
-            n1: Integral.of(alt.claim.n1 as Expression, exp.relativeTo)
-        }, alt.argument, alt.ruleId))
+        equivalents.add(
+            new Argument(
+                setOf(exp),
+                {
+                    n: exp,
+                    r: Relationship.Equal,
+                    n1: Integral.of(alt.claim.n1 as Expression, exp.relativeTo)
+                },
+                alt.argument,
+                alt.ruleId
+            )
+        )
     })
     equiv(exp.relativeTo, directEquivalents).forEach(alt => {
-        equivalents.add(new Argument(setOf(exp), {
-            n: exp,
-            r: Relationship.Equal,
-            n1: Integral.of(exp.integrand, alt.claim.n1 as Expression),
-        }, alt.argument, alt.ruleId))
+        equivalents.add(
+            new Argument(
+                setOf(exp),
+                {
+                    n: exp,
+                    r: Relationship.Equal,
+                    n1: Integral.of(exp.integrand, alt.claim.n1 as Expression)
+                },
+                alt.argument,
+                alt.ruleId
+            )
+        )
     })
 
     return [...equivalents]

@@ -38,10 +38,7 @@ import { SumCoefficientsOfAddedTerms } from "./simplifications/SumCoefficientsOf
  * 1 input, 1 output
  * Rewrite expressions to follow math conventions
  */
- const conventionRules = [
-    new OrderProducts(),
-    new OrderSums(),
-]
+const conventionRules = [new OrderProducts(), new OrderSums()]
 
 /**
  * 1 input, 1 output
@@ -49,7 +46,7 @@ import { SumCoefficientsOfAddedTerms } from "./simplifications/SumCoefficientsOf
 const evaluativeRules = [
     new EvaluateSums(),
     new CancelNegatives(),
-    new CombineIntegerFactors(),
+    new CombineIntegerFactors()
 ]
 
 const combinatoricRules = [
@@ -58,58 +55,57 @@ const combinatoricRules = [
     new MultiplyExponentPowers(),
     new SubtractExponentsOnFractions(),
     new CombineProductsAndFractions(),
-    new MultiplyFractions(),
+    new MultiplyFractions()
 ]
 
-const remainingNoContextSimplificationRules: NoContextExpressionSimplificationRule[] = [
-    new USubstitution(),
-    new PowerRule(),
-    new PullConstantsFromDerivatives(),
-    new PullConstantsFromIntegrals(),
-    new AssociativePropertyOfProductsAndSums(),
-    new ProductRule(),
-    new QuotientRule(),
-    new DivideFractions(),
-    new RemoveCommonFactorsFromTopAndBottomOfFraction(),
-    new BreakDerivativesOverAddition(),
-    new ConstantDerivaties(),
-    new ReversePowerRule(),
-    new LogIntegralRule(),
-]
+const remainingNoContextSimplificationRules: NoContextExpressionSimplificationRule[] =
+    [
+        new USubstitution(),
+        new PowerRule(),
+        new PullConstantsFromDerivatives(),
+        new PullConstantsFromIntegrals(),
+        new AssociativePropertyOfProductsAndSums(),
+        new ProductRule(),
+        new QuotientRule(),
+        new DivideFractions(),
+        new RemoveCommonFactorsFromTopAndBottomOfFraction(),
+        new BreakDerivativesOverAddition(),
+        new ConstantDerivaties(),
+        new ReversePowerRule(),
+        new LogIntegralRule()
+    ]
 
 /**
  * A list of simplification rules.
- * If and only if an earlier rule fails to 
+ * If and only if an earlier rule fails to
  * produce equivalent expressions should later lists
  * be used.
  * This list only contains rules which converge to one answer.
  */
-export const convergentSimplificationRules: NoContextExpressionSimplificationRule[] = [
-    // Identity rules first
-    new AnythingTimesZero(),
-    new ExponentToZero(),
-    new MultiplicativeIdentity(),
-    new ExponentialIdentity(),
-    new DivisionIdentity(),
-    new AdditiveIdentity(),
-    new LogOfOne(),
-    ...evaluativeRules,
-    ...combinatoricRules,
-    ...conventionRules,
-    ...remainingNoContextSimplificationRules,
-]
+export const convergentSimplificationRules: NoContextExpressionSimplificationRule[] =
+    [
+        // Identity rules first
+        new AnythingTimesZero(),
+        new ExponentToZero(),
+        new MultiplicativeIdentity(),
+        new ExponentialIdentity(),
+        new DivisionIdentity(),
+        new AdditiveIdentity(),
+        new LogOfOne(),
+        ...evaluativeRules,
+        ...combinatoricRules,
+        ...conventionRules,
+        ...remainingNoContextSimplificationRules
+    ]
 
 /**
  * These rules converge to factored form.
  */
-export const factoringSimplificationRules : NoContextExpressionSimplificationRule[] = [
-    new CombineCommonTermsAddition(),
-]
+export const factoringSimplificationRules: NoContextExpressionSimplificationRule[] =
+    [new CombineCommonTermsAddition()]
 
 /**
  * These rules converge to polynomial form.
  */
-export const polynomialSimplificationRules : NoContextExpressionSimplificationRule[] = [
-    new DistributiveProperty(), 
-    new FOIL(),
-]
+export const polynomialSimplificationRules: NoContextExpressionSimplificationRule[] =
+    [new DistributiveProperty(), new FOIL()]

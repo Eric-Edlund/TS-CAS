@@ -8,8 +8,8 @@ export function setOf<T>(...arr: T[]): Set<T> {
 
 /**
  * Adds the given elements to the given collection
- * @param collection 
- * @param elements 
+ * @param collection
+ * @param elements
  */
 export function addAll<T>(collection: Set<T>, ...elements: T[]) {
     for (const e of elements) {
@@ -20,8 +20,8 @@ export function addAll<T>(collection: Set<T>, ...elements: T[]) {
 /**
  * Checks if the given element is in the given collection
  * using referencial equality.
- * @param collection 
- * @param element 
+ * @param collection
+ * @param element
  * @returns True if the collection has the element, false otherwise.
  */
 export function has<T>(collection: T[], element: T): boolean {

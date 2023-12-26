@@ -1,17 +1,19 @@
-import { Argument } from "../../Argument";
-import { num } from "../../ConvenientExpressions";
-import { Expression } from "../../expressions/Expression";
-import { Fraction } from "../../expressions/Fraction";
-import { Product } from "../../expressions/Product";
-import { Relationship } from "../../Relationship";
-import { has, setOf } from "../../util/ThingsThatShouldBeInTheStdLib";
-import { NoContextExpressionSimplificationRule } from "../NoContextExpressionSimplificationRule";
+import { Argument } from "../../Argument"
+import { num } from "../../ConvenientExpressions"
+import { Expression } from "../../expressions/Expression"
+import { Fraction } from "../../expressions/Fraction"
+import { Product } from "../../expressions/Product"
+import { Relationship } from "../../Relationship"
+import { has, setOf } from "../../util/ThingsThatShouldBeInTheStdLib"
+import { NoContextExpressionSimplificationRule } from "../NoContextExpressionSimplificationRule"
 
 export class RemoveCommonFactorsFromTopAndBottomOfFraction extends NoContextExpressionSimplificationRule {
     protected appliesImpl(exp: Expression): boolean {
-        return exp instanceof Fraction
-            && !(exp.numerator instanceof Product && exp.numerator.isNegation)
-            && !(exp.denominator instanceof Product && exp.denominator.isNegation)
+        return (
+            exp instanceof Fraction &&
+            !(exp.numerator instanceof Product && exp.numerator.isNegation) &&
+            !(exp.denominator instanceof Product && exp.denominator.isNegation)
+        )
     }
     protected applyImpl(exp: Expression): Set<Argument> {
         const frac = exp as Fraction
@@ -30,9 +32,12 @@ export class RemoveCommonFactorsFromTopAndBottomOfFraction extends NoContextExpr
         const inBoth = new Set<Expression>()
         allFactors.forEach(f => {
             if (
-                (top instanceof Product ? has(top.factors, f) : top === f)
-                && (bottom instanceof Product ? has(bottom.factors, f) : bottom === f)
-            ) inBoth.add(f)    
+                (top instanceof Product ? has(top.factors, f) : top === f) &&
+                (bottom instanceof Product
+                    ? has(bottom.factors, f)
+                    : bottom === f)
+            )
+                inBoth.add(f)
         })
 
         if (inBoth.size == 0) return setOf()
@@ -45,7 +50,7 @@ export class RemoveCommonFactorsFromTopAndBottomOfFraction extends NoContextExpr
             } else {
                 newTop = num(1)
             }
-        }) 
+        })
 
         let newBottom: Expression = bottom
         inBoth.forEach(f => {
@@ -54,13 +59,20 @@ export class RemoveCommonFactorsFromTopAndBottomOfFraction extends NoContextExpr
             } else {
                 newBottom = num(1)
             }
-        }) 
+        })
 
-        return setOf(new Argument(setOf(frac), {
-            n: frac,
-            r: Relationship.Equal,
-            n1: Fraction.of(newTop, newBottom),
-        }, "Divide top and bottom by same thing", RULE_ID))
+        return setOf(
+            new Argument(
+                setOf(frac),
+                {
+                    n: frac,
+                    r: Relationship.Equal,
+                    n1: Fraction.of(newTop, newBottom)
+                },
+                "Divide top and bottom by same thing",
+                RULE_ID
+            )
+        )
     }
 }
 
