@@ -1,7 +1,7 @@
 module.exports = {
     preset: 'ts-jest',
     testEnvironment: 'node',
-    roots: ['<rootDir>/src/mathlib/tests'],
+    roots: ['<rootDir>/ui/mathlib/tests'],
     modulePaths: ['<rootDir>/mathlib'],
     transform: {
       '^.+\\.tsx?$': 'ts-jest',
