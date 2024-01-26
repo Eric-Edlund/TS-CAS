@@ -1,7 +1,6 @@
 use std::sync::Arc;
 
-use super::{IExpression, ExpressionPtr, Expression, EXPRESSION_INSTANCES };
-
+use super::{Expression, ExpressionPtr, IExpression, EXPRESSION_INSTANCES};
 
 /**
 * Stores 2 or more ordered expressions as a product.
@@ -12,15 +11,14 @@ pub struct Product {
 }
 
 impl Product {
-
     pub fn factors(&self) -> &Vec<ExpressionPtr> {
         &self._factors
     }
-    
+
     /**
-    * Creates a product from the given factors.
-    * @param factors Length >= 2
-    */
+     * Creates a product from the given factors.
+     * @param factors Length >= 2
+     */
     pub fn of(factors: &[ExpressionPtr]) -> Result<ExpressionPtr, ()> {
         let id = {
             let mut tmp = String::from("product");
@@ -32,8 +30,8 @@ impl Product {
 
         if let Ok(instances) = EXPRESSION_INSTANCES.lock() {
             let result = instances.get(&id);
-//             println!("Product::of({}) -> {:?}", id, result);
-//             println!("Expression Size {}", instances.len());
+            //             println!("Product::of({}) -> {:?}", id, result);
+            //             println!("Expression Size {}", instances.len());
             if result.is_some() {
                 return Ok(result.unwrap().clone());
             }
@@ -45,9 +43,12 @@ impl Product {
         match result.rep_ok() {
             true => {
                 let pointer = Expression::Product(Arc::new(result));
-                EXPRESSION_INSTANCES.lock().unwrap().insert(id, pointer.clone());
+                EXPRESSION_INSTANCES
+                    .lock()
+                    .unwrap()
+                    .insert(id, pointer.clone());
                 Ok(pointer)
-            },
+            }
             false => Err(()),
         }
     }
@@ -64,7 +65,9 @@ impl IExpression for Product {
         result += &self._factors[0].as_stringable().to_unambigious_string();
         result += " * ";
 
-        result += &self._factors.iter()
+        result += &self
+            ._factors
+            .iter()
             .skip(1)
             .map(|f| f.as_stringable().to_unambigious_string())
             .reduce(|a, b| a + " * " + &b)
@@ -81,7 +84,6 @@ impl IExpression for Product {
         let mut suffix = String::new();
         for exp in &self._factors {
             suffix += &exp.as_stringable().id()
-
         }
         format!("product{}", suffix)
     }
@@ -106,9 +108,11 @@ mod tests {
         let product = Product::of(&[Integer::of(1), Integer::of(2)]).unwrap();
         let product2 = Product::of(&[Integer::of(1), Integer::of(2)]).unwrap();
 
-        assert_eq!(product.as_stringable().id(), product2.as_stringable().id(), "Id not preserved");
+        assert_eq!(
+            product.as_stringable().id(),
+            product2.as_stringable().id(),
+            "Id not preserved"
+        );
         assert_eq!(product, product2, "Flywheel not working");
     }
 }
-
-

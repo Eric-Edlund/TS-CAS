@@ -1,14 +1,12 @@
-
 use std::rc::Rc;
 use std::sync::Arc;
 
 use crate::argument::Argument;
 use crate::expressions::product::Product;
-use crate::expressions::ExpressionPtr;
 use crate::expressions::Expression;
+use crate::expressions::ExpressionPtr;
 
 use super::DerivationRule;
-
 
 pub struct CancelNegatives {}
 
@@ -24,10 +22,10 @@ impl DerivationRule for CancelNegatives {
                     Expression::Product(p) => p,
                     _ => return vec![],
                 }
-            },
+            }
             _ => return vec![],
         };
-        
+
         let mut new_factors: Vec<ExpressionPtr> = vec![];
 
         for factor in product.factors() {
@@ -35,14 +33,15 @@ impl DerivationRule for CancelNegatives {
                 Expression::Negation(f) => {
                     sign = !sign;
                     new_factors.push(f.child().clone());
-                },
+                }
                 _ => new_factors.push(factor.clone()),
-            }   
+            }
         }
 
-        return vec![
-            (Product::of(&new_factors).unwrap(), Argument::new(String::from("cancelled negatives"), vec![input.clone()])),
-        ];
+        return vec![(
+            Product::of(&new_factors).unwrap(),
+            Argument::new(String::from("cancelled negatives"), vec![input.clone()]),
+        )];
     }
 }
 
@@ -58,14 +57,17 @@ mod tests {
         let rule = CancelNegatives {};
 
         // Two negatives -> positive
-        let first = Product::of(&[Negation::of(Integer::of(1)), Negation::of(Integer::of(2))]).unwrap();
+        let first =
+            Product::of(&[Negation::of(Integer::of(1)), Negation::of(Integer::of(2))]).unwrap();
         let goal = Product::of(&[Integer::of(1), Integer::of(2)]).unwrap();
         println!("Start: {}, Goal: {}", first, goal);
-        let results: Vec<ExpressionPtr> = rule.apply(first.clone()).into_iter()
-            .map(|x| x.0)
-            .collect();
+        let results: Vec<ExpressionPtr> =
+            rule.apply(first.clone()).into_iter().map(|x| x.0).collect();
 
-        assert!(!results.contains(&first), "Rules shouldn't return their inputs");
+        assert!(
+            !results.contains(&first),
+            "Rules shouldn't return their inputs"
+        );
 
         for exp in &results {
             println!("Contains: {}", exp);
@@ -75,5 +77,4 @@ mod tests {
 
         assert!(results.contains(&goal));
     }
-
 }

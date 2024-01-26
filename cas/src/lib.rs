@@ -1,13 +1,13 @@
 pub mod expressions;
 
-mod graph;
 mod argument;
-mod deriver;
 mod derivation_rules;
+mod deriver;
+mod graph;
 
+use deriver::Deriver;
 use expressions::{Expression, ExpressionId};
 use graph::Graph;
-use deriver::Deriver;
 
 /**
 * Takes an ascii string and reads it into an expression.

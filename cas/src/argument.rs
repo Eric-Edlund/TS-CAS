@@ -1,11 +1,12 @@
-use std::{collections::HashSet, rc::Rc};
 use std::hash::Hash;
+use std::{collections::HashSet, rc::Rc};
 
 use crate::expressions::ExpressionPtr;
 
 /**
- * Connects one or more nodes (grounds) to one or more nodes (claims).
- * Contains an explanation/argument for the connection.
+ * Stores a human readable argument describing why a relationship
+* exists. Stores some number of expressions which the argument is
+* based on.
  */
 #[derive(PartialEq, Eq)]
 pub struct Argument {
@@ -24,7 +25,8 @@ impl Argument {
         Argument {
             msg,
             grounds: HashSet::from_iter(grounds),
-        }.into()
+        }
+        .into()
     }
 
     pub fn message(&self) -> &str {
@@ -32,6 +34,6 @@ impl Argument {
     }
 
     pub fn grounds(&self) -> &HashSet<ExpressionPtr> {
-        &self.grounds 
+        &self.grounds
     }
 }

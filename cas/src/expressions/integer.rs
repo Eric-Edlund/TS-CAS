@@ -1,7 +1,6 @@
 use std::sync::Arc;
 
-use super::{IExpression, ExpressionPtr, Expression, EXPRESSION_INSTANCES};
-
+use super::{Expression, ExpressionPtr, IExpression, EXPRESSION_INSTANCES};
 
 #[derive(PartialEq, Eq, Hash, Debug)]
 pub struct Integer {
@@ -16,13 +15,12 @@ impl Integer {
             return result.clone();
         }
 
-        let result = Expression::Integer(
-            Arc::new(Integer {
-                value,
-            }
-            ));
-    
-        EXPRESSION_INSTANCES.lock().unwrap().insert(id, result.clone());
+        let result = Expression::Integer(Arc::new(Integer { value }));
+
+        EXPRESSION_INSTANCES
+            .lock()
+            .unwrap()
+            .insert(id, result.clone());
         result
     }
 
@@ -32,7 +30,6 @@ impl Integer {
 }
 
 impl IExpression for Integer {
-
     fn to_unambigious_string(&self) -> String {
         self.value.to_string()
     }

@@ -1,6 +1,5 @@
-use std::rc::Rc;
 use super::{ExpressionPtr, IExpression};
-
+use std::rc::Rc;
 
 #[derive(PartialEq, Eq, Hash, Debug)]
 pub struct Exponent {
@@ -10,16 +9,12 @@ pub struct Exponent {
 
 impl Exponent {
     pub fn of(base: ExpressionPtr, power: ExpressionPtr) -> Rc<Exponent> {
-        Exponent {
-            base,
-            power,
-        }.into()
+        Exponent { base, power }.into()
     }
 }
 
 impl IExpression for Exponent {
-
-  fn to_unambigious_string(&self) -> String {
+    fn to_unambigious_string(&self) -> String {
         String::from("({self.base.to_unambigious_string()})^(self.power.to_unambigious_string())")
     }
 
@@ -28,6 +23,10 @@ impl IExpression for Exponent {
     }
 
     fn id(&self) -> String {
-        format!("({})^({})", &self.base.as_stringable().id(), &self.base.as_stringable().id())
+        format!(
+            "({})^({})",
+            &self.base.as_stringable().id(),
+            &self.base.as_stringable().id()
+        )
     }
 }
