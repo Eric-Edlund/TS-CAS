@@ -1,14 +1,27 @@
-pub fn add(left: usize, right: usize) -> usize {
-    left + right
+pub mod expressions;
+
+mod argument;
+mod derivation_rules;
+mod deriver;
+mod graph;
+
+use deriver::Deriver;
+use expressions::{Expression, ExpressionId};
+use graph::Graph;
+
+/**
+* Takes an ascii string and reads it into an expression.
+*/
+pub fn expression_from_ascii(_string: &str) -> ExpressionId {
+    todo!()
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
+pub fn find_equivalents(exp: Expression) -> Graph {
+    let mut graph = Graph::new();
+    graph.add_node(exp);
+    let deriver = Deriver::new();
 
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    }
+    deriver.expand(&mut graph);
+
+    return graph;
 }
