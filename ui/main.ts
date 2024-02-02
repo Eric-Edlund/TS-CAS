@@ -3,6 +3,8 @@ import { loadExpressionsTestPage } from "./LoadExpressionTestPage"
 import { loadInputParseTestPage } from "./LoadInputParseTestPage"
 import { loadSolverPage } from "./LoadSolverPage"
 import { loadSimplificationTestPage } from "./LoadSimplificationTestPage"
+import { loadWasmStepsBackend } from "./LoadWasmStepsPage"
+
 
 window.onload = () => {
     setTimeout(function () {
@@ -21,6 +23,10 @@ window.onload = () => {
             loadSolverPage()
         } else if (classes.contains("mathTests")) {
             loadSimplificationTestPage()
+        } else if (classes.contains("wasm_steps_backend")) {
+            loadWasmStepsBackend()
+        } else {
+            alert("No page selected.")
         }
     }, 100)
 }

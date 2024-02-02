@@ -1,0 +1,58 @@
+<!doctype html>
+
+<html>
+    <head>
+        <title>Step By Step Solution WASM</title>
+        <meta charset="UTF-8" />
+        <link rel="stylesheet" href="css/solver.css" />
+        <script>
+            var exports = {}
+        </script>
+        <script
+            async
+            type="text/js"
+            src="https://polyfill.io/v3/polyfill.min.js?features=es6"
+        ></script>
+        <script id="MathJax-script" src="mathjax/tex-mml-chtml.js"></script>
+        <script src="bundle.js" type="module"></script>
+        <style>
+            editable-mathview {
+                background-color: green;
+                height: 100px;
+                width: 100px;
+            }
+
+            #solution {
+                background-color: gray;
+            }
+
+            /* #steps {
+
+            }
+
+            .argument {
+
+            }
+
+            .expression {
+
+            } */
+
+            #inputZone {
+                display: flex;
+            }
+        </style>
+    </head>
+
+    <body id="body" class="wasm_steps_backend">
+        <h1>Solver</h1>
+        <div id="inputZone">
+            <textarea id="problem"></textarea>
+            <div id="expressionViewDiv"></div>
+        </div>
+
+        <div id="steps"></div>
+        <editable-mathview id="solution"></editable-mathview>
+    </body>
+</html>
+
