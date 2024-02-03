@@ -30,8 +30,6 @@ impl Product {
 
         if let Ok(instances) = EXPRESSION_INSTANCES.lock() {
             let result = instances.get(&id);
-            //             println!("Product::of({}) -> {:?}", id, result);
-            //             println!("Expression Size {}", instances.len());
             if result.is_some() {
                 return Ok(result.unwrap().clone());
             }

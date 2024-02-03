@@ -6,14 +6,17 @@ use std::{
 
 use once_cell::sync::Lazy;
 
-mod exponent;
+pub mod exponent;
 pub mod integer;
 pub mod negation;
 pub mod product;
+pub mod sum;
 
 pub use integer::Integer;
 pub use negation::Negation;
 pub use product::Product;
+pub use sum::Sum;
+pub use exponent::Exponent;
 
 pub trait IExpression {
     /**
@@ -56,10 +59,11 @@ pub type ExpressionId = String;
 */
 #[derive(Eq, Hash, Clone, Debug)]
 pub enum Expression {
-    Negation(Arc<negation::Negation>),
-    Integer(Arc<integer::Integer>),
-    Product(Arc<product::Product>),
-    Exponent(Arc<exponent::Exponent>),
+    Negation(Arc<Negation>),
+    Integer(Arc<Integer>),
+    Product(Arc<Product>),
+    Exponent(Arc<Exponent>),
+    Sum(Arc<Sum>),
 }
 
 impl PartialEq for Expression {
@@ -82,6 +86,7 @@ impl Expression {
             Expression::Negation(n) => n.clone(),
             Expression::Product(p) => p.clone(),
             Expression::Exponent(e) => e.clone(),
+            Expression::Sum(s) => s.clone(),
         }
     }
 

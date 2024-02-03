@@ -2,7 +2,7 @@ use std::rc::Rc;
 use std::sync::Arc;
 
 use crate::argument::Argument;
-use crate::expressions::product::Product;
+use crate::expressions::Product;
 use crate::expressions::Expression;
 use crate::expressions::ExpressionPtr;
 

@@ -3,7 +3,8 @@ pub mod expressions;
 mod argument;
 mod derivation_rules;
 mod deriver;
-mod graph;
+pub mod graph;
+mod std_parts;
 
 use deriver::Deriver;
 use expressions::{Expression, ExpressionId};
