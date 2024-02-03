@@ -6,11 +6,9 @@
   "scripts": {
     "test": "jest",
     "format": "prettier --write **/*",
-    "clean": "rm -rf out; rm public/bundle.js",
     "build": "npx webpack",
-    "build-dev": "npx webpack --config webpack.dev.js",
-    "build-prod": "npx webpack --config webpack.prod.js",
-    "build-grammar": "java -jar ~/antlr4.jar -Dlanguage=TypeScript -visitor ./ui/mathlib/userinput/arithmetic.g4"
+    "build-grammar": "java -jar ~/antlr4.jar -Dlanguage=TypeScript -visitor ./ui/mathlib/userinput/arithmetic.g4",
+    "serve": "npx webpack serve"
   },
   "author": "Eric Edlund",
   "license": "ISC",

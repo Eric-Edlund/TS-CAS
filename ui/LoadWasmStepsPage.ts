@@ -1,17 +1,9 @@
-import { simplify_with_steps } from "../cas/pkg";
 import { Expression } from "./mathlib/expressions/Expression"
 import { EditableMathView } from "./mathlib/uielements/EditableMathView"
+import loadWasm, {simplify_with_steps} from "../cas/pkg"
 
 export async function loadWasmStepsBackend(): Promise<void> {
-    const loadWasm = import("../cas/pkg");
-    loadWasm.then((res) => {
-        console.log("Loaded wasm.")
-        console.log(simplify_with_steps)
-        console.log(res.simplify_with_steps("1"))
-        res.run()
-
-    })
-
+    await loadWasm()
 
     const inputView = document.getElementById("problem")! as HTMLTextAreaElement
     const problemViewDiv = document.getElementById(
@@ -28,14 +20,8 @@ export async function loadWasmStepsBackend(): Promise<void> {
 
     inputView.focus()
 
-    // import("../cas/pkg").then(module => {
-    //     module.simplify_with_steps("1"); 
-    //     console.log("Run with crate")
-    // })
-
-
     inputView.addEventListener("keyup", () => {
-        // let result = wasm.simplify_with_steps(inputView.textContent)
-        // console.log(result)
+        let result = simplify_with_steps(inputView.textContent)
+        console.log(result)
     })
 }

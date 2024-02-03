@@ -2,29 +2,6 @@ const path = require('path');
 const webpack = require('webpack');
 const WasmPackPlugin = require("@wasm-tool/wasm-pack-plugin");
 
-// module.exports = {
-//   mode: "production",
-//   entry: {
-//     index: "./js/bundle.js"
-//   },
-//   output: {
-//     path: dist,
-//     filename: "[name].js"
-//   },
-//   devServer: {
-//     contentBase: dist,
-//   },
-//   plugins: [
-//     new CopyPlugin([
-//       path.resolve(__dirname, "static")
-//     ]),
-// 
-//     new WasmPackPlugin({
-//       crateDirectory: __dirname,
-//     }),
-//   ]
-// };
-
 module.exports = {
     entry: './ui/main.ts',
     output: {
@@ -33,7 +10,12 @@ module.exports = {
     },
     plugins: [
         new WasmPackPlugin({
-            crateDirectory: path.resolve(__dirname, 'cas')
+            crateDirectory: path.resolve(__dirname, 'cas'),
+            // Optional space delimited arguments to appear before the wasm-pack
+            // command. Default arguments are `--verbose`.
+            args: '--log-level warn',
+            // Default arguments are `--typescript --target browser --mode normal`.
+            extraArgs: '--target web',
         }),
         // Have this example work in Edge which doesn't ship `TextEncoder` or
         // `TextDecoder` at this time.

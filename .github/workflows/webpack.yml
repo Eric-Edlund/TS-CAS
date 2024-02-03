@@ -18,8 +18,7 @@ jobs:
   
         - name: Build Website
           run: |
-            npm run build-dev
-            npm run build-prod
+            npm run build
 
         - name: Upload results
           uses: actions/upload-artifact@v2
