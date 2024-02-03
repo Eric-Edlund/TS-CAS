@@ -6,3 +6,6 @@ out
 public/bundle.js
 .directory
 cas/target
+cas/pkg
+public/*.wasm
+cas/Cargo.lock
