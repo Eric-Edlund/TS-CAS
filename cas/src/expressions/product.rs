@@ -56,6 +56,17 @@ impl Product {
     }
 }
 
+/**
+* Takes 1  or more expressions, returning a product of them
+* if there are more than 1, or just the 1 if there is only 1.
+*/
+pub fn product_of(factors: &[ExpressionPtr]) -> ExpressionPtr {
+    if factors.len() == 1 {
+        return factors[0].clone();
+    }
+    Product::of(factors).unwrap()
+} 
+
 impl IExpression for Product {
     fn to_unambigious_string(&self) -> String {
         let mut result = String::from("");
