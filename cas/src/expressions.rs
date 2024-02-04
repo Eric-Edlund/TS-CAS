@@ -18,6 +18,8 @@ pub use product::Product;
 pub use sum::Sum;
 pub use exponent::Exponent;
 
+use self::product::product_of;
+
 pub trait IExpression {
     /**
      * Creates a string representing the expression and it's children
@@ -68,7 +70,23 @@ pub enum Expression {
 
 impl PartialEq for Expression {
     fn eq(&self, other: &Self) -> bool {
-        self.as_stringable().id() == other.as_stringable().id()
+        let first: Arc<dyn IExpression> = match self {
+            Expression::Negation(p) => p.clone(),
+            Expression::Integer(p) => p.clone(),
+            Expression::Product(p) => p.clone(),
+            Expression::Exponent(p) => p.clone(),
+            Expression::Sum(p) => p.clone(),
+        };
+        let second: Arc<dyn IExpression> = match other {
+            Expression::Negation(p) => p.clone(),
+            Expression::Integer(p) => p.clone(),
+            Expression::Product(p) => p.clone(),
+            Expression::Exponent(p) => p.clone(),
+            Expression::Sum(p) => p.clone(),
+        };
+
+
+        Arc::ptr_eq(&first, &second)
     }
 }
 
@@ -90,10 +108,6 @@ impl Expression {
         }
     }
 
-    pub fn get_instance(id: ExpressionId) -> Option<ExpressionPtr> {
-        let result = EXPRESSION_INSTANCES.lock().unwrap().get(&id).cloned();
-        result
-    }
 }
 
 impl Display for Expression {

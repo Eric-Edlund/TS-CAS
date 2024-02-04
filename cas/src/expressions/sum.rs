@@ -19,11 +19,11 @@ impl Sum {
 
         let id = id_from_terms(terms);
 
-        if let Ok(instances) = EXPRESSION_INSTANCES.lock() {
-            let result = instances.get(&id);
-            if result.is_some() {
-                return Ok(result.unwrap().clone());
-            }
+        let mut instances = EXPRESSION_INSTANCES.lock().unwrap();
+
+        let result = instances.get(&id);
+        if result.is_some() {
+            return Ok(result.unwrap().clone());
         }
 
         let result = Sum {
@@ -31,7 +31,7 @@ impl Sum {
         };
 
         let pointer = Expression::Sum(Arc::new(result));
-        EXPRESSION_INSTANCES.lock().unwrap().insert(id, pointer.clone());
+        instances.insert(id, pointer.clone());
         Ok(pointer)
     }
 
