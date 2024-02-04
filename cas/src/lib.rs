@@ -4,7 +4,6 @@ mod argument;
 mod derivation_rules;
 mod deriver;
 pub mod graph;
-mod std_parts;
 
 use deriver::Deriver;
 use expressions::{Expression, ExpressionId};
