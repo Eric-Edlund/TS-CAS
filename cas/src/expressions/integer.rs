@@ -9,18 +9,17 @@ pub struct Integer {
 
 impl Integer {
     pub fn of(value: u32) -> ExpressionPtr {
-        let id = String::from("integer {value}");
+        let id = format!("integer {}", value);
 
-        if let Some(result) = EXPRESSION_INSTANCES.lock().unwrap().get(&id) {
+        let mut instances = EXPRESSION_INSTANCES.lock().unwrap();
+
+        if let Some(result) = instances.get(&id) {
             return result.clone();
         }
 
         let result = Expression::Integer(Arc::new(Integer { value }));
 
-        EXPRESSION_INSTANCES
-            .lock()
-            .unwrap()
-            .insert(id, result.clone());
+        instances.insert(id, result.clone());
         result
     }
 
@@ -40,5 +39,19 @@ impl IExpression for Integer {
 
     fn id(&self) -> String {
         format!("integer{}", self.value)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::expressions::Integer;
+
+
+    #[test]
+    fn flywheel_integer() {
+        let i1 = Integer::of(1);
+        let i2 = Integer::of(2);
+        assert_ne!(i1.as_stringable().id(), i2.as_stringable().id(), 
+        "Integer not generating unique flywheel hashes");
     }
 }
