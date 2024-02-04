@@ -1,5 +1,5 @@
-use super::{ExpressionPtr, IExpression};
-use std::rc::Rc;
+use super::{ExpressionPtr, IExpression, Expression, EXPRESSION_INSTANCES};
+use std::sync::Arc;
 
 #[derive(PartialEq, Eq, Hash, Debug)]
 pub struct Exponent {
@@ -8,14 +8,26 @@ pub struct Exponent {
 }
 
 impl Exponent {
-    pub fn of(base: ExpressionPtr, power: ExpressionPtr) -> Rc<Exponent> {
-        Exponent { base, power }.into()
+    pub fn of(base: ExpressionPtr, power: ExpressionPtr) -> ExpressionPtr {
+        let id = get_id(&base, &power);
+
+        let mut instances = EXPRESSION_INSTANCES.lock().unwrap();
+
+        if let Some(result) = instances.get(&id) {
+            return result.clone();
+        }
+
+        let result = Expression::Exponent(Arc::new(Exponent{base, power}));
+        instances.insert(id, result.clone());
+        result
     }
 }
 
 impl IExpression for Exponent {
     fn to_unambigious_string(&self) -> String {
-        String::from("({self.base.to_unambigious_string()})^(self.power.to_unambigious_string())")
+        format!("({})^({})", 
+            self.base.as_stringable().to_unambigious_string(), 
+            self.power.as_stringable().to_unambigious_string())
     }
 
     fn to_math_xml(&self) -> String {
@@ -23,10 +35,37 @@ impl IExpression for Exponent {
     }
 
     fn id(&self) -> String {
-        format!(
-            "({})^({})",
-            &self.base.as_stringable().id(),
-            &self.base.as_stringable().id()
-        )
+        get_id(&self.base, &self.power)
     }
+}
+
+fn get_id(base: &ExpressionPtr, power: &ExpressionPtr) -> String {
+        format!(
+            "exponent{}{}",
+            &base.as_stringable().id(),
+            &power.as_stringable().id()
+        )
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::expressions::Integer;
+
+    use super::Exponent;
+
+    #[test]
+    fn flywheel_impl() {
+
+        let first = Exponent::of(Integer::of(1), Integer::of(1));
+        let second = Exponent::of(Integer::of(1), Integer::of(1));
+        let third = Exponent::of(Integer::of(1), Integer::of(0));
+        let forth = Exponent::of(Integer::of(0), Integer::of(1));
+
+        assert_eq!(first, second);
+        assert_eq!(first.as_stringable().id(), second.as_stringable().id());
+        assert_ne!(first, third);
+        assert_ne!(first, forth);
+        assert_ne!(third, forth);
+    }
+
 }

@@ -28,11 +28,11 @@ impl Product {
             tmp
         };
 
-        if let Ok(instances) = EXPRESSION_INSTANCES.lock() {
-            let result = instances.get(&id);
-            if result.is_some() {
-                return Ok(result.unwrap().clone());
-            }
+        let mut instances = EXPRESSION_INSTANCES.lock().unwrap();
+
+        let result = instances.get(&id);
+        if result.is_some() {
+            return Ok(result.unwrap().clone());
         }
 
         let result = Product {
@@ -41,10 +41,7 @@ impl Product {
         match result.rep_ok() {
             true => {
                 let pointer = Expression::Product(Arc::new(result));
-                EXPRESSION_INSTANCES
-                    .lock()
-                    .unwrap()
-                    .insert(id, pointer.clone());
+                instances.insert(id, pointer.clone());
                 Ok(pointer)
             }
             false => Err(()),

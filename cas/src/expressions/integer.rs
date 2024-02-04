@@ -49,9 +49,12 @@ mod tests {
 
     #[test]
     fn flywheel_integer() {
+        let i0 = Integer::of(1);
         let i1 = Integer::of(1);
         let i2 = Integer::of(2);
         assert_ne!(i1.as_stringable().id(), i2.as_stringable().id(), 
         "Integer not generating unique flywheel hashes");
+
+        assert_eq!(i0, i1);
     }
 }
