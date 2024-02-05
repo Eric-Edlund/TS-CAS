@@ -1,6 +1,8 @@
 
 use std::sync::Arc;
 
+use crate::mathxml::in_paren;
+
 use super::EXPRESSION_INSTANCES;
 use super::Expression;
 use super::ExpressionPtr;
@@ -65,7 +67,20 @@ impl IExpression for Sum {
     }
 
     fn to_math_xml(&self) -> String {
-        todo!()
+        fn wrap_if_needed(exp: &ExpressionPtr) -> String {
+            match exp {
+                Expression::Sum(s) =>
+                    in_paren(&s.to_math_xml()),
+                _ => exp.as_stringable().to_math_xml(),
+            }
+        }
+
+        let mut result = wrap_if_needed(&self.terms[0]);
+        for term in self.terms.iter().skip(1) {
+            result += "<mo>+</mo>";
+            result += &wrap_if_needed(term);
+        }
+        result
     }
 
     fn id(&self) -> String {

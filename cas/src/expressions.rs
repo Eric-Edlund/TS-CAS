@@ -18,8 +18,6 @@ pub use product::Product;
 pub use sum::Sum;
 pub use exponent::Exponent;
 
-use self::product::product_of;
-
 pub trait IExpression {
     /**
      * Creates a string representing the expression and it's children

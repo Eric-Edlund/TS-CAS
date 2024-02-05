@@ -1,17 +1,16 @@
-import { Expression } from "./mathlib/expressions/Expression"
 import { EditableMathView } from "./mathlib/uielements/EditableMathView"
-import loadWasm, {simplify_with_steps} from "../cas/pkg"
+import initWasm, {simplify_with_steps} from "../cas/pkg"
+
+declare const MathJax: any
 
 export async function loadWasmStepsBackend(): Promise<void> {
-    await loadWasm()
+    await initWasm()
 
     const inputView = document.getElementById("problem")! as HTMLTextAreaElement
     const problemViewDiv = document.getElementById(
         "expressionViewDiv"
     ) as HTMLDivElement
-    const solutionView = document.getElementById(
-        "solution"
-    )! as EditableMathView
+    const solutionView = document.getElementById("solution")!
     const stepListView = document.getElementById("steps")!
 
     // Populate ui
@@ -21,7 +20,10 @@ export async function loadWasmStepsBackend(): Promise<void> {
     inputView.focus()
 
     inputView.addEventListener("keyup", () => {
-        let result = simplify_with_steps(inputView.textContent)
-        console.log(result)
+        let result = JSON.parse(simplify_with_steps(inputView.textContent))
+        console.log(result[0])
+        problemViewDiv.innerHTML = result[0]
+        solutionView.innerHTML = "<math display='block'>" + result[0] + "</math>"
+        MathJax.typeset([problemViewDiv])
     })
 }
