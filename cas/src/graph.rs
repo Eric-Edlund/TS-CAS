@@ -26,3 +26,4 @@ pub struct Relationship {
 * Graph type for expressions
 */
 pub type Graph = DiGraph<ExpressionPtr, Relationship>;
+

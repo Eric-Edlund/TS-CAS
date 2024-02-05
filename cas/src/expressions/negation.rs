@@ -36,7 +36,7 @@ impl IExpression for Negation {
     }
 
     fn to_math_xml(&self) -> String {
-        todo!()
+        format!("-{}", self.expression.as_stringable().to_math_xml())
     }
 
     fn id(&self) -> String {

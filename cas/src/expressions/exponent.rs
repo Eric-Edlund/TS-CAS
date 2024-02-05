@@ -1,3 +1,5 @@
+use crate::mathxml::{in_row, in_paren};
+
 use super::{ExpressionPtr, IExpression, Expression, EXPRESSION_INSTANCES};
 use std::sync::Arc;
 
@@ -21,6 +23,14 @@ impl Exponent {
         instances.insert(id, result.clone());
         result
     }
+
+    pub fn base(&self) -> ExpressionPtr {
+        self.base.clone()
+    }
+
+    pub fn power(&self) -> ExpressionPtr {
+        self.power.clone()
+    }
 }
 
 impl IExpression for Exponent {
@@ -31,7 +41,22 @@ impl IExpression for Exponent {
     }
 
     fn to_math_xml(&self) -> String {
-        todo!()
+        fn wrap_if_needed(exp: &ExpressionPtr) -> String {
+            let stringable = exp.as_stringable();
+            match exp {
+                Expression::Sum(s) =>
+                    in_row(&in_paren(&s.to_math_xml())),
+                Expression::Product(p) => 
+                    in_row(&in_paren(&p.to_math_xml())),
+                _ => stringable.to_math_xml(),
+            }
+        }
+
+        format!(
+            "<msup>{}{}</msup>",
+            wrap_if_needed(&self.base),
+            &in_row(&self.power.as_stringable().to_math_xml())
+        )
     }
 
     fn id(&self) -> String {
