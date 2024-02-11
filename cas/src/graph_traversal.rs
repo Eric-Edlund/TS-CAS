@@ -46,6 +46,15 @@ fn complexity(a: &ExpressionPtr) -> u32 {
         },
         Expression::Fraction(f) => {
             2 + complexity(&f.numerator()) + complexity(&f.denominator())
+        },
+        Expression::Logarithm(l) => {
+            1 + complexity(&l.base()) + complexity(&l.exp())
+        },
+        Expression::Derivative(d) => {
+            3 + complexity(&d.exp()) + complexity(&d.relative_to())
+        },
+        Expression::Integral(i) => {
+            3 + complexity(&i.integrand()) + complexity(&i.relative_to())
         }
     }
 }

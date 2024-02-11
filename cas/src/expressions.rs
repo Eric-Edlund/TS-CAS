@@ -13,6 +13,9 @@ pub mod product;
 pub mod sum;
 pub mod variable;
 pub mod fraction;
+pub mod logarithm;
+pub mod derivative;
+pub mod integral;
 mod read_from_json;
 
 pub use integer::Integer;
@@ -22,6 +25,9 @@ pub use sum::Sum;
 pub use exponent::Exponent;
 pub use variable::Variable;
 pub use fraction::Fraction;
+pub use logarithm::Logarithm;
+pub use derivative::Derivative;
+pub use integral::Integral;
 pub use read_from_json::*;
 
 pub trait IExpression {
@@ -72,6 +78,9 @@ pub enum Expression {
     Sum(Arc<Sum>),
     Variable(Arc<Variable>),
     Fraction(Arc<Fraction>),
+    Logarithm(Arc<Logarithm>),
+    Derivative(Arc<Derivative>),
+    Integral(Arc<Integral>),
 }
 
 impl PartialEq for Expression {
@@ -84,6 +93,9 @@ impl PartialEq for Expression {
             Expression::Sum(p) => p.clone(),
             Expression::Variable(p) => p.clone(),
             Expression::Fraction(p) => p.clone(),
+            Expression::Logarithm(p) => p.clone(),
+            Expression::Derivative(p) => p.clone(),
+            Expression::Integral(p) => p.clone(),
         };
         let second: Arc<dyn IExpression> = match other {
             Expression::Negation(p) => p.clone(),
@@ -93,6 +105,9 @@ impl PartialEq for Expression {
             Expression::Sum(p) => p.clone(),
             Expression::Variable(p) => p.clone(),
             Expression::Fraction(p) => p.clone(),
+            Expression::Logarithm(p) => p.clone(),
+            Expression::Derivative(p) => p.clone(),
+            Expression::Integral(p) => p.clone(),
         };
 
 
@@ -117,6 +132,9 @@ impl Expression {
             Expression::Sum(s) => s.clone(),
             Expression::Variable(v) => v.clone(),
             Expression::Fraction(f) => f.clone(),
+            Expression::Logarithm(l) => l.clone(),
+            Expression::Derivative(d) => d.clone(),
+            Expression::Integral(i) => i.clone(),
         }
     }
 }
