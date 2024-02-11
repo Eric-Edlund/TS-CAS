@@ -6,6 +6,8 @@ mod cancel_negatives;
 mod additive_identity;
 mod anything_times_zero;
 mod associative_property;
+mod evaluate_sums;
+mod multiplicative_identity;
 
 pub trait DerivationRule {
     /**
@@ -20,4 +22,6 @@ pub static ALL_RULES: Mutex<&[&(dyn DerivationRule + Sync)]> =
     &cancel_negatives::CancelNegatives {},
     &additive_identity::AdditiveIdentity {},
     &associative_property::AssociativeProperty {},
+    &evaluate_sums::EvaluateSums {},
+    &multiplicative_identity::MultiplicativeIdentity {},
 ]);
