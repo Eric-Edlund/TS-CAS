@@ -10,7 +10,7 @@ mod convenience_expressions;
 
 use convenience_expressions::{sum, product, i, power};
 use deriver::Deriver;
-use expressions::{Expression, ExpressionId, ExpressionPtr, Integer, Exponent};
+use expressions::{Expression, ExpressionId, ExpressionPtr, Integer, Exponent, read_object_from_json};
 use graph::Graph;
 use graph_traversal::{expression_complexity_cmp, Path};
 use petgraph::{visit::IntoNodeReferences, algo::astar};
@@ -34,12 +34,16 @@ pub fn find_equivalents(exp: Expression) -> Graph {
 }
 
 /**
-* Takes an ascii math expression and returns a JSON object
-* contianing a sequence of steps leading to a reduced expression.
+* Takes an expression in JSON form, parses, simplifies then returns
+* a JSON containing steps to solve it, or an error message.
+* TODO: Actual spec for return type and input JSON
 */
 #[wasm_bindgen]
-pub fn simplify_with_steps(_ascii_expression: &str) -> String {
-    let expression: ExpressionPtr = product(sum(i(1), i(1)), power(i(42), i(69)));
+pub fn simplify_with_steps(json_expression: &str) -> String {
+    let expression = match read_object_from_json(json_expression) {
+        Ok(exp) => exp,
+        Err(msg) => return msg,
+    };
     let mut graph = Graph::new();
     let deriver = Deriver::new();
 

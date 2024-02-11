@@ -16,20 +16,24 @@ import { assert } from "../util/assert"
  * @param input See the gramar file (.g4)
  * @returns
  */
-export function parseExpression(input: string): Expression {
-    const stream = new CharStream(input, true)
-    const lexer = new arithmeticLexer(stream)
-    const tokens = new CommonTokenStream(lexer)
-    const parser = new arithmeticParser(tokens)
-    //parser.buildParseTrees = true
-    const tree = parser.expression()
+export function parseExpression(input: string): Expression | null {
+    try {
+        const stream = new CharStream(input, true)
+        const lexer = new arithmeticLexer(stream)
+        const tokens = new CommonTokenStream(lexer)
+        const parser = new arithmeticParser(tokens)
+        //parser.buildParseTrees = true
+        const tree = parser.expression()
 
-    tree.accept<OpenContext>(new Flattener())
+        tree.accept<OpenContext>(new Flattener())
 
-    // Print debug info
-    //tree.accept(new PrintVisitor())
+        // Print debug info
+        //tree.accept(new PrintVisitor())
 
-    const result = tree.accept<Expression>(new ExpressionVisitor())
-    assert(result != null && result != undefined)
-    return result
+        const result = tree.accept<Expression>(new ExpressionVisitor())
+        // assert(result != null && result != undefined)
+        return result
+    } catch (e) {
+        return null
+    }
 }

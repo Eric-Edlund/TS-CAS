@@ -51,6 +51,10 @@ export class Integer extends Expression {
         return this.value
     }
 
+    public toJSON(): string {
+        return `{"num": ${this.value}}`;
+    }
+
     public readonly value: number
     public readonly isReducible: boolean = false
 

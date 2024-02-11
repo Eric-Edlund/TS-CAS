@@ -49,6 +49,10 @@ export class Exponent extends Expression {
         return Math.pow(this.base.evaluate(values), this.power.evaluate(values))
     }
 
+    toJSON(): string {
+        return `["Exponent", ${this.base.toJSON()}, ${this.power.toJSON()}]`
+    }
+
     private constructor(base: Expression, power: Expression) {
         super()
         this.base = base

@@ -44,6 +44,10 @@ export class Logarithm extends Expression {
         )
     }
 
+    toJSON(): string {
+        return `["Log", ${this.base.toJSON()}, ${this.exp.toJSON()}]`
+    }
+
     public readonly isConstant: boolean
     public readonly childCount: number
 

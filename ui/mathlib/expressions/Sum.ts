@@ -111,6 +111,15 @@ export class Sum extends Expression {
             .reduce((a, b) => a + b)
     }
 
+    toJSON(): string {
+        let result = '["Sum"'
+        for (const term of this.terms) {
+            result += ", " + term.toJSON()
+        }
+        return result + "]"
+
+    }
+
     public readonly class = SumType
     /**
      * Ordered, immutable

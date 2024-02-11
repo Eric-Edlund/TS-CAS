@@ -34,6 +34,10 @@ export class Variable extends Expression {
         return values.valueOf(this)
     }
 
+    toJSON(): string {
+        return `{"var": "${this.symbol}"}`
+    }
+
     public readonly symbol: string
     public readonly isReducible: boolean = false
 
