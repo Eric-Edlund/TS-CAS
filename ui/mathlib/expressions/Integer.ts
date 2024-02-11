@@ -52,7 +52,7 @@ export class Integer extends Expression {
     }
 
     public toJSON(): string {
-        return `{"num": ${this.value}}`;
+        return `{"num": ${this.value}}`
     }
 
     public readonly value: number

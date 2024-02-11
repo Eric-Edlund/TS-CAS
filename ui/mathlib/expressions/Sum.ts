@@ -117,7 +117,6 @@ export class Sum extends Expression {
             result += ", " + term.toJSON()
         }
         return result + "]"
-
     }
 
     public readonly class = SumType

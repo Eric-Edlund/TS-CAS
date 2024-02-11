@@ -1,9 +1,9 @@
-import { Exponent } from "../expressions/Exponent";
-import { Fraction } from "../expressions/Fraction";
+import { Exponent } from "../expressions/Exponent"
+import { Fraction } from "../expressions/Fraction"
 import { Integer } from "../expressions/Integer"
-import { Product } from "../expressions/Product";
-import { Sum } from "../expressions/Sum";
-import { Logarithm } from "../expressions/Logarithm";
+import { Product } from "../expressions/Product"
+import { Sum } from "../expressions/Sum"
+import { Logarithm } from "../expressions/Logarithm"
 
 test("Expression objects serialize to JSON correctyl", () => {
     let i = Integer.of(69).toJSON()
@@ -19,7 +19,7 @@ test("Expression objects serialize to JSON correctyl", () => {
     expect(e == `["Exponent", {"num": 1}, {"num": 2}]`)
 
     let f = Fraction.of(Integer.of(1), Integer.of(2)).toJSON()
-    expect(f = `["Divide", {"num": 1}, {"num": 2}]`)
+    expect((f = `["Divide", {"num": 1}, {"num": 2}]`))
 
     let l = Logarithm.of(Integer.of(1), Integer.of(2)).toJSON()
     expect(l == `["Logarithrm", {"num": 1}, {"num": 2}]`)

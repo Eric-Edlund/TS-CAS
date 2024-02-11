@@ -16,7 +16,10 @@ export interface JSONMath {
  * All children should implement fly-wheel pattern.
  * All children should be immutable.
  */
-export abstract class Expression extends MathGraphNode implements MathElement, JSONMath {
+export abstract class Expression
+    extends MathGraphNode
+    implements MathElement, JSONMath
+{
     public abstract toMathXML(): string
 
     /**
@@ -82,5 +85,5 @@ export abstract class Expression extends MathGraphNode implements MathElement, J
      */
     public abstract evaluate(values: VariableValueMap): number
 
-    public abstract toJSON(): string;
+    public abstract toJSON(): string
 }
