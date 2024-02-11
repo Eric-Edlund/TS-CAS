@@ -45,7 +45,7 @@ export class Logarithm extends Expression {
     }
 
     toJSON(): string {
-        return `["Log", ${this.base.toJSON()}, ${this.exp.toJSON()}]`
+        return `["Logarithm", ${this.base.toJSON()}, ${this.exp.toJSON()}]`
     }
 
     public readonly isConstant: boolean

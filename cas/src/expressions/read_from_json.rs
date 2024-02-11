@@ -1,6 +1,6 @@
 use crate::convenience_expressions::power;
 
-use super::{Expression, sum::sum_of, Integer, product::product_of, variable::Variable};
+use super::{Expression, sum::sum_of, Integer, product::product_of, variable::Variable, Fraction, Logarithm};
 use serde_json::{Value, from_str};
 
 /// Reads expression objects out of JSON expressions
@@ -40,10 +40,25 @@ fn read_obj_rec(object: &Value) -> Result<Expression, String> {
                     Ok(product_of(&factors.map(|f| f.unwrap()).collect::<Vec<Expression>>()))
                 },
                 "Divide" => {
-                    panic!("TODO: Divide not implemented")
+                    let numerator = match read_obj_rec(&arr[1]) {
+                        Ok(val) => val,
+                        Err(val) => return Err(val),
+                    };
+                    let denominator = match read_obj_rec(&arr[2]) {
+                        Ok(val) => val,
+                        Err(val) => return Err(val),
+                    };
+
+                    Ok(Fraction::of(
+                        numerator,
+                        denominator
+                    ))
                 },
                 "Exponent" => {
                     Ok(power(read_obj_rec(&arr[1])?, read_obj_rec(&arr[2])?)) 
+                },
+                "Logarithm" => {
+                    Ok(Logarithm::of(read_obj_rec(&arr[1])?, read_obj_rec(&arr[2])?))
                 },
                 s => panic!("Unimplemented operation {}", s)
             }
@@ -63,7 +78,7 @@ fn read_obj_rec(object: &Value) -> Result<Expression, String> {
 
 #[cfg(test)]
 mod tests {
-    use crate::expressions::Integer;
+    use crate::expressions::{Integer, Logarithm, Fraction};
 
     use super::read_object_from_json;
 
@@ -71,6 +86,18 @@ mod tests {
     fn test_1() {
         let e = read_object_from_json("{\"num\": 1}");
         assert_eq!(e.unwrap(), Integer::of(1));
+    }
+
+    #[test]
+    fn parse_fraction() {
+        let e = read_object_from_json("[\"Divide\", {\"num\": 1}, {\"num\": 1}]");
+        assert_eq!(e.unwrap(), Fraction::of(Integer::of(1), Integer::of(1)));
+    }
+
+    #[test]
+    fn parse_logarithm() {
+        let e = read_object_from_json("[\"Logarithm\", {\"num\": 1}, {\"num\": 1}]");
+        assert_eq!(e.unwrap(), Logarithm::of(Integer::of(1), Integer::of(1)));
     }
 }
 
