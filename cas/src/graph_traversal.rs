@@ -12,7 +12,7 @@ use serde::ser::SerializeSeq;
 * Expressions with fewer children and components are simpler.
 */
 pub fn expression_complexity_cmp(a: &ExpressionPtr, b: &ExpressionPtr) -> Ordering {
-    let diff = complexity(b) - complexity(a);
+    let diff = complexity(b) as i32 - complexity(a) as i32;
     if diff == 0 {
         Ordering::Equal
     } else if diff > 0 {

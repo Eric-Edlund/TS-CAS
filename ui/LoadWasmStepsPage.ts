@@ -39,7 +39,7 @@ export async function loadWasmStepsBackend(): Promise<void> {
             return
         }
 
-        problemViewDiv.innerHTML = result[0]
+        problemViewDiv.innerHTML = result[result.length - 1]
         solutionView.innerHTML = "<math display='block'>" + result[0] + "</math>"
         MathJax.typeset([problemViewDiv])
     })

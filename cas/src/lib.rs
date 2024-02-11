@@ -73,6 +73,8 @@ pub fn simplify_with_steps(json_expression: &str) -> String {
 
 #[cfg(test)]
 mod tests {
+    use serde_json::Value;
+
     use super::*;
 
     #[test]
@@ -80,5 +82,18 @@ mod tests {
         // Shouldn't panic
         let result = simplify_with_steps("1 + 1");
         println!("{}", result);
+    }
+
+    #[test]
+    fn one_plus_one() {
+        let result = simplify_with_steps("{\"num\": 1}");
+        println!("{}", result);
+        match serde_json::from_str(&result).unwrap() {
+            Value::Array(a) => {
+                assert!(a.last().unwrap() == "<mn>1</mn>")
+            },
+            _ => assert!(false),
+        }
+
     }
 }
