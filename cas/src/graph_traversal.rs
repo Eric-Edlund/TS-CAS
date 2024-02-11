@@ -41,6 +41,9 @@ fn complexity(a: &ExpressionPtr) -> u32 {
         Expression::Integer(_) => {
             1
         },
+        Expression::Variable(_) => {
+            1
+        },
     }
 }
 

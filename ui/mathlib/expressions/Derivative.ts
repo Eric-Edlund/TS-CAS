@@ -68,6 +68,10 @@ export class Derivative extends Expression {
         return NaN
     }
 
+    toJSON(): string {
+        return `["Derivative", ${this.exp.toJSON()}, ${this.relativeTo.toJSON()}]`
+    }
+
     public readonly isConstant: boolean
     public readonly childCount: number
 }

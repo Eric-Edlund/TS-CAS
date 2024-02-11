@@ -57,6 +57,10 @@ export class Fraction extends Expression {
         )
     }
 
+    toJSON(): string {
+        return `["Divide", ${this.numerator.toJSON()}, ${this.denominator.toJSON()}]`
+    }
+
     public readonly childCount: number
 }
 

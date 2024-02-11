@@ -73,6 +73,10 @@ export class Integral extends Expression {
         return NaN
     }
 
+    toJSON(): string {
+        return `["Integral", ${this.integrand.toJSON()}]`
+    }
+
     public readonly childCount: number
 }
 

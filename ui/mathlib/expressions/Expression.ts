@@ -3,12 +3,23 @@ import { VariableValueMap } from "../VariableValueMap"
 import { IntegerType } from "./Integer"
 import { MathElement } from "./MathElement"
 
+export interface JSONMath {
+    /**
+     * Produces a JSON array representing the expression.
+     * TODO: Make actual specification
+     */
+    toJSON(): string
+}
+
 /**
  * Base of all mathematical expressions.
  * All children should implement fly-wheel pattern.
  * All children should be immutable.
  */
-export abstract class Expression extends MathGraphNode implements MathElement {
+export abstract class Expression
+    extends MathGraphNode
+    implements MathElement, JSONMath
+{
     public abstract toMathXML(): string
 
     /**
@@ -73,4 +84,6 @@ export abstract class Expression extends MathGraphNode implements MathElement {
      *          evaluating the expression.
      */
     public abstract evaluate(values: VariableValueMap): number
+
+    public abstract toJSON(): string
 }

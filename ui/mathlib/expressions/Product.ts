@@ -187,6 +187,14 @@ export class Product extends Expression {
             .reduce((a, b) => a * b)
     }
 
+    toJSON(): string {
+        let result = '["Product"'
+        for (const factor of this.factors) {
+            result += ", " + factor.toJSON()
+        }
+        return result + "]"
+    }
+
     // At least 2 elements, order matters
     public readonly factors: Expression[]
     public readonly class: string = ProductType
