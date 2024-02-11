@@ -44,6 +44,9 @@ fn complexity(a: &ExpressionPtr) -> u32 {
         Expression::Variable(_) => {
             1
         },
+        Expression::Fraction(f) => {
+            2 + complexity(&f.numerator()) + complexity(&f.denominator())
+        }
     }
 }
 

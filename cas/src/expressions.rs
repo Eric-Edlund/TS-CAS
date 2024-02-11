@@ -12,6 +12,7 @@ pub mod negation;
 pub mod product;
 pub mod sum;
 pub mod variable;
+pub mod fraction;
 mod read_from_json;
 
 pub use integer::Integer;
@@ -20,6 +21,7 @@ pub use product::Product;
 pub use sum::Sum;
 pub use exponent::Exponent;
 pub use variable::Variable;
+pub use fraction::Fraction;
 pub use read_from_json::*;
 
 pub trait IExpression {
@@ -69,6 +71,7 @@ pub enum Expression {
     Exponent(Arc<Exponent>),
     Sum(Arc<Sum>),
     Variable(Arc<Variable>),
+    Fraction(Arc<Fraction>),
 }
 
 impl PartialEq for Expression {
@@ -80,6 +83,7 @@ impl PartialEq for Expression {
             Expression::Exponent(p) => p.clone(),
             Expression::Sum(p) => p.clone(),
             Expression::Variable(p) => p.clone(),
+            Expression::Fraction(p) => p.clone(),
         };
         let second: Arc<dyn IExpression> = match other {
             Expression::Negation(p) => p.clone(),
@@ -88,6 +92,7 @@ impl PartialEq for Expression {
             Expression::Exponent(p) => p.clone(),
             Expression::Sum(p) => p.clone(),
             Expression::Variable(p) => p.clone(),
+            Expression::Fraction(p) => p.clone(),
         };
 
 
@@ -111,6 +116,7 @@ impl Expression {
             Expression::Exponent(e) => e.clone(),
             Expression::Sum(s) => s.clone(),
             Expression::Variable(v) => v.clone(),
+            Expression::Fraction(f) => f.clone(),
         }
     }
 }

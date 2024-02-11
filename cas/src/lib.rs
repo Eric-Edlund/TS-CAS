@@ -94,6 +94,5 @@ mod tests {
             },
             _ => assert!(false),
         }
-
     }
 }

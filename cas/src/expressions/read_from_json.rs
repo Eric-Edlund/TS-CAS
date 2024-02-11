@@ -1,6 +1,6 @@
 use crate::convenience_expressions::power;
 
-use super::{Expression, sum::sum_of, Integer, product::product_of, variable::Variable};
+use super::{Expression, sum::sum_of, Integer, product::product_of, variable::Variable, Fraction};
 use serde_json::{Value, from_str};
 
 /// Reads expression objects out of JSON expressions
@@ -40,7 +40,19 @@ fn read_obj_rec(object: &Value) -> Result<Expression, String> {
                     Ok(product_of(&factors.map(|f| f.unwrap()).collect::<Vec<Expression>>()))
                 },
                 "Divide" => {
-                    panic!("TODO: Divide not implemented")
+                    let numerator = match read_obj_rec(&arr[1]) {
+                        Ok(val) => val,
+                        Err(val) => return Err(val),
+                    };
+                    let denominator = match read_obj_rec(&arr[2]) {
+                        Ok(val) => val,
+                        Err(val) => return Err(val),
+                    };
+
+                    Ok(Fraction::of(
+                        numerator,
+                        denominator
+                    ))
                 },
                 "Exponent" => {
                     Ok(power(read_obj_rec(&arr[1])?, read_obj_rec(&arr[2])?)) 
