@@ -4,22 +4,31 @@ import { parseExpression } from "./mathlib/userinput/AntlrMathParser"
 import { Expression } from "./mathlib/expressions/Expression"
 import { Integer } from "./mathlib/expressions/Integer"
 import { Sum } from "./mathlib/expressions/Sum"
+import { parseExpressionJSON } from "./mathlib/expressions-from-json"
 
 declare const MathJax: any
 
 export async function loadWasmStepsBackend(): Promise<void> {
     await initWasm()
 
-    const inputView = document.getElementById("problem")! as HTMLTextAreaElement
-    const problemViewDiv = document.getElementById(
-        "expressionViewDiv"
-    ) as HTMLDivElement
-    const solutionView = document.getElementById("solution")!
-    const stepListView = document.getElementById("steps")!
+    // Where the text input goes
+    const inputView = document.getElementById("inputView")! as HTMLTextAreaElement
+    // Displays the typeset input
+    const problemView = new EditableMathView();
+    {
+        const problemViewDiv = document.getElementById("problemView") as HTMLDivElement
+        problemViewDiv.appendChild(problemView)
+    }
+    // Displays the final answer
+    const solutionView = new EditableMathView();
+    {
+        const solutionViewDiv = document.getElementById("solutionView")!;
+        solutionViewDiv.appendChild(solutionView)
+    }
+    // Displays sequence of steps
+    const stepListView = document.getElementById("stepsView")! as HTMLDivElement
 
     // Populate ui
-    const problemView = new EditableMathView()
-    problemViewDiv.appendChild(problemView)
 
     inputView.focus()
     let parsedExpression: Expression;
@@ -28,9 +37,13 @@ export async function loadWasmStepsBackend(): Promise<void> {
         parsedExpression = parseExpression(inputView.value) ?? parsedExpression
         if (parsedExpression == undefined) return
 
+        problemView.value = parsedExpression;
+
         let r = simplify_with_steps(parsedExpression.toJSON())
 
-        let result: String;
+        let result: {
+            "steps": string[]
+        }
         try {
             result = JSON.parse(r);
         } catch (e) {
@@ -39,8 +52,24 @@ export async function loadWasmStepsBackend(): Promise<void> {
             return
         }
 
-        problemViewDiv.innerHTML = result[result.length - 1]
-        solutionView.innerHTML = "<math display='block'>" + result[0] + "</math>"
-        MathJax.typeset([problemViewDiv])
+
+        stepListView.innerHTML = ''
+        for (let i=0; i<result.steps.length; i++) {
+            let step = result.steps[i];
+            if (i % 2 == 1) {
+                const paragraph = document.createElement("p");
+                paragraph.innerText = step;
+                stepListView.appendChild(paragraph);
+            } else {
+                const stepView = document.createElement("div")
+                const expressionView = new EditableMathView();
+                expressionView.value = parseExpressionJSON(step);
+                stepView.appendChild(expressionView);
+                stepListView.appendChild(stepView);
+            }
+        }
+
+        solutionView.value = parseExpressionJSON(result.steps[result.steps.length - 1])
+        MathJax.typeset([problemView, stepListView])
     })
 }

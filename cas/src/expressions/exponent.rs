@@ -1,3 +1,5 @@
+use serde_json::json;
+
 use crate::mathxml::{in_row, in_paren};
 
 use super::{ExpressionPtr, IExpression, Expression, EXPRESSION_INSTANCES};
@@ -62,6 +64,14 @@ impl IExpression for Exponent {
 
     fn id(&self) -> String {
         get_id(&self.base, &self.power)
+    }
+
+    fn to_json(&self) -> serde_json::Value {
+        json!([
+            "Pow",
+            self.base.to_json(),
+            self.power.to_json()
+        ])
     }
 }
 

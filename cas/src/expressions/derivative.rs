@@ -1,5 +1,7 @@
 use std::sync::Arc;
 
+use serde_json::json;
+
 use super::{IExpression, ExpressionPtr, EXPRESSION_INSTANCES, Expression};
 
 #[derive(PartialEq, Eq, Hash, Debug)]
@@ -57,6 +59,14 @@ impl IExpression for Derivative {
 
     fn id(&self) -> String {
         todo!()
+    }
+
+    fn to_json(&self) -> serde_json::Value {
+        json!([
+            "Derivative",
+            self.exp.to_json(),
+            self.relative_to.to_json()
+        ])
     }
 }
 

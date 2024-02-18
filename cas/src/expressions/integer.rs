@@ -1,6 +1,8 @@
 use core::fmt;
 use std::sync::Arc;
 
+use serde_json::json;
+
 use super::{Expression, ExpressionPtr, IExpression, EXPRESSION_INSTANCES};
 
 #[derive(PartialEq, Eq, Hash)]
@@ -40,6 +42,12 @@ impl IExpression for Integer {
 
     fn id(&self) -> String {
         format!("integer{}", self.value)
+    }
+
+    fn to_json(&self) -> serde_json::Value {
+        json!({
+            "num": self.value
+        })
     }
 }
 

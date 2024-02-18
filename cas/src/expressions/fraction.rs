@@ -1,6 +1,8 @@
 use core::fmt;
 use std::sync::Arc;
 
+use serde_json::json;
+
 use super::{ExpressionPtr, EXPRESSION_INSTANCES, Expression, IExpression};
 
 
@@ -57,6 +59,14 @@ impl IExpression for Fraction {
 
     fn id(&self) -> String {
         get_id(&self.numerator, &self.denominator)
+    }
+
+    fn to_json(&self) -> serde_json::Value {
+        json!([
+            "Divide",
+            self.numerator.to_json(),
+            self.denominator.to_json()
+        ])
     }
 }
 

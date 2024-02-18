@@ -2,6 +2,9 @@
 use core::fmt;
 use std::sync::Arc;
 
+use serde_json::Value;
+use serde_json::json;
+
 use crate::mathxml::in_paren;
 
 use super::EXPRESSION_INSTANCES;
@@ -86,6 +89,14 @@ impl IExpression for Sum {
 
     fn id(&self) -> String {
         id_from_terms(&self.terms)
+    }
+
+    fn to_json(&self) -> Value {
+        json!(
+            &mut [json!("Sum")].into_iter().chain(
+            self.terms.iter().map(|term| term.to_json()))
+                .collect::<Vec<Value>>()
+        )
     }
 }
 

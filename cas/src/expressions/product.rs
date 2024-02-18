@@ -1,6 +1,8 @@
 use core::fmt;
 use std::sync::Arc;
 
+use serde_json::{Value, json};
+
 use super::{Expression, ExpressionPtr, IExpression, EXPRESSION_INSTANCES, Integer};
 
 /**
@@ -122,6 +124,14 @@ impl IExpression for Product {
             suffix += &exp.as_stringable().id()
         }
         format!("product{}", suffix)
+    }
+    
+    fn to_json(&self) -> Value {
+        json!(
+            &mut [json!("Product")].into_iter().chain(
+            self._factors.iter().map(|factor| factor.to_json()))
+                .collect::<Vec<Value>>()
+        )
     }
 }
 

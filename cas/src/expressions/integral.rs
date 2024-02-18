@@ -1,5 +1,7 @@
 use std::sync::Arc;
 
+use serde_json::json;
+
 use super::{ExpressionPtr, IExpression, EXPRESSION_INSTANCES, Expression};
 
 
@@ -58,6 +60,14 @@ impl IExpression for Integral {
 
     fn id(&self) -> String {
         get_id(&self.integrand, &self.relative_to)
+    }
+
+    fn to_json(&self) -> serde_json::Value {
+        json!([
+            "Integral",
+            self.integrand.to_json(),
+            self.relative_to.to_json()
+        ])
     }
 }
 
