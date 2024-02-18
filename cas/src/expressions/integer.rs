@@ -1,8 +1,9 @@
+use core::fmt;
 use std::sync::Arc;
 
 use super::{Expression, ExpressionPtr, IExpression, EXPRESSION_INSTANCES};
 
-#[derive(PartialEq, Eq, Hash, Debug)]
+#[derive(PartialEq, Eq, Hash)]
 pub struct Integer {
     value: u32,
 }
@@ -39,6 +40,12 @@ impl IExpression for Integer {
 
     fn id(&self) -> String {
         format!("integer{}", self.value)
+    }
+}
+
+impl fmt::Debug for Integer {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", self.value)
     }
 }
 

@@ -1,3 +1,4 @@
+use core::fmt;
 use std::{
     collections::HashMap,
     fmt::Display,
@@ -69,7 +70,7 @@ pub type ExpressionId = String;
 * If we want to access an Expression attribute, we have to
 * unwrap the enum and consider each variant.
 */
-#[derive(Eq, Hash, Clone, Debug)]
+#[derive(Eq, Hash, Clone)]
 pub enum Expression {
     Negation(Arc<Negation>),
     Integer(Arc<Integer>),
@@ -81,6 +82,23 @@ pub enum Expression {
     Logarithm(Arc<Logarithm>),
     Derivative(Arc<Derivative>),
     Integral(Arc<Integral>),
+}
+
+impl fmt::Debug for Expression {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", format!("{:?}", match self {
+            Expression::Negation(ref p) => p as &dyn fmt::Debug,
+            Expression::Integer(p) => p as &dyn fmt::Debug,
+            Expression::Product(p) => p as &dyn fmt::Debug,
+            Expression::Exponent(p) => p as &dyn fmt::Debug,
+            Expression::Sum(p) => p as &dyn fmt::Debug,
+            Expression::Variable(p) => p as &dyn fmt::Debug,
+            Expression::Fraction(p) => p as &dyn fmt::Debug,
+            Expression::Logarithm(p) => p as &dyn fmt::Debug,
+            Expression::Derivative(p) => p as &dyn fmt::Debug,
+            Expression::Integral(p) => p as &dyn fmt::Debug,
+        }))
+    }
 }
 
 impl PartialEq for Expression {

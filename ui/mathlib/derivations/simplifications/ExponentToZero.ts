@@ -24,7 +24,7 @@ export class ExponentToZero extends NoContextExpressionSimplificationRule {
                     r: Relationship.Equal,
                     n1: num(1)
                 },
-                "Anything to zero is zero",
+                "Anything to zero is one",
                 RULE_ID
             )
         )

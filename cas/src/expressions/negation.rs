@@ -1,8 +1,9 @@
+use core::fmt;
 use std::sync::Arc;
 
 use super::{Expression, ExpressionPtr, IExpression, EXPRESSION_INSTANCES};
 
-#[derive(PartialEq, Eq, Hash, Debug)]
+#[derive(PartialEq, Eq, Hash)]
 pub struct Negation {
     expression: ExpressionPtr,
 }
@@ -46,6 +47,12 @@ impl IExpression for Negation {
 
 fn get_id(exp: &ExpressionPtr) -> String {
     format!("negation{}", &exp.as_stringable().id())
+}
+
+impl fmt::Debug for Negation {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "-({})", self.expression)
+    }
 }
 
 #[cfg(test)]

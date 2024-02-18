@@ -1,9 +1,10 @@
+use core::fmt;
 use std::sync::Arc;
 
 use super::{ExpressionPtr, EXPRESSION_INSTANCES, Expression, IExpression};
 
 
-#[derive(PartialEq, Eq, Hash, Debug)]
+#[derive(PartialEq, Eq, Hash)]
 pub struct Fraction {
     numerator: ExpressionPtr,
     denominator: ExpressionPtr,
@@ -56,6 +57,12 @@ impl IExpression for Fraction {
 
     fn id(&self) -> String {
         get_id(&self.numerator, &self.denominator)
+    }
+}
+
+impl fmt::Debug for Fraction {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "Fraction({:?}, {:?})", self.numerator, self.denominator)
     }
 }
 

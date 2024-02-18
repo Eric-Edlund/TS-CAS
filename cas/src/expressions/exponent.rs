@@ -1,9 +1,10 @@
 use crate::mathxml::{in_row, in_paren};
 
 use super::{ExpressionPtr, IExpression, Expression, EXPRESSION_INSTANCES};
+use core::fmt;
 use std::sync::Arc;
 
-#[derive(PartialEq, Eq, Hash, Debug)]
+#[derive(PartialEq, Eq, Hash)]
 pub struct Exponent {
     base: ExpressionPtr,
     power: ExpressionPtr,
@@ -70,6 +71,12 @@ fn get_id(base: &ExpressionPtr, power: &ExpressionPtr) -> String {
             &base.as_stringable().id(),
             &power.as_stringable().id()
         )
+}
+
+impl fmt::Debug for Exponent {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "Exponent({}, {})", self.base, self.power)
+    }
 }
 
 #[cfg(test)]

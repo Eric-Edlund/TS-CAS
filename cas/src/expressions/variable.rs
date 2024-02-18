@@ -1,10 +1,11 @@
+use core::fmt;
 use std::sync::Arc;
 
 use crate::expressions::IExpression;
 
 use super::{Expression, EXPRESSION_INSTANCES, ExpressionPtr};
 
-#[derive(PartialEq, Eq, Hash, Debug)]
+#[derive(PartialEq, Eq, Hash)]
 pub struct Variable {
     symbol: String,
 }
@@ -47,6 +48,12 @@ impl IExpression for Variable {
 
     fn id(&self) -> String {
         get_id(&self.symbol)
+    }
+}
+
+impl fmt::Debug for Variable {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", self.symbol)
     }
 }
 

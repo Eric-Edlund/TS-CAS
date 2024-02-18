@@ -1,10 +1,8 @@
 import { Argument } from "../../Argument"
 import {
     num,
-    product,
     productAndNotTimesOne,
     productOrNot,
-    sumIntuitive,
     sumOrNot
 } from "../../ConvenientExpressions"
 import { Expression } from "../../expressions/Expression"
@@ -14,7 +12,6 @@ import { Sum } from "../../expressions/Sum"
 import { Relationship } from "../../Relationship"
 import { setOf } from "../../util/ThingsThatShouldBeInTheStdLib"
 import { NoContextExpressionSimplificationRule } from "../NoContextExpressionSimplificationRule"
-import { RelationalDerivationRule } from "../RelationalDerivationRule"
 
 /**
  * Takes sums of several added products and combines ones that only

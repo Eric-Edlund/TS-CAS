@@ -8,9 +8,8 @@ pub mod graph;
 mod mathxml;
 mod convenience_expressions;
 
-use convenience_expressions::{sum, product, i, power};
 use deriver::Deriver;
-use expressions::{Expression, ExpressionId, ExpressionPtr, Integer, Exponent, read_object_from_json};
+use expressions::{Expression, ExpressionId, read_object_from_json};
 use graph::Graph;
 use graph_traversal::{expression_complexity_cmp, Path};
 use petgraph::{visit::IntoNodeReferences, algo::astar};
