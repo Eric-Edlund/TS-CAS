@@ -69,10 +69,10 @@ impl Serialize for Path {
     where
         S: serde::Serializer {
         let mut seq = serializer.serialize_seq(Some(self.steps.len() * 2 + 1))?;
-        seq.serialize_element(&self.start.as_stringable().to_math_xml())?;
+        seq.serialize_element(&self.start.to_json())?;
         for step in &self.steps {
             seq.serialize_element(step.0.message())?;
-            seq.serialize_element(&step.1.as_stringable().to_math_xml())?;
+            seq.serialize_element(&step.1.to_json())?;
         }
         seq.end()
     }

@@ -13,6 +13,7 @@ use expressions::{Expression, ExpressionId, read_object_from_json};
 use graph::Graph;
 use graph_traversal::{expression_complexity_cmp, Path};
 use petgraph::{visit::IntoNodeReferences, algo::astar};
+use serde_json::json;
 use wasm_bindgen::prelude::*;
 
 /**
@@ -36,6 +37,22 @@ pub fn find_equivalents(exp: Expression) -> Graph {
 * Takes an expression in JSON form, parses, simplifies then returns
 * a JSON containing steps to solve it, or an error message.
 * TODO: Actual spec for return type and input JSON
+*
+* Returned JSON is an object:
+* {
+*   "steps": [
+*       "MathXMLExpression", // The problem given
+*       "Argument string",
+*       "MathXMLExpression",
+*       "Argument string",
+*       "MathXMLExpression"
+*       ...
+*   ]
+* }
+*
+* Where 
+* 1) "steps" will be at least one long, the first
+*   element being the given problem.
 */
 #[wasm_bindgen]
 pub fn simplify_with_steps(json_expression: &str) -> String {
@@ -55,6 +72,7 @@ pub fn simplify_with_steps(json_expression: &str) -> String {
 
     let shortest_path = astar(&graph, start, |n| n == simplest_exp.0, |_| 1, |_| 0)
         .expect("There must be a path because the graph is connected");
+
     let mut result = Path {start: expression.clone(), steps: vec![]}; 
 
     let mut last_node = start;
@@ -67,7 +85,9 @@ pub fn simplify_with_steps(json_expression: &str) -> String {
         last_node = *step;
     }
 
-    serde_json::to_string(&result).unwrap()
+    json!({
+        "steps": &result
+    }).to_string()
 }
 
 #[cfg(test)]

@@ -1,6 +1,6 @@
 use crate::convenience_expressions::power;
 
-use super::{Expression, sum::sum_of, Integer, product::product_of, variable::Variable, Fraction, Logarithm};
+use super::{Expression, sum::sum_of, Integer, product::product_of, variable::Variable, Fraction, Logarithm, Negation};
 use serde_json::{Value, from_str};
 
 /// Reads expression objects out of JSON expressions
@@ -65,7 +65,12 @@ fn read_obj_rec(object: &Value) -> Result<Expression, String> {
         },
         Value::Object(obj) => {
             if obj.contains_key("num") {
-                Ok(Integer::of(obj["num"].as_u64().unwrap() as u32))
+                let value = obj["num"].as_i64().unwrap();
+                if value < 0 {
+                    Ok(Negation::of(Integer::of(value.abs() as u32)))
+                } else {
+                    Ok(Integer::of(value.abs() as u32))
+                }
             } else if obj.contains_key("var") {
                 Ok(Variable::of(obj["var"].as_str().unwrap()))
             }else {

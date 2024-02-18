@@ -1,6 +1,8 @@
 use core::fmt;
 use std::sync::Arc;
 
+use serde_json::json;
+
 use super::{Expression, ExpressionPtr, IExpression, EXPRESSION_INSTANCES};
 
 #[derive(PartialEq, Eq, Hash)]
@@ -42,6 +44,13 @@ impl IExpression for Negation {
 
     fn id(&self) -> String {
         get_id(&self.expression)
+    }
+
+    fn to_json(&self) -> serde_json::Value {
+        json!([
+            "Negation",
+            self.child().to_json()
+        ])
     }
 }
 

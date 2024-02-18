@@ -1,6 +1,8 @@
 use core::fmt;
 use std::sync::Arc;
 
+use serde_json::json;
+
 use crate::expressions::IExpression;
 
 use super::{Expression, EXPRESSION_INSTANCES, ExpressionPtr};
@@ -48,6 +50,12 @@ impl IExpression for Variable {
 
     fn id(&self) -> String {
         get_id(&self.symbol)
+    }
+
+    fn to_json(&self) -> serde_json::Value {
+        json!({
+            "var": self.symbol
+        })
     }
 }
 

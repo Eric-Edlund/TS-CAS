@@ -22,6 +22,7 @@ mod read_from_json;
 pub use integer::Integer;
 pub use negation::Negation;
 pub use product::Product;
+use serde_json::Value;
 pub use sum::Sum;
 pub use exponent::Exponent;
 pub use variable::Variable;
@@ -49,6 +50,11 @@ pub trait IExpression {
      * The string is unique to the expression implementation.
      */
     fn id(&self) -> String;
+
+    /**
+    * Produce JSON object representing the expression.
+    */
+    fn to_json(&self) -> Value;
 }
 
 // Use this when refering to an Expression in case we need to change
@@ -153,6 +159,21 @@ impl Expression {
             Expression::Logarithm(l) => l.clone(),
             Expression::Derivative(d) => d.clone(),
             Expression::Integral(i) => i.clone(),
+        }
+    }
+
+    pub fn to_json(&self) -> Value {
+        match self {
+            Expression::Integer(i) => i.to_json(),
+            Expression::Negation(n) => n.to_json(),
+            Expression::Product(p) => p.to_json(),
+            Expression::Exponent(e) => e.to_json(),
+            Expression::Sum(s) => s.to_json(),
+            Expression::Variable(v) => v.to_json(),
+            Expression::Fraction(f) => f.to_json(),
+            Expression::Logarithm(l) => l.to_json(),
+            Expression::Derivative(d) => d.to_json(),
+            Expression::Integral(i) => i.to_json(),
         }
     }
 }

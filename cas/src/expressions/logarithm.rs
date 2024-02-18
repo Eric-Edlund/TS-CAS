@@ -1,5 +1,7 @@
 use std::sync::Arc;
 
+use serde_json::json;
+
 use super::{ExpressionPtr, EXPRESSION_INSTANCES, Expression, IExpression};
 
 
@@ -59,6 +61,14 @@ impl IExpression for Logarithm {
 
     fn id(&self) -> String {
         get_id(&self.base, &self.exp)
+    }
+
+    fn to_json(&self) -> serde_json::Value {
+        json!([
+            "Logarithm",
+            self.base.to_json(),
+            self.exp.to_json()
+        ])
     }
 }
 
