@@ -1,11 +1,12 @@
+use core::fmt;
 use std::sync::Arc;
 
-use super::{Expression, ExpressionPtr, IExpression, EXPRESSION_INSTANCES};
+use super::{Expression, ExpressionPtr, IExpression, EXPRESSION_INSTANCES, Integer};
 
 /**
 * Stores 2 or more ordered expressions as a product.
 */
-#[derive(PartialEq, Eq, Hash, Debug)]
+#[derive(PartialEq, Eq, Hash)]
 pub struct Product {
     _factors: Vec<ExpressionPtr>,
 }
@@ -54,15 +55,26 @@ impl Product {
 }
 
 /**
-* Takes 1  or more expressions, returning a product of them
+* Takes 0 or more expressions, returning a product of them
 * if there are more than 1, or just the 1 if there is only 1.
+* If no expressions are given, returns the integer 1.
 */
 pub fn product_of(factors: &[ExpressionPtr]) -> ExpressionPtr {
-    if factors.len() == 1 {
+    if factors.is_empty() {
+        return Integer::of(0);
+    } else if factors.len() == 1 {
         return factors[0].clone();
     }
     Product::of(factors).unwrap()
 } 
+
+pub fn product_of_iter(factors: &mut dyn Iterator<Item = ExpressionPtr>) -> ExpressionPtr {
+    let factors = factors.collect::<Vec<ExpressionPtr>>();
+    if factors.len() == 1 {
+        return factors[0].clone();
+    }
+    Product::of(&factors).unwrap()
+}
 
 impl IExpression for Product {
     fn to_unambigious_string(&self) -> String {
@@ -110,6 +122,15 @@ impl IExpression for Product {
             suffix += &exp.as_stringable().id()
         }
         format!("product{}", suffix)
+    }
+}
+
+impl fmt::Debug for Product {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let factors = self._factors.iter().map(|f| format!("{:?}", f))
+            .reduce(|a, b| a + " " + &b)
+            .unwrap();
+        write!(f, "*({:?})", factors)
     }
 }
 

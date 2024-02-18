@@ -1,4 +1,5 @@
 
+use core::fmt;
 use std::sync::Arc;
 
 use crate::mathxml::in_paren;
@@ -8,7 +9,7 @@ use super::Expression;
 use super::ExpressionPtr;
 use super::IExpression;
 
-#[derive(PartialEq, Eq, Hash, Debug)]
+#[derive(PartialEq, Eq, Hash)]
 pub struct Sum {
     terms: Vec<ExpressionPtr>
 }
@@ -95,6 +96,16 @@ fn id_from_terms(terms: &[ExpressionPtr]) -> String {
             .unwrap()
             .as_str()
 
+}
+
+impl fmt::Debug for Sum {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let result = self.terms.iter()
+            .map(|term| format!("{:?}", term))
+            .reduce(|a, b| a + " " + &b)
+            .unwrap();
+        write!(f, "+({:?})", result)
+    }
 }
 
 #[cfg(test)]

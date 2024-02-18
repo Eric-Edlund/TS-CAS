@@ -31,6 +31,3 @@ frontend bugs.
 I'd like to get the backend caught up functionally CAS wise with what I have
 in JavaScript. That's big, but I need to get moving to finish this on time.
 
-
-
-
