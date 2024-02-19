@@ -6,11 +6,13 @@ body {
 
 #inputZone {
     display: flex;
+    flex-direction: row;
+    min-width: 30em;
+    
 }
 
-#problem {
-    width: 80%;
-    height: fit-content;
+#inputZone > * {
+    flex-grow: 1;
 }
 
 .MathJax {
