@@ -4,15 +4,12 @@ body {
     height: 100%;
 }
 
-#inputZone {
+/* body {
     display: flex;
-}
+    flex-direction: column;
+} */
 
 #problem {
     width: 80%;
     height: fit-content;
-}
-
-.MathJax {
-    font-size: 1.7em;
 }
