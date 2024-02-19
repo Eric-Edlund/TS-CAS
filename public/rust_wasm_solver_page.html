@@ -23,14 +23,22 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     </head>
 
-    <body id="body" class="wasm_steps_backend">
+    <body id="body" class="wasm_steps_backend container">
         <h1>Solver</h1>
         <div id="inputZone">
             <textarea id="inputView"></textarea>
-            <div id="problemView"></div>
-            <p>=</p>
-            <div id="solutionView"></div>
         </div>
+        <div class="row">
+            <div id="problemView" class="col s5"></div>
+            <div class="col s2 center">
+                <math display="block">
+                    <mo>=</mo>
+                </math>
+            </div>
+            <div id="solutionView" class="col s5"></div>
+        </div>
+
+        <div class="divider"></div>
 
         <div id="stepsView"></div>
     </body>
