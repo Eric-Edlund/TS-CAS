@@ -14,24 +14,31 @@
             src="https://polyfill.io/v3/polyfill.min.js?features=es6"
         ></script>
         <script id="MathJax-script" src="mathjax/tex-mml-chtml.js"></script>
-        <script src="bundle.js" type="module"></script>
-        <style>
-            #inputZone {
-                display: flex;
-            }
-        </style>
+        <!--Import Google Icon Font-->
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <!--Import materialize.css-->
+        <link type="text/css" rel="stylesheet" href="css/materialize.min.css"  media="screen,projection"/>
+
+        <!--Let browser know website is optimized for mobile-->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     </head>
 
-    <body id="body" class="wasm_steps_backend">
+    <body id="body" class="wasm_steps_backend container">
         <h1>Solver</h1>
         <div id="inputZone">
             <textarea id="inputView"></textarea>
-            <div id="problemView"></div>
-            <p>=</p>
-            <div id="solutionView"></div>
         </div>
-
+        <div class="row">
+            <div id="problemView" class="col s5"></div>
+            <p class="col s2" style="text-align: center;">=</p>
+            <div id="solutionView" class="col s5"></div>
+        </div>
+        <div class="divider"></div>
         <div id="stepsView"></div>
     </body>
+
+    <script type="text/javascript" src="js/materialize.min.js"></script>
+    <!-- Bundle with WASM needs to be imported after Materialize for some reason-->
+    <script src="bundle.js" type="module"></script>
 </html>
 
