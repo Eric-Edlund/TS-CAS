@@ -23,20 +23,17 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     </head>
 
-    <body id="body" class="wasm_steps_backend container">
+    <body id="body" class="wasm_steps_backend">
         <h1>Solver</h1>
         <div id="inputZone">
             <textarea id="inputView"></textarea>
+            <div id="problemView"></div>
+            <p>=</p>
+            <div id="solutionView"></div>
         </div>
-        <div class="row">
-            <div id="problemView" class="col s5"></div>
-            <p class="col s2" style="text-align: center;">=</p>
-            <div id="solutionView" class="col s5"></div>
-        </div>
-        <div class="divider"></div>
+
         <div id="stepsView"></div>
     </body>
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 
     <!-- Bundle with WASM needs to be imported after Materialize for some reason-->
