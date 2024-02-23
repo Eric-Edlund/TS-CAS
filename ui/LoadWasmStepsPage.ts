@@ -35,7 +35,7 @@ export async function loadWasmStepsBackend(): Promise<void> {
     inputView.focus()
     let parsedExpression: Expression
 
-    inputView.addEventListener("keyup", () => {
+    inputView.addEventListener("input", () => {
         parsedExpression = parseExpression(inputView.value) ?? parsedExpression
         if (parsedExpression == undefined) return
 

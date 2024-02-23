@@ -63,7 +63,7 @@ impl Product {
 */
 pub fn product_of(factors: &[ExpressionPtr]) -> ExpressionPtr {
     if factors.is_empty() {
-        return Integer::of(0);
+        return Integer::of(1);
     } else if factors.len() == 1 {
         return factors[0].clone();
     }

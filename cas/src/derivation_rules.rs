@@ -18,6 +18,10 @@ mod divide_fractions;
 mod foil;
 mod sum_coefficients_of_terms;
 mod subtract_exponents_on_fractions;
+mod evaluate_products;
+mod evaluate_fractions;
+mod evaluate_logs;
+mod make_common_denominators;
 
 pub trait DerivationRule {
     /**
@@ -45,4 +49,8 @@ pub static ALL_RULES: Mutex<&[&(dyn DerivationRule + Sync)]> =
     // TODO: These rules aren't passing tests yet
     // &sum_coefficients_of_terms::SumCoefficientsOfTerms {},
     // &subtract_exponents_on_fractions::SubtractExponentsOnFractions {},
+    &evaluate_products::EvaluateProducts {},
+    &evaluate_fractions::EvaluateFractions {},
+    &evaluate_logs::EvaluateLogs {},
+    &make_common_denominators::MakeCommonDenominators {},
 ]);
