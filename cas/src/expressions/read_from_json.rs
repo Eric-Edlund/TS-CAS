@@ -1,6 +1,6 @@
 use crate::convenience_expressions::power;
 
-use super::{Expression, sum::sum_of, Integer, product::product_of, variable::Variable, Fraction, Logarithm, Negation};
+use super::{product::product_of, sum::sum_of, variable::Variable, Expression, Fraction, Integer, Integral, Logarithm, Negation};
 use serde_json::{Value, from_str};
 
 /// Reads expression objects out of JSON expressions
@@ -60,6 +60,9 @@ fn read_obj_rec(object: &Value) -> Result<Expression, String> {
                 "Logarithm" => {
                     Ok(Logarithm::of(read_obj_rec(&arr[1])?, read_obj_rec(&arr[2])?))
                 },
+                "Integral" => {
+                    Ok(Integral::of(read_obj_rec(&arr[1])?, read_obj_rec(&arr[2])?))
+                }
                 s => panic!("Unimplemented operation {}", s)
             }
         },
@@ -83,7 +86,7 @@ fn read_obj_rec(object: &Value) -> Result<Expression, String> {
 
 #[cfg(test)]
 mod tests {
-    use crate::expressions::{Integer, Logarithm, Fraction};
+    use crate::{convenience_expressions::i, expressions::{Fraction, Integer, Integral, Logarithm}};
 
     use super::read_object_from_json;
 
@@ -103,6 +106,12 @@ mod tests {
     fn parse_logarithm() {
         let e = read_object_from_json("[\"Logarithm\", {\"num\": 1}, {\"num\": 1}]");
         assert_eq!(e.unwrap(), Logarithm::of(Integer::of(1), Integer::of(1)));
+    }
+
+    #[test]
+    fn parse_integral() {
+        let e = read_object_from_json("[\"Integral\", {\"num\": 1}, {\"num\": 2}]");
+        assert_eq!(e.unwrap(), Integral::of(i(1), i(2)));
     }
 }
 

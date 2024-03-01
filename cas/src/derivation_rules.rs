@@ -22,6 +22,7 @@ mod evaluate_products;
 mod evaluate_fractions;
 mod evaluate_logs;
 mod make_common_denominators;
+mod integration_power_rule;
 
 pub trait DerivationRule {
     /**
@@ -53,4 +54,5 @@ pub static ALL_RULES: Mutex<&[&(dyn DerivationRule + Sync)]> =
     &evaluate_fractions::EvaluateFractions {},
     &evaluate_logs::EvaluateLogs {},
     &make_common_denominators::MakeCommonDenominators {},
+    &integration_power_rule::IntegralPowerRule {},
 ]);

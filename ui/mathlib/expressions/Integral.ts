@@ -74,7 +74,7 @@ export class Integral extends Expression {
     }
 
     toJSON(): string {
-        return `["Integral", ${this.integrand.toJSON()}]`
+        return `["Integral", ${this.integrand.toJSON()}, ${this.relativeTo.toJSON()}]`
     }
 
     public readonly childCount: number
