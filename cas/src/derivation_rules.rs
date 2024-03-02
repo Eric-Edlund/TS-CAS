@@ -2,6 +2,8 @@ use std::{rc::Rc, sync::Mutex};
 
 use crate::{argument::Argument, expressions::ExpressionPtr};
 
+mod helpers;
+
 mod cancel_negatives;
 mod additive_identity;
 mod anything_times_zero;
@@ -23,6 +25,9 @@ mod evaluate_fractions;
 mod evaluate_logs;
 mod make_common_denominators;
 mod integration_power_rule;
+mod integral_sum_rule;
+mod integral_chain_rule;
+mod integral_constant_coefficients;
 
 pub trait DerivationRule {
     /**
@@ -55,4 +60,7 @@ pub static ALL_RULES: Mutex<&[&(dyn DerivationRule + Sync)]> =
     &evaluate_logs::EvaluateLogs {},
     &make_common_denominators::MakeCommonDenominators {},
     &integration_power_rule::IntegralPowerRule {},
+    &integral_sum_rule::IntegralSumRule {},
+    &integral_chain_rule::IntegralChainRule {},
+    &integral_constant_coefficients::IntegralConstCoeff {},
 ]);

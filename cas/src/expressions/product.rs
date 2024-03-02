@@ -70,8 +70,16 @@ pub fn product_of(factors: &[ExpressionPtr]) -> ExpressionPtr {
     Product::of(factors).unwrap()
 } 
 
+/**
+* Produces a product from the expressions.
+* If there are no expressions, returns 1.
+* If there is only 1 expression, returns it.
+*/
 pub fn product_of_iter(factors: &mut dyn Iterator<Item = ExpressionPtr>) -> ExpressionPtr {
     let factors = factors.collect::<Vec<ExpressionPtr>>();
+    if factors.len() == 0 {
+        return Integer::of(1);
+    }
     if factors.len() == 1 {
         return factors[0].clone();
     }

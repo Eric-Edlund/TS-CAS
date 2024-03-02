@@ -35,3 +35,9 @@ additional expressions when deriving.
    doesn't need to actually treat it as a real thing. What if U-Sub operations
    just provided extra data in their Argument so the UI could draw subsitutions?
    Then we don't need to change anything structural.
+
+We will need to represent substitutions somehow so that we can keep using the 
+iterative rule application approach. We could also treat integrals specially
+and hide intermediate variables from the rest of the system.
+
+To limit computational redundant representations, we'll
