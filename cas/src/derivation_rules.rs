@@ -28,6 +28,7 @@ mod integration_power_rule;
 mod integral_sum_rule;
 mod integral_chain_rule;
 mod integral_constant_coefficients;
+mod integral_of_constant;
 
 pub trait DerivationRule {
     /**
@@ -63,4 +64,5 @@ pub static ALL_RULES: Mutex<&[&(dyn DerivationRule + Sync)]> =
     &integral_sum_rule::IntegralSumRule {},
     &integral_chain_rule::IntegralChainRule {},
     &integral_constant_coefficients::IntegralConstCoeff {},
+    &integral_of_constant::IntegralOfConst {},
 ]);
