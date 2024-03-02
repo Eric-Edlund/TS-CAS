@@ -1,6 +1,6 @@
 use std::rc::Rc;
 
-use crate::{expressions::{ExpressionPtr, Expression}, argument::Argument, convenience_expressions::sum_of_iter};
+use crate::{expressions::ExpressionPtr, argument::Argument};
 
 use super::DerivationRule;
 
