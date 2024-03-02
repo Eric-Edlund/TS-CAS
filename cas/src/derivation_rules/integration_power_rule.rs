@@ -1,6 +1,6 @@
 use std::rc::Rc;
 
-use crate::{argument::Argument, expressions::{sum::sum_of, Exponent, Expression, ExpressionPtr, Fraction, Integer, Integral}};
+use crate::{argument::Argument, expressions::{sum::sum_of, Exponent, Expression, ExpressionPtr, Fraction, Integer}};
 
 use super::DerivationRule;
 

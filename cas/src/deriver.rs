@@ -1,5 +1,4 @@
 use std::collections::HashSet;
-use std::iter::Sum;
 use std::rc::Rc;
 
 use petgraph::data::DataMap;

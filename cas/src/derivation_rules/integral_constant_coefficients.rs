@@ -1,6 +1,6 @@
 use std::rc::Rc;
 
-use crate::{argument::Argument, derivation_rules::helpers::is_constant, expressions::{product::{product_of, product_of_iter}, Expression, ExpressionPtr, Integral}};
+use crate::{argument::Argument, derivation_rules::helpers::is_constant, expressions::{product::product_of_iter, Expression, ExpressionPtr, Integral}};
 
 use super::DerivationRule;
 
