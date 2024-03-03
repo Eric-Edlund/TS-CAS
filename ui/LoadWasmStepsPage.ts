@@ -5,6 +5,7 @@ import { Expression } from "./mathlib/expressions/Expression"
 import { parseExpressionJSON } from "./mathlib/expressions-from-json"
 
 declare const MathJax: any
+declare const MQ: any
 
 export async function loadWasmStepsBackend(): Promise<void> {
     await initWasm()
@@ -13,6 +14,15 @@ export async function loadWasmStepsBackend(): Promise<void> {
     const inputView = document.getElementById(
         "inputView"
     )! as HTMLTextAreaElement
+
+//     const _quil = document.getElementById("mathquill");
+//     let _config = {
+//         handlers: { edit: function(){} },
+//         restrictMismatchedBrackets: true
+//     };
+//     const input = MQ.MathField(_quil, _config)
+//     console.debug(input)
+
     // Displays the typeset input
     const problemView = new EditableMathView()
     {
