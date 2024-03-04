@@ -3,6 +3,7 @@ import initWasm, { simplify_with_steps } from "../cas/pkg"
 import { parseExpression } from "./mathlib/userinput/AntlrMathParser"
 import { Expression } from "./mathlib/expressions/Expression"
 import { parseExpressionJSON } from "./mathlib/expressions-from-json"
+import { parseExpressionLatex } from "./mathlib/userinput/LatexParser"
 
 declare const MathJax: any
 declare const MQ: any
@@ -37,8 +38,7 @@ const stepListView = document.getElementById("stepsView")! as HTMLDivElement
  */
 export async function loadWasmStepsBackend(): Promise<void> {
     await initWasm()
-
-    setInputMode("boring")
+    setInputMode("quill")
 }
 
 // The last valid entered expression
@@ -91,7 +91,17 @@ export function setInputMode(mode: InputMode): void {
 
     if (mode == "quill") {
         const inputView = document.createElement("span")
-        const quill = MQ.MathField(inputView)
+        inputView.classList.add('col', 's12')
+        inputView.style.minHeight = "2em"
+        const quill = MQ.MathField(inputView, {
+            handlers: {
+                edit: function() {
+                    expression = parseExpressionLatex(quill.latex()) ?? expression
+                    onInputExpressionChanged()
+                }
+            }
+        })
+        
         activeUI = {
             quillInput: quill
         } as QuillInputUI
