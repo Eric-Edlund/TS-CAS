@@ -76,7 +76,7 @@ pub type ExpressionId = String;
 * If we want to access an Expression attribute, we have to
 * unwrap the enum and consider each variant.
 */
-#[derive(Eq, Hash, Clone)]
+#[derive(Eq, Clone)]
 pub enum Expression {
     Negation(Arc<Negation>),
     Integer(Arc<Integer>),
@@ -89,6 +89,8 @@ pub enum Expression {
     Derivative(Arc<Derivative>),
     Integral(Arc<Integral>),
 }
+
+impl Expression {}
 
 impl fmt::Debug for Expression {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -181,5 +183,11 @@ impl Expression {
 impl Display for Expression {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}", self.as_stringable().to_unambigious_string())
+    }
+}
+
+impl std::hash::Hash for Expression {
+    fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
+        self.as_stringable().id().hash(state)
     }
 }

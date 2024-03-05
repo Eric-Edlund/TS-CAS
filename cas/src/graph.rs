@@ -8,6 +8,7 @@ use std::collections::HashSet;
 /**
 * A type of relationship between two expressions.
 */
+#[derive(Debug)]
 pub enum RelType {
     Equal,
 }
@@ -17,6 +18,7 @@ pub enum RelType {
 * which derived it. There may be no arguments,
 * meaning this relationship wasn't derived.
 */
+#[derive(Debug)]
 pub struct Relationship {
     pub r_type: RelType,
     pub derived_from: HashSet<Rc<Argument>>,
@@ -25,5 +27,5 @@ pub struct Relationship {
 /**
 * Graph type for expressions
 */
-pub type Graph = DiGraph<ExpressionPtr, Relationship>;
+pub type Graph = DiGraph<ExpressionPtr, Relationship, u32>;
 

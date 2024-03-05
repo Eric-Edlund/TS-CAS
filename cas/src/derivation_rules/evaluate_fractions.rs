@@ -45,7 +45,6 @@ impl DerivationRule for EvaluateFractions {
 
         vec![(result,
             Argument::new(String::from("Reduce fraction"), vec![input]))]
-        
     }
 }
 

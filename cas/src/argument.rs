@@ -8,7 +8,7 @@ use crate::expressions::ExpressionPtr;
 * exists. Stores some number of expressions which the argument is
 * based on.
  */
-#[derive(PartialEq, Eq)]
+#[derive(PartialEq, Eq, Debug)]
 pub struct Argument {
     msg: String,
     grounds: HashSet<ExpressionPtr>,

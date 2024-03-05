@@ -1,7 +1,9 @@
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 use std::rc::Rc;
 
 use petgraph::data::DataMap;
+use petgraph::graph::NodeIndex;
+use wasm_bindgen::prelude::wasm_bindgen;
 
 use crate::argument::Argument;
 use crate::derivation_rules::ALL_RULES;
@@ -12,68 +14,84 @@ use crate::graph::{Graph, RelType, Relationship};
 
 /**
 * Object used to expand graphs.
-* TODO: Currently has no state, we use an object instead of just functions
-* because later we plan to have configuration options for derivation
-* and it will be nicer to store them in an object.
 */
-pub struct Deriver {}
+pub struct Deriver {
+    node_indices: HashMap<Expression, NodeIndex>,
+}
 
 impl Deriver {
     pub fn new() -> Deriver {
-        Deriver {}
+        Deriver {
+            node_indices: HashMap::new(),
+        }
     }
 
     /*
      * Expands the graph with equivalent expressions.
      */
-    pub fn expand(&self, graph: &mut Graph) {
-        pass(graph);
-        pass(graph);
-        pass(graph);
-        pass(graph);
+    pub fn expand(&mut self, graph: &mut Graph) {
+        self.pass(graph);
+        self.pass(graph);
+        self.pass(graph);
+        self.pass(graph);
     }
-}
 
-fn pass(graph: &mut Graph) {
-    let rules = *ALL_RULES.lock().unwrap();
+    fn pass(&mut self, graph: &mut Graph) {
+        let rules = *ALL_RULES.lock().unwrap();
 
-    for i in graph.node_indices() {
-        let expression = graph.node_weight(i).unwrap().clone();
-        let equivalents = rules.iter()
-            .map(|rule| {
-                equiv(&expression, &|exp| {
-                    rule.apply(exp.clone())
+        for i in graph.node_indices() {
+            let expression = graph.node_weight(i).unwrap().clone();
+            let equivalents = rules.iter()
+                .map(|rule| {
+                    equiv(&expression, &|exp| {
+                        rule.apply(exp.clone())
+                    })
                 })
-                // rule.apply(expression.clone())
-            })
-            .flatten()
-            .inspect(|result| {
-                println!("Derived {:?} -> {:?}, {}", result.1.grounds().iter().nth(0).unwrap(), result.0, result.1.message());
-            });
+                .flatten()
+                .inspect(|result| {
+                    println!("Derived {:?} -> {:?}, {}", result.1.grounds().iter().nth(0).unwrap(), result.0, result.1.message());
+                });
 
-        for (derived, argument) in equivalents {
-            let index = graph.add_node(derived);
-            match graph.find_edge(i, index) {
-                Some(edge_id) => {
-                    graph
-                        .edge_weight_mut(edge_id)
-                        .unwrap()
-                        .derived_from
-                        .insert(argument);
-                }
-                None => {
-                    let mut new_edge = Relationship {
-                        r_type: RelType::Equal,
-                        derived_from: HashSet::new(),
-                    };
-                    new_edge.derived_from.insert(argument);
-                    graph.add_edge(i, index, new_edge);
+            for (derived, argument) in equivalents {
+                let index = if self.node_indices.contains_key(&derived) {
+                    self.node_indices[&derived]
+                } else {
+                    let result = graph.add_node(derived.clone());
+                    self.node_indices.insert(derived, result);
+                    result
+                };
+                
+                match graph.find_edge(i, index) {
+                    Some(edge_id) => {
+                        graph
+                            .edge_weight_mut(edge_id)
+                            .unwrap()
+                            .derived_from
+                            .insert(argument);
+                    }
+                    None => {
+                        let mut new_edge = Relationship {
+                            r_type: RelType::Equal,
+                            derived_from: HashSet::new(),
+                        };
+                        new_edge.derived_from.insert(argument);
+                        graph.add_edge(i, index, new_edge);
+                    }
                 }
             }
         }
     }
-
 }
+
+#[wasm_bindgen]
+extern "C" {
+    // Use `js_namespace` here to bind `console.log(..)` instead of just
+    // `log(..)`
+    #[wasm_bindgen(js_namespace = console)]
+    fn log(s: &str);
+}
+
+
 
 type Derivation = (Expression, Rc<Argument>);
 type EquivList = Vec<Derivation>;
@@ -209,7 +227,7 @@ mod tests {
     
     #[test]
     fn applies_multiple_rules() {
-        let deriver = Deriver {};
+        let mut deriver = Deriver::new();
         let mut graph = Graph::new();
         let start = sum_of(&[i(1), i(3), i(3), product_of(&[i(3), i(3)])]);
         graph.add_node(start);
