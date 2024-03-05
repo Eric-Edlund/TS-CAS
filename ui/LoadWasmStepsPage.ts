@@ -51,6 +51,7 @@ let expression: Expression
  */
 function onInputExpressionChanged() {
     if (expression == undefined) return
+    console.log(expression.toUnambigiousString())
 
     let r = simplify_with_steps(expression.toJSON())
 
@@ -99,7 +100,8 @@ export function setInputMode(mode: InputMode): void {
                     expression = parseExpressionLatex(quill.latex()) ?? expression
                     onInputExpressionChanged()
                 }
-            }
+            },
+            autoCommands: 'int'
         })
         
         activeUI = {
