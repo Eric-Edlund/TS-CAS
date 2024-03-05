@@ -83,6 +83,7 @@ function onInputExpressionChanged() {
         // Fetch the equivalents it was able to find
         console.log("No solution found.")
         let equivalents = JSON.parse(get_all_equivalents(expression.toJSON()))["equivalents"]
+        console.log("Found " + equivalents.length + " equivalents.")
         solutionView.value = null
         stepListView.innerHTML = ""
         for (const equiv of equivalents) {

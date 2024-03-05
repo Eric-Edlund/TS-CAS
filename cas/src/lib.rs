@@ -26,7 +26,7 @@ pub fn expression_from_ascii(_string: &str) -> ExpressionId {
 pub fn find_equivalents(exp: Expression) -> Graph {
     let mut graph = Graph::new();
     graph.add_node(exp);
-    let deriver = Deriver::new();
+    let mut deriver = Deriver::new();
 
     deriver.expand(&mut graph);
 
@@ -63,7 +63,7 @@ pub fn simplify_with_steps(json_expression: &str) -> String {
         Err(msg) => return msg,
     };
     let mut graph = Graph::new();
-    let deriver = Deriver::new();
+    let mut deriver = Deriver::new();
 
     let start = graph.add_node(expression.clone());
     deriver.expand(&mut graph);
@@ -100,17 +100,29 @@ pub fn get_all_equivalents(json_expression: &str) -> String {
         Err(msg) => return msg,
     };
     let mut graph = Graph::new();
-    let deriver = Deriver::new();
+    let mut deriver = Deriver::new();
 
     graph.add_node(expression.clone());
     deriver.expand(&mut graph);
 
     let mut result = Vec::new();
     result.extend(graph.node_weights().map(|e| e.as_stringable().to_json()));
+    
+    graph.edge_weights().for_each(|e| {
+        log(&format!("{:?}", e));
+    });
 
     json!({
-        "equivalents": &result
+        "equivalents": &result,
     }).to_string()
+}
+
+#[wasm_bindgen]
+extern "C" {
+    // Use `js_namespace` here to bind `console.log(..)` instead of just
+    // `log(..)`
+    #[wasm_bindgen(js_namespace = console)]
+    fn log(s: &str);
 }
 
 #[cfg(test)]

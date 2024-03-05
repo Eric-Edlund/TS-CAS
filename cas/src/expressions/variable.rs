@@ -65,3 +65,15 @@ impl fmt::Debug for Variable {
     }
 }
 
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn flywheel() {
+        let a = Variable::of("a");
+        let b = Variable::of("a");
+        assert_eq!(a, b);
+    }
+}
