@@ -4,25 +4,27 @@
     <head>
         <title>Test</title>
         <meta charset="UTF-8" />
-        <link rel="stylesheet" href="style.css" />
-        <script>
-            var exports = {}
-        </script>
 
-        <script
-            async
-            src="https://polyfill.io/v3/polyfill.min.js?features=es6"
-        ></script>
-        <script id="MathJax-script" src="mathjax/tex-mml-chtml.js"></script>
-        <script defer src="bundle.js"></script>
+        <!--MathQuill Imports-->
+        <link rel="stylesheet" type="text/css" href="mathquill/mathquill.css"/>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+        <script src="mathquill/mathquill.js"></script>
     </head>
     <body id="body">
-        <h1>Integrator</h1>
-        <math>
-            <mfrac>
-                <mn>a</mn>
-                <mn>a</mn>
-            </mfrac>
-        </math>
+        <script>
+            function render() {
+                console.log("Pressed")
+                var MQ = MathQuill.getInterface(2)
+                let view = document.getElementById("mathquill");
+                let field = MQ.MathField(view);
+                field.latex('/int x')
+
+            }
+            window.addEventListener('DOMContentLoaded', () => {
+            })
+        </script>
+        <span id="mathquill">1+1</span>
+        <button onClick='render()'>Render</button>
+
     </body>
 </html>
