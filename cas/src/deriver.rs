@@ -34,6 +34,9 @@ impl Deriver {
         self.pass(graph);
         self.pass(graph);
         self.pass(graph);
+        self.pass(graph);
+        self.pass(graph);
+        self.pass(graph);
     }
 
     fn pass(&mut self, graph: &mut Graph) {
