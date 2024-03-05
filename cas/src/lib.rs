@@ -30,7 +30,7 @@ pub fn find_equivalents(exp: Expression) -> Graph {
 
     deriver.expand(&mut graph);
 
-    return graph;
+    graph
 }
 
 /**
@@ -47,12 +47,14 @@ pub fn find_equivalents(exp: Expression) -> Graph {
 *       "Argument string",
 *       "MathXMLExpression"
 *       ...
-*   ]
+*   ],
+*   "success": true | false
 * }
 *
 * Where 
 * 1) "steps" will be at least one long, the first
 *   element being the given problem.
+* 2) "success" is true if a simpler equivalent expression was found.
 */
 #[wasm_bindgen]
 pub fn simplify_with_steps(json_expression: &str) -> String {
@@ -86,7 +88,28 @@ pub fn simplify_with_steps(json_expression: &str) -> String {
     }
 
     json!({
-        "steps": &result
+        "steps": &result,
+        "success": &expression != simplest_exp.1
+    }).to_string()
+}
+
+#[wasm_bindgen]
+pub fn get_all_equivalents(json_expression: &str) -> String {
+    let expression = match read_object_from_json(json_expression) {
+        Ok(exp) => exp,
+        Err(msg) => return msg,
+    };
+    let mut graph = Graph::new();
+    let deriver = Deriver::new();
+
+    graph.add_node(expression.clone());
+    deriver.expand(&mut graph);
+
+    let mut result = Vec::new();
+    result.extend(graph.node_weights().map(|e| e.as_stringable().to_json()));
+
+    json!({
+        "equivalents": &result
     }).to_string()
 }
 

@@ -1,5 +1,5 @@
 import { EditableMathView } from "./mathlib/uielements/EditableMathView"
-import initWasm, { simplify_with_steps } from "../cas/pkg"
+import initWasm, { get_all_equivalents, simplify_with_steps } from "../cas/pkg"
 import { parseExpression } from "./mathlib/userinput/AntlrMathParser"
 import { Expression } from "./mathlib/expressions/Expression"
 import { parseExpressionJSON } from "./mathlib/expressions-from-json"
@@ -56,7 +56,8 @@ function onInputExpressionChanged() {
     let r = simplify_with_steps(expression.toJSON())
 
     let result: {
-        steps: string[]
+        steps: string[],
+        success: boolean
     }
     try {
         result = JSON.parse(r)
@@ -66,16 +67,29 @@ function onInputExpressionChanged() {
         return
     }
 
-    solutionView.value = parseExpressionJSON(
-        result.steps[result.steps.length - 1]
-    )
-    stepListView.innerHTML = ""
-    for (let i = 1; i + 1 < result.steps.length; i += 2) {
-        let argument = result.steps[i]
-        let expression = result.steps[i + 1]
+    if (result.success) {
+        console.log("Success")
+        solutionView.value = parseExpressionJSON(
+            result.steps[result.steps.length - 1]
+        )
+        stepListView.innerHTML = ""
+        for (let i = 1; i + 1 < result.steps.length; i += 2) {
+            let argument = result.steps[i]
+            let expression = result.steps[i + 1]
 
-        stepListView.appendChild(row(argument, expression))
+            stepListView.appendChild(row(argument, expression))
+        }
+    } else {
+        // Fetch the equivalents it was able to find
+        console.log("No solution found.")
+        let equivalents = JSON.parse(get_all_equivalents(expression.toJSON()))["equivalents"]
+        solutionView.value = null
+        stepListView.innerHTML = ""
+        for (const equiv of equivalents) {
+            stepListView.appendChild(row(JSON.stringify(equiv), equiv))
+        }
     }
+
 
     MathJax.typeset([answerSummary, stepListView])
 }
