@@ -43,6 +43,10 @@ impl DerivationRule for EvaluateFractions {
             Fraction::of(Integer::of(n), Integer::of(d))
         };
 
+        if result == input {
+            return vec![]
+        }
+
         vec![(result,
             Argument::new(String::from("Reduce fraction"), vec![input]))]
     }
