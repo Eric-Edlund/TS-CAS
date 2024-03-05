@@ -30,6 +30,7 @@ impl Deriver {
         pass(graph);
         pass(graph);
         pass(graph);
+        pass(graph);
     }
 }
 
