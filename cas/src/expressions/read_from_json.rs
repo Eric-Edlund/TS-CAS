@@ -1,6 +1,6 @@
 use crate::convenience_expressions::power;
 
-use super::{product::product_of, sum::sum_of, variable::Variable, Expression, Fraction, Integer, Integral, Logarithm, Negation};
+use super::{product::product_of, sum::sum_of, variable::Variable, Derivative, Expression, Fraction, Integer, Integral, Logarithm, Negation};
 use serde_json::{Value, from_str};
 
 /// Reads expression objects out of JSON expressions
@@ -62,6 +62,9 @@ fn read_obj_rec(object: &Value) -> Result<Expression, String> {
                 },
                 "Integral" => {
                     Ok(Integral::of(read_obj_rec(&arr[1])?, read_obj_rec(&arr[2])?))
+                }
+                "Derivative" => {
+                    Ok(Derivative::of(read_obj_rec(&arr[1])?, read_obj_rec(&arr[2])?))
                 }
                 s => panic!("Unimplemented operation {}", s)
             }
