@@ -30,6 +30,10 @@ impl Deriver {
      * Expands the graph with equivalent expressions.
      */
     pub fn expand(&mut self, graph: &mut Graph) {
+        for i in graph.node_indices() {
+            let node = graph.node_weight(i).unwrap();
+            self.node_indices.insert(node.clone(), i);
+        }
         self.pass(graph);
         self.pass(graph);
         self.pass(graph);
