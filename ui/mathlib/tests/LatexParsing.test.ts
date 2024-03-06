@@ -6,6 +6,7 @@ import { parseExpressionLatex } from "../userinput/LatexParser"
 import { assert } from "../util/assert";
 import { negative, num, product, sum, v } from "../ConvenientExpressions";
 import { Derivative } from "../expressions/Derivative";
+import { Exponent } from "../expressions/Exponent";
 
 
 test("Latex is parsed correctly", () => {
@@ -18,6 +19,7 @@ test("Latex is parsed correctly", () => {
     const EXP_7 = "\\int xd(x+1) + 7"
     const EXP_8 = "\\frac{d}{dx} a + z"
     const EXP_9 = "\\int \\int xdxdy"
+    const EXP_10 = "a^b"
     // TODO: logs
 
     function expect(latex: string, value: Expression): void {
@@ -49,4 +51,5 @@ test("Latex is parsed correctly", () => {
     expect(EXP_7, sum(Integral.of(v("x"), sum(v("x"), num(1))), num(7)))
     expect(EXP_8, sum(Derivative.of(v("a"), v("x")), v("z")))
     expect(EXP_9, Integral.of(Integral.of(v("x"), v("x")), v("y")))
+    expect(EXP_10, Exponent.of(v("a"), v("b")))
 })
