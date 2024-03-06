@@ -7,7 +7,7 @@ use wasm_bindgen::prelude::wasm_bindgen;
 
 use crate::argument::Argument;
 use crate::derivation_rules::ALL_RULES;
-use crate::expressions::{Expression, Exponent, Fraction};
+use crate::expressions::{Derivative, Exponent, Expression, Fraction, Integral};
 use crate::expressions::product::product_of;
 use crate::expressions::sum::sum_of;
 use crate::graph::{Graph, RelType, Relationship};
@@ -119,6 +119,8 @@ fn equiv(exp: &Expression, direct: &EquivFn) -> EquivList {
         Expression::Product(_) => product_equiv(exp, direct),
         Expression::Exponent(_) => exponent_equiv(exp, direct),
         Expression::Fraction(_) => fraction_equiv(exp, direct),
+        Expression::Integral(_) => integral_equiv(exp, direct),
+        Expression::Derivative(_) => derivative_equiv(exp, direct),
         _ => vec![] //TODO: Implement all expression variants
     });
 
@@ -224,6 +226,58 @@ fn fraction_equiv(exp: &Expression, direct: &EquivFn) -> EquivList {
     equivalents
 }
 
+fn integral_equiv(exp: &Expression, direct: &EquivFn) -> EquivList {
+    let mut equivalents = Vec::<Derivation>::new();
+    let Expression::Integral(ref integral) = exp
+    else {
+        panic!();
+    };
+
+    // for integrand
+    for deriv in equiv(&integral.integrand(), direct) {
+        equivalents.push(
+            (Integral::of(deriv.0, integral.relative_to()),
+            deriv.1)
+        );
+    }
+
+    // for variable
+    for deriv in equiv(&integral.relative_to(), direct) {
+        equivalents.push(
+            (Integral::of(integral.integrand(), deriv.0),
+            deriv.1)
+        );
+    }
+
+    equivalents
+}
+
+fn derivative_equiv(exp: &Expression, direct: &EquivFn) -> EquivList {
+    let mut equivalents = Vec::<Derivation>::new();
+    let Expression::Derivative(ref derivative) = exp
+    else {
+        panic!();
+    };
+
+    // for exp 
+    for deriv in equiv(&derivative.exp(), direct) {
+        equivalents.push(
+            (Derivative::of(deriv.0, derivative.relative_to()),
+            deriv.1)
+        );
+    }
+
+    // for variable
+    for deriv in equiv(&derivative.relative_to(), direct) {
+        equivalents.push(
+            (Derivative::of(derivative.exp(), deriv.0),
+            deriv.1)
+        );
+    }
+
+    equivalents
+    
+}
 
 
 #[cfg(test)]
