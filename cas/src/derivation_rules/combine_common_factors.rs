@@ -47,6 +47,10 @@ impl DerivationRule for CombineCommonFactors {
             })
             .collect::<Vec<ExpressionPtr>>();
 
+        if stripped.len() >= product.factors().len() {
+            return vec![];
+        }
+
         let result = product_of(&stripped);
 
         vec![(result, 
