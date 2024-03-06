@@ -14,6 +14,7 @@ import { Integral } from "../expressions/Integral"
 import { Logarithm } from "../expressions/Logarithm"
 import { argv0 } from "process"
 import { Derivative } from "../expressions/Derivative"
+import { Exponent } from "../expressions/Exponent"
 
 /**
  * Parses latex expression into internal expression.
@@ -382,6 +383,24 @@ function group(
                 } else {
                     i = end + 1
                 }
+                continue;
+            }
+
+            if (curr.type === "macro" && curr.content === "^") {
+                const lastFactor = factors.pop();
+                if (lastFactor == undefined) {
+                    // ^ must follow a factor
+                    return null
+                }
+                
+                const power = group(curr.args[0].content);
+                if (power == null) {
+                    // Something can't be raised to nothing
+                    return null
+                }
+
+                factors.push(Exponent.of(lastFactor, power))
+                i++;
                 continue;
             }
 
