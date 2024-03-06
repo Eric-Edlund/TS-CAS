@@ -1,6 +1,6 @@
 use std::rc::Rc;
 
-use crate::{argument::Argument, derivation_rules::helpers::is_constant, expressions::{product::product_of_iter, Expression, ExpressionPtr, Integral}};
+use crate::{argument::Argument, derivation_rules::helpers::is_constant, expressions::{product::product_of_iter, Expression, ExpressionPtr, Integer, Integral}};
 
 use super::DerivationRule;
 
@@ -28,6 +28,10 @@ impl DerivationRule for IntegralConstCoeff {
             .partition(|e| is_constant(e, &integral.relative_to()));
 
         if constant.len() == 0 {
+            return vec![];
+        }
+
+        if constant.len() == 1 && **constant.first().unwrap() == Integer::of(1) {
             return vec![];
         }
 
