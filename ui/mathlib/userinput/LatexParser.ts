@@ -103,15 +103,22 @@ function trimWhiteSpace(nodes: Ast.Node[]): void {
  * Takes a node representing a fraction, variable or number
  * and gets the expression for it.
  */
-function interpret(node: Ast.Node): Expression {
+function interpret(node: Ast.Node): Expression | null{
 
     switch (node.type) {
         case "macro":
             switch (node.content) {
                 case "frac":
+                    const num = group(node.args[0].content);
+                    const den = group(node.args[1].content)
+
+                    if (num == null || den == null) {
+                        return null
+                    }
+
                     return Fraction.of(
-                        group(node.args[0].content),
-                        group(node.args[1].content)
+                        num,
+                        den
                     )
                 default:
                     console.log("Unimplemented macro " + node.content)
@@ -379,7 +386,10 @@ function group(
                 continue;
             }
 
-            factors.push(interpret(curr))
+            const interpretation = interpret(curr);
+            if (interpretation) {
+                factors.push(interpretation)
+            }
             i++
         }
 
