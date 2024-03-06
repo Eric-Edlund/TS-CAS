@@ -12,6 +12,8 @@ import { num, productOrNot, sumOrNot, v } from "../ConvenientExpressions"
 import { Variable } from "../expressions/Variable"
 import { Integral } from "../expressions/Integral"
 import { Logarithm } from "../expressions/Logarithm"
+import { argv0 } from "process"
+import { Derivative } from "../expressions/Derivative"
 
 /**
  * Parses latex expression into internal expression.
@@ -35,8 +37,8 @@ export function parseExpressionLatex(source: string): Expression | null {
  * Groups adjacent numbers left to right
  */
 function groupNumbers(nodes: Ast.Node[]): void {
-    function isNumChar(char: string) {
-        return (
+    function isNum(str: string) {
+        return str.split("").every(char =>
             char === "0" ||
             char === "1" ||
             char === "2" ||
@@ -48,18 +50,20 @@ function groupNumbers(nodes: Ast.Node[]): void {
             char === "8" ||
             char === "9"
         )
+
     }
     for (let i = 1; i < nodes.length; i++) {
         const last = nodes[i - 1]
         const curr = nodes[i]
         if (
             last.type === "string" &&
-            isNumChar(last.content) &&
+            isNum(last.content) &&
             curr.type === "string" &&
-            isNumChar(curr.content)
+            isNum(curr.content)
         ) {
             curr.content = last.content + curr.content
             nodes.splice(i - 1, 1)
+            i--
         }
     }
 }
@@ -148,19 +152,20 @@ function group(
     function isUnaryMinus(index: number): boolean {
         const prev = nodes[index - 1]
         if (prev == undefined) return false
-        if (prev.type !== "string") return false
-        const content = prev.content
-
         const curr = nodes[index]
         if (curr.type !== "string") {
             return false
         }
-        const currContent = curr.content
+        if (curr.content !== "-") return false;
 
-        return (
-            (content === "(" || content === "*" || content === "+") &&
-            currContent === "-"
-        )
+        if (prev.type === "string") {
+            const prevChar = prev.content
+            if (prevChar === "(" || prevChar === "*" || prevChar === "+") {
+                return true;
+            }
+        } else if (isDerivative(prev)) {
+            return true
+        }
     }
     function isDot(node: Ast.Node): boolean {
         return node.type === "macro" && node.content === "cdot"
@@ -171,6 +176,44 @@ function group(
     function isLog(node: Ast.Node): boolean {
         return node.type === "macro" && node.content === "log"
     }
+    // We only recognize derivatives of the form (d/d<var>)
+    // Returns the integration variable if it is a derivative
+    function isDerivative(node: Ast.Node): Expression | null{
+        if (node.type === "macro" 
+            && node.content === "frac"
+            && node.args[0].content.length === 1
+            && node.args[0].content[0].type === "string"
+            && node.args[0].content[0].content === "d"
+            && node.args[1].content[0].type === "string"
+            && node.args[1].content[0].content === "d"
+        ) {
+            return group(node.args[1].content.slice(1))
+        }
+        return null
+    }
+    function isOpenParen(node: Ast.Node): boolean {
+        return node.type === "string" && node.content === "("
+    }
+    function isCloseParen(node: Ast.Node): boolean {
+        return node.type === "string" && node.content === ")"
+    }
+
+    // Begins searching at start and finds the first index
+    // of a + or non-unary - not in a deeper level of parens
+    // than the start index. Returns -1 if none found.
+    function findNextTopLevelSum(start: number): number {
+        let depth = 0;
+        for (let i=start; i<=end; i++) {
+            if (isOpenParen(nodes[i])) depth++;
+            else if (isCloseParen(nodes[i])) depth--;
+            if (depth === 0) {
+                if (isAddition(nodes[i])) return i;
+                else if (!isUnaryMinus(i) && isSubtraction(nodes[i])) return i;
+            }
+        }
+        return -1
+    }
+
 
     const terms = []
     let i = start
@@ -198,7 +241,7 @@ function group(
                 i++
                 break
             }
-            if (curr.type === "string" && curr.content === "(") {
+            if (isOpenParen(curr)) {
                 let stack = 1
                 let j = i
                 while (stack > 0 && j < end) {
@@ -260,18 +303,16 @@ function group(
                 // it in the integration variable.
 
                 // Index of the first addition op after the D (if there is one)
-                const plusOffset = nodes
-                    .slice(lastD + 1, end + 1)
-                    .findIndex(node => isAddition(node) || isSubtraction(node))
+                const plusIndex = findNextTopLevelSum(lastD + 1);
 
                 let variable
-                if (plusOffset === -1) {
+                if (plusIndex === -1) {
                     variable = group(nodes, lastD + 1, end)
                 } else {
                     variable = group(
                         nodes,
                         lastD + 1,
-                        plusOffset + lastD + 1 - 1
+                        plusIndex - 1
                     )
                 }
 
@@ -280,8 +321,8 @@ function group(
                 const result = Integral.of(integrand, variable)
                 // console.log(result.toUnambigiousString())
                 factors.push(result)
-                if (plusOffset !== -1) {
-                    i = plusOffset + lastD + 1
+                if (plusIndex !== -1) {
+                    i = plusIndex 
                 } else {
                     i = end + 1
                 }
@@ -306,6 +347,33 @@ function group(
                 //TODO: Finish log
 
                 continue
+            }
+
+            let derivative = isDerivative(curr);
+            if (derivative) {
+                // Get index of next addition (add it to i)
+                const plusIndex = findNextTopLevelSum(i+1)
+
+                let exp;
+                if (plusIndex === -1) {
+                    exp = group(nodes, i+1, end)
+                } else {
+                    exp = group(nodes, i+1, plusIndex - 1)
+                }
+
+                if (exp == null) {
+                    // There was no expression after the 
+                    // derivation symbol
+                    return null
+                }
+
+                factors.push(Derivative.of(exp, derivative))
+                if (plusIndex !== -1) {
+                    i = plusIndex
+                } else {
+                    i = end + 1
+                }
+                continue;
             }
 
             factors.push(interpret(curr))

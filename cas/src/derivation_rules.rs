@@ -31,6 +31,9 @@ mod integral_constant_coefficients;
 mod integral_of_constant;
 mod derivative_of_constant;
 mod derivative_of_power;
+mod derivative_of_product;
+mod derivative_of_sum;
+mod derivative_of_negation;
 
 pub trait DerivationRule {
     /**
@@ -69,4 +72,6 @@ pub static ALL_RULES: Mutex<&[&(dyn DerivationRule + Sync)]> =
     &integral_of_constant::IntegralOfConst {},
     &derivative_of_constant::DerivativeOfConst {},
     &derivative_of_power::PowerRule {},
+    &derivative_of_sum::DerivativeOfSum {},
+    &derivative_of_negation::PullOutNegation {},
 ]);

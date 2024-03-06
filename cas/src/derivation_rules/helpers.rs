@@ -33,7 +33,7 @@ fn dependent_variables(exp: &ExpressionPtr) -> Vec<ExpressionPtr> {
 /**
 * Gets all children of given expression recursively.
 */
-fn children_rec(exp: &ExpressionPtr) -> impl Iterator<Item = ExpressionPtr> {
+pub fn children_rec(exp: &ExpressionPtr) -> impl Iterator<Item = ExpressionPtr> {
     let mut children = Vec::<ExpressionPtr>::new();
     let mut queue = LinkedList::<ExpressionPtr>::new();
 
