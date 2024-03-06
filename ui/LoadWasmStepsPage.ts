@@ -42,7 +42,7 @@ export async function loadWasmStepsBackend(): Promise<void> {
 }
 
 // The last valid entered expression
-let expression: Expression
+let expression: Expression | null
 
 /**
  * Calculates the new answer and displays it.
@@ -116,7 +116,16 @@ export function setInputMode(mode: InputMode): void {
         const quill = MQ.MathField(inputView, {
             handlers: {
                 edit: function() {
-                    expression = parseExpressionLatex(quill.latex()) ?? expression
+                    expression = parseExpressionLatex(quill.latex())
+                    if (expression == null) {
+                        inputView.style.color = "red"
+                        // Also set border color 
+                        // https://docs.mathquill.com/en/latest/Config/#changing-colors
+                        inputView.style.borderColor = "red"
+                    } else {
+                        inputView.style.color = "black"
+                        inputView.style.borderColor = "black"
+                    }
                     onInputExpressionChanged()
                 }
             },
