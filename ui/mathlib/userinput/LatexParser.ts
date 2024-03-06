@@ -134,8 +134,7 @@ function interpret(node: Ast.Node): Expression | null{
             }
     }
 
-    console.log("Unimplemented interpet")
-    return Variable.of("Not understood")
+    return null
 }
 
 /**
