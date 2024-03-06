@@ -35,6 +35,7 @@ mod derivative_of_product;
 mod derivative_of_sum;
 mod derivative_of_negation;
 mod derivative_constant_coefficients;
+mod evaluate_exponents;
 
 pub trait DerivationRule {
     /**
@@ -76,4 +77,5 @@ pub static ALL_RULES: Mutex<&[&(dyn DerivationRule + Sync)]> =
     &derivative_of_sum::DerivativeOfSum {},
     &derivative_of_negation::PullOutNegation {},
     &derivative_constant_coefficients::PullOutConst {},
+    &evaluate_exponents::EvaluateExponents {},
 ]);
