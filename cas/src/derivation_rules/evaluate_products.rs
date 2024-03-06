@@ -20,6 +20,10 @@ impl DerivationRule for EvaluateProducts {
                 _ => false
             });
 
+        if ints.len() <= 1 {
+            return vec![];
+        }
+
         let product = ints.into_iter().map(|i| match i {
             Expression::Integer(i) => i.value(),
             _ => panic!()
