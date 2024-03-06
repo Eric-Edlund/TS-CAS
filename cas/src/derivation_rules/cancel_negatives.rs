@@ -38,10 +38,16 @@ impl DerivationRule for CancelNegatives {
             }
         }
 
-        return vec![(
-            Product::of(&new_factors).unwrap(),
+        let result = Product::of(&new_factors).unwrap();
+
+        if result == input {
+            return vec![];
+        }
+
+        vec![(
+            result,
             Argument::new(String::from("cancelled negatives"), vec![input.clone()]),
-        )];
+        )]
     }
 }
 
