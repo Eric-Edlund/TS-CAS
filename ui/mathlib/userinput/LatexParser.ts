@@ -291,6 +291,9 @@ function group(
                 } else {
                     integrand = group(nodes, i + 1, lastD - 1)
                 }
+                if (integrand == null) {
+                    return null
+                }
 
                 // If there is no specified variable
                 if (lastD + 1 > end) {

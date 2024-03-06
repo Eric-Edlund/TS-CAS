@@ -17,6 +17,7 @@ test("Latex is parsed correctly", () => {
     const EXP_6 = "\\int dx"
     const EXP_7 = "\\int xd(x+1) + 7"
     const EXP_8 = "\\frac{d}{dx} a + z"
+    const EXP_9 = "\\int \\int xdxdy"
     // TODO: logs
 
     function expect(latex: string, value: Expression): void {
@@ -47,5 +48,5 @@ test("Latex is parsed correctly", () => {
     expect(EXP_6, Integral.of(num(1), v("x")))
     expect(EXP_7, sum(Integral.of(v("x"), sum(v("x"), num(1))), num(7)))
     expect(EXP_8, sum(Derivative.of(v("a"), v("x")), v("z")))
-
+    expect(EXP_9, Integral.of(Integral.of(v("x"), v("x")), v("y")))
 })
