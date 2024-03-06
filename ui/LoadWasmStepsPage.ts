@@ -108,7 +108,11 @@ export function setInputMode(mode: InputMode): void {
     if (mode == "quill") {
         const inputView = document.createElement("span")
         inputView.classList.add('col', 's12')
-        inputView.style.minHeight = "2em"
+        // inputView.style.minHeight = "2em"
+        inputView.style.fontSize = "2em"
+        inputView.style.textAlign = "center"
+        //inputView.style.text
+        inputView.style.padding = ".5em"
         const quill = MQ.MathField(inputView, {
             handlers: {
                 edit: function() {
