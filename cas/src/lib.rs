@@ -9,29 +9,12 @@ mod mathxml;
 mod convenience_expressions;
 
 use deriver::Deriver;
-use expressions::{Expression, ExpressionId, read_object_from_json};
+use expressions::{Expression, read_object_from_json};
 use graph::Graph;
 use graph_traversal::{expression_complexity_cmp, Path};
 use petgraph::{visit::IntoNodeReferences, algo::astar};
 use serde_json::json;
 use wasm_bindgen::prelude::*;
-
-/**
-* Takes an ascii string and reads it into an expression.
-*/
-pub fn expression_from_ascii(_string: &str) -> ExpressionId {
-    todo!()
-}
-
-pub fn find_equivalents(exp: Expression) -> Graph {
-    let mut graph = Graph::new();
-    graph.add_node(exp);
-    let mut deriver = Deriver::new();
-
-    deriver.expand(&mut graph);
-
-    graph
-}
 
 /**
 * Takes an expression in JSON form, parses, simplifies then returns
@@ -123,30 +106,4 @@ extern "C" {
     // `log(..)`
     #[wasm_bindgen(js_namespace = console)]
     fn log(s: &str);
-}
-
-#[cfg(test)]
-mod tests {
-    use serde_json::Value;
-
-    use super::*;
-
-    #[test]
-    fn simplify_with_steps_test() {
-        // Shouldn't panic
-        let result = simplify_with_steps("1 + 1");
-        println!("{}", result);
-    }
-
-    #[test]
-    fn one_plus_one() {
-        let result = simplify_with_steps("{\"num\": 1}");
-        println!("{}", result);
-        match serde_json::from_str(&result).unwrap() {
-            Value::Array(a) => {
-                assert!(a.last().unwrap() == "<mn>1</mn>")
-            },
-            _ => assert!(false),
-        }
-    }
 }
