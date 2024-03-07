@@ -5,7 +5,7 @@ use serde_json::json;
 
 use super::{Expression, IExpression, EXPRESSION_INSTANCES};
 
-#[derive(PartialEq, Eq, Hash)]
+#[derive(PartialEq, Eq, Hash, Clone, Copy)]
 pub enum TrigFn {
     Sin,
     Cos,
@@ -31,7 +31,7 @@ impl fmt::Display for TrigFn {
             TrigFn::Sec => "Sec",
             TrigFn::Cot => "Cot",
             TrigFn::ArcSin => "Arcsin",
-            TrigFn::ArcCos => "Arccot",
+            TrigFn::ArcCos => "Arccos",
             TrigFn::ArcTan => "Arctan",
             TrigFn::ArcSec => "Arcsec",
             TrigFn::ArcCsc => "Arccsc",
@@ -43,9 +43,9 @@ impl fmt::Display for TrigFn {
 /**
 * Represents any of sin, cos, tan, sec, csc, cot, and arc*
 */
-#[derive(PartialEq, Eq, Hash)]
+#[derive(PartialEq, Eq, Hash, Clone)]
 pub struct TrigExp {
-    operation: TrigFn,
+    pub operation: TrigFn,
     exp: Expression,
 }
 
