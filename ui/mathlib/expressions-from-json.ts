@@ -7,6 +7,7 @@ import { Integral } from "./expressions/Integral";
 import { Logarithm } from "./expressions/Logarithm";
 import { Product } from "./expressions/Product";
 import { Sum } from "./expressions/Sum";
+import { TrigExp } from "./expressions/TrigExp";
 import { Variable } from "./expressions/Variable";
 
 /**
@@ -54,5 +55,17 @@ function parseRec(obj: any): Expression {
             parseRec(arr[2])
         );
         case "Negation": return Product.of([Integer.of(-1), parseRec(arr[1])]);
+        case "Sin": return TrigExp.of("Sin", parseRec(arr[1]));
+        case "Cos": return TrigExp.of("Cos", parseRec(arr[1]));
+        case "Tan": return TrigExp.of("Tan", parseRec(arr[1]));
+        case "Sec": return TrigExp.of("Sec", parseRec(arr[1]));
+        case "Csc": return TrigExp.of("Csc", parseRec(arr[1]));
+        case "Cot": return TrigExp.of("Cot", parseRec(arr[1]));
+        case "Arcsin": return TrigExp.of("Arcsin", parseRec(arr[1]));
+        case "Arccos": return TrigExp.of("Arccos", parseRec(arr[1]));
+        case "Arctan": return TrigExp.of("Arctan", parseRec(arr[1]));
+        case "Arccsc": return TrigExp.of("Arccsc", parseRec(arr[1]));
+        case "Arcsec": return TrigExp.of("Arcsec", parseRec(arr[1]));
+        case "Arccot": return TrigExp.of("Arccot", parseRec(arr[1]));
     }
 }

@@ -1,11 +1,25 @@
-import { assert } from "../util/assert"
 import { VariableValueMap } from "../VariableValueMap"
 import { Expression } from "./Expression"
-import { Integer, IntegerType } from "./Integer";
-import { Variable, VariableType } from "./Variable";
+import { IntegerType } from "./Integer";
+import { VariableType } from "./Variable";
 
-type TrigFn = "Sin" | "Cos" | "Tan" | "Sec" | "Csc" | "Cot"
-            | "Arcsin" | "Arccos" | "Arctan" | "Arcsec" | "Arccos" | "Arccot"
+export type TrigFn = "Sin" | "Cos" | "Tan" | "Sec" | "Csc" | "Cot"
+            | "Arcsin" | "Arccos" | "Arctan" | "Arcsec" | "Arccsc" | "Arccot"
+
+export function isTrigFn(val: string): boolean {
+    return val === "Sin"
+        || val === "Cos"
+        || val === "Tan"
+        || val === "Sec"
+        || val === "Csc"
+        || val === "Cot"
+        || val === "Arcsin"
+        || val === "Arccos"
+        || val === "Arctan"
+        || val === "Arcsec"
+        || val === "Arccsc"
+        || val === "Arccot"
+}
 
 export class TrigExp extends Expression {
     public static of(fn: TrigFn, exp: Expression): TrigExp {
@@ -26,13 +40,14 @@ export class TrigExp extends Expression {
     public class: string = TrigType
     public toMathXML(): string {
         function wrapIfNeeded(exp: Expression): string {
-            if (exp.class === IntegerType || exp.class === VariableType) {
-                return '(' + exp.toMathXML() + ')'
+            if (exp.class !== IntegerType && exp.class !== VariableType) {
+                return '<mo>(</mo>' + exp.toMathXML() + '<mo>)</mo>'
             }
             return exp.toMathXML();
         }
 
-        return "<mrow>" + this.operation.toLowerCase() + wrapIfNeeded(this.exp) + "</mrow>"
+        return "<mrow><mtext>" + this.operation.toLowerCase() + 
+            "</mtext><mrow>" + wrapIfNeeded(this.exp) + "</mrow></mrow>"
     }
 
     public toString(): string {

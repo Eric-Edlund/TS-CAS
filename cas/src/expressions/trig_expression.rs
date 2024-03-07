@@ -86,7 +86,7 @@ impl TrigExp {
 }
 
 fn get_id(op: &TrigFn, exp: &Expression) -> String {
-    format!("{} {}", op, exp)
+    format!("{} {}", op, exp.as_stringable().id())
 }
 
 impl IExpression for TrigExp {
