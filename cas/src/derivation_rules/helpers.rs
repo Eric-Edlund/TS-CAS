@@ -63,6 +63,7 @@ fn children_of<'a>(exp: &'a ExpressionPtr) -> Vec<ExpressionPtr> {
         Expression::Fraction(f) => [f.numerator(), f.denominator()].into_iter().collect(),
         Expression::Logarithm(l) => [l.base(), l.exp()].into_iter().collect(),
         Expression::Derivative(d) => [d.exp(), d.relative_to()].into_iter().collect(),
+        Expression::Trig(t) => [t.exp()].into_iter().collect(),
     }
 }
 

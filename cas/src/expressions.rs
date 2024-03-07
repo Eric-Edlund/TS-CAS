@@ -17,6 +17,7 @@ pub mod fraction;
 pub mod logarithm;
 pub mod derivative;
 pub mod integral;
+pub mod trig_expression;
 mod read_from_json;
 
 pub use integer::Integer;
@@ -30,6 +31,7 @@ pub use fraction::Fraction;
 pub use logarithm::Logarithm;
 pub use derivative::Derivative;
 pub use integral::Integral;
+pub use trig_expression::TrigExp;
 pub use read_from_json::*;
 
 pub trait IExpression {
@@ -88,6 +90,7 @@ pub enum Expression {
     Logarithm(Arc<Logarithm>),
     Derivative(Arc<Derivative>),
     Integral(Arc<Integral>),
+    Trig(Arc<TrigExp>)
 }
 
 impl Expression {}
@@ -105,6 +108,7 @@ impl fmt::Debug for Expression {
             Expression::Logarithm(p) => p as &dyn fmt::Debug,
             Expression::Derivative(p) => p as &dyn fmt::Debug,
             Expression::Integral(p) => p as &dyn fmt::Debug,
+            Expression::Trig(p) => p as &dyn fmt::Debug,
         }))
     }
 }
@@ -122,6 +126,7 @@ impl PartialEq for Expression {
             Expression::Logarithm(p) => p.clone(),
             Expression::Derivative(p) => p.clone(),
             Expression::Integral(p) => p.clone(),
+            Expression::Trig(p) => p.clone(),
         };
         let second: Arc<dyn IExpression> = match other {
             Expression::Negation(p) => p.clone(),
@@ -134,8 +139,8 @@ impl PartialEq for Expression {
             Expression::Logarithm(p) => p.clone(),
             Expression::Derivative(p) => p.clone(),
             Expression::Integral(p) => p.clone(),
+            Expression::Trig(p) => p.clone(),
         };
-
 
         Arc::ptr_eq(&first, &second)
     }
@@ -161,6 +166,7 @@ impl Expression {
             Expression::Logarithm(l) => l.clone(),
             Expression::Derivative(d) => d.clone(),
             Expression::Integral(i) => i.clone(),
+            Expression::Trig(t) => t.clone(),
         }
     }
 
@@ -176,6 +182,7 @@ impl Expression {
             Expression::Logarithm(l) => l.to_json(),
             Expression::Derivative(d) => d.to_json(),
             Expression::Integral(i) => i.to_json(),
+            Expression::Trig(t) => t.to_json(),
         }
     }
 }
