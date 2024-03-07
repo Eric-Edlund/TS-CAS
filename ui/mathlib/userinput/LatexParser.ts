@@ -204,6 +204,12 @@ function group(
     function isCloseParen(node: Ast.Node): boolean {
         return node.type === "string" && node.content === ")"
     }
+    function isExponent(node: Ast.Node): Expression | null {
+        if (node.type === "macro" && node.content === "^") {
+            return group(node.args[0].content)
+        }
+        return null
+    }
 
     // Begins searching at start and finds the first index
     // of a + or non-unary - not in a deeper level of parens
@@ -227,7 +233,9 @@ function group(
     let subtractNext = false
     // A stack of trig functions we are currently parsing.
     // Trig functions only capture the following next factor.
-    let trigStack: TrigFn[] = [];
+    // If it is a TrigFn, then you have a trig function to unpack.
+    // If it's an expression, then you have an exponent to unpack.
+    let trigStack: (Expression | TrigFn)[] = [];
     while (i <= end) {
         let factors = []
 
@@ -238,7 +246,13 @@ function group(
         function addFactor(exp: Expression): void {
             let result = exp
             while (trigStack.length > 0) {
-                result = TrigExp.of(trigStack.pop(), exp);
+                const top = trigStack.pop();
+                if (top instanceof Expression) {
+                    console.log("Unrolling " + top)
+                    result = Exponent.of(result, top);
+                } else {
+                    result = TrigExp.of(top as TrigFn, result);
+                }
             }
             factors.push(result)
         }
@@ -401,20 +415,15 @@ function group(
                 continue;
             }
 
-            if (curr.type === "macro" && curr.content === "^") {
+            let exponent = isExponent(curr);
+            if (exponent) {
                 const lastFactor = factors.pop();
                 if (lastFactor == undefined) {
                     // ^ must follow a factor
                     return null
                 }
                 
-                const power = group(curr.args[0].content);
-                if (power == null) {
-                    // Something can't be raised to nothing
-                    return null
-                }
-
-                addFactor(Exponent.of(lastFactor, power))
+                addFactor(Exponent.of(lastFactor, exponent))
                 i++;
                 continue;
             }
@@ -433,6 +442,15 @@ function group(
                 || curr.content === "arccsc"
                 || curr.content === "arccot"
                 )) {
+                // Look ahead to grab any exponent like cos^2
+                let power = null;
+                if (i+1 <= end) {
+                    power = isExponent(nodes[i+1]);
+                }
+                if (power != null) {
+                    trigStack.push(power)
+                    i++
+                }
                 trigStack.push(curr.content.charAt(0).toUpperCase() 
                     + curr.content.slice(1) as TrigFn);
                 i++;
@@ -441,9 +459,6 @@ function group(
 
             let interpretation = interpret(curr);
             if (interpretation) {
-                while (trigStack.length > 0) {
-                    interpretation = TrigExp.of(trigStack.pop(), interpretation)
-                }
                 addFactor(interpretation)
             }
             i++
