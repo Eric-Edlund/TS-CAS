@@ -5,6 +5,7 @@ import { FractionType } from "./Fraction"
 import { Integer, IntegerType } from "./Integer"
 import { ProductType } from "./Product"
 import { SumType } from "./Sum"
+import { TrigType } from "./TrigExp"
 
 export class Exponent extends Expression {
     public static of(base: Expression, power: Expression): Exponent {
@@ -22,7 +23,8 @@ export class Exponent extends Expression {
             if (
                 exp.class == SumType ||
                 exp.class == ProductType ||
-                exp.class == FractionType
+                exp.class == FractionType ||
+                exp.class == TrigType
             )
                 return inRow(inParen(exp.toMathXML()))
             return exp.toMathXML()
