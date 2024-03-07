@@ -1,6 +1,5 @@
 import { MathGraphNode } from "../MathGraphNode"
 import { VariableValueMap } from "../VariableValueMap"
-import { IntegerType } from "./Integer"
 import { MathElement } from "./MathElement"
 
 export interface JSONMath {
