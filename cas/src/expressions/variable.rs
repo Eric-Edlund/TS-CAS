@@ -44,10 +44,6 @@ impl IExpression for Variable {
         self.symbol.clone()
     }
 
-    fn to_math_xml(&self) -> String {
-        format!("<mi>{}</mi>", self.symbol)
-    }
-
     fn id(&self) -> String {
         get_id(&self.symbol)
     }

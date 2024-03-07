@@ -43,25 +43,6 @@ impl IExpression for Exponent {
             self.power.as_stringable().to_unambigious_string())
     }
 
-    fn to_math_xml(&self) -> String {
-        fn wrap_if_needed(exp: &ExpressionPtr) -> String {
-            let stringable = exp.as_stringable();
-            match exp {
-                Expression::Sum(s) =>
-                    in_row(&in_paren(&s.to_math_xml())),
-                Expression::Product(p) => 
-                    in_row(&in_paren(&p.to_math_xml())),
-                _ => stringable.to_math_xml(),
-            }
-        }
-
-        format!(
-            "<msup>{}{}</msup>",
-            wrap_if_needed(&self.base),
-            &in_row(&self.power.as_stringable().to_math_xml())
-        )
-    }
-
     fn id(&self) -> String {
         get_id(&self.base, &self.power)
     }

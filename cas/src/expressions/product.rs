@@ -104,28 +104,6 @@ impl IExpression for Product {
         result + ")"
     }
 
-    fn to_math_xml(&self) -> String {
-        let mut result = String::new();
-
-        fn wrap_if_needed(exp: &ExpressionPtr) -> String {
-            match exp {
-                Expression::Product(e) =>
-                    format!("<mo>(</mo>{}<mo>)</mo>", e.to_math_xml()),
-                Expression::Sum(e) =>
-                    format!("<mo>(</mo>{}<mo>)</mo>", e.to_math_xml()),
-                _ => exp.as_stringable().to_math_xml()
-
-            }
-        }
-
-        result += &wrap_if_needed(&self._factors[0]);
-        for factor in self._factors.iter().skip(1) {
-            result += "<mo>⋅</mo>";
-            result += &wrap_if_needed(&factor);
-        }
-        result
-    }
-
     fn id(&self) -> String {
         let mut suffix = String::new();
         for exp in &self._factors {
@@ -177,12 +155,5 @@ mod tests {
             "Id not preserved"
         );
         assert_eq!(product, product2, "Flywheel not working");
-    }
-
-    #[test]
-    fn to_math_xml() {
-        let exp = Product::of(&[Integer::of(1), Integer::of(0)]).unwrap();
-        assert_eq!(exp.as_stringable().to_math_xml(), 
-            "<mn>1</mn><mn>0</mn>");
     }
 }

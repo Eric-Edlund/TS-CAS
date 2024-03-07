@@ -52,12 +52,6 @@ impl IExpression for Integral {
             self.relative_to.as_stringable().to_unambigious_string())
     }
 
-    fn to_math_xml(&self) -> String {
-        format!("<mrow><mo>∫</mo>{}<md>d</md>{}</mrow>",
-        self.integrand.as_stringable().to_unambigious_string(),
-        self.relative_to.as_stringable().to_unambigious_string())
-    }
-
     fn id(&self) -> String {
         get_id(&self.integrand, &self.relative_to)
     }

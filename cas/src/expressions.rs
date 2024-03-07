@@ -42,11 +42,6 @@ pub trait IExpression {
     fn to_unambigious_string(&self) -> String;
 
     /**
-     * Creates a mathxml string to display this expression.
-     */
-    fn to_math_xml(&self) -> String;
-
-    /**
      * A string representing the operation used in generating hashes
      * for expressions without instantiating temporary versions of them.
      * The string is unique to the expression implementation.

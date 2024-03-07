@@ -36,10 +36,6 @@ impl IExpression for Integer {
         self.value.to_string()
     }
 
-    fn to_math_xml(&self) -> String {
-        String::from("<mn>") + self.value.to_string().as_str() + "</mn>"
-    }
-
     fn id(&self) -> String {
         format!("integer{}", self.value)
     }

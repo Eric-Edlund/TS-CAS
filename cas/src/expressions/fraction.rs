@@ -51,12 +51,6 @@ impl IExpression for Fraction {
             self.denominator.as_stringable().to_unambigious_string())
     }
 
-    fn to_math_xml(&self) -> String {
-        format!("<mfrac><mrow>{}</mrow><mrow>{}</mrow></mfrac>", 
-            self.numerator.as_stringable().to_unambigious_string(),
-            self.denominator.as_stringable().to_unambigious_string())
-    }
-
     fn id(&self) -> String {
         get_id(&self.numerator, &self.denominator)
     }

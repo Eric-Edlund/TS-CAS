@@ -53,12 +53,6 @@ impl IExpression for Logarithm {
         self.exp.as_stringable().to_unambigious_string())
     }
 
-    fn to_math_xml(&self) -> String {
-        format!("<mrow><msub><mtext>log</mtext>{}</msub><mrow>{}</mrow></mrow>",
-            self.base.as_stringable().to_math_xml(),
-            self.exp.as_stringable().to_math_xml())
-    }
-
     fn id(&self) -> String {
         get_id(&self.base, &self.exp)
     }

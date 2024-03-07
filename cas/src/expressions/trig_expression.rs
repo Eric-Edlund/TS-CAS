@@ -96,10 +96,6 @@ impl IExpression for TrigExp {
             self.exp.as_stringable().to_unambigious_string())
     }
 
-    fn to_math_xml(&self) -> String {
-        todo!()
-    }
-
     fn id(&self) -> String {
         get_id(&self.operation, &self.exp)
     }
