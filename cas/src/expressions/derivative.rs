@@ -51,12 +51,6 @@ impl IExpression for Derivative {
             self.relative_to.as_stringable().to_unambigious_string())
     }
 
-    fn to_math_xml(&self) -> String {
-        format!("<mfrac><mn>d</mn><mrow><mn>d</mn>{}</mrow></mfrac>{}",
-            self.exp.as_stringable().to_math_xml(),
-            self.relative_to.as_stringable().to_math_xml())
-    }
-
     fn id(&self) -> String {
         format!("Derivative{}{}", self.exp(), self.relative_to())
     }
