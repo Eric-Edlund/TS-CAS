@@ -15,6 +15,7 @@ import { Logarithm } from "../expressions/Logarithm"
 import { argv0 } from "process"
 import { Derivative } from "../expressions/Derivative"
 import { Exponent } from "../expressions/Exponent"
+import { TrigExp, TrigFn } from "../expressions/TrigExp"
 
 /**
  * Parses latex expression into internal expression.
@@ -105,7 +106,6 @@ function trimWhiteSpace(nodes: Ast.Node[]): void {
  * and gets the expression for it.
  */
 function interpret(node: Ast.Node): Expression | null{
-
     switch (node.type) {
         case "macro":
             switch (node.content) {
@@ -225,8 +225,23 @@ function group(
     const terms = []
     let i = start
     let subtractNext = false
+    // A stack of trig functions we are currently parsing.
+    // Trig functions only capture the following next factor.
+    let trigStack: TrigFn[] = [];
     while (i <= end) {
         let factors = []
+
+        /**
+        * Adds the expression to the factors list,
+        * collapsing the trig stack if there is one.
+        */
+        function addFactor(exp: Expression): void {
+            let result = exp
+            while (trigStack.length > 0) {
+                result = TrigExp.of(trigStack.pop(), exp);
+            }
+            factors.push(result)
+        }
 
         if (subtractNext) {
             subtractNext = false
@@ -235,7 +250,7 @@ function group(
         while (i <= end) {
             const curr = nodes[i]
             if (isUnaryMinus(i)) {
-                factors.push(Integer.of(-1))
+                addFactor(Integer.of(-1))
                 i++
                 continue
             }
@@ -263,7 +278,7 @@ function group(
                 }
                 const parenExp = group(nodes, i + 1, j - 1)
                 if (parenExp != null) {
-                    factors.push(parenExp)
+                    addFactor(parenExp)
                 }
                 i = j + 1
                 continue
@@ -330,7 +345,7 @@ function group(
 
                 const result = Integral.of(integrand, variable)
                 // console.log(result.toUnambigiousString())
-                factors.push(result)
+                addFactor(result)
                 if (plusIndex !== -1) {
                     i = plusIndex 
                 } else {
@@ -353,7 +368,7 @@ function group(
                     base = Integer.of(10)
                 }
 
-                factors.push(Logarithm.of(v("Not read"), base))
+                addFactor(Logarithm.of(v("Not read"), base))
                 //TODO: Finish log
 
                 continue
@@ -377,7 +392,7 @@ function group(
                     return null
                 }
 
-                factors.push(Derivative.of(exp, derivative))
+                addFactor(Derivative.of(exp, derivative))
                 if (plusIndex !== -1) {
                     i = plusIndex
                 } else {
@@ -399,14 +414,37 @@ function group(
                     return null
                 }
 
-                factors.push(Exponent.of(lastFactor, power))
+                addFactor(Exponent.of(lastFactor, power))
                 i++;
                 continue;
             }
 
-            const interpretation = interpret(curr);
+            if (curr.type === "macro"
+                && (curr.content === "sin"
+                || curr.content === "cos"
+                || curr.content === "tan"
+                || curr.content === "sec"
+                || curr.content === "csc"
+                || curr.content === "cot"
+                || curr.content === "arcsin"
+                || curr.content === "arccos"
+                || curr.content === "arctan"
+                || curr.content === "arcsec"
+                || curr.content === "arccsc"
+                || curr.content === "arccot"
+                )) {
+                trigStack.push(curr.content.charAt(0).toUpperCase() 
+                    + curr.content.slice(1) as TrigFn);
+                i++;
+                continue;
+            }
+
+            let interpretation = interpret(curr);
             if (interpretation) {
-                factors.push(interpretation)
+                while (trigStack.length > 0) {
+                    interpretation = TrigExp.of(trigStack.pop(), interpretation)
+                }
+                addFactor(interpretation)
             }
             i++
         }

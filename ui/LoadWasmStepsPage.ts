@@ -51,7 +51,7 @@ let expression: Expression | null
  */
 function onInputExpressionChanged() {
     if (expression == undefined) return
-    console.log(expression.toUnambigiousString())
+    console.log("Parsed " + expression.toJSON())
 
     let r = simplify_with_steps(expression.toJSON())
 
