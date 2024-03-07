@@ -36,8 +36,13 @@ mod derivative_of_sum;
 mod derivative_of_negation;
 mod derivative_constant_coefficients;
 mod evaluate_exponents;
-// mod pythagorean_identities;
-// mod tan_identity;
+mod pythagorean_identities;
+mod tan_identity;
+mod integral_of_trig;
+mod derivative_of_trig;
+mod cancel_trig_inverses;
+mod cancel_trig_arcs;
+mod trig_reflections;
 
 pub trait DerivationRule {
     /**
@@ -80,6 +85,11 @@ pub static ALL_RULES: Mutex<&[&(dyn DerivationRule + Sync)]> =
     &derivative_of_negation::PullOutNegation {},
     &derivative_constant_coefficients::PullOutConst {},
     &evaluate_exponents::EvaluateExponents {},
-    // &pythagorean_identities::Pythagoras {},
-    // &tan_identity::TanIdentity {},
+    &pythagorean_identities::Pythagoras {},
+    &tan_identity::TanIdentity {},
+    &integral_of_trig::IntegralOfTrig {},
+    &derivative_of_trig::DerivativeOfTrig {},
+    &cancel_trig_inverses::CancelTrigInverses {},
+    &cancel_trig_arcs::CancelTrigArcFunctions {},
+    &trig_reflections::TrigReflections {},
 ]);
