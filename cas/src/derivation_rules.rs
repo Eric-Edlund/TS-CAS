@@ -2,7 +2,7 @@ use std::{rc::Rc, sync::Mutex};
 
 use crate::{argument::Argument, expressions::ExpressionPtr};
 
-mod helpers;
+pub mod helpers;
 
 mod cancel_negatives;
 mod additive_identity;

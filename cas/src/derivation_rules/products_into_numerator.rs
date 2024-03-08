@@ -1,6 +1,6 @@
 use std::rc::Rc;
 
-use crate::{argument::Argument, expressions::{product::product_of_iter, Expression, ExpressionPtr, Fraction}};
+use crate::{argument::Argument, convenience_expressions::ordered, expressions::{product::product_of_iter, Expression, ExpressionPtr, Fraction}};
 
 use super::DerivationRule;
 
@@ -38,7 +38,7 @@ impl DerivationRule for ProductsIntoNumerator {
                 .cloned()
                 );
 
-            results.push(product_of_iter(&mut [Fraction::of(
+            results.push(ordered(product_of_iter(&mut [Fraction::of(
                 new_num, 
                 fraction.denominator())].iter()
                 .chain(fractions.iter()
@@ -46,7 +46,7 @@ impl DerivationRule for ProductsIntoNumerator {
                     .cloned()
                 )
                 .cloned()
-            ));
+            )));
         }
 
         results.into_iter().map(|exp| {

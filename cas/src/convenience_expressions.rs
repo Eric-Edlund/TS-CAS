@@ -1,6 +1,7 @@
 #![allow(dead_code)]
-use crate::expressions::{trig_expression::TrigFn, Exponent, Expression, ExpressionPtr, Integer, Product, Sum, TrigExp, Variable};
+use std::cmp::Ordering;
 
+use crate::{derivation_rules::helpers::dependent_variables, expressions::{product::product_of, trig_expression::TrigFn, Exponent, Expression, ExpressionPtr, Integer, Product, Sum, TrigExp, Variable}};
 
 pub fn product(f: ExpressionPtr, f1: ExpressionPtr) -> ExpressionPtr {
     Product::of(&[f, f1]).unwrap()
@@ -68,3 +69,74 @@ pub fn arcsec(exp: Expression) -> Expression {
     TrigExp::of(TrigFn::ArcSec, exp)
 }
 
+
+/**
+* Returns a version of the expression with the products ordered
+* nicely. This is stuff like 7a instead of a7.
+* Not recursive.
+*/
+pub fn ordered(exp: Expression) -> Expression {
+    match exp {
+        Expression::Product(p) => {
+            let mut factors = p.factors().clone();
+            factors.sort_by(factor_ord);
+            product_of(&factors)
+        },
+        _ => exp
+    }
+}
+
+fn factor_ord(a: &Expression, b: &Expression) -> Ordering {
+    let vars_a = dependent_variables(a);
+    let vars_b = dependent_variables(b);
+    if vars_a.is_empty() && !vars_b.is_empty() {
+        return Ordering::Less;
+    }
+    if vars_b.is_empty() && !vars_a.is_empty() {
+        return Ordering::Greater;
+    }
+    if vars_a.is_empty() && vars_b.is_empty() {
+        return Ordering::Equal;
+    }
+
+    let min_a = vars_a.iter()
+        .map(|e| match e {
+            Expression::Variable(v) => v.symbol(),
+            _ => panic!()
+        })
+        .min_by(|a, b| a.cmp(b))
+        .unwrap();
+
+    let min_b = vars_b.iter()
+        .map(|e| match e {
+            Expression::Variable(v) => v.symbol(),
+            _ => panic!()
+        })
+        .min_by(|a, b| a.cmp(b))
+        .unwrap();
+
+    min_a.cmp(min_b)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn factor_ordering() {
+        let start = product_of(&[v("x"), i(1)]);
+        let end = ordered(start);
+        assert_eq!(end, product_of(&[i(1), v("x")]));
+
+        assert_eq!(factor_ord(&i(1), &v("x")), Ordering::Less);
+        assert_eq!(factor_ord(&power(v("t"), i(5)), &i(2)), Ordering::Greater);
+
+        let start1 = product_of(&[power(v("t"), i(5)), i(2)]);
+        let end1 = ordered(start1);
+        assert_eq!(end1, product_of(&[i(2), power(v("t"), i(5))]));
+
+        let start2 = product_of(&[v("b"), v("a")]);
+        let end2 = ordered(start2);
+        assert_eq!(end2, product_of(&[v("a"), v("b")]));
+    }
+}
