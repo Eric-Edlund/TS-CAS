@@ -28,19 +28,16 @@ impl Deriver {
 
     /*
      * Expands the graph with equivalent expressions.
+     * @param depth The number of recursions used to search for equivlaents.
      */
-    pub fn expand(&mut self, graph: &mut Graph) {
+    pub fn expand(&mut self, graph: &mut Graph, depth: u32) {
         for i in graph.node_indices() {
             let node = graph.node_weight(i).unwrap();
             self.node_indices.insert(node.clone(), i);
         }
-        self.pass(graph);
-        self.pass(graph);
-        self.pass(graph);
-        self.pass(graph);
-        self.pass(graph);
-        self.pass(graph);
-        self.pass(graph);
+        for _ in 0..depth {
+            self.pass(graph);
+        }
     }
 
     fn pass(&mut self, graph: &mut Graph) {

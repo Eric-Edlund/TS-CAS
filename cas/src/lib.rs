@@ -1,4 +1,4 @@
-pub mod expressions;
+mod expressions;
 
 mod graph_traversal;
 mod argument;
@@ -40,7 +40,7 @@ use wasm_bindgen::prelude::*;
 * 2) "success" is true if a simpler equivalent expression was found.
 */
 #[wasm_bindgen]
-pub fn simplify_with_steps(json_expression: &str) -> String {
+pub fn simplify_with_steps(json_expression: &str, search_depth: u32) -> String {
     let expression = match read_object_from_json(json_expression) {
         Ok(exp) => exp,
         Err(msg) => return msg,
@@ -49,7 +49,7 @@ pub fn simplify_with_steps(json_expression: &str) -> String {
     let mut deriver = Deriver::new();
 
     let start = graph.add_node(expression.clone());
-    deriver.expand(&mut graph);
+    deriver.expand(&mut graph, search_depth);
 
     let simplest_exp = graph.node_references()
         .min_by(|a, b| expression_complexity_cmp(a.1, b.1))
@@ -86,7 +86,7 @@ pub fn get_all_equivalents(json_expression: &str) -> String {
     let mut deriver = Deriver::new();
 
     graph.add_node(expression.clone());
-    deriver.expand(&mut graph);
+    deriver.expand(&mut graph, 5);
 
     let mut result = Vec::new();
     result.extend(graph.node_weights().map(|e| e.as_stringable().to_json()));

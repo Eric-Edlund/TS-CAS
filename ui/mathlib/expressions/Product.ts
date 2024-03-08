@@ -1,6 +1,6 @@
-import { assert } from "../util/assert"
-import { VariableValueMap } from "../VariableValueMap"
-import { Exponent } from "./Exponent"
+import { assert } from "../util/assert" 
+import { VariableValueMap } from "../VariableValueMap" 
+import { Exponent } from "./Exponent" 
 import { Expression } from "./Expression"
 import { Integer, IntegerType } from "./Integer"
 import { SumType } from "./Sum"
@@ -188,6 +188,9 @@ export class Product extends Expression {
     }
 
     toJSON(): string {
+        if (this.isNegation) {
+            return `["Negation",${this.factors[1].toJSON()}]`
+        }
         let result = '["Product"'
         for (const factor of this.factors) {
             result += ", " + factor.toJSON()
