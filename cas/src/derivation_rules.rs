@@ -43,6 +43,7 @@ mod derivative_of_trig;
 mod cancel_trig_inverses;
 mod cancel_trig_arcs;
 mod trig_reflections;
+mod integral_pull_out_negative;
 
 pub trait DerivationRule {
     /**
@@ -92,4 +93,5 @@ pub static ALL_RULES: Mutex<&[&(dyn DerivationRule + Sync)]> =
     &cancel_trig_inverses::CancelTrigInverses {},
     &cancel_trig_arcs::CancelTrigArcFunctions {},
     &trig_reflections::TrigReflections {},
+    &integral_pull_out_negative::IntegralPullOutNegative {},
 ]);
