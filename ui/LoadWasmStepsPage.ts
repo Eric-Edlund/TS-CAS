@@ -53,7 +53,7 @@ function onInputExpressionChanged() {
     if (expression == undefined) return
     console.log("Parsed " + expression.toJSON())
 
-    let r = simplify_with_steps(expression.toJSON())
+    let r = simplify_with_steps(expression.toJSON(), 25)
 
     let result: {
         steps: string[],
