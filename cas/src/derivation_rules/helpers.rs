@@ -23,7 +23,7 @@ pub fn is_constant(exp: &ExpressionPtr, delta: &ExpressionPtr) -> bool {
 * Gets all variables which determine the value of the expression,
 * including the expression if it is a variable.
 */
-fn dependent_variables(exp: &ExpressionPtr) -> Vec<ExpressionPtr> {
+pub fn dependent_variables(exp: &ExpressionPtr) -> Vec<ExpressionPtr> {
     if matches!(exp, Expression::Variable(_)) {
         return once(exp.clone()).collect();
     }
