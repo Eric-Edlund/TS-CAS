@@ -8,7 +8,7 @@ pub mod graph;
 mod mathxml;
 mod convenience_expressions;
 
-use deriver::Deriver;
+use deriver::{BruteForceProfile, Deriver, EvaluateFirstProfile, OptimizationProfile};
 use expressions::{Expression, read_object_from_json};
 use graph::Graph;
 use graph_traversal::{expression_complexity_cmp, Path};
@@ -40,13 +40,18 @@ use wasm_bindgen::prelude::*;
 * 2) "success" is true if a simpler equivalent expression was found.
 */
 #[wasm_bindgen]
-pub fn simplify_with_steps(json_expression: &str, search_depth: u32) -> String {
+pub fn simplify_with_steps(json_expression: &str, search_depth: u32, optimizer: &str) -> String {
     let expression = match read_object_from_json(json_expression) {
         Ok(exp) => exp,
         Err(msg) => return msg,
     };
     let mut graph = Graph::new();
-    let mut deriver = Deriver::new();
+    let opt: Box<dyn OptimizationProfile> = match optimizer {
+        "brute_force" => BruteForceProfile::new(),
+        "evaluate_first" => EvaluateFirstProfile::new(),
+        _ => panic!("Invalid optimizer")
+    };
+    let mut deriver = Deriver::new(opt);
 
     let start = graph.add_node(expression.clone());
     deriver.expand(&mut graph, search_depth);
@@ -76,14 +81,22 @@ pub fn simplify_with_steps(json_expression: &str, search_depth: u32) -> String {
     }).to_string()
 }
 
+/**
+* @param optimizer brute_force | evaluate_first
+*/
 #[wasm_bindgen]
-pub fn get_all_equivalents(json_expression: &str, search_depth: u32) -> String {
+pub fn get_all_equivalents(json_expression: &str, search_depth: u32, optimizer: &str) -> String {
     let expression = match read_object_from_json(json_expression) {
         Ok(exp) => exp,
         Err(msg) => return msg,
     };
     let mut graph = Graph::new();
-    let mut deriver = Deriver::new();
+    let opt: Box<dyn OptimizationProfile> = match optimizer {
+        "brute_force" => BruteForceProfile::new(),
+        "evaluate_first" => EvaluateFirstProfile::new(),
+        _ => panic!("Invalid optimizer")
+    };
+    let mut deriver = Deriver::new(opt);
 
     graph.add_node(expression.clone());
     deriver.expand(&mut graph, search_depth);

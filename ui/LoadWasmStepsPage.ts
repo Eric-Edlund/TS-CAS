@@ -53,7 +53,7 @@ function onInputExpressionChanged() {
     if (expression == undefined) return
     console.log("Parsed " + expression.toJSON())
 
-    let r = simplify_with_steps(expression.toJSON(), 20)
+    let r = simplify_with_steps(expression.toJSON(), 20, "evaluate_first")
 
     let result: {
         steps: string[],
@@ -82,7 +82,8 @@ function onInputExpressionChanged() {
     } else {
         // Fetch the equivalents it was able to find
         console.log("No solution found.")
-        let equivalents = JSON.parse(get_all_equivalents(expression.toJSON(), 20))["equivalents"]
+        let equivalents = JSON.parse(get_all_equivalents(expression.toJSON(), 20, 
+            "evaluate_first"))["equivalents"]
         console.log("Found " + equivalents.length + " equivalents.")
         solutionView.value = null
         stepListView.innerHTML = ""

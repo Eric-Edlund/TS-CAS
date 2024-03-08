@@ -24,8 +24,13 @@ impl DerivationRule for MultiplicativeIdentity {
             .map(|f| f.clone())
             .collect();
 
+        let result = product_of(&new_factors);
+        if result == input {
+            return vec![];
+        }
+
         vec![
-            (product_of(&new_factors),
+            (result,
             Argument::new("Multiplicative identity".to_owned(), vec![input]))
         ]
     }
