@@ -2,6 +2,7 @@ use std::rc::Rc;
 use std::sync::Arc;
 
 use crate::argument::Argument;
+use crate::expressions::Negation;
 use crate::expressions::Product;
 use crate::expressions::Expression;
 use crate::expressions::ExpressionPtr;
@@ -12,12 +13,13 @@ pub struct CancelNegatives {}
 
 impl DerivationRule for CancelNegatives {
     fn apply(&self, input: ExpressionPtr) -> Vec<(ExpressionPtr, Rc<Argument>)> {
+        // If true, result is negative
         let mut sign = false;
 
         let product: Arc<Product> = match input {
             Expression::Product(ref p) => p.clone(),
             Expression::Negation(ref n) => {
-                sign = !sign;
+                sign = true;
                 match n.child() {
                     Expression::Product(p) => p,
                     _ => return vec![],
@@ -38,7 +40,10 @@ impl DerivationRule for CancelNegatives {
             }
         }
 
-        let result = Product::of(&new_factors).unwrap();
+        let mut result = Product::of(&new_factors).unwrap();
+        if sign {
+            result = Negation::of(result);
+        }
 
         if result == input {
             return vec![];
