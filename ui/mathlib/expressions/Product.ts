@@ -1,3 +1,4 @@
+import { productOrNot } from "../ConvenientExpressions"
 import { assert } from "../util/assert" 
 import { VariableValueMap } from "../VariableValueMap" 
 import { Exponent } from "./Exponent" 
@@ -188,8 +189,8 @@ export class Product extends Expression {
     }
 
     toJSON(): string {
-        if (this.isNegation) {
-            return `["Negation",${this.factors[1].toJSON()}]`
+        if (this.factors[0].class === IntegerType && (this.factors[0] as Integer).value == -1) {
+            return `["Negation",${productOrNot(...this.factors.slice(1)).toJSON()}]`
         }
         let result = '["Product"'
         for (const factor of this.factors) {

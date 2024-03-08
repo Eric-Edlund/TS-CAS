@@ -52,6 +52,9 @@ export class Integer extends Expression {
     }
 
     public toJSON(): string {
+        if (this.value === -1) {
+            return `["Negation",{"num":${this.value}}]`
+        }
         return `{"num": ${this.value}}`
     }
 
