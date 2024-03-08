@@ -289,7 +289,7 @@ mod tests {
         let mut graph = Graph::new();
         let start = sum_of(&[i(1), i(3), i(3), product_of(&[i(3), i(3)])]);
         graph.add_node(start);
-        deriver.expand(&mut graph);
+        deriver.expand(&mut graph, 5);
 
         assert!(graph.node_weights().any(|exp| *exp == i(16)));
     }
