@@ -15,7 +15,6 @@ impl DerivationRule for AdditiveIdentity {
             _ => return vec![],
         };
 
-        println!("{:?}", sum);
         let non_zero_terms: Vec<ExpressionPtr> = sum.terms().iter()
             .filter(|x| match x {
                 Expression::Integer(i) => i.value() != 0,
