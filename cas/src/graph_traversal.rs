@@ -54,7 +54,7 @@ fn complexity(a: &ExpressionPtr) -> u32 {
             3 + complexity(&d.exp()) + complexity(&d.relative_to())
         },
         Expression::Integral(i) => {
-            6 + complexity(&i.integrand()) + complexity(&i.relative_to())
+            15 + complexity(&i.integrand()) + complexity(&i.relative_to())
         }
         Expression::Trig(t) => {
             2 + complexity(&t.exp()) + if t.arc() { 2 } else { 0 }

@@ -7,7 +7,7 @@ use wasm_bindgen::prelude::wasm_bindgen;
 
 use crate::argument::Argument;
 use crate::derivation_rules::ALL_RULES;
-use crate::expressions::{Derivative, Exponent, Expression, Fraction, Integral};
+use crate::expressions::{Derivative, Exponent, Expression, Fraction, Integral, Logarithm, Negation, TrigExp};
 use crate::expressions::product::product_of;
 use crate::expressions::sum::sum_of;
 use crate::graph::{Graph, RelType, Relationship};
@@ -51,10 +51,7 @@ impl Deriver {
                         rule.apply(exp.clone())
                     })
                 })
-                .flatten()
-                .inspect(|result| {
-                    println!("Derived {:?} -> {:?}, {}", result.1.grounds().iter().nth(0).unwrap(), result.0, result.1.message());
-                });
+                .flatten();
 
             for (derived, argument) in equivalents {
                 let index = if self.node_indices.contains_key(&derived) {
@@ -118,7 +115,9 @@ fn equiv(exp: &Expression, direct: &EquivFn) -> EquivList {
         Expression::Fraction(_) => fraction_equiv(exp, direct),
         Expression::Integral(_) => integral_equiv(exp, direct),
         Expression::Derivative(_) => derivative_equiv(exp, direct),
-        _ => vec![] //TODO: Implement all expression variants
+        Expression::Negation(_) => negation_equiv(exp, direct),
+        Expression::Trig(_) => trig_equiv(exp, direct),
+        Expression::Logarithm(_) => log_equiv(exp, direct),
     });
 
     result.into_iter().collect()
@@ -273,8 +272,60 @@ fn derivative_equiv(exp: &Expression, direct: &EquivFn) -> EquivList {
     }
 
     equivalents
-    
 }
+
+fn negation_equiv(exp: &Expression, direct: &EquivFn) -> EquivList {
+    let mut equivalents = Vec::<Derivation>::new();
+    let Expression::Negation(ref negation) = exp 
+    else {
+        panic!();
+    };
+
+    for deriv in equiv(&negation.child(), direct) {
+        equivalents.push((Negation::of(deriv.0), deriv.1));
+    }
+    equivalents
+}
+
+fn trig_equiv(exp: &Expression, direct: &EquivFn) -> EquivList {
+    let mut equivalents = Vec::<Derivation>::new();
+    let Expression::Trig(ref trig) = exp 
+    else {
+        panic!();
+    };
+
+    for deriv in equiv(&trig.exp(), direct) {
+        equivalents.push((TrigExp::of(trig.operation, deriv.0), deriv.1));
+    }
+    equivalents
+}
+
+fn log_equiv(exp: &Expression, direct: &EquivFn) -> EquivList {
+    let mut equivalents = Vec::<Derivation>::new();
+    let Expression::Logarithm(ref log) = exp
+    else {
+        panic!();
+    };
+
+    // for exp 
+    for deriv in equiv(&log.base(), direct) {
+        equivalents.push(
+            (Logarithm::of(deriv.0, log.exp()),
+            deriv.1)
+        );
+    }
+
+    // for variable
+    for deriv in equiv(&log.exp(), direct) {
+        equivalents.push(
+            (Logarithm::of(log.base(), deriv.0),
+            deriv.1)
+        );
+    }
+
+    equivalents
+}
+
 
 
 #[cfg(test)]

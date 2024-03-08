@@ -77,7 +77,7 @@ pub fn simplify_with_steps(json_expression: &str, search_depth: u32) -> String {
 }
 
 #[wasm_bindgen]
-pub fn get_all_equivalents(json_expression: &str) -> String {
+pub fn get_all_equivalents(json_expression: &str, search_depth: u32) -> String {
     let expression = match read_object_from_json(json_expression) {
         Ok(exp) => exp,
         Err(msg) => return msg,
@@ -86,24 +86,13 @@ pub fn get_all_equivalents(json_expression: &str) -> String {
     let mut deriver = Deriver::new();
 
     graph.add_node(expression.clone());
-    deriver.expand(&mut graph, 5);
+    deriver.expand(&mut graph, search_depth);
 
     let mut result = Vec::new();
     result.extend(graph.node_weights().map(|e| e.as_stringable().to_json()));
-    
-    graph.edge_weights().for_each(|e| {
-        log(&format!("{:?}", e));
-    });
 
     json!({
         "equivalents": &result,
     }).to_string()
 }
 
-#[wasm_bindgen]
-extern "C" {
-    // Use `js_namespace` here to bind `console.log(..)` instead of just
-    // `log(..)`
-    #[wasm_bindgen(js_namespace = console)]
-    fn log(s: &str);
-}
