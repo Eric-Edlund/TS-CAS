@@ -6,23 +6,119 @@ use petgraph::graph::NodeIndex;
 use wasm_bindgen::prelude::wasm_bindgen;
 
 use crate::argument::Argument;
-use crate::derivation_rules::ALL_RULES;
+use crate::derivation_rules::{ALL_RULES, STRICT_SIMPLIFYING_RULES};
 use crate::expressions::{Derivative, Exponent, Expression, Fraction, Integral, Logarithm, Negation, TrigExp};
 use crate::expressions::product::product_of;
 use crate::expressions::sum::sum_of;
 use crate::graph::{Graph, RelType, Relationship};
+
+
+/**
+* An object to describe what optimization strategy should be used
+* to minimize derivation steps.
+*/
+pub trait OptimizationProfile {
+    /**
+    * Generates a set of equivalent expressions from the given expression.
+    */
+    fn find_equivalents(&mut self, exp: &Expression) -> Vec<(Expression, Rc<Argument>)>;
+}
+
+/**
+* For every expression including children, apply every derivation rule
+* on every pass.
+*/
+pub struct BruteForceProfile {
+    already_seen: HashSet<Expression>,
+}
+impl BruteForceProfile {
+        pub fn new() -> Box<Self> {
+        Box::new(Self {
+            already_seen: HashSet::<Expression>::new(),
+        })
+    }
+}
+impl OptimizationProfile for BruteForceProfile {
+    fn find_equivalents(&mut self, exp: &Expression) -> Vec<(Expression, Rc<Argument>)> {
+        if self.already_seen.contains(exp) {
+            return vec![];
+        }
+        self.already_seen.insert(exp.clone());
+        let rules = *ALL_RULES.lock().unwrap();
+        rules.iter()
+            .map(|rule| {
+                equiv(&exp, &|e| {
+                    rule.apply(e.clone())
+                })
+            })
+            .flatten()
+            .collect()
+    }
+}
+
+/**
+* Apply evaluation/associative simplification rules with only one output
+* first. Expressions which are simplified by these rules are then excluded
+* from being used by more complex rules in later passes.
+*/
+pub struct EvaluateFirstProfile {
+    already_seen: HashSet<Expression>,
+}
+
+impl EvaluateFirstProfile {
+    pub fn new() -> Box<Self> {
+        Box::new(Self {
+            already_seen: HashSet::<Expression>::new(),
+        })
+    }
+}
+
+impl OptimizationProfile for EvaluateFirstProfile {
+    fn find_equivalents(&mut self, exp: &Expression) -> Vec<(Expression, Rc<Argument>)> {
+        if self.already_seen.contains(exp) {
+            return vec![];
+        }
+        self.already_seen.insert(exp.clone());
+        let simplifying_rules = STRICT_SIMPLIFYING_RULES.lock().unwrap();
+
+        let mut simple = simplifying_rules.iter()
+            .map(|rule| {
+                equiv(&exp, &|e| {
+                    rule.apply(e.clone())
+                })
+            })
+            .flatten()
+            .peekable();
+        
+        if simple.peek().is_some() {
+            return simple.collect();
+        }
+
+        let all_rules = ALL_RULES.lock().unwrap();
+        all_rules.iter()
+            .map(|rule| {
+                equiv(&exp, &|e| {
+                    rule.apply(e.clone())
+                })
+            })
+            .flatten()
+            .collect()
+    }
+}
 
 /**
 * Object used to expand graphs.
 */
 pub struct Deriver {
     node_indices: HashMap<Expression, NodeIndex>,
+    optimizer: Box<dyn OptimizationProfile>,
 }
 
 impl Deriver {
-    pub fn new() -> Deriver {
+    pub fn new(optimizer: Box<dyn OptimizationProfile>) -> Deriver {
         Deriver {
             node_indices: HashMap::new(),
+            optimizer,
         }
     }
 
@@ -41,17 +137,9 @@ impl Deriver {
     }
 
     fn pass(&mut self, graph: &mut Graph) {
-        let rules = *ALL_RULES.lock().unwrap();
-
         for i in graph.node_indices() {
             let expression = graph.node_weight(i).unwrap().clone();
-            let equivalents = rules.iter()
-                .map(|rule| {
-                    equiv(&expression, &|exp| {
-                        rule.apply(exp.clone())
-                    })
-                })
-                .flatten();
+            let equivalents = self.optimizer.find_equivalents(&expression);
 
             for (derived, argument) in equivalents {
                 let index = if self.node_indices.contains_key(&derived) {
@@ -336,7 +424,7 @@ mod tests {
     
     #[test]
     fn applies_multiple_rules() {
-        let mut deriver = Deriver::new();
+        let mut deriver = Deriver::new(BruteForceProfile::new());
         let mut graph = Graph::new();
         let start = sum_of(&[i(1), i(3), i(3), product_of(&[i(3), i(3)])]);
         graph.add_node(start);

@@ -97,3 +97,27 @@ pub static ALL_RULES: Mutex<&[&(dyn DerivationRule + Sync)]> =
     &integral_pull_out_negative::IntegralPullOutNegative {},
     &products_into_numerator::ProductsIntoNumerator {},
 ]);
+
+pub static STRICT_SIMPLIFYING_RULES: Mutex<&[&(dyn DerivationRule + Sync)]> =
+    Mutex::new(&[
+    &cancel_negatives::CancelNegatives {},
+    &additive_identity::AdditiveIdentity {},
+    &associative_property::AssociativeProperty {},
+    &evaluate_sums::EvaluateSums {},
+    &multiplicative_identity::MultiplicativeIdentity {},
+    &division_identity::DivisionIdentity {},
+    &log_of_one::LogOfOne {},
+    &exponent_to_zero::ExponentToZero {},
+    &divide_fractions::DivideFractions {},
+    &evaluate_products::EvaluateProducts {},
+    &evaluate_fractions::EvaluateFractions {},
+    &evaluate_logs::EvaluateLogs {},
+    &integral_constant_coefficients::IntegralConstCoeff {},
+    &integral_of_constant::IntegralOfConst {},
+    &derivative_of_constant::DerivativeOfConst {},
+    &derivative_constant_coefficients::PullOutConst {},
+    &evaluate_exponents::EvaluateExponents {},
+    &derivative_of_trig::DerivativeOfTrig {},
+    &integral_pull_out_negative::IntegralPullOutNegative {},
+]);
+
