@@ -1,6 +1,6 @@
 use std::rc::Rc;
 
-use crate::{argument::Argument, expressions::{sum::sum_of, Exponent, Expression, ExpressionPtr, Fraction, Integer}};
+use crate::{argument::Argument, derivation_rules::helpers::is_constant, expressions::{sum::sum_of, Exponent, Expression, ExpressionPtr, Fraction, Integer}};
 
 use super::DerivationRule;
 
@@ -22,8 +22,7 @@ impl DerivationRule for IntegralPowerRule {
         let (base, power) = match integral.integrand() {
             Expression::Exponent(e) => {
                 if e.base() == integral.relative_to() 
-                && matches!(e.power(), Expression::Integer(_)) {
-                    // TODO: Check if the power is a non-integer constant
+                && is_constant(&e.power(), &integral.relative_to()) {
                     (e.base(), e.power())
                 } else {
                     return vec![];
