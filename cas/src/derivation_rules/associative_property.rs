@@ -65,7 +65,7 @@ impl DerivationRule for AssociativeProperty {
 #[cfg(test)]
 mod tests {
     use crate::expressions::ExpressionPtr;
-    use crate::expressions::{Integer, Sum, Product, sum::sum_of};
+    use crate::expressions::{Integer, Sum, Product};
 
     use super::AssociativeProperty;
     use super::DerivationRule;
