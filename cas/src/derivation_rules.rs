@@ -46,6 +46,7 @@ mod trig_reflections;
 mod integral_pull_out_negative;
 mod products_into_numerator;
 mod one_to_any_power;
+mod add_fractions;
 
 pub trait DerivationRule {
     /**
@@ -98,6 +99,7 @@ pub static ALL_RULES: Mutex<&[&(dyn DerivationRule + Sync)]> =
     &integral_pull_out_negative::IntegralPullOutNegative {},
     &products_into_numerator::ProductsIntoNumerator {},
     &one_to_any_power::OneToAnything {},
+    &add_fractions::AddFractions {},
 ]);
 
 pub static STRICT_SIMPLIFYING_RULES: Mutex<&[&(dyn DerivationRule + Sync)]> =
@@ -111,7 +113,6 @@ pub static STRICT_SIMPLIFYING_RULES: Mutex<&[&(dyn DerivationRule + Sync)]> =
     &log_of_one::LogOfOne {},
     &exponent_to_zero::ExponentToZero {},
     &evaluate_products::EvaluateProducts {},
-    &evaluate_fractions::EvaluateFractions {},
     &evaluate_logs::EvaluateLogs {},
     &integral_constant_coefficients::IntegralConstCoeff {},
     &integral_of_constant::IntegralOfConst {},
