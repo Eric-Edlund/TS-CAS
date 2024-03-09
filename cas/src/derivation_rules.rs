@@ -47,6 +47,7 @@ mod integral_pull_out_negative;
 mod products_into_numerator;
 mod one_to_any_power;
 mod add_fractions;
+mod fractions_in_denominator;
 
 pub trait DerivationRule {
     /**
@@ -100,6 +101,7 @@ pub static ALL_RULES: Mutex<&[&(dyn DerivationRule + Sync)]> =
     &products_into_numerator::ProductsIntoNumerator {},
     &one_to_any_power::OneToAnything {},
     &add_fractions::AddFractions {},
+    &fractions_in_denominator::FractionInDenominator {},
 ]);
 
 pub static STRICT_SIMPLIFYING_RULES: Mutex<&[&(dyn DerivationRule + Sync)]> =
