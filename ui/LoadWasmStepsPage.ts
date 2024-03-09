@@ -67,6 +67,9 @@ function onInputExpressionChanged() {
         return
     }
 
+    // REMOVE
+    // result.success = false;
+
     if (result.success) {
         console.log("Success")
         solutionView.value = parseExpressionJSON(

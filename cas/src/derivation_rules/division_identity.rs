@@ -3,6 +3,9 @@ use crate::expressions::{ExpressionPtr, Expression};
 use crate::argument::Argument;
 use std::rc::Rc;
 
+/**
+* x/1 = x
+*/
 pub struct DivisionIdentity {}
 
 impl DerivationRule for DivisionIdentity {
