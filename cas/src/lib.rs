@@ -4,7 +4,7 @@ mod graph_traversal;
 mod argument;
 mod derivation_rules;
 mod deriver;
-pub mod graph;
+mod graph;
 mod mathxml;
 mod convenience_expressions;
 
@@ -16,29 +16,37 @@ use petgraph::{visit::IntoNodeReferences, algo::astar};
 use serde_json::json;
 use wasm_bindgen::prelude::*;
 
-/**
-* Takes an expression in JSON form, parses, simplifies then returns
-* a JSON containing steps to solve it, or an error message.
-* TODO: Actual spec for return type and input JSON
-*
-* Returned JSON is an object:
-* {
-*   "steps": [
-*       "MathXMLExpression", // The problem given
-*       "Argument string",
-*       "MathXMLExpression",
-*       "Argument string",
-*       "MathXMLExpression"
-*       ...
-*   ],
-*   "success": true | false
-* }
-*
-* Where 
-* 1) "steps" will be at least one long, the first
-*   element being the given problem.
-* 2) "success" is true if a simpler equivalent expression was found.
-*/
+
+/// Takes an expression in JSON form, parses, simplifies then returns
+/// a JSON containing steps to solve it, or an error message.
+/// TODO: Actual spec for return type and input JSON
+///
+/// # Arguments
+///
+/// * `json_expression`
+/// * `search_depth`
+/// * `optimizer`
+///
+/// # Examples
+///
+/// Returned JSON is an object:
+///
+///     {
+///       "steps": [
+///           "MathXMLExpression", // The problem given
+///           "Argument string",
+///           "MathXMLExpression",
+///           "Argument string",
+///           "MathXMLExpression"
+///           ...
+///       ],
+///       "success": true | false
+///     }
+///
+/// Where 
+/// 1) "steps" will be at least one long, the first
+///   element being the given problem.
+/// 2) "success" is true if a simpler equivalent expression was found.
 #[wasm_bindgen]
 pub fn simplify_with_steps(json_expression: &str, search_depth: u32, optimizer: &str) -> String {
     let expression = match read_object_from_json(json_expression) {
@@ -81,9 +89,16 @@ pub fn simplify_with_steps(json_expression: &str, search_depth: u32, optimizer: 
     }).to_string()
 }
 
-/**
-* @param optimizer brute_force | evaluate_first
-*/
+/// Finds a set of equivalent expressions for the given expression.
+///
+/// # Arguments
+/// 
+/// * `json_expression`
+/// * `search_depth`
+/// * `optimizer`
+///
+/// # Examples
+///
 #[wasm_bindgen]
 pub fn get_all_equivalents(json_expression: &str, search_depth: u32, optimizer: &str) -> String {
     let expression = match read_object_from_json(json_expression) {
