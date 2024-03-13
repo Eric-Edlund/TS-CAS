@@ -1,0 +1,14 @@
+[package]
+name = "cas-wasm-wrapper"
+description = "Wrapper library for the CAS core logic. Adds WASM support."
+version = "0.1.0"
+edition = "2021"
+
+# For WebAssembly compilation target
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+cas = { path = "../cas"}
+wasm-bindgen = "0.2.90"
+
