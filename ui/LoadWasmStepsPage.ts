@@ -1,5 +1,5 @@
 import { EditableMathView } from "./mathlib/uielements/EditableMathView"
-import initWasm, { get_all_equivalents, simplify_with_steps } from "../cas/pkg"
+import initWasm, { get_all_equivalents, simplify_with_steps } from "../cas-wasm-wrapper/pkg"
 import { parseExpression } from "./mathlib/userinput/AntlrMathParser"
 import { Expression } from "./mathlib/expressions/Expression"
 import { parseExpressionJSON } from "./mathlib/expressions-from-json"

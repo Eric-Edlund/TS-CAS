@@ -9,3 +9,4 @@ cas/target
 cas/pkg
 public/*.wasm
 cas/Cargo.lock
+pkg

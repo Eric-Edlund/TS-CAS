@@ -10,7 +10,7 @@ module.exports = {
     },
     plugins: [
         new WasmPackPlugin({
-            crateDirectory: path.resolve(__dirname, 'cas'),
+            crateDirectory: path.resolve(__dirname, 'cas-wasm-wrapper'),
             // Optional space delimited arguments to appear before the wasm-pack
             // command. Default arguments are `--verbose`.
             args: '--log-level warn',
