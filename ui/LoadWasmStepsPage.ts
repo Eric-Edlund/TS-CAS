@@ -68,7 +68,6 @@ function onInputExpressionChanged() {
     }
 
     if (result.success) {
-        console.log("Success")
         solutionView.value = parseExpressionJSON(
             result.steps[result.steps.length - 1]
         )
