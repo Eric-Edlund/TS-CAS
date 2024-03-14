@@ -37,6 +37,26 @@ pub fn sum4(a: &str, b: &str, c: &str, d: &str) -> String {
 pub fn pow(base: &str, pow: &str) -> String {
     format!("[\"Pow\",{},{}]", base, pow)
 }
+pub fn log(base: &str, exp: &str) -> String {
+    format!("[\"Logarithm\",{},{}]", base, exp)
+} 
+pub fn ln(exp: &str) -> String {
+    todo!()
+    // format!("[\"Logarithm\",{},{}]", base, exp)
+}
+pub fn abs(exp: &str) -> String {
+    todo!()
+}
+pub fn sin(exp: &str) -> String {
+    format!("[\"Sin\",{}]", exp)
+}
+pub fn cos(exp: &str) -> String {
+    format!("[\"Cos\",{}]", exp)
+}
+pub fn arctan(exp: &str) -> String {
+    format!("[\"Arctan\",{}]", exp)
+}
+
 
 pub const X: &str = "{\"var\":\"x\"}";
 pub const T: &str = "{\"var\":\"t\"}";

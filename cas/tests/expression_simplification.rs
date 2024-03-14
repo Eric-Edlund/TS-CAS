@@ -46,7 +46,7 @@ fn single_variable_integrals() {
         )
     );
 
-    let p3: Problem = (
+    let _p3: Problem = (
         int(
             &sum(
                 &prod(seven, &pow(X, &frac(three, two))),
@@ -75,10 +75,75 @@ fn single_variable_integrals() {
         )
     );
 
+    // let _p5: Problem = (
+    //     int(&frac(three, X), X),
+    //     prod(three, &ln(&abs(X)))
+    // );
+
+    // let _p6: Problem = (
+    //     int(
+    //         &sum(
+    //             &frac(four, &prod(three, &pow(T, two))),
+    //             &frac(seven, &prod(two, T))
+    //         ),
+    //         X
+    //     ),
+    //     sum(
+    //         &neg(&prod(&frac(four, three), &pow(T, &neg(one)))),
+    //         &prod(&frac(seven, two), &ln(&abs(T)))
+    //     )
+    // );
+
+    // let _p8: Problem = (
+    //     int(
+    //         &frac(
+    //             &sum3(
+    //                 &prod(three, &pow(X, two)),
+    //                 &prod(four, X),
+    //                 one
+    //             ),
+    //             &prod(two, X)
+    //         ),
+    //         X
+    //     ),
+    //     sum3(
+    //         &pow(X, two),
+    //         &prod(two, X),
+    //         &prod(&frac(one, two), &ln(&abs(X)))
+    //     )
+    // );
+
+    let p9: Problem = (
+        int(
+            &sum(
+                &prod(two, &sin(X)),
+                &prod(three, &cos(X))
+            ),
+            X
+        ),
+        sum(
+            &neg(&prod(two, &cos(X))),
+            &prod(three, &sin(X))
+        )
+    );
+
+    let p11: Problem = (
+        int(
+            &frac(
+                four,
+                &sum(one, &pow(T, two))
+            ),
+            T
+        ),
+        prod(seven, &arctan(T))
+    );
+
     add_test("problem 1", p1, 11);
     add_test("problem 2", p2, 16);
     // add_test("problem 3", p3, 16);
     add_test("problem 4", p4, 18);
+    add_test("problem 9", p9, 6);
+    add_test("problem 11", p11, 20);
 
     report_results();
 }
