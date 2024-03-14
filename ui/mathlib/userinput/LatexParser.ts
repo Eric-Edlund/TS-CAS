@@ -23,14 +23,11 @@ import { TrigExp, TrigFn } from "../expressions/TrigExp"
 export function parseExpressionLatex(source: string): Expression | null {
     const ast: Ast.Node[] = parseMath(source)
 
-    console.log(source)
-
     if (ast == undefined) return null
     if (ast.length == 0) return null
     groupNumbers(ast)
     dropParenMacros(ast)
     trimWhiteSpace(ast)
-    ast.forEach(node => console.log(node))
 
     return group(ast)
 }
