@@ -61,9 +61,24 @@ fn single_variable_integrals() {
         )
     );
 
+    let p4: Problem = (
+        int(
+            &sum(
+                &prod(three, &pow(X, &neg(two))),
+                &neg(&prod(four, &pow(X, &neg(three))))
+            ),
+            X
+        ),
+        sum(
+            &neg(&prod(three, &pow(X, &neg(one)))),
+            &prod(two, &pow(X, &neg(two))),
+        )
+    );
+
     add_test("problem 1", p1, 11);
     add_test("problem 2", p2, 16);
     // add_test("problem 3", p3, 16);
+    add_test("problem 4", p4, 10);
 
     report_results();
 }
