@@ -32,13 +32,13 @@ impl DerivationRule for ProductsIntoNumerator {
                 panic!()
             };
             // Pull all factors into the fraction, not the powerset, too expensive
-            let new_num = product_of_iter(&mut [fraction.numerator()]
+            let new_num = ordered(product_of_iter(&mut [fraction.numerator()]
                 .iter()
                 .chain(&mut not.iter().cloned())
                 .cloned()
-                );
+                ));
 
-            results.push(ordered(product_of_iter(&mut [Fraction::of(
+            results.push(product_of_iter(&mut [Fraction::of(
                 new_num, 
                 fraction.denominator())].iter()
                 .chain(fractions.iter()
@@ -46,7 +46,7 @@ impl DerivationRule for ProductsIntoNumerator {
                     .cloned()
                 )
                 .cloned()
-            )));
+            ));
         }
 
         results.into_iter().map(|exp| {

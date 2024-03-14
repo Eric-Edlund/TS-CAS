@@ -40,7 +40,7 @@ fn single_variable_integrals() {
         ),
         sum4(
             &frac(&prod(five, &pow(T, nine)), nine),
-            &frac(&prod(two, &pow(T, five)), five),
+            &neg(&frac(&prod(two, &pow(T, five)), five)),
             &frac(&pow(T, two), two),
             &prod(three, T)
         )
@@ -61,7 +61,7 @@ fn single_variable_integrals() {
         )
     );
 
-    add_test("problem 1", p1, 15);
+    add_test("problem 1", p1, 11);
     add_test("problem 2", p2, 16);
     // add_test("problem 3", p3, 16);
 

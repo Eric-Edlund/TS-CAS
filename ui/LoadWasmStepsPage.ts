@@ -67,9 +67,6 @@ function onInputExpressionChanged() {
         return
     }
 
-    // REMOVE
-    // result.success = false;
-
     if (result.success) {
         console.log("Success")
         solutionView.value = parseExpressionJSON(
@@ -91,6 +88,9 @@ function onInputExpressionChanged() {
         solutionView.value = null
         stepListView.innerHTML = ""
         for (const equiv of equivalents) {
+            if (new String("" + equiv).includes("Integral")) {
+                continue;
+            }
             stepListView.appendChild(row(JSON.stringify(equiv), equiv))
         }
     }
