@@ -51,7 +51,7 @@ pub fn children_rec(exp: &ExpressionPtr) -> impl Iterator<Item = ExpressionPtr> 
 /**
 * Grabs immediate children of given expression
 */
-fn children_of<'a>(exp: &'a ExpressionPtr) -> Vec<ExpressionPtr> {
+pub fn children_of<'a>(exp: &'a ExpressionPtr) -> Vec<ExpressionPtr> {
     match exp {
         Expression::Integer(_) => vec![],
         Expression::Product(p) => p.factors().clone(),
