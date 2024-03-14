@@ -1,14 +1,13 @@
 use std::rc::Rc;
 
-use crate::{expressions::{ExpressionPtr, Expression, Integer, Fraction}, argument::Argument};
+use crate::{argument::Argument, expressions::{product::product_of_iter, Expression, ExpressionPtr, Fraction, Integer}};
 
 use super::DerivationRule;
 
 
 /**
-* If the numerator and denominator are both integers
-* and they can be reduced to a single
-* integer or a simpler fraction do so.
+* If the numerator and denominator both contian integers
+* and they can be reduced to a simpler fraction do so.
 */
 pub struct EvaluateFractions {}
 
@@ -19,14 +18,33 @@ impl DerivationRule for EvaluateFractions {
             _ => return vec![],
         };
 
-        let Expression::Integer(num) = fraction.numerator() 
-        else {
-            return vec![];
+        let num_factors = match fraction.numerator() {
+            Expression::Product(p) => p.factors().clone(),
+            x => vec![x]
         };
-        let Expression::Integer(den) = fraction.denominator() 
-        else {
-            return vec![];
+        let den_factors = match fraction.denominator() {
+            Expression::Product(p) => p.factors().clone(),
+            x => vec![x]
         };
+
+        if num_factors.iter().filter(|x| matches!(x, Expression::Integer(_)))
+            .count() > 1 {
+            // Let another rule combine the integers first
+            return vec![]
+        }
+        if den_factors.iter().filter(|x| matches!(x, Expression::Integer(_)))
+            .count() > 1 {
+            return vec![]
+        }
+
+        let Expression::Integer(ref num) = num_factors.iter().cloned()
+            .find(|x| matches!(x, Expression::Integer(_)))
+            .unwrap_or(Integer::of(1))
+        else { panic!() };
+
+        let Expression::Integer(ref den) = den_factors.iter().cloned()
+            .find(|x| matches!(x, Expression::Integer(_)))
+            .unwrap_or(Integer::of(1)) else { panic!() };
 
         let mut gcf = 1;
 
@@ -37,11 +55,16 @@ impl DerivationRule for EvaluateFractions {
         }
 
         let (n, d) = (num.value() / gcf, den.value() / gcf);
-        let result = if d == 1 {
-            Integer::of(n)
-        } else {
-            Fraction::of(Integer::of(n), Integer::of(d))
-        };
+        let result = Fraction::of(
+            product_of_iter(&mut [Integer::of(n)].into_iter()
+                .chain(&mut num_factors.into_iter()
+                    .filter(|x| !matches!(x, Expression::Integer(_))))
+                    ),
+            product_of_iter(&mut [Integer::of(d)].into_iter()
+                .chain(&mut den_factors.into_iter()
+                    .filter(|x| !matches!(x, Expression::Integer(_))))
+                    ),
+            );
 
         if result == input {
             return vec![]
@@ -55,7 +78,7 @@ impl DerivationRule for EvaluateFractions {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{derivation_rules::DerivationRule, convenience_expressions::i};
+    use crate::{convenience_expressions::{i, power, v}, derivation_rules::DerivationRule, expressions::{product::product_of, Negation}};
 
     #[test]
     fn test_1() {
@@ -64,7 +87,7 @@ mod tests {
         let start = Fraction::of(i(8), i(4));
         let result = rule.apply(start).first().unwrap().0.clone();
 
-        assert_eq!(result, Integer::of(2));
+        assert_eq!(result, Fraction::of(Integer::of(2), Integer::of(1)));
 
         let start2 = Fraction::of(i(16), i(12));
         let result2 = rule.apply(start2).first().unwrap().0.clone();
@@ -76,6 +99,15 @@ mod tests {
 
         assert_eq!(result3, Fraction::of(i(1), i(2)));
         
+        let start4 = Fraction::of(
+            product_of(&[i(4), power(v("x"), Negation::of(i(2)))]),
+            i(2)
+        );
+        let result4 = rule.apply(start4).first().unwrap().0.clone();
 
+        assert_eq!(result4, Fraction::of(
+            product_of(&[i(2), power(v("x"), Negation::of(i(2)))]),
+            i(1)
+        ));
     }
 }
