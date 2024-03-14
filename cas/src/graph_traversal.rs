@@ -1,6 +1,7 @@
 use std::cmp::Ordering;
 use std::rc::Rc;
 
+use crate::derivation_rules::helpers::children_of;
 use crate::expressions::{ExpressionPtr, Expression};
 use crate::argument::Argument;
 
@@ -27,6 +28,9 @@ fn complexity(a: &ExpressionPtr) -> u32 {
         Expression::Product(p) => {
             p.factors().len() as u32 
             + p.factors().iter().map(|x| complexity(x)).sum::<u32>()
+            + children_of(a).iter()
+                .filter(|x| matches!(x, Expression::Negation(_)))
+                .count() as u32
         },
         Expression::Sum(s) => {
             s.terms().len() as u32
