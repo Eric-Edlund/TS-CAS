@@ -78,7 +78,7 @@ fn single_variable_integrals() {
     add_test("problem 1", p1, 11);
     add_test("problem 2", p2, 16);
     // add_test("problem 3", p3, 16);
-    add_test("problem 4", p4, 10);
+    add_test("problem 4", p4, 18);
 
     report_results();
 }
