@@ -121,6 +121,10 @@ function interpret(node: Ast.Node): Expression | null{
             switch (node.content) {
                 case "frac":
                     const num = group(node.args[0].content);
+                    if (1 !in node.args) {
+                        // Fraction missing denominator
+                        return null
+                    }
                     const den = group(node.args[1].content)
 
                     if (num == null || den == null) {
@@ -209,6 +213,7 @@ function group(
             && node.args[0].content.length === 1
             && node.args[0].content[0].type === "string"
             && node.args[0].content[0].content === "d"
+            && 0 in node.args[1].content
             && node.args[1].content[0].type === "string"
             && node.args[1].content[0].content === "d"
         ) {
