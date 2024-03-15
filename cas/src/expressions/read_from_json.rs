@@ -1,6 +1,6 @@
 use crate::convenience_expressions::power;
 
-use super::{product::product_of, sum::sum_of, trig_expression::TrigFn, variable::Variable, AbsoluteValue, Derivative, Exponent, Expression, Fraction, Integer, Integral, Logarithm, Negation, TrigExp};
+use super::{constant::Constant, product::product_of, sum::sum_of, trig_expression::TrigFn, variable::Variable, AbsoluteValue, ConstantExp, Derivative, Exponent, Expression, Fraction, Integer, Integral, Logarithm, Negation, TrigExp};
 use serde_json::{Value, from_str};
 
 /// Reads expression objects out of JSON expressions
@@ -101,6 +101,12 @@ fn read_obj_rec(object: &Value) -> Result<Expression, String> {
             }else {
                 Err(format!("Invalid object {:?}", obj))
             }
+        },
+        Value::String(s) => match s.as_str() {
+            "E" => Ok(ConstantExp::of(Constant::Euler)),
+            "Pi" => Ok(ConstantExp::of(Constant::Pi)),
+            _ => Err(format!("Invalid string {:?}", s))
+
         }
         _ => panic!("Not implemented {}, {}", object, object.as_str().unwrap())
     }

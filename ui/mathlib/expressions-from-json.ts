@@ -1,4 +1,5 @@
 import { AbsoluteValue } from "./expressions/AbsoluteValue";
+import { ConstantExp } from "./expressions/ConstantExp";
 import { Derivative } from "./expressions/Derivative";
 import { Exponent } from "./expressions/Exponent";
 import { Expression } from "./expressions/Expression";
@@ -25,6 +26,14 @@ function parseRec(obj: any): Expression {
             return Integer.of(obj["num"])
         } else if ("var" in obj) {
             return Variable.of(obj["var"])
+        }
+    }
+
+    if (typeof obj === "string") {
+        if (obj === "E") {
+            return ConstantExp.of("Euler")
+        } else if (obj === "Pi") {
+            return ConstantExp.of("Pi")
         }
     }
 

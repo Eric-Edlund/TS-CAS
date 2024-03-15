@@ -19,6 +19,7 @@ pub mod derivative;
 pub mod integral;
 pub mod trig_expression;
 pub mod absolute_value;
+pub mod constant;
 mod read_from_json;
 
 pub use integer::Integer;
@@ -34,6 +35,7 @@ pub use derivative::Derivative;
 pub use integral::Integral;
 pub use trig_expression::TrigExp;
 pub use absolute_value::AbsoluteValue;
+pub use constant::ConstantExp;
 pub use read_from_json::*;
 
 pub trait IExpression {
@@ -89,6 +91,7 @@ pub enum Expression {
     Integral(Arc<Integral>),
     Trig(Arc<TrigExp>),
     AbsoluteValue(Arc<AbsoluteValue>),
+    ConstantExp(Arc<ConstantExp>),
 }
 
 impl Expression {}
@@ -108,6 +111,7 @@ impl fmt::Debug for Expression {
             Expression::Integral(p) => p as &dyn fmt::Debug,
             Expression::Trig(p) => p as &dyn fmt::Debug,
             Expression::AbsoluteValue(p) => p as &dyn fmt::Debug,
+            Expression::ConstantExp(p) => p as &dyn fmt::Debug,
         }))
     }
 }
@@ -127,6 +131,7 @@ impl PartialEq for Expression {
             Expression::Integral(p) => p.clone(),
             Expression::Trig(p) => p.clone(),
             Expression::AbsoluteValue(p) => p.clone(),
+            Expression::ConstantExp(p) => p.clone(),
         };
         let second: Arc<dyn IExpression> = match other {
             Expression::Negation(p) => p.clone(),
@@ -141,6 +146,7 @@ impl PartialEq for Expression {
             Expression::Integral(p) => p.clone(),
             Expression::Trig(p) => p.clone(),
             Expression::AbsoluteValue(p) => p.clone(),
+            Expression::ConstantExp(p) => p.clone(),
         };
 
         Arc::ptr_eq(&first, &second)
@@ -169,6 +175,7 @@ impl Expression {
             Expression::Integral(i) => i.clone(),
             Expression::Trig(t) => t.clone(),
             Expression::AbsoluteValue(a) => a.clone(),
+            Expression::ConstantExp(c) => c.clone(),
         }
     }
 
@@ -186,6 +193,7 @@ impl Expression {
             Expression::Integral(i) => i.to_json(),
             Expression::Trig(t) => t.to_json(),
             Expression::AbsoluteValue(a) => a.to_json(),
+            Expression::ConstantExp(c) => c.to_json(),
         }
     }
 }

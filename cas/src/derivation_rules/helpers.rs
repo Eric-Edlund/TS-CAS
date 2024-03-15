@@ -54,6 +54,7 @@ pub fn children_rec(exp: &ExpressionPtr) -> impl Iterator<Item = ExpressionPtr> 
 pub fn children_of<'a>(exp: &'a ExpressionPtr) -> Vec<ExpressionPtr> {
     match exp {
         Expression::Integer(_) => vec![],
+        Expression::ConstantExp(_) => vec![],
         Expression::Product(p) => p.factors().clone(),
         Expression::Sum(s) => s.terms().clone(),
         Expression::Exponent(e) => [e.base(), e.power()].into_iter().collect(),
