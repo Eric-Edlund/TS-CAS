@@ -64,6 +64,7 @@ pub fn children_of<'a>(exp: &'a ExpressionPtr) -> Vec<ExpressionPtr> {
         Expression::Logarithm(l) => [l.base(), l.exp()].into_iter().collect(),
         Expression::Derivative(d) => [d.exp(), d.relative_to()].into_iter().collect(),
         Expression::Trig(t) => [t.exp()].into_iter().collect(),
+        Expression::AbsoluteValue(a) => [a.exp()].into_iter().collect(),
     }
 }
 

@@ -1,6 +1,6 @@
 use crate::convenience_expressions::power;
 
-use super::{product::product_of, sum::sum_of, trig_expression::TrigFn, variable::Variable, Derivative, Exponent, Expression, Fraction, Integer, Integral, Logarithm, Negation, TrigExp};
+use super::{product::product_of, sum::sum_of, trig_expression::TrigFn, variable::Variable, AbsoluteValue, Derivative, Exponent, Expression, Fraction, Integer, Integral, Logarithm, Negation, TrigExp};
 use serde_json::{Value, from_str};
 
 /// Reads expression objects out of JSON expressions
@@ -84,6 +84,7 @@ fn read_obj_rec(object: &Value) -> Result<Expression, String> {
                 "Arccsc" => Ok(TrigExp::of(TrigFn::ArcCsc, read_obj_rec(&arr[1])?)),
                 "Arcsec" => Ok(TrigExp::of(TrigFn::ArcSec, read_obj_rec(&arr[1])?)),
                 "Arccot" => Ok(TrigExp::of(TrigFn::ArcCot, read_obj_rec(&arr[1])?)),
+                "Abs" => Ok(AbsoluteValue::of(read_obj_rec(&arr[1])?)),
                 s => panic!("Unimplemented operation {}", s)
             }
         },
