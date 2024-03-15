@@ -1,5 +1,5 @@
 /**
- * Wraps the given mathml string in mathml parenthases.
+ * Wraps the given mathml string in mathml paren.
  * @param str
  */
 export function inParen(str: string): string {

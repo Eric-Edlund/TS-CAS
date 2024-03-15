@@ -1,8 +1,11 @@
 import { VariableValueMap } from "../VariableValueMap"
 import { wrapInGraph } from "../derivations/Deriver"
+import { inParen } from "../util/MathMLHelpers"
 import { ConstantExp } from "./ConstantExp"
 import { Expression } from "./Expression"
 import { Integer } from "./Integer"
+import { ProductType } from "./Product"
+import { SumType } from "./Sum"
 
 export class Logarithm extends Expression {
     public static of(exp: Expression, base: Expression): Logarithm {
@@ -34,15 +37,22 @@ export class Logarithm extends Expression {
         } else if (text === "log" && this.base === Integer.of(10)) {
             base = ""
         }
+        function wrapIfNeeded(exp: Expression): string {
+            if (exp.class === ProductType
+            || exp.class === SumType) {
+                return inParen(exp.toMathXML())
+            }
+            return exp.toMathXML()
+        }
         if (base === "") {
             return `<mrow>
 <mtext>${text}</mtext>
-<mrow>${this.exp.toMathXML()}</mrow>
+<mrow>${wrapIfNeeded(this.exp)}</mrow>
 </row>`
         } else {
             return `<mrow>
 <msub><mtext>${text}</mtext>${base}</msub>
-<mrow>${this.exp.toMathXML()}</mrow>
+<mrow>${wrapIfNeeded(this.exp)}</mrow>
 </row>`
         }
     }
