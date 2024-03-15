@@ -57,8 +57,8 @@ function parseRec(obj: any): Expression {
             parseRec(arr[2])
         );
         case "Logarithm": return Logarithm.of(
-            parseRec(arr[1]), 
-            parseRec(arr[2])
+            parseRec(arr[2]),
+            parseRec(arr[1])
         );
         case "Divide": return Fraction.of(
             parseRec(arr[1]),

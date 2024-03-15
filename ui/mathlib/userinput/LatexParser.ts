@@ -15,7 +15,7 @@ import { Logarithm } from "../expressions/Logarithm"
 import { argv0 } from "process"
 import { Derivative } from "../expressions/Derivative"
 import { Exponent } from "../expressions/Exponent"
-import { TrigExp, TrigFn } from "../expressions/TrigExp"
+import { TrigExp, TrigFn, isTrigFn } from "../expressions/TrigExp"
 import { AbsoluteValue } from "../expressions/AbsoluteValue"
 import { ConstantExp } from "../expressions/ConstantExp"
 
@@ -96,10 +96,17 @@ function trimWhiteSpace(nodes: Ast.Node[]): void {
         if (n.type === "macro" && n.content.trim() === "") {
             nodes.splice(i, 1)
             i--
+            continue
         }
         if (n.type === "whitespace") {
             nodes.splice(i, 1)
             i--
+            continue
+        }
+        if (n.type === "macro") {
+            for (const arg of n.args ?? []) {
+                trimWhiteSpace(arg.content)
+            }
         }
     }
 }
@@ -191,6 +198,9 @@ function group(
     function isLog(node: Ast.Node): boolean {
         return node.type === "macro" && node.content === "log"
     }
+    function isLn(node: Ast.Node): boolean {
+        return node.type === "macro" && node.content === "ln"
+    }
     // We only recognize derivatives of the form (d/d<var>)
     // Returns the integration variable if it is a derivative
     function isDerivative(node: Ast.Node): Expression | null{
@@ -256,27 +266,32 @@ function group(
     const terms = []
     let i = start
     let subtractNext = false
-    // A stack of trig functions we are currently parsing.
-    // Trig functions only capture the following next factor.
+    // A stack of functions we are currently parsing.
+    // These functions only capture the following next factor.
     // If it is a TrigFn, then you have a trig function to unpack.
     // If it's an expression, then you have an exponent to unpack.
-    let trigStack: (Expression | TrigFn)[] = [];
+    // If it's an array ["Log", <expression>], you have a logarithm
+    // in that base to unpack.
+    let stack: (Expression | TrigFn | (string | Expression)[])[] = [];
     while (i <= end) {
         let factors = []
 
         /**
         * Adds the expression to the factors list,
-        * collapsing the trig stack if there is one.
+        * collapsing the expression stack if there is one.
         */
         function addFactor(exp: Expression): void {
             let result = exp
-            while (trigStack.length > 0) {
-                const top = trigStack.pop();
+            while (stack.length > 0) {
+                const top = stack.pop();
                 if (top instanceof Expression) {
                     console.log("Unrolling " + top)
                     result = Exponent.of(result, top);
-                } else {
+                //@ts-ignore
+                } else if (isTrigFn(top)) {
                     result = TrigExp.of(top as TrigFn, result);
+                } else {
+                    result = Logarithm.of(result, top[1] as unknown as Expression)
                 }
             }
             factors.push(result)
@@ -422,17 +437,31 @@ function group(
                 }
                 let base
                 if (next.type === "macro" && next.content === "_") {
+                    if (next.args[0].content.length == 0) {
+                        // Base hasn't been specified
+                        return null
+                    }
                     base = group(next.args[0].content)
                     i++
                 } else {
                     base = Integer.of(10)
                 }
 
-                addFactor(Logarithm.of(v("Not read"), base))
-                //TODO: Finish log
-
+                stack.push(["Log", base])
                 continue
             }
+
+            if (isLn(curr)) {
+                i++
+                const next = nodes[i]
+                if (next === undefined) {
+                    return null
+                }
+
+                stack.push(["Log", ConstantExp.of("Euler")])
+                continue
+            }
+
 
             let derivative = isDerivative(curr);
             if (derivative) {
@@ -494,10 +523,10 @@ function group(
                     power = isExponent(nodes[i+1]);
                 }
                 if (power != null) {
-                    trigStack.push(power)
+                    stack.push(power)
                     i++
                 }
-                trigStack.push(curr.content.charAt(0).toUpperCase() 
+                stack.push(curr.content.charAt(0).toUpperCase() 
                     + curr.content.slice(1) as TrigFn);
                 i++;
                 continue;
