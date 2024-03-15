@@ -1,6 +1,8 @@
 import { VariableValueMap } from "../VariableValueMap"
 import { wrapInGraph } from "../derivations/Deriver"
+import { ConstantExp } from "./ConstantExp"
 import { Expression } from "./Expression"
+import { Integer } from "./Integer"
 
 export class Logarithm extends Expression {
     public static of(exp: Expression, base: Expression): Logarithm {
@@ -22,10 +24,27 @@ export class Logarithm extends Expression {
     }
 
     public toMathXML(): string {
-        return `<mrow>
-            <msub><mtext>log</mtext>${this.base.toMathXML()}</msub>
-            <mrow>${this.exp.toMathXML()}</mrow>
-        </row>`
+        let text = "log"
+        if (this.base === ConstantExp.of("Euler")) {
+            text = "ln"
+        }
+        let base = this.base.toMathXML()
+        if (text === "ln") {
+            base = ""
+        } else if (text === "log" && this.base === Integer.of(10)) {
+            base = ""
+        }
+        if (base === "") {
+            return `<mrow>
+<mtext>${text}</mtext>
+<mrow>${this.exp.toMathXML()}</mrow>
+</row>`
+        } else {
+            return `<mrow>
+<msub><mtext>${text}</mtext>${base}</msub>
+<mrow>${this.exp.toMathXML()}</mrow>
+</row>`
+        }
     }
     public isReducible: boolean
     public readonly class: string = LogType
