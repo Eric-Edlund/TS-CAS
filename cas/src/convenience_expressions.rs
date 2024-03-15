@@ -1,7 +1,7 @@
 #![allow(dead_code)]
 use std::cmp::Ordering;
 
-use crate::{derivation_rules::helpers::dependent_variables, expressions::{product::product_of, trig_expression::TrigFn, Exponent, Expression, ExpressionPtr, Integer, Product, Sum, TrigExp, Variable}};
+use crate::{derivation_rules::helpers::dependent_variables, expressions::{product::product_of, trig_expression::TrigFn, AbsoluteValue, Exponent, Expression, ExpressionPtr, Fraction, Integer, Product, Sum, TrigExp, Variable}};
 
 pub fn product(f: ExpressionPtr, f1: ExpressionPtr) -> ExpressionPtr {
     Product::of(&[f, f1]).unwrap()
@@ -67,6 +67,12 @@ pub fn arccsc(exp: Expression) -> Expression {
 }
 pub fn arcsec(exp: Expression) -> Expression {
     TrigExp::of(TrigFn::ArcSec, exp)
+}
+pub fn sqrt(exp: Expression) -> Expression {
+    Exponent::of(exp, Fraction::of(i(1), i(2)))
+}
+pub fn abs(exp: Expression) -> Expression {
+    AbsoluteValue::of(exp)
 }
 
 

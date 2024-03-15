@@ -1,6 +1,6 @@
 use std::rc::Rc;
 
-use crate::{argument::Argument, expressions::{product::product_of, sum::sum_of, trig_expression::TrigFn, Derivative, Exponent, Expression, ExpressionPtr, Fraction, Integer, Negation, TrigExp}};
+use crate::{argument::Argument, convenience_expressions::{abs, power, sqrt}, expressions::{product::product_of, sum::sum_of, trig_expression::TrigFn, Derivative, Exponent, Expression, ExpressionPtr, Fraction, Integer, Negation, TrigExp}};
 
 use super::DerivationRule;
 
@@ -43,29 +43,23 @@ impl DerivationRule for DerivativeOfTrig {
             )),
             TrigFn::ArcSin => Fraction::of(
                 Derivative::of(exp.clone(), derivative.relative_to()),
-                Exponent::of(
-                    sum_of(&[
-                        Integer::of(1),
-                        Negation::of(Exponent::of(
-                            exp.clone(),
-                            Integer::of(2)
-                        ))
-                    ]),
-                    Fraction::of(Integer::of(1), Integer::of(2))
-                )
+                sqrt(sum_of(&[
+                    Integer::of(1),
+                    Negation::of(Exponent::of(
+                        exp.clone(),
+                        Integer::of(2)
+                    ))
+                ]))
             ),
             TrigFn::ArcCos => Fraction::of(
                 Negation::of(Derivative::of(exp.clone(), derivative.relative_to())),
-                Exponent::of(
-                    sum_of(&[
-                        Integer::of(1),
-                        Negation::of(Exponent::of(
-                            exp.clone(),
-                            Integer::of(2)
-                        ))
-                    ]),
-                    Fraction::of(Integer::of(1), Integer::of(2))
-                )
+                sqrt(sum_of(&[
+                    Integer::of(1),
+                    Negation::of(Exponent::of(
+                        exp.clone(),
+                        Integer::of(2)
+                    ))
+                ]))
             ),
             TrigFn::ArcTan => Fraction::of(
                 Derivative::of(exp.clone(), derivative.relative_to()),
@@ -87,8 +81,26 @@ impl DerivationRule for DerivativeOfTrig {
                     )
                 ])
             ),
-            TrigFn::ArcSec => todo!("Requires absolute value"),
-            TrigFn::ArcCsc => todo!("Requires absolute value"),
+            TrigFn::ArcSec => Fraction::of(
+                Integer::of(1),
+                product_of(&[
+                    abs(exp.clone()), 
+                    sqrt(sum_of(&[
+                        power(exp.clone(), Integer::of(2)), 
+                        Negation::of(Integer::of(1))
+                    ]))
+                ])
+            ),
+            TrigFn::ArcCsc => Negation::of(Fraction::of(
+                Integer::of(1),
+                product_of(&[
+                    abs(exp.clone()), 
+                    sqrt(sum_of(&[
+                        power(exp.clone(), Integer::of(2)), 
+                        Negation::of(Integer::of(1))
+                    ]))
+                ])
+            )),
         };
 
         vec![(
