@@ -186,6 +186,7 @@ fn equiv(exp: &Expression, direct: &EquivFn) -> EquivList {
     result.extend(match exp {
         Expression::Variable(_) => vec![],
         Expression::Integer(_) => vec![],
+        Expression::ConstantExp(_) => vec![],
         Expression::Sum(_) => sum_equiv(exp, direct),
         Expression::Product(_) => product_equiv(exp, direct),
         Expression::Exponent(_) => exponent_equiv(exp, direct),

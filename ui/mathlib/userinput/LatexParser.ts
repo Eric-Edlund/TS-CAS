@@ -17,6 +17,7 @@ import { Derivative } from "../expressions/Derivative"
 import { Exponent } from "../expressions/Exponent"
 import { TrigExp, TrigFn } from "../expressions/TrigExp"
 import { AbsoluteValue } from "../expressions/AbsoluteValue"
+import { ConstantExp } from "../expressions/ConstantExp"
 
 /**
  * Parses latex expression into internal expression.
@@ -123,17 +124,22 @@ function interpret(node: Ast.Node): Expression | null{
                         num,
                         den
                     )
+                case "pi":
+                    return ConstantExp.of("Pi")
                 default:
                     console.log("Unimplemented macro " + node.content)
             }
             break
 
         case "string":
+            const content = node.content
             const num = /[0-9]+/
-            if (node.content.match(num)) {
-                return Integer.of(parseInt(node.content))
+            if (content.match(num)) {
+                return Integer.of(parseInt(content))
+            } else if (content === "e") {
+                return ConstantExp.of("Euler")
             } else {
-                return Variable.of(node.content)
+                return Variable.of(content)
             }
     }
 

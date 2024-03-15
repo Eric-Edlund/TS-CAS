@@ -66,6 +66,7 @@ fn complexity(a: &ExpressionPtr) -> u32 {
         Expression::AbsoluteValue(a) => {
             2 + complexity(&a.exp())
         },
+        Expression::ConstantExp(_) => 1
     }
 }
 
