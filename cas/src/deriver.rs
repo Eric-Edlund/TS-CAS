@@ -6,7 +6,7 @@ use petgraph::graph::NodeIndex;
 
 use crate::argument::Argument;
 use crate::derivation_rules::{ALL_RULES, STRICT_SIMPLIFYING_RULES};
-use crate::expressions::{Derivative, Exponent, Expression, Fraction, Integral, Logarithm, Negation, TrigExp};
+use crate::expressions::{AbsoluteValue, Derivative, Exponent, Expression, Fraction, Integral, Logarithm, Negation, TrigExp};
 use crate::expressions::product::product_of;
 use crate::expressions::sum::sum_of;
 use crate::graph::{Graph, RelType, Relationship};
@@ -195,6 +195,7 @@ fn equiv(exp: &Expression, direct: &EquivFn) -> EquivList {
         Expression::Negation(_) => negation_equiv(exp, direct),
         Expression::Trig(_) => trig_equiv(exp, direct),
         Expression::Logarithm(_) => log_equiv(exp, direct),
+        Expression::AbsoluteValue(_) => abs_equiv(exp, direct),
     });
 
     result.into_iter().collect()
@@ -403,6 +404,22 @@ fn log_equiv(exp: &Expression, direct: &EquivFn) -> EquivList {
     equivalents
 }
 
+fn abs_equiv(exp: &Expression, direct: &EquivFn) -> EquivList {
+    let mut equivalents = Vec::<Derivation>::new();
+    let Expression::AbsoluteValue(ref abs) = exp
+    else {
+        panic!();
+    };
+
+    for deriv in equiv(&abs.exp(), direct) {
+        equivalents.push(
+            (AbsoluteValue::of(deriv.0),
+            deriv.1)
+        );
+    }
+
+    equivalents
+}
 
 
 #[cfg(test)]

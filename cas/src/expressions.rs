@@ -18,6 +18,7 @@ pub mod logarithm;
 pub mod derivative;
 pub mod integral;
 pub mod trig_expression;
+pub mod absolute_value;
 mod read_from_json;
 
 pub use integer::Integer;
@@ -32,6 +33,7 @@ pub use logarithm::Logarithm;
 pub use derivative::Derivative;
 pub use integral::Integral;
 pub use trig_expression::TrigExp;
+pub use absolute_value::AbsoluteValue;
 pub use read_from_json::*;
 
 pub trait IExpression {
@@ -85,7 +87,8 @@ pub enum Expression {
     Logarithm(Arc<Logarithm>),
     Derivative(Arc<Derivative>),
     Integral(Arc<Integral>),
-    Trig(Arc<TrigExp>)
+    Trig(Arc<TrigExp>),
+    AbsoluteValue(Arc<AbsoluteValue>),
 }
 
 impl Expression {}
@@ -104,6 +107,7 @@ impl fmt::Debug for Expression {
             Expression::Derivative(p) => p as &dyn fmt::Debug,
             Expression::Integral(p) => p as &dyn fmt::Debug,
             Expression::Trig(p) => p as &dyn fmt::Debug,
+            Expression::AbsoluteValue(p) => p as &dyn fmt::Debug,
         }))
     }
 }
@@ -122,6 +126,7 @@ impl PartialEq for Expression {
             Expression::Derivative(p) => p.clone(),
             Expression::Integral(p) => p.clone(),
             Expression::Trig(p) => p.clone(),
+            Expression::AbsoluteValue(p) => p.clone(),
         };
         let second: Arc<dyn IExpression> = match other {
             Expression::Negation(p) => p.clone(),
@@ -135,6 +140,7 @@ impl PartialEq for Expression {
             Expression::Derivative(p) => p.clone(),
             Expression::Integral(p) => p.clone(),
             Expression::Trig(p) => p.clone(),
+            Expression::AbsoluteValue(p) => p.clone(),
         };
 
         Arc::ptr_eq(&first, &second)
@@ -162,6 +168,7 @@ impl Expression {
             Expression::Derivative(d) => d.clone(),
             Expression::Integral(i) => i.clone(),
             Expression::Trig(t) => t.clone(),
+            Expression::AbsoluteValue(a) => a.clone(),
         }
     }
 
@@ -178,6 +185,7 @@ impl Expression {
             Expression::Derivative(d) => d.to_json(),
             Expression::Integral(i) => i.to_json(),
             Expression::Trig(t) => t.to_json(),
+            Expression::AbsoluteValue(a) => a.to_json(),
         }
     }
 }

@@ -16,6 +16,7 @@ import { argv0 } from "process"
 import { Derivative } from "../expressions/Derivative"
 import { Exponent } from "../expressions/Exponent"
 import { TrigExp, TrigFn } from "../expressions/TrigExp"
+import { AbsoluteValue } from "../expressions/AbsoluteValue"
 
 /**
  * Parses latex expression into internal expression.
@@ -28,6 +29,7 @@ export function parseExpressionLatex(source: string): Expression | null {
     groupNumbers(ast)
     dropParenMacros(ast)
     trimWhiteSpace(ast)
+    ast.forEach(n => console.log(n))
 
     return group(ast)
 }
@@ -74,9 +76,12 @@ function groupNumbers(nodes: Ast.Node[]): void {
 function dropParenMacros(nodes: Ast.Node[]): void {
     for (let i = 0; i < nodes.length; i++) {
         const n = nodes[i]
+        const next = nodes[i+1]
         if (
-            n.type === "macro" &&
-            (n.content === "right" || n.content === "left")
+            n.type === "macro" 
+            && (n.content === "right" || n.content === "left")
+            && next.type === "string"
+            && (next.content === "(" || next.content === ")")
         ) {
             nodes.splice(i, 1)
             i--
@@ -207,6 +212,23 @@ function group(
         }
         return null
     }
+    function isOpenAbs(index: number): boolean {
+        const node = nodes[index]
+        const next = nodes[index + 1]
+        return node.type === "macro" 
+            && node.content === "left"
+            && next.type === "string"
+            && next.content === "|"
+    }
+    function isCloseAbs(index: number): boolean {
+        const node = nodes[index]
+        const next = nodes[index + 1]
+        return node.type === "macro" 
+            && node.content === "right"
+            && next.type === "string"
+            && next.content === "|"
+    }
+
 
     // Begins searching at start and finds the first index
     // of a + or non-unary - not in a deeper level of parens
@@ -294,6 +316,27 @@ function group(
                 i = j + 1
                 continue
             }
+
+            if (isOpenAbs(i)) {
+                // Absolute value bars are two nodes wide: \left or \right, then "|"
+                let stack = 1
+                let j = i + 1
+                while (stack > 0 && j < end) {
+                    j++
+                    if (isOpenAbs(j)) stack++
+                    if (isCloseAbs(j)) stack--
+                }
+                if (j == i + 1) {
+                    return null
+                }
+                const absExp = group(nodes, i + 2, j - 1)
+                if (absExp != null) {
+                    addFactor(AbsoluteValue.of(absExp))
+                }
+                i = j + 2
+                continue
+            }
+
             if (isDot(curr)) {
                 i++
                 continue

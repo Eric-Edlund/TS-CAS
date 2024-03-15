@@ -1,3 +1,4 @@
+import { AbsoluteValue } from "./expressions/AbsoluteValue";
 import { Derivative } from "./expressions/Derivative";
 import { Exponent } from "./expressions/Exponent";
 import { Expression } from "./expressions/Expression";
@@ -67,5 +68,6 @@ function parseRec(obj: any): Expression {
         case "Arccsc": return TrigExp.of("Arccsc", parseRec(arr[1]));
         case "Arcsec": return TrigExp.of("Arcsec", parseRec(arr[1]));
         case "Arccot": return TrigExp.of("Arccot", parseRec(arr[1]));
+        case "Abs": return AbsoluteValue.of(parseRec(arr[1]));
     }
 }
