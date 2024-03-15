@@ -26,6 +26,10 @@ impl DerivationRule for EvaluateLogs {
             return vec![];
         };
 
+        if base.value() == 0 {
+            return vec![]
+        }
+
         let mut value = exp.value();
 
         let mut result = -1;
