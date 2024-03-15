@@ -1,9 +1,10 @@
 import { VariableValueMap } from "../VariableValueMap"
+import { wrapInGraph } from "../derivations/Deriver"
 import { Expression } from "./Expression"
 
 export class Logarithm extends Expression {
     public static of(exp: Expression, base: Expression): Logarithm {
-        const hash = exp.hash + base.hash
+        const hash = "Log" + exp.hash + base.hash
         if (!this.instances.has(hash))
             this.instances.set(hash, new Logarithm(exp, base))
         return this.instances.get(hash)!
@@ -35,7 +36,7 @@ export class Logarithm extends Expression {
         return `log(${this.base.toUnambigiousString()})(${this.exp.toUnambigiousString()})`
     }
     public get hash(): string {
-        throw new Error("Method not implemented.")
+        return "Log" + this.exp.hash + this.base.hash
     }
     public evaluate(values: VariableValueMap): number {
         return (
