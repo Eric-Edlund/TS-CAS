@@ -245,6 +245,27 @@ function group(
             && next.content === "|"
     }
 
+    function isArcSec(index: number): boolean {
+        const node = nodes[index]
+        return node.type === "macro"
+            && node.content === "operatorname"
+            && node.args[1]?.content[0]?.type === "string"
+            && node.args[1]?.content[0]?.content === "arcsec"
+    }
+    function isArcCsc(index: number): boolean {
+        const node = nodes[index]
+        return node.type === "macro"
+            && node.content === "operatorname"
+            && node.args[1]?.content[0]?.type === "string"
+            && node.args[1]?.content[0]?.content === "arccsc"
+    }
+    function isArcCot(index: number): boolean {
+        const node = nodes[index]
+        return node.type === "macro"
+            && node.content === "operatorname"
+            && node.args[1]?.content[0]?.type === "string"
+            && node.args[1]?.content[0]?.content === "arccot"
+    }
 
     // Begins searching at start and finds the first index
     // of a + or non-unary - not in a deeper level of parens
@@ -513,9 +534,6 @@ function group(
                 || curr.content === "arcsin"
                 || curr.content === "arccos"
                 || curr.content === "arctan"
-                || curr.content === "arcsec"
-                || curr.content === "arccsc"
-                || curr.content === "arccot"
                 )) {
                 // Look ahead to grab any exponent like cos^2
                 let power = null;
@@ -530,6 +548,29 @@ function group(
                     + curr.content.slice(1) as TrigFn);
                 i++;
                 continue;
+            }
+
+            if (isArcSec(i) || isArcCsc(i) || isArcCot(i)) {
+                // Look ahead to grab any exponent like arccsc^2
+                let power = null;
+                if (i+1 <= end) {
+                    power = isExponent(nodes[i+1]);
+                }
+                if (power != null) {
+                    stack.push(power)
+                    i++
+                }
+                if (i+1 >= nodes.length) {
+                    // We're missing the arg
+                    return null
+                }
+                // @ts-ignore
+                const fn = curr.args[1].content[0].content;
+                stack.push(fn.charAt(0).toUpperCase()
+                     + fn.slice(1) as TrigFn);
+                i++;
+                continue;
+
             }
 
             let interpretation = interpret(curr);
