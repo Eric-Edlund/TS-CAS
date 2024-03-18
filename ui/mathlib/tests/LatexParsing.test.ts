@@ -25,6 +25,7 @@ test("Latex is parsed correctly", () => {
     const EXP_12 = "\\sin \\cos x + 7"
     const EXP_13 = "\\tan (x+9)"
     const EXP_14 = "\\cot ^2 x"
+    const EXP_15 = "\\sqrt x"
     // TODO: logs
 
     function expect(latex: string, value: Expression): void {
@@ -61,4 +62,5 @@ test("Latex is parsed correctly", () => {
     expect(EXP_12, sum(TrigExp.of("Sin", TrigExp.of("Cos", v("x"))), num(7)))
     expect(EXP_13, TrigExp.of("Tan", sum(v("x"), num(9))))
     expect(EXP_14, Exponent.of(TrigExp.of("Cot", v("x")), num(2)))
+    expect(EXP_15, Exponent.of(v("x"), Fraction.of(num(1), num(2))))
 })

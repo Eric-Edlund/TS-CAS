@@ -267,6 +267,10 @@ function group(
             && node.args[1]?.content[0]?.type === "string"
             && node.args[1]?.content[0]?.content === "arccot"
     }
+    function isSqrt(node: Ast.Node): boolean {
+        return node.type === "macro"
+            && node.content === "sqrt"
+    }
 
     // Begins searching at start and finds the first index
     // of a + or non-unary - not in a deeper level of parens
@@ -571,7 +575,21 @@ function group(
                      + fn.slice(1) as TrigFn);
                 i++;
                 continue;
+            }
 
+            if (isSqrt(curr)) {
+                // @ts-ignore
+                const child = group(curr.args[1].content);
+                if (child == null) {
+                    // Sqrt missing argument
+                    return null
+                }
+                addFactor(Exponent.of(
+                    child,
+                    Fraction.of(num(1), num(2))
+                ))
+                i++;
+                continue;
             }
 
             let interpretation = interpret(curr);
