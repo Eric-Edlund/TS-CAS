@@ -9,7 +9,7 @@ pub struct IntegralChainRule {}
 
 impl DerivationRule for IntegralChainRule {
     fn apply(&self, input: Expression) -> Vec<(Expression, Rc<Argument>)> {
-        let integral = match input {
+        let _integral = match input {
             Expression::Integral(ref i) => i,
             _ => return vec![]
         };

@@ -11,7 +11,7 @@ fn single_variable_integrals() {
     let three = &num(3);
     let four = &num(4);
     let five = &num(5);
-    let six = &num(6);
+    let _six = &num(6);
     let seven = &num(7);
     let eight = &num(8);
     let nine = &num(9);

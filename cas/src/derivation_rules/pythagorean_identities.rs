@@ -1,4 +1,4 @@
-use std::{collections::{HashMap, HashSet}, rc::Rc, sync::Arc};
+use std::{collections::{HashSet}, rc::Rc, sync::Arc};
 
 use crate::{argument::Argument, convenience_expressions::sum_of_iter, expressions::{trig_expression::TrigFn, Exponent, Expression, Integer, TrigExp}};
 

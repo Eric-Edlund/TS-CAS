@@ -9,7 +9,7 @@ mod mathxml;
 mod convenience_expressions;
 
 use deriver::{BruteForceProfile, Deriver, EvaluateFirstProfile, OptimizationProfile};
-use expressions::{Expression, read_object_from_json};
+use expressions::read_object_from_json;
 use graph::Graph;
 use graph_traversal::{expression_complexity_cmp, Path};
 use petgraph::{visit::IntoNodeReferences, algo::astar};

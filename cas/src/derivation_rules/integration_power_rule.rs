@@ -52,7 +52,7 @@ impl DerivationRule for IntegralPowerRule {
 
 #[cfg(test)]
 mod tests {
-    use crate::{convenience_expressions::{i, power, v}, derivation_rules::DerivationRule, expressions::{product::product_of, sum::sum_of, Fraction, Integer, Integral}};
+    use crate::{convenience_expressions::{i, power, v}, derivation_rules::DerivationRule, expressions::{sum::sum_of, Fraction, Integral}};
 
     use super::IntegralPowerRule;
 

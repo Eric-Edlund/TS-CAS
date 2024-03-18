@@ -12,7 +12,7 @@ use super::DerivationRule;
 pub struct TrigReflections {}
 
 impl DerivationRule for TrigReflections {
-    fn apply(&self, input: Expression) -> Vec<(Expression, Rc<Argument>)> {
+    fn apply(&self, _input: Expression) -> Vec<(Expression, Rc<Argument>)> {
         // let trig = match input {
         //     Expression::Trig(ref t) => t,
         //     _ => return vec![]
