@@ -58,10 +58,6 @@ pub trait IExpression {
     fn to_json(&self) -> Value;
 }
 
-// Use this when refering to an Expression in case we need to change
-// it later.
-pub type ExpressionPtr = Expression;
-
 // For JS interop
 pub type ExpressionId = String;
 
@@ -154,7 +150,7 @@ impl PartialEq for Expression {
 }
 
 // We implement Flywheel in all expression subclasses
-pub(self) static EXPRESSION_INSTANCES: Lazy<Mutex<HashMap<ExpressionId, ExpressionPtr>>> =
+pub(self) static EXPRESSION_INSTANCES: Lazy<Mutex<HashMap<ExpressionId, Expression>>> =
     Lazy::new(|| Mutex::new(HashMap::new()));
 
 impl Expression {

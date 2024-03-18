@@ -1,6 +1,6 @@
 use std::{rc::Rc, collections::HashMap};
 
-use crate::{argument::Argument, expressions::{ExpressionPtr, Expression, Integer, product::product_of, Exponent, sum::sum_of}};
+use crate::{argument::Argument, expressions::{Expression, Integer, product::product_of, Exponent, sum::sum_of}};
 
 use super::DerivationRule;
 
@@ -11,14 +11,14 @@ use super::DerivationRule;
 pub struct CombineCommonFactors {}
 
 impl DerivationRule for CombineCommonFactors {
-    fn apply(&self, input: ExpressionPtr) -> Vec<(ExpressionPtr, Rc<Argument>)> {
+    fn apply(&self, input: Expression) -> Vec<(Expression, Rc<Argument>)> {
         let product = match input {
             Expression::Product(ref p) => p,
             _ => return vec![],
         };
 
         // factor bases -> terms of the new power
-        let mut new_factors: HashMap<Expression, Vec<ExpressionPtr>> = HashMap::new();
+        let mut new_factors: HashMap<Expression, Vec<Expression>> = HashMap::new();
 
         for factor in product.factors() {
             match factor {
@@ -45,7 +45,7 @@ impl DerivationRule for CombineCommonFactors {
                     Exponent::of(pair.0.clone(), sum_of(pair.1))
                 }
             })
-            .collect::<Vec<ExpressionPtr>>();
+            .collect::<Vec<Expression>>();
 
         if stripped.len() >= product.factors().len() {
             return vec![];

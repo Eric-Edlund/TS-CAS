@@ -1,6 +1,6 @@
 use std::rc::Rc;
 
-use crate::{argument::Argument, expressions::{Derivative, Expression, ExpressionPtr, Negation}};
+use crate::{argument::Argument, expressions::{Derivative, Expression, Negation}};
 
 use super::DerivationRule;
 
@@ -8,7 +8,7 @@ use super::DerivationRule;
 pub struct PullOutNegation {}
 
 impl DerivationRule for PullOutNegation {
-    fn apply(&self, input: ExpressionPtr) -> Vec<(Expression, Rc<Argument>)> {
+    fn apply(&self, input: Expression) -> Vec<(Expression, Rc<Argument>)> {
         let derivative = match input {
             Expression::Derivative(ref d) => d,
             _ => return vec![]

@@ -3,19 +3,19 @@ use std::sync::Arc;
 
 use serde_json::json;
 
-use super::{Expression, ExpressionPtr, IExpression, EXPRESSION_INSTANCES};
+use super::{Expression, IExpression, EXPRESSION_INSTANCES};
 
 #[derive(PartialEq, Eq, Hash)]
 pub struct Negation {
-    expression: ExpressionPtr,
+    expression: Expression,
 }
 
 impl Negation {
-    pub fn child(&self) -> ExpressionPtr {
+    pub fn child(&self) -> Expression {
         self.expression.clone()
     }
 
-    pub fn of(expression: ExpressionPtr) -> ExpressionPtr {
+    pub fn of(expression: Expression) -> Expression {
         let id = get_id(&expression);
 
         let mut instances = EXPRESSION_INSTANCES.lock().unwrap();
@@ -50,7 +50,7 @@ impl IExpression for Negation {
     }
 }
 
-fn get_id(exp: &ExpressionPtr) -> String {
+fn get_id(exp: &Expression) -> String {
     format!("negation{}", &exp.as_stringable().id())
 }
 

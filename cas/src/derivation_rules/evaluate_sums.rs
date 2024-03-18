@@ -1,7 +1,7 @@
 use super::DerivationRule;
 
 use crate::expressions::sum::sum_of;
-use crate::expressions::{Expression, ExpressionPtr, Integer, Negation};
+use crate::expressions::{Expression, Integer, Negation};
 use crate::argument::Argument;
 use std::rc::Rc;
 
@@ -13,7 +13,7 @@ use std::rc::Rc;
 pub struct EvaluateSums {}
 
 impl DerivationRule for EvaluateSums {
-    fn apply(&self, input: ExpressionPtr) -> Vec<(ExpressionPtr, Rc<Argument>)> {
+    fn apply(&self, input: Expression) -> Vec<(Expression, Rc<Argument>)> {
         let sum = match input {
             Expression::Sum(ref s) => s,
             _ => return vec![],

@@ -1,6 +1,6 @@
 use std::rc::Rc;
 
-use crate::{expressions::{ExpressionPtr, Expression, product::product_of_iter, sum::sum_of}, argument::Argument};
+use crate::{expressions::{Expression, product::product_of_iter, sum::sum_of}, argument::Argument};
 
 use super::DerivationRule;
 
@@ -13,7 +13,7 @@ use super::DerivationRule;
 pub struct DistributiveProperty {}
 
 impl DerivationRule for DistributiveProperty {
-    fn apply(&self, input: ExpressionPtr) -> Vec<(Expression, Rc<Argument>)> {
+    fn apply(&self, input: Expression) -> Vec<(Expression, Rc<Argument>)> {
         let product = match input {
             Expression::Product(ref p) => p,
             _ => return vec![],
@@ -63,7 +63,7 @@ impl DerivationRule for DistributiveProperty {
                         product_of_iter(&mut [term].iter().map(|e| (*e).clone())
                             .chain(to_distribute.iter().map(|e| (*e).clone())))
                     })
-                    .collect::<Vec<ExpressionPtr>>();
+                    .collect::<Vec<Expression>>();
 
                 let new_factors = &mut new_terms.iter()
                     .chain(others)

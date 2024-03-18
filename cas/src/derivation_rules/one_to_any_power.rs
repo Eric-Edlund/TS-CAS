@@ -1,6 +1,6 @@
 use std::rc::Rc;
 
-use crate::{argument::Argument, expressions::{Expression, ExpressionPtr, Integer}};
+use crate::{argument::Argument, expressions::{Expression, Integer}};
 
 use super::DerivationRule;
 
@@ -10,7 +10,7 @@ use super::DerivationRule;
 pub struct OneToAnything {}
 
 impl DerivationRule for OneToAnything {
-    fn apply(&self, input: ExpressionPtr) -> Vec<(ExpressionPtr, Rc<Argument>)> {
+    fn apply(&self, input: Expression) -> Vec<(Expression, Rc<Argument>)> {
         let power = match input {
             Expression::Exponent(ref e) => e,
             _ => return vec![]

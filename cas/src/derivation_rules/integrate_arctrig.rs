@@ -1,6 +1,6 @@
 use std::rc::Rc;
 
-use crate::{argument::Argument, convenience_expressions::{arcsec, arcsin, arctan, i, sqrt}, expressions::{product::product_of, trig_expression::TrigFn, AbsoluteValue, Exponent, Expression, ExpressionPtr, Fraction, Integer, Negation, TrigExp}};
+use crate::{argument::Argument, convenience_expressions::{arcsec, arcsin, arctan, i, sqrt}, expressions::{product::product_of, AbsoluteValue, Exponent, Expression, Fraction, Integer}};
 
 use super::{helpers::is_constant, DerivationRule};
 
@@ -13,7 +13,7 @@ use super::{helpers::is_constant, DerivationRule};
 pub struct IntegrateArcTrig {}
 
 impl DerivationRule for IntegrateArcTrig {
-    fn apply(&self, input: ExpressionPtr) -> Vec<(ExpressionPtr, Rc<Argument>)> {
+    fn apply(&self, input: Expression) -> Vec<(Expression, Rc<Argument>)> {
         let integral = match input {
             Expression::Integral(ref i) => i,
             _ => return vec![]
@@ -165,7 +165,7 @@ impl DerivationRule for IntegrateArcTrig {
 
 #[cfg(test)]
 mod tests {
-    use crate::{convenience_expressions::{arctan, v}, expressions::{sum::sum_of, Integral}};
+    use crate::{convenience_expressions::{arctan, v}, expressions::{sum::sum_of, Integral, Negation}};
 
     use super::*;
 

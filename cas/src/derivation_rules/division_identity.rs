@@ -1,5 +1,5 @@
 use super::DerivationRule;
-use crate::expressions::{ExpressionPtr, Expression};
+use crate::expressions::{Expression};
 use crate::argument::Argument;
 use std::rc::Rc;
 
@@ -9,7 +9,7 @@ use std::rc::Rc;
 pub struct DivisionIdentity {}
 
 impl DerivationRule for DivisionIdentity {
-    fn apply(&self, input: ExpressionPtr) -> Vec<(ExpressionPtr, Rc<Argument>)> {
+    fn apply(&self, input: Expression) -> Vec<(Expression, Rc<Argument>)> {
         let fraction = match input {
             Expression::Fraction(ref f) => f,
             _ => return vec![],

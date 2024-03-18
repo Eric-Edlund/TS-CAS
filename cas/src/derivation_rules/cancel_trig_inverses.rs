@@ -1,6 +1,6 @@
 use std::{collections::HashSet, rc::Rc};
 
-use crate::{argument::Argument, expressions::{product::product_of_iter, trig_expression::TrigFn, Expression, ExpressionPtr, Integer, TrigExp}};
+use crate::{argument::Argument, expressions::{product::product_of_iter, trig_expression::TrigFn, Expression, Integer, TrigExp}};
 
 use super::DerivationRule;
 
@@ -11,7 +11,7 @@ use super::DerivationRule;
 pub struct CancelTrigInverses {}
 
 impl DerivationRule for CancelTrigInverses {
-    fn apply(&self, input: ExpressionPtr) -> Vec<(ExpressionPtr, Rc<Argument>)> {
+    fn apply(&self, input: Expression) -> Vec<(Expression, Rc<Argument>)> {
         let product = match input {
             Expression::Product(ref p) => p,
             _ => return vec![] 

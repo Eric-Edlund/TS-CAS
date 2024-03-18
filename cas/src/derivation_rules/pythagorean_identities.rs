@@ -1,6 +1,6 @@
 use std::{collections::{HashMap, HashSet}, rc::Rc, sync::Arc};
 
-use crate::{argument::Argument, convenience_expressions::sum_of_iter, expressions::{trig_expression::TrigFn, Exponent, Expression, ExpressionPtr, Integer, TrigExp}};
+use crate::{argument::Argument, convenience_expressions::sum_of_iter, expressions::{trig_expression::TrigFn, Exponent, Expression, Integer, TrigExp}};
 
 use super::DerivationRule;
 
@@ -36,7 +36,7 @@ fn is_one(exp: &&Expression) -> bool {
 }
 
 impl DerivationRule for Pythagoras {
-    fn apply(&self, input: ExpressionPtr) -> Vec<(ExpressionPtr, Rc<Argument>)> {
+    fn apply(&self, input: Expression) -> Vec<(Expression, Rc<Argument>)> {
         let sum = match input {
             Expression::Sum(ref s) => s,
             _ => return vec![]

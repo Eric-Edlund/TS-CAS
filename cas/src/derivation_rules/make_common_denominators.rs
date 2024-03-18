@@ -1,6 +1,6 @@
 use std::rc::Rc;
 
-use crate::{argument::Argument, convenience_expressions::sum_of_iter, expressions::{product::product_of, Expression, ExpressionPtr, Fraction}};
+use crate::{argument::Argument, convenience_expressions::sum_of_iter, expressions::{product::product_of, Expression, Fraction}};
 
 use super::DerivationRule;
 
@@ -13,7 +13,7 @@ use super::DerivationRule;
 pub struct MakeCommonDenominators {}
 
 impl DerivationRule for MakeCommonDenominators {
-    fn apply(&self, input: ExpressionPtr) -> Vec<(ExpressionPtr, Rc<Argument>)> {
+    fn apply(&self, input: Expression) -> Vec<(Expression, Rc<Argument>)> {
         let sum = match input {
             Expression::Sum(ref s) => s,
             _ => return vec![]
@@ -27,7 +27,7 @@ impl DerivationRule for MakeCommonDenominators {
             });
 
 
-        let mut equivalents = Vec::<ExpressionPtr>::new();
+        let mut equivalents = Vec::<Expression>::new();
 
         for denominator in denominators {
             equivalents.push(

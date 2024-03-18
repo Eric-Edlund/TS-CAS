@@ -2,16 +2,16 @@ use std::sync::Arc;
 
 use serde_json::json;
 
-use super::{IExpression, ExpressionPtr, EXPRESSION_INSTANCES, Expression};
+use super::{IExpression, EXPRESSION_INSTANCES, Expression};
 
 #[derive(PartialEq, Eq, Hash, Debug)]
 pub struct Derivative {
-    exp: ExpressionPtr,
-    relative_to: ExpressionPtr,
+    exp: Expression,
+    relative_to: Expression,
 }
 
 impl Derivative {
-    pub fn of(exp: ExpressionPtr, relative_to: ExpressionPtr) -> ExpressionPtr {
+    pub fn of(exp: Expression, relative_to: Expression) -> Expression {
         let id = get_id(&exp, &relative_to);
 
         let mut instances = EXPRESSION_INSTANCES.lock().unwrap();
@@ -29,16 +29,16 @@ impl Derivative {
         result
     }
 
-    pub fn exp(&self) -> ExpressionPtr {
+    pub fn exp(&self) -> Expression {
         self.exp.clone()
     }
 
-    pub fn relative_to(&self) -> ExpressionPtr {
+    pub fn relative_to(&self) -> Expression {
         self.relative_to.clone()
     }
 }
 
-fn get_id(exp: &ExpressionPtr, rel: &ExpressionPtr) -> String {
+fn get_id(exp: &Expression, rel: &Expression) -> String {
     format!("Derivative{}{}", 
         exp.as_stringable().id(),
         rel.as_stringable().id())

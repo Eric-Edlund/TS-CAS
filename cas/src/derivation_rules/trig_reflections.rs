@@ -1,6 +1,6 @@
 use std::rc::Rc;
 
-use crate::{argument::Argument, expressions::{Expression, ExpressionPtr}};
+use crate::{argument::Argument, expressions::{Expression}};
 
 use super::DerivationRule;
 
@@ -12,7 +12,7 @@ use super::DerivationRule;
 pub struct TrigReflections {}
 
 impl DerivationRule for TrigReflections {
-    fn apply(&self, input: ExpressionPtr) -> Vec<(ExpressionPtr, Rc<Argument>)> {
+    fn apply(&self, input: Expression) -> Vec<(Expression, Rc<Argument>)> {
         // let trig = match input {
         //     Expression::Trig(ref t) => t,
         //     _ => return vec![]

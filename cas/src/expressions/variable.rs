@@ -5,7 +5,7 @@ use serde_json::json;
 
 use crate::expressions::IExpression;
 
-use super::{Expression, EXPRESSION_INSTANCES, ExpressionPtr};
+use super::{EXPRESSION_INSTANCES, Expression};
 
 #[derive(PartialEq, Eq, Hash)]
 pub struct Variable {
@@ -13,7 +13,7 @@ pub struct Variable {
 }
 
 impl Variable {
-    pub fn of(symbol: &str) -> ExpressionPtr {
+    pub fn of(symbol: &str) -> Expression {
         let id = get_id(symbol);
 
         let mut instances = EXPRESSION_INSTANCES.lock().unwrap();

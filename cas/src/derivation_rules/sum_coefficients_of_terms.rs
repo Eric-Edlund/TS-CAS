@@ -4,7 +4,7 @@ use std::hash::Hash;
 use crate::convenience_expressions::sum_of_iter;
 use crate::expressions::Negation;
 use crate::expressions::product::{product_of, product_of_iter};
-use crate::{expressions::{ExpressionPtr, Expression}, argument::Argument};
+use crate::{expressions::{Expression}, argument::Argument};
 
 use super::DerivationRule;
 
@@ -36,7 +36,7 @@ where T: PartialEq + Eq + Hash + Clone {
 }
 
 impl DerivationRule for SumCoefficientsOfTerms {
-    fn apply(&self, input: ExpressionPtr) -> Vec<(ExpressionPtr, Rc<Argument>)> {
+    fn apply(&self, input: Expression) -> Vec<(Expression, Rc<Argument>)> {
         let terms = match input {
             Expression::Sum(ref s) => s.terms(),
             _ => return vec![],
@@ -55,22 +55,22 @@ impl DerivationRule for SumCoefficientsOfTerms {
                     _ => (term.0, vec![term.1.clone()]),
                 }
             })
-            .collect::<Vec<(bool, Vec<ExpressionPtr>)>>();
+            .collect::<Vec<(bool, Vec<Expression>)>>();
 
         let factors = expanded_terms.iter()
             .map(|term| term.1.clone())
             .flatten()
-            .collect::<HashSet<ExpressionPtr>>()
+            .collect::<HashSet<Expression>>()
             .into_iter()
             .collect();
 
-        let mut equivalents = Vec::<ExpressionPtr>::new();
+        let mut equivalents = Vec::<Expression>::new();
 
         for subset in power_set(factors) {
             // Figure out which terms are affected
             // The term is included if it contains all elements of subset
-            let mut relevant = Vec::<(bool, Vec<ExpressionPtr>)>::new();
-            let mut others = Vec::<ExpressionPtr>::new();
+            let mut relevant = Vec::<(bool, Vec<Expression>)>::new();
+            let mut others = Vec::<Expression>::new();
             for term in &expanded_terms {
                 let mut overlaps_subset = false;
                 for factor in &subset {

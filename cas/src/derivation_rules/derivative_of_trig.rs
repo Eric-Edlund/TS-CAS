@@ -1,6 +1,6 @@
 use std::rc::Rc;
 
-use crate::{argument::Argument, convenience_expressions::{abs, power, sqrt}, expressions::{product::product_of, sum::sum_of, trig_expression::TrigFn, Derivative, Exponent, Expression, ExpressionPtr, Fraction, Integer, Negation, TrigExp}};
+use crate::{argument::Argument, convenience_expressions::{abs, power, sqrt}, expressions::{product::product_of, sum::sum_of, trig_expression::TrigFn, Derivative, Exponent, Expression, Fraction, Integer, Negation, TrigExp}};
 
 use super::DerivationRule;
 
@@ -8,7 +8,7 @@ use super::DerivationRule;
 pub struct DerivativeOfTrig {}
 
 impl DerivationRule for DerivativeOfTrig {
-    fn apply(&self, input: ExpressionPtr) -> Vec<(ExpressionPtr, Rc<Argument>)> {
+    fn apply(&self, input: Expression) -> Vec<(Expression, Rc<Argument>)> {
         let derivative = match input {
             Expression::Derivative(ref d) => d,
             _ => return vec![]

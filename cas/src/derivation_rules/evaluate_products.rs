@@ -1,6 +1,6 @@
 use std::rc::Rc;
 
-use crate::{expressions::{ExpressionPtr, Expression, product::product_of_iter}, argument::Argument, convenience_expressions::i};
+use crate::{expressions::{Expression, product::product_of_iter}, argument::Argument, convenience_expressions::i};
 
 use super::DerivationRule;
 
@@ -8,7 +8,7 @@ use super::DerivationRule;
 pub struct EvaluateProducts {}
 
 impl DerivationRule for EvaluateProducts {
-    fn apply(&self, input: ExpressionPtr) -> Vec<(ExpressionPtr, Rc<Argument>)> {
+    fn apply(&self, input: Expression) -> Vec<(Expression, Rc<Argument>)> {
         let product = match input {
             Expression::Product(ref p) => p,
             _ => return vec![],

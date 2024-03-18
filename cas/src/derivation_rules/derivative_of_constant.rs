@@ -1,6 +1,6 @@
 use std::rc::Rc;
 
-use crate::{argument::Argument, expressions::{Expression, ExpressionPtr, Integer}};
+use crate::{argument::Argument, expressions::{Expression, Integer}};
 
 use super::{helpers::is_constant, DerivationRule};
 
@@ -11,7 +11,7 @@ use super::{helpers::is_constant, DerivationRule};
 pub struct DerivativeOfConst {}
 
 impl DerivationRule for DerivativeOfConst {
-    fn apply(&self, input: ExpressionPtr) -> Vec<(ExpressionPtr, Rc<Argument>)> {
+    fn apply(&self, input: Expression) -> Vec<(Expression, Rc<Argument>)> {
         let derivative = match input {
             Expression::Derivative(ref d) => d,
             _ => return vec![],

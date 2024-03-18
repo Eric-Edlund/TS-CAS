@@ -1,6 +1,6 @@
 use std::{rc::Rc, sync::Mutex};
 
-use crate::{argument::Argument, expressions::ExpressionPtr};
+use crate::{argument::Argument, expressions::Expression};
 
 pub mod helpers;
 
@@ -58,7 +58,7 @@ pub trait DerivationRule {
      * Produces a set of equivalent expressions from the given
      * one. Result does not include the input.
      */
-    fn apply(&self, input: ExpressionPtr) -> Vec<(ExpressionPtr, Rc<Argument>)>;
+    fn apply(&self, input: Expression) -> Vec<(Expression, Rc<Argument>)>;
 }
 
 pub static ALL_RULES: Mutex<&[&(dyn DerivationRule + Sync)]> =

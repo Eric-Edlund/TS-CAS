@@ -1,6 +1,6 @@
 use std::rc::Rc;
 
-use crate::{argument::Argument, convenience_expressions::i, expressions::{product::product_of, sum::sum_of, Exponent, Expression, ExpressionPtr, Integer, Negation}};
+use crate::{argument::Argument, convenience_expressions::i, expressions::{product::product_of, sum::sum_of, Exponent, Expression, Integer, Negation}};
 
 use super::{helpers::is_constant, DerivationRule};
 
@@ -8,7 +8,7 @@ use super::{helpers::is_constant, DerivationRule};
 pub struct PowerRule {}
 
 impl DerivationRule for PowerRule {
-    fn apply(&self, input: ExpressionPtr) -> Vec<(Expression, Rc<Argument>)> {
+    fn apply(&self, input: Expression) -> Vec<(Expression, Rc<Argument>)> {
         let derivative = match input {
             Expression::Derivative(ref d) => d,
             _ => return vec![]

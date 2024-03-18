@@ -1,6 +1,6 @@
 use std::rc::Rc;
 
-use crate::{argument::Argument, expressions::{ExpressionPtr, Expression, product::{product_of, product_of_iter}, sum::sum_of}};
+use crate::{argument::Argument, expressions::{Expression, product::{product_of, product_of_iter}, sum::sum_of}};
 
 use super::DerivationRule;
 
@@ -11,7 +11,7 @@ pub struct FOIL {}
 * (a+b)(c+d) = ac + ad + bc + bd
 */
 impl DerivationRule for FOIL {
-    fn apply(&self, input: ExpressionPtr) -> Vec<(ExpressionPtr, Rc<Argument>)> {
+    fn apply(&self, input: Expression) -> Vec<(Expression, Rc<Argument>)> {
         let product = match input {
             Expression::Product(ref p) => p,
             _ => return vec![],
@@ -30,7 +30,7 @@ impl DerivationRule for FOIL {
         };
 
         // Foil every pair of sums
-        let mut equivalents = Vec::<ExpressionPtr>::new();
+        let mut equivalents = Vec::<Expression>::new();
 
         for first in &sums {
             for second in &sums {
@@ -48,9 +48,9 @@ impl DerivationRule for FOIL {
                 let excluded_sums = sums.iter()
                     .filter(|s| *s != first && *s != second)
                     .map(|s| (*s).clone())
-                    .collect::<Vec<ExpressionPtr>>();
+                    .collect::<Vec<Expression>>();
                 // FOIL
-                let mut new_terms = Vec::<ExpressionPtr>::new();
+                let mut new_terms = Vec::<Expression>::new();
 
                 for term in first_sum.terms() {
                     for other in second_sum.terms() {

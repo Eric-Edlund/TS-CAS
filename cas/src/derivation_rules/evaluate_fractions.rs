@@ -1,6 +1,6 @@
 use std::rc::Rc;
 
-use crate::{argument::Argument, expressions::{product::product_of_iter, Expression, ExpressionPtr, Fraction, Integer}};
+use crate::{argument::Argument, expressions::{product::product_of_iter, Expression, Fraction, Integer}};
 
 use super::DerivationRule;
 
@@ -12,7 +12,7 @@ use super::DerivationRule;
 pub struct EvaluateFractions {}
 
 impl DerivationRule for EvaluateFractions {
-    fn apply(&self, input: ExpressionPtr) -> Vec<(ExpressionPtr, Rc<Argument>)> {
+    fn apply(&self, input: Expression) -> Vec<(Expression, Rc<Argument>)> {
         let fraction = match input {
             Expression::Fraction(ref f) => f,
             _ => return vec![],

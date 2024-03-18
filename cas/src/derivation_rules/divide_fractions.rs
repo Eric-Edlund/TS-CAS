@@ -1,6 +1,6 @@
 use std::rc::Rc;
 
-use crate::{expressions::{ExpressionPtr, Expression, Integer, sum::sum_of, Negation, Exponent, product::product_of, Fraction}, argument::Argument};
+use crate::{expressions::{Expression, Integer, sum::sum_of, Negation, Exponent, product::product_of, Fraction}, argument::Argument};
 
 use super::DerivationRule;
 
@@ -12,22 +12,22 @@ use super::DerivationRule;
 pub struct DivideFractions {}
 
 impl DerivationRule for DivideFractions {
-    fn apply(&self, input: ExpressionPtr) -> Vec<(ExpressionPtr, Rc<Argument>)> {
+    fn apply(&self, input: Expression) -> Vec<(Expression, Rc<Argument>)> {
         let fraction = match input {
             Expression::Fraction(ref f) => f,
             _ => return vec![],
         };
 
-        let mut numerator: Vec<ExpressionPtr> = match fraction.numerator() {
+        let mut numerator: Vec<Expression> = match fraction.numerator() {
             Expression::Product(p) => p.factors().clone(),
             exp => vec![exp],
         };
-        let mut denominator: Vec<ExpressionPtr> = match fraction.denominator() {
+        let mut denominator: Vec<Expression> = match fraction.denominator() {
             Expression::Product(p) => p.factors().clone(),
             exp => vec![exp],
         };
 
-        fn contains_base (list: &Vec<ExpressionPtr>, exp: &ExpressionPtr) -> bool {
+        fn contains_base (list: &Vec<Expression>, exp: &Expression) -> bool {
             for e in list {
                 match e {
                     Expression::Exponent(e) => if e.base() == *exp {
@@ -41,7 +41,7 @@ impl DerivationRule for DivideFractions {
             false
         }
 
-        fn base_of(exp: &ExpressionPtr) -> ExpressionPtr {
+        fn base_of(exp: &Expression) -> Expression {
             match exp {
                 Expression::Exponent(e) => e.base(),
                 _ => exp.clone(),

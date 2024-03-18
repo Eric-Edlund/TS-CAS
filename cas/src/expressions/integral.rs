@@ -2,17 +2,17 @@ use std::sync::Arc;
 
 use serde_json::json;
 
-use super::{ExpressionPtr, IExpression, EXPRESSION_INSTANCES, Expression};
+use super::{IExpression, EXPRESSION_INSTANCES, Expression};
 
 
 #[derive(PartialEq, Eq, Hash, Debug)]
 pub struct Integral {
-    integrand: ExpressionPtr,
-    relative_to: ExpressionPtr,
+    integrand: Expression,
+    relative_to: Expression,
 }
 
 impl Integral {
-    pub fn of(integrand: ExpressionPtr, relative_to: ExpressionPtr) -> ExpressionPtr {
+    pub fn of(integrand: Expression, relative_to: Expression) -> Expression {
         let id = get_id(&integrand, &relative_to);
 
         let mut instances = EXPRESSION_INSTANCES.lock().unwrap();
@@ -30,16 +30,16 @@ impl Integral {
         result
     }
 
-    pub fn integrand(&self) -> ExpressionPtr {
+    pub fn integrand(&self) -> Expression {
         self.integrand.clone()
     }
 
-    pub fn relative_to(&self) -> ExpressionPtr {
+    pub fn relative_to(&self) -> Expression {
         self.relative_to.clone()
     }
 }
 
-fn get_id(integrand: &ExpressionPtr, relative_to: &ExpressionPtr) -> String {
+fn get_id(integrand: &Expression, relative_to: &Expression) -> String {
     format!("Integral{}{}", 
         integrand.as_stringable().id(), 
         relative_to.as_stringable().id())
