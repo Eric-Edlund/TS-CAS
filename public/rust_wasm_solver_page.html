@@ -10,6 +10,11 @@
                 font-size: 1.7em;
                 text-align: center;
             }
+            #input {
+                font-size: 2em;
+                text-align: center;
+                padding: 0.5em;
+            }
         </style>
         <script>
             var exports = {}
@@ -45,13 +50,11 @@
 
     <body id="body" class="wasm_steps_backend container">
         <h1>Solver</h1>
-        <div id="inputZone" class="row"></div>
-        <button onclick="setInputMode('boring')">Ascii</button>
-        <button onclick="setInputMode('quill')">Interactive Latex</button>
+        <div id="inputZone" class="row">
+            <div id="input" class="col s12"></div>
+        </div>
         <div id="answerSummary" class="row"></div>
-
         <div class="divider"></div>
-
         <div id="stepsView"></div>
     </body>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
