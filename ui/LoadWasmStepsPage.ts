@@ -27,7 +27,13 @@ export async function loadWasmStepsBackend(): Promise<void> {
     const quill = MQ.MathField(inputView, {
         handlers: {
             edit: function() {
-                expression = parseExpressionLatex(quill.latex())
+                const parseResult = parseExpressionLatex(quill.latex());
+                if (parseResult === "empty") {
+                    expression = null
+                    onInputExpressionChanged()
+                    return
+                }
+                expression = parseResult
                 if (expression == null) {
                     inputView.style.color = "red"
                     // Also set border color 
@@ -55,7 +61,12 @@ let expression: Expression | null
  *      Does not effect the input area.
  */
 function onInputExpressionChanged() {
-    if (expression == undefined) return
+    if (expression === undefined) return
+    if (expression === null) {
+        solutionView.innerHTML = ""
+        stepListView.innerHTML = ""
+        return
+    }
     console.log("Parsed " + expression.toJSON())
 
     let r = simplify_with_steps(expression.toJSON(), 20, "evaluate_first")
