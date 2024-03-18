@@ -1,5 +1,6 @@
 import { VariableValueMap } from "../VariableValueMap"
 import { Expression } from "./Expression"
+import { FractionType } from "./Fraction";
 import { IntegerType } from "./Integer";
 import { VariableType } from "./Variable";
 
@@ -40,7 +41,10 @@ export class TrigExp extends Expression {
     public class: string = TrigType
     public toMathXML(): string {
         function wrapIfNeeded(exp: Expression): string {
-            if (exp.class !== IntegerType && exp.class !== VariableType) {
+            if (exp.class !== IntegerType 
+                && exp.class !== VariableType
+                && exp.class !== FractionType
+            ) {
                 return '<mo>(</mo>' + exp.toMathXML() + '<mo>)</mo>'
             }
             return exp.toMathXML();
