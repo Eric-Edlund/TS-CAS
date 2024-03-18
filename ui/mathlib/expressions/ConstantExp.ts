@@ -1,7 +1,7 @@
 import { VariableValueMap } from "../VariableValueMap";
 import { Expression } from "./Expression";
 
-export type Constant = "Euler" | "Pi"
+export type Constant = "Euler" | "Pi" | "Imaginary"
 
 export class ConstantExp extends Expression {
     public static of(value: Constant): ConstantExp {
@@ -24,6 +24,7 @@ export class ConstantExp extends Expression {
             break
             case "Pi": symbol = "π"
             break;
+            case "Imaginary": symbol = "𝑖"
         }
         return `<mi>${symbol}</mi>`
     }
@@ -47,6 +48,7 @@ export class ConstantExp extends Expression {
         switch (this.value) {
             case "Euler": return '"E"';
             case "Pi": return '"Pi"';
+            case "Imaginary": return '"ImaginaryUnit"'
         }
     }
 

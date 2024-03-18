@@ -9,6 +9,7 @@ use super::{Expression, IExpression, EXPRESSION_INSTANCES};
 pub enum Constant {
     Euler,
     Pi,
+    Imaginary,
 }
 
 #[derive(PartialEq, Eq, Hash)]
@@ -50,6 +51,7 @@ impl IExpression for ConstantExp {
         json!(match self.value {
             Constant::Euler => "E",
             Constant::Pi => "Pi",
+            Constant::Imaginary => "ImaginaryUnit",
         })
     }
 }

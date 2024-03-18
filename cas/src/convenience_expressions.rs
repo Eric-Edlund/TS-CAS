@@ -75,7 +75,6 @@ pub fn abs(exp: Expression) -> Expression {
     AbsoluteValue::of(exp)
 }
 
-
 /**
 * Returns a version of the expression with the products ordered
 * nicely. This is stuff like 7a instead of a7.

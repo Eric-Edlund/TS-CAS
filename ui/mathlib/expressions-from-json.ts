@@ -34,6 +34,8 @@ function parseRec(obj: any): Expression {
             return ConstantExp.of("Euler")
         } else if (obj === "Pi") {
             return ConstantExp.of("Pi")
+        } else if (obj === "ImaginaryUnit") {
+            return ConstantExp.of("Imaginary")
         }
     }
 
