@@ -1,7 +1,7 @@
 import { inParen, inRow } from "../util/MathMLHelpers"
 import { VariableValueMap } from "../VariableValueMap"
 import { Expression } from "./Expression"
-import { FractionType } from "./Fraction"
+import { Fraction, FractionType } from "./Fraction"
 import { Integer, IntegerType } from "./Integer"
 import { ProductType } from "./Product"
 import { SumType } from "./Sum"
@@ -28,6 +28,9 @@ export class Exponent extends Expression {
             )
                 return inRow(inParen(exp.toMathXML()))
             return exp.toMathXML()
+        }
+        if (this.power === Fraction.of(Integer.of(1), Integer.of(2))) {
+            return `<msqrt>${this.base.toMathXML()}</msqrt>`
         }
         return (
             "<msup>" +
