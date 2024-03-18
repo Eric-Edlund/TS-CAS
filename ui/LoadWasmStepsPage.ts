@@ -22,7 +22,7 @@ const inputView = document.getElementById("input")
 /**
  * Called after the DOM is loaded.
  */
-export async function loadWasmStepsBackend(): Promise<void> {
+export async function loadSolverPage(): Promise<void> {
     await initWasm()
     const quill = MQ.MathField(inputView, {
         handlers: {

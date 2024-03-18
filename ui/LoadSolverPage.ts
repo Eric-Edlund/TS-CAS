@@ -1,136 +1,134 @@
-import { deriveExpand, wrapInGraph } from "./mathlib/derivations/Deriver"
-import { GraphEdge } from "./mathlib/Graph"
 import { EditableMathView } from "./mathlib/uielements/EditableMathView"
-import path from "ngraph.path"
-import createGraph from "ngraph.graph"
+import initWasm, { get_all_equivalents, simplify_with_steps } from "../cas-wasm-wrapper/pkg"
 import { Expression } from "./mathlib/expressions/Expression"
-import { MathGraphNode } from "./mathlib/MathGraphNode"
-import { Argument } from "./mathlib/Argument"
-import { ArgumentNodeView } from "./mathlib/uielements/ArgumentNodeView"
-import { ExpressionNodeView } from "./mathlib/uielements/ExpressionNodeView"
-import { GraphMinipulator } from "./mathlib/GraphMinipulator"
-import { parseExpression } from "./mathlib/userinput/AntlrMathParser"
-import { Interpreter } from "./mathlib/interpreting/Interpreter"
-import { setOf } from "./mathlib/util/ThingsThatShouldBeInTheStdLib"
-import { RULE_ID as Evaluate_Sums_Rule } from "./mathlib/derivations/simplifications/EvaluateSums"
-import { Path } from "./mathlib/interpreting/Path"
+import { parseExpressionJSON } from "./mathlib/expressions-from-json"
+import { parseExpressionLatex } from "./mathlib/userinput/LatexParser"
 
-export function loadSolverPage(): void {
-    const inputView = document.getElementById("problem")! as HTMLTextAreaElement
-    const problemViewDiv = document.getElementById(
-        "expressionViewDiv"
-    ) as HTMLDivElement
-    const solutionView = document.getElementById(
-        "solution"
-    )! as EditableMathView
-    const stepListView = document.getElementById("steps")!
+declare const MathJax: any
+declare const MQ: any
 
-    // Populate ui
-    const problemView = new EditableMathView()
-    problemViewDiv.appendChild(problemView)
+const answerSummary = document.getElementById(
+    "answerSummary"
+)! as HTMLDivElement
 
-    inputView.focus()
+// Displays the final answer
+const solutionView = new EditableMathView()
 
-    inputView.addEventListener("keyup", () => {
-        // Parse input
-        let exp: Expression
-        try {
-            exp = parseExpression(inputView.value)
-            problemView.value = exp
-        } catch (e) {
-            stepListView.style.opacity = "0.6"
-            problemView.value = null
-            return
-        }
-        // We were able to parse the input
-        stepListView.style.opacity = "1"
+// Displays sequence of steps leading to the final answer
+const stepListView = document.getElementById("stepsView")! as HTMLDivElement
 
-        // Clear the previous result
-        while (stepListView.children.length > 0) {
-            stepListView.removeChild(stepListView.children[0])
-        }
+const inputView = document.getElementById("input")
 
-        const steps = getSolution(exp)
-
-        if (steps.nodes.length == 0) {
-            stepListView.textContent = "Cannot Simplify"
-            return
-        } else {
-            stepListView.textContent = ""
-        }
-
-        // Interpret the solution
-        const interpreter = new Interpreter({
-            skips: setOf(Evaluate_Sums_Rule)
-        })
-        const skipSet = interpreter.processPath(steps)
-
-        // Display new result
-        solutionView.value = steps.nodes[steps.nodes.length - 1] as Expression
-
-        function recursiveAdd(node: Expression): void {
-            stepListView.appendChild(new ExpressionNodeView(node, view => {}))
-
-            const next = skipSet.next(node)
-
-            if (next == null) return
-
-            const arg = next.a
-            stepListView.appendChild(new ArgumentNodeView(arg, view => {}))
-            recursiveAdd(next.e)
-        }
-
-        recursiveAdd(steps.nodes[0])
+/**
+ * Called after the DOM is loaded.
+ */
+export async function loadSolverPage(): Promise<void> {
+    await initWasm()
+    const quill = MQ.MathField(inputView, {
+        handlers: {
+            edit: function() {
+                const parseResult = parseExpressionLatex(quill.latex());
+                if (parseResult === "empty") {
+                    expression = null
+                    onInputExpressionChanged()
+                    return
+                }
+                expression = parseResult
+                if (expression == null) {
+                    inputView.style.color = "red"
+                    // Also set border color 
+                    // https://docs.mathquill.com/en/latest/Config/#changing-colors
+                    inputView.style.borderColor = "red"
+                } else {
+                    inputView.style.color = "black"
+                    inputView.style.borderColor = "black"
+                }
+                onInputExpressionChanged()
+            }
+        },
+        autoCommands: 'int pi sqrt'
     })
+
+    answerSummary.replaceChildren(solutionView)
+}
+
+// The last valid entered expression
+let expression: Expression | null
+
+/**
+ * Calculates the new answer and displays it.
+ * @effects The solution steps view and summary div.
+ *      Does not effect the input area.
+ */
+function onInputExpressionChanged() {
+    if (expression === undefined) return
+    if (expression === null) {
+        solutionView.innerHTML = ""
+        stepListView.innerHTML = ""
+        return
+    }
+    console.log("Parsed " + expression.toJSON())
+
+    let r = simplify_with_steps(expression.toJSON(), 20, "evaluate_first")
+
+    let result: {
+        steps: string[],
+        success: boolean
+    }
+    try {
+        result = JSON.parse(r)
+    } catch (e) {
+        console.log("Implementation error: Received error msg from backend:")
+        console.log(r)
+        return
+    }
+
+    if (result.success) {
+        solutionView.value = parseExpressionJSON(
+            result.steps[result.steps.length - 1]
+        )
+        stepListView.innerHTML = ""
+        for (let i = 1; i + 1 < result.steps.length; i += 2) {
+            let argument = result.steps[i]
+            let expression = result.steps[i + 1]
+
+            stepListView.appendChild(row(argument, expression))
+        }
+    } else {
+        // Fetch the equivalents it was able to find
+        console.log("No solution found.")
+        let equivalents = JSON.parse(get_all_equivalents(expression.toJSON(), 20, 
+            "evaluate_first"))["equivalents"]
+        console.log("Found " + equivalents.length + " equivalents.")
+        solutionView.value = null
+        stepListView.innerHTML = ""
+        for (const equiv of equivalents) {
+            if (new String("" + equiv).includes("Integral")) {
+                continue;
+            }
+            stepListView.appendChild(row(JSON.stringify(equiv), equiv))
+        }
+    }
+
+
+    MathJax.typeset([answerSummary, stepListView])
 }
 
 /**
- * Simplifies the given expression returning an array
- * of steps ending in the answer.
- * The last node will be an expression.
- * Result path will have no nodes if there is no solution.
+ * Creates an argument row for the solution steps list.
  */
-function getSolution(problem: Expression): Path<Expression> {
-    const graph = wrapInGraph(problem)
-    const derivationResult = deriveExpand(graph, 50, true)
+function row(argument: string, expression: string): HTMLDivElement {
+    const row = document.createElement("div")
+    row.classList.add("row")
 
-    let simplified: Expression = problem
-    for (const node of graph.getNodes()) {
-        if (node instanceof Expression)
-            if (derivationResult.isSimplified(node))
-                if (simplified.childCount > node.childCount)
-                    simplified = node as Expression
-    }
+    const argumentView = document.createElement("p")
+    argumentView.innerText = argument
+    argumentView.classList.add("col", "s6")
+    row.appendChild(argumentView)
 
-    // Copy the resulting graph into a library implementation of graph
-    const libraryGraph = createGraph<MathGraphNode, GraphEdge>()
-    graph.getNodes().forEach(n => {
-        libraryGraph.addNode(n.id, n)
-    })
+    const expressionView = new EditableMathView()
+    expressionView.value = parseExpressionJSON(expression)
+    row.appendChild(expressionView)
 
-    // I assume that library graph isn't directed
-    for (const edge of GraphMinipulator.dropSymmetric(graph.getEdges())) {
-        if (edge.e instanceof Argument) {
-            libraryGraph.addLink(edge.n.id, edge.e.id)
-            libraryGraph.addLink(edge.e.id, edge.n1.id)
-        }
-
-        // if (edge.n instanceof Expression && edge.n1 instanceof Expression)
-        //     console.log(`edge ${edge.n} AND ${edge.n1}`)
-    }
-
-    // Do path finding operation on it
-    const pathFinder = path.nba<MathGraphNode, GraphEdge>(libraryGraph)
-    const resultPath = pathFinder.find(problem.id, simplified!.id).reverse()
-
-    const typedResultPath = resultPath
-        .map(node => {
-            if (node.data instanceof Argument) return node.data as Argument
-            else if (node.data instanceof Expression)
-                return node.data as Expression
-            else throw new Error("Not implemented")
-        })
-        .filter(node => node instanceof Expression) as Expression[]
-
-    return new Path(graph, ...typedResultPath)
+    return row
 }
