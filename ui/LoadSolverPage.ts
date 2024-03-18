@@ -6,6 +6,7 @@ import { parseExpressionLatex } from "./mathlib/userinput/LatexParser"
 
 declare const MathJax: any
 declare const MQ: any
+declare const M: any
 
 const answerSummary = document.getElementById(
     "answerSummary"
@@ -50,6 +51,9 @@ export async function loadSolverPage(): Promise<void> {
     })
 
     answerSummary.replaceChildren(solutionView)
+
+    var elems = document.querySelectorAll('.sidenav');
+    M.Sidenav.init(elems, {});
 }
 
 // The last valid entered expression
