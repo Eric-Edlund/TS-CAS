@@ -132,7 +132,7 @@ export function setInputMode(mode: InputMode): void {
                     onInputExpressionChanged()
                 }
             },
-            autoCommands: 'int pi'
+            autoCommands: 'int pi sqrt'
         })
         
         activeUI = {
