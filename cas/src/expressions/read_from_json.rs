@@ -105,6 +105,7 @@ fn read_obj_rec(object: &Value) -> Result<Expression, String> {
         Value::String(s) => match s.as_str() {
             "E" => Ok(ConstantExp::of(Constant::Euler)),
             "Pi" => Ok(ConstantExp::of(Constant::Pi)),
+            "ImaginaryUnit" => Ok(ConstantExp::of(Constant::Imaginary)),
             _ => Err(format!("Invalid string {:?}", s))
 
         }
