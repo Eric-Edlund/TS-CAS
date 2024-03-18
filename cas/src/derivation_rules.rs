@@ -50,6 +50,7 @@ mod add_fractions;
 mod fractions_in_denominator;
 mod multiply_fractions;
 mod pull_negative_arround_fraction;
+mod integrate_arctrig;
 
 pub trait DerivationRule {
     /**
@@ -106,6 +107,7 @@ pub static ALL_RULES: Mutex<&[&(dyn DerivationRule + Sync)]> =
     &fractions_in_denominator::FractionInDenominator {},
     &multiply_fractions::MultiplyFractions {},
     &pull_negative_arround_fraction::PullNegativeOutOfFraction {},
+    &integrate_arctrig::IntegrateArcTrig {},
 ]);
 
 pub static STRICT_SIMPLIFYING_RULES: Mutex<&[&(dyn DerivationRule + Sync)]> =
