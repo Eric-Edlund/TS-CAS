@@ -1,6 +1,6 @@
 use std::rc::Rc;
 
-use crate::{argument::Argument, convenience_expressions::ordered, expressions::{product::product_of_iter, Expression, ExpressionPtr, Fraction}};
+use crate::{argument::Argument, convenience_expressions::ordered, expressions::{product::product_of_iter, Expression, Fraction}};
 
 use super::DerivationRule;
 
@@ -11,7 +11,7 @@ use super::DerivationRule;
 pub struct ProductsIntoNumerator {}
 
 impl DerivationRule for ProductsIntoNumerator {
-    fn apply(&self, input: ExpressionPtr) -> Vec<(ExpressionPtr, Rc<Argument>)> {
+    fn apply(&self, input: Expression) -> Vec<(Expression, Rc<Argument>)> {
         let product = match input {
             Expression::Product(ref p) => p,
             _ => return vec![]

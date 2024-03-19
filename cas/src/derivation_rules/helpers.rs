@@ -4,7 +4,7 @@
 
 use std::{collections::LinkedList, iter::once};
 
-use crate::expressions::{Expression, ExpressionPtr};
+use crate::expressions::{Expression};
 
 /**
 * True if the given expression does not depend on any of the variables
@@ -12,7 +12,7 @@ use crate::expressions::{Expression, ExpressionPtr};
 * @param exp The expression being checked for constancy.
 * @param relative The "dx" or "d whatever" change variable.
 */
-pub fn is_constant(exp: &ExpressionPtr, delta: &ExpressionPtr) -> bool {
+pub fn is_constant(exp: &Expression, delta: &Expression) -> bool {
     let delta_vars: Vec<Expression> = dependent_variables(&delta);
     !children_rec(exp).chain(once(exp.clone())).any(|e|
         matches!(e, Expression::Variable(_)) && delta_vars.contains(&e)
@@ -23,7 +23,7 @@ pub fn is_constant(exp: &ExpressionPtr, delta: &ExpressionPtr) -> bool {
 * Gets all variables which determine the value of the expression,
 * including the expression if it is a variable.
 */
-pub fn dependent_variables(exp: &ExpressionPtr) -> Vec<ExpressionPtr> {
+pub fn dependent_variables(exp: &Expression) -> Vec<Expression> {
     if matches!(exp, Expression::Variable(_)) {
         return once(exp.clone()).collect();
     }
@@ -33,9 +33,9 @@ pub fn dependent_variables(exp: &ExpressionPtr) -> Vec<ExpressionPtr> {
 /**
 * Gets all children of given expression recursively.
 */
-pub fn children_rec(exp: &ExpressionPtr) -> impl Iterator<Item = ExpressionPtr> {
-    let mut children = Vec::<ExpressionPtr>::new();
-    let mut queue = LinkedList::<ExpressionPtr>::new();
+pub fn children_rec(exp: &Expression) -> impl Iterator<Item = Expression> {
+    let mut children = Vec::<Expression>::new();
+    let mut queue = LinkedList::<Expression>::new();
 
     queue.extend(children_of(&exp));
 
@@ -51,7 +51,7 @@ pub fn children_rec(exp: &ExpressionPtr) -> impl Iterator<Item = ExpressionPtr> 
 /**
 * Grabs immediate children of given expression
 */
-pub fn children_of<'a>(exp: &'a ExpressionPtr) -> Vec<ExpressionPtr> {
+pub fn children_of<'a>(exp: &'a Expression) -> Vec<Expression> {
     match exp {
         Expression::Integer(_) => vec![],
         Expression::ConstantExp(_) => vec![],

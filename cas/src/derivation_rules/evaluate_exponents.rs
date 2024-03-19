@@ -1,6 +1,6 @@
 use std::rc::Rc;
 
-use crate::{argument::Argument, expressions::{Expression, ExpressionPtr, Integer}};
+use crate::{argument::Argument, expressions::{Expression, Integer}};
 
 use super::DerivationRule;
 
@@ -8,7 +8,7 @@ use super::DerivationRule;
 pub struct EvaluateExponents {}
 
 impl DerivationRule for EvaluateExponents {
-    fn apply(&self, input: ExpressionPtr) -> Vec<(ExpressionPtr, Rc<Argument>)> {
+    fn apply(&self, input: Expression) -> Vec<(Expression, Rc<Argument>)> {
         let exponent = match input {
             Expression::Exponent(ref e) => e,
             _ => return vec![]

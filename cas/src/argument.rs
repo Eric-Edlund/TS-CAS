@@ -1,7 +1,7 @@
 use std::hash::Hash;
 use std::{collections::HashSet, rc::Rc};
 
-use crate::expressions::ExpressionPtr;
+use crate::expressions::Expression;
 
 /**
  * Stores a human readable argument describing why a relationship
@@ -11,7 +11,7 @@ use crate::expressions::ExpressionPtr;
 #[derive(PartialEq, Eq, Debug)]
 pub struct Argument {
     msg: String,
-    grounds: HashSet<ExpressionPtr>,
+    grounds: HashSet<Expression>,
 }
 
 impl Hash for Argument {
@@ -21,7 +21,7 @@ impl Hash for Argument {
 }
 
 impl Argument {
-    pub fn new(msg: String, grounds: Vec<ExpressionPtr>) -> Rc<Argument> {
+    pub fn new(msg: String, grounds: Vec<Expression>) -> Rc<Argument> {
         Argument {
             msg,
             grounds: HashSet::from_iter(grounds),
@@ -33,7 +33,7 @@ impl Argument {
         &self.msg
     }
 
-    pub fn grounds(&self) -> &HashSet<ExpressionPtr> {
+    pub fn grounds(&self) -> &HashSet<Expression> {
         &self.grounds
     }
 }

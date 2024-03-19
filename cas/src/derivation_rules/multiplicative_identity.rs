@@ -1,6 +1,6 @@
 use std::rc::Rc;
 
-use crate::{argument::Argument, expressions::{ExpressionPtr, Expression, product::product_of}};
+use crate::{argument::Argument, expressions::{Expression, product::product_of}};
 
 use super::DerivationRule;
 
@@ -8,7 +8,7 @@ use super::DerivationRule;
 pub struct MultiplicativeIdentity {}
 
 impl DerivationRule for MultiplicativeIdentity {
-    fn apply(&self, input: ExpressionPtr) -> Vec<(ExpressionPtr, Rc<Argument>)> {
+    fn apply(&self, input: Expression) -> Vec<(Expression, Rc<Argument>)> {
         let product = match input {
             Expression::Product(ref p) => p,
             _ => return vec![],

@@ -1,6 +1,6 @@
 use std::rc::Rc;
 
-use crate::{argument::Argument, derivation_rules::helpers::is_constant, expressions::{sum::sum_of, Exponent, Expression, ExpressionPtr, Fraction, Integer}};
+use crate::{argument::Argument, derivation_rules::helpers::is_constant, expressions::{sum::sum_of, Exponent, Expression, Fraction, Integer}};
 
 use super::DerivationRule;
 
@@ -11,7 +11,7 @@ use super::DerivationRule;
 pub struct IntegralPowerRule {}
 
 impl DerivationRule for IntegralPowerRule {
-    fn apply(&self, input: ExpressionPtr) -> Vec<(ExpressionPtr, Rc<Argument>)> {
+    fn apply(&self, input: Expression) -> Vec<(Expression, Rc<Argument>)> {
         let integral = match input {
             Expression::Integral(ref i) => i,
             _ => return vec![],
@@ -52,7 +52,7 @@ impl DerivationRule for IntegralPowerRule {
 
 #[cfg(test)]
 mod tests {
-    use crate::{convenience_expressions::{i, power, v}, derivation_rules::DerivationRule, expressions::{product::product_of, sum::sum_of, Fraction, Integer, Integral}};
+    use crate::{convenience_expressions::{i, power, v}, derivation_rules::DerivationRule, expressions::{sum::sum_of, Fraction, Integral}};
 
     use super::IntegralPowerRule;
 

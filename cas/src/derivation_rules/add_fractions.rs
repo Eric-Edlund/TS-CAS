@@ -1,6 +1,6 @@
 use std::rc::Rc;
 
-use crate::{argument::Argument, convenience_expressions::sum_of_iter, expressions::{sum::sum_of, Expression, ExpressionPtr, Fraction}};
+use crate::{argument::Argument, convenience_expressions::sum_of_iter, expressions::{sum::sum_of, Expression, Fraction}};
 
 use super::DerivationRule;
 
@@ -11,7 +11,7 @@ use super::DerivationRule;
 pub struct AddFractions {}
 
 impl DerivationRule for AddFractions {
-    fn apply(&self, input: ExpressionPtr) -> Vec<(ExpressionPtr, Rc<Argument>)> {
+    fn apply(&self, input: Expression) -> Vec<(Expression, Rc<Argument>)> {
         let sum = match input {
             Expression::Sum(ref s) => s,
             _ => return vec![],

@@ -8,8 +8,10 @@ pub mod graph;
 mod mathxml;
 mod convenience_expressions;
 
+use std::collections::HashSet;
+
 use deriver::{BruteForceProfile, Deriver, EvaluateFirstProfile, OptimizationProfile};
-use expressions::{Expression, read_object_from_json};
+use expressions::read_object_from_json;
 use graph::Graph;
 use graph_traversal::{expression_complexity_cmp, Path};
 use petgraph::{visit::IntoNodeReferences, algo::astar};
@@ -101,8 +103,15 @@ pub fn get_all_equivalents(json_expression: &str, search_depth: u32, optimizer: 
     let mut result = Vec::new();
     result.extend(graph.node_weights().map(|e| e.as_stringable().to_json()));
 
+    let rules = graph.edge_weights()
+        .map(|e| &e.derived_from)
+        .flatten()
+        .map(|arg| arg.message().to_string())
+        .collect::<HashSet<String>>();
+
     json!({
         "equivalents": &result,
+        "rules_used": rules,
     }).to_string()
 }
 

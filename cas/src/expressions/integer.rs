@@ -3,7 +3,7 @@ use std::sync::Arc;
 
 use serde_json::json;
 
-use super::{Expression, ExpressionPtr, IExpression, EXPRESSION_INSTANCES};
+use super::{Expression, IExpression, EXPRESSION_INSTANCES};
 
 #[derive(PartialEq, Eq, Hash)]
 pub struct Integer {
@@ -11,7 +11,7 @@ pub struct Integer {
 }
 
 impl Integer {
-    pub fn of(value: u32) -> ExpressionPtr {
+    pub fn of(value: u32) -> Expression {
         let id = format!("integer {}", value);
 
         let mut instances = EXPRESSION_INSTANCES.lock().unwrap();

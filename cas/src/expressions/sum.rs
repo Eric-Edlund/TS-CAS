@@ -5,20 +5,19 @@ use std::sync::Arc;
 use serde_json::Value;
 use serde_json::json;
 
-use crate::mathxml::in_paren;
+
 
 use super::EXPRESSION_INSTANCES;
 use super::Expression;
-use super::ExpressionPtr;
 use super::IExpression;
 
 #[derive(PartialEq, Eq, Hash)]
 pub struct Sum {
-    terms: Vec<ExpressionPtr>
+    terms: Vec<Expression>
 }
 
 impl Sum {
-    pub fn of(terms: &[ExpressionPtr]) -> Result<ExpressionPtr, ()> {
+    pub fn of(terms: &[Expression]) -> Result<Expression, ()> {
         if terms.len() < 2 {
             return Err(());
         }
@@ -41,7 +40,7 @@ impl Sum {
         Ok(pointer)
     }
 
-    pub fn terms(&self) -> &Vec<ExpressionPtr> {
+    pub fn terms(&self) -> &Vec<Expression> {
         &self.terms
     }
 }
@@ -50,7 +49,7 @@ impl Sum {
 * Takes one or more terms. If 2 or more, returns sum,
 * otherwise, returns the given term.
 */
-pub fn sum_of(terms: &[ExpressionPtr]) -> ExpressionPtr {
+pub fn sum_of(terms: &[Expression]) -> Expression {
     if terms.len() == 1 {
         return terms[0].clone();
     }
@@ -83,7 +82,7 @@ impl IExpression for Sum {
     }
 }
 
-fn id_from_terms(terms: &[ExpressionPtr]) -> String {
+fn id_from_terms(terms: &[Expression]) -> String {
         String::from("sum") + 
         terms.iter().map(|x| x.as_stringable().id())
             .reduce(|x, y| x + y.as_str())

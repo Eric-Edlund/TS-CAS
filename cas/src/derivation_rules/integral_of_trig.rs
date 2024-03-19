@@ -1,6 +1,6 @@
 use std::rc::Rc;
 
-use crate::{argument::Argument, expressions::{trig_expression::TrigFn, Expression, ExpressionPtr, Negation, TrigExp}};
+use crate::{argument::Argument, expressions::{trig_expression::TrigFn, Expression, Negation, TrigExp}};
 
 use super::DerivationRule;
 
@@ -13,7 +13,7 @@ use super::DerivationRule;
 pub struct IntegralOfTrig{}
 
 impl DerivationRule for IntegralOfTrig {
-    fn apply(&self, input: ExpressionPtr) -> Vec<(ExpressionPtr, Rc<Argument>)> {
+    fn apply(&self, input: Expression) -> Vec<(Expression, Rc<Argument>)> {
         let integral = match input {
             Expression::Integral(ref i) => i,
             _ => return vec![],

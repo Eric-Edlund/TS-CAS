@@ -2,7 +2,7 @@ use std::cmp::Ordering;
 use std::rc::Rc;
 
 use crate::derivation_rules::helpers::children_of;
-use crate::expressions::{ExpressionPtr, Expression};
+use crate::expressions::{Expression};
 use crate::argument::Argument;
 
 use serde::Serialize;
@@ -12,7 +12,7 @@ use serde::ser::SerializeSeq;
 * Compares the human perceived complexity of the given expressions.
 * Expressions with fewer children and components are simpler.
 */
-pub fn expression_complexity_cmp(a: &ExpressionPtr, b: &ExpressionPtr) -> Ordering {
+pub fn expression_complexity_cmp(a: &Expression, b: &Expression) -> Ordering {
     let diff = complexity(b) as i32 - complexity(a) as i32;
     if diff == 0 {
         Ordering::Equal
@@ -23,7 +23,7 @@ pub fn expression_complexity_cmp(a: &ExpressionPtr, b: &ExpressionPtr) -> Orderi
     }
 }
 
-fn complexity(a: &ExpressionPtr) -> u32 {
+fn complexity(a: &Expression) -> u32 {
     match a {
         Expression::Product(p) => {
             p.factors().len() as u32 
@@ -71,8 +71,8 @@ fn complexity(a: &ExpressionPtr) -> u32 {
 }
 
 pub struct Path {
-    pub start: ExpressionPtr,
-    pub steps: Vec<(Rc<Argument>, ExpressionPtr)>,
+    pub start: Expression,
+    pub steps: Vec<(Rc<Argument>, Expression)>,
 }
 
 impl Serialize for Path {

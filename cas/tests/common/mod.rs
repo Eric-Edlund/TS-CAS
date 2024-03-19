@@ -1,4 +1,4 @@
-use std::{collections::{HashSet, LinkedList}, os::unix::thread::JoinHandleExt, sync::Mutex, thread::{JoinHandle, Thread}};
+use std::{collections::{HashSet}, sync::Mutex, thread::{JoinHandle}};
 use std::thread;
 
 use cas::get_all_equivalents;
@@ -40,11 +40,11 @@ pub fn pow(base: &str, pow: &str) -> String {
 pub fn log(base: &str, exp: &str) -> String {
     format!("[\"Logarithm\",{},{}]", base, exp)
 } 
-pub fn ln(exp: &str) -> String {
+pub fn ln(_exp: &str) -> String {
     todo!()
     // format!("[\"Logarithm\",{},{}]", base, exp)
 }
-pub fn abs(exp: &str) -> String {
+pub fn abs(_exp: &str) -> String {
     todo!()
 }
 pub fn sin(exp: &str) -> String {

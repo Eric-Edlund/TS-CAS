@@ -22,11 +22,11 @@ import { ConstantExp } from "../expressions/ConstantExp"
 /**
  * Parses latex expression into internal expression.
  */
-export function parseExpressionLatex(source: string): Expression | null {
+export function parseExpressionLatex(source: string): Expression | null | "empty" {
     const ast: Ast.Node[] = parseMath(source)
 
-    if (ast == undefined) return null
-    if (ast.length == 0) return null
+    if (ast == undefined) return "empty"
+    if (ast.length == 0) return "empty"
     groupNumbers(ast)
     dropParenMacros(ast)
     trimWhiteSpace(ast)

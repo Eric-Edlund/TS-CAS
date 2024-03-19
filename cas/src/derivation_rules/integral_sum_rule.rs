@@ -1,6 +1,6 @@
 use std::rc::Rc;
 
-use crate::{argument::Argument, convenience_expressions::sum_of_iter, expressions::{Expression, ExpressionPtr, Integral}};
+use crate::{argument::Argument, convenience_expressions::sum_of_iter, expressions::{Expression, Integral}};
 
 use super::DerivationRule;
 
@@ -11,7 +11,7 @@ use super::DerivationRule;
 pub struct IntegralSumRule {}
 
 impl DerivationRule for IntegralSumRule {
-    fn apply(&self, input: ExpressionPtr) -> Vec<(ExpressionPtr, Rc<Argument>)> {
+    fn apply(&self, input: Expression) -> Vec<(Expression, Rc<Argument>)> {
         let integral = match input {
             Expression::Integral(ref i) => i,
             _ => return vec![]

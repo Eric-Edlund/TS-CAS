@@ -1,4 +1,4 @@
-use crate::{expressions::{Expression, ExpressionPtr, sum::sum_of, product::product_of}, argument::Argument};
+use crate::{expressions::{Expression, sum::sum_of, product::product_of}, argument::Argument};
 
 use super::DerivationRule;
 
@@ -9,9 +9,9 @@ use super::DerivationRule;
 pub struct AssociativeProperty {}
 
 impl DerivationRule for AssociativeProperty {
-    fn apply(&self, input: crate::expressions::ExpressionPtr) -> Vec<(crate::expressions::ExpressionPtr, std::rc::Rc<crate::argument::Argument>)> {
+    fn apply(&self, input: crate::expressions::Expression) -> Vec<(crate::expressions::Expression, std::rc::Rc<crate::argument::Argument>)> {
         if let Expression::Sum(ref sum) = input {
-            let mut new_terms: Vec<ExpressionPtr> = vec![];
+            let mut new_terms: Vec<Expression> = vec![];
 
             for term in sum.terms() {
                 match term {
@@ -34,7 +34,7 @@ impl DerivationRule for AssociativeProperty {
                 )]
 
         } else if let Expression::Product(ref product) = input {
-            let mut new_factors: Vec<ExpressionPtr> = vec![];
+            let mut new_factors: Vec<Expression> = vec![];
 
             for factor in product.factors() {
                 match factor {
@@ -64,7 +64,7 @@ impl DerivationRule for AssociativeProperty {
 
 #[cfg(test)]
 mod tests {
-    use crate::expressions::ExpressionPtr;
+    use crate::expressions::Expression;
     use crate::expressions::{Integer, Sum, Product};
 
     use super::AssociativeProperty;
@@ -78,8 +78,8 @@ mod tests {
         let sum_of_sums = Sum::of(&[Sum::of(&[Integer::of(1), Integer::of(1)]).unwrap(), Integer::of(1)]).unwrap();
         let product_of_products = Product::of(&[Product::of(&[Integer::of(1), Integer::of(1)]).unwrap(), Integer::of(1)]).unwrap();
 
-        let result1: Vec<ExpressionPtr> = rule.apply(sum_of_sums).iter().map(|x| x.0.clone()).collect();
-        let result2: Vec<ExpressionPtr> = rule.apply(product_of_products).iter().map(|x| x.0.clone()).collect();
+        let result1: Vec<Expression> = rule.apply(sum_of_sums).iter().map(|x| x.0.clone()).collect();
+        let result2: Vec<Expression> = rule.apply(product_of_products).iter().map(|x| x.0.clone()).collect();
 
         assert_eq!(result1[0], Sum::of(&[Integer::of(1), Integer::of(1), Integer::of(1)]).unwrap());
         assert_eq!(result2[0], Product::of(&[Integer::of(1), Integer::of(1), Integer::of(1)]).unwrap());

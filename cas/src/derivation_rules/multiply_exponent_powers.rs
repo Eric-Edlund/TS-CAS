@@ -1,6 +1,6 @@
 use std::rc::Rc;
 
-use crate::{expressions::{ExpressionPtr, Expression, product::product_of}, argument::Argument, convenience_expressions::power};
+use crate::{expressions::{Expression, product::product_of}, argument::Argument, convenience_expressions::power};
 
 use super::DerivationRule;
 
@@ -11,7 +11,7 @@ use super::DerivationRule;
 pub struct MultiplyExponentPowers {}
 
 impl DerivationRule for MultiplyExponentPowers {
-    fn apply(&self, input: ExpressionPtr) -> Vec<(ExpressionPtr, Rc<Argument>)> {
+    fn apply(&self, input: Expression) -> Vec<(Expression, Rc<Argument>)> {
         let outer =  match input {
             Expression::Exponent(ref e) => e,
             _ => return vec![],

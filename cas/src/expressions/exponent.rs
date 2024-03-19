@@ -1,19 +1,19 @@
 use serde_json::json;
 
-use crate::mathxml::{in_row, in_paren};
 
-use super::{ExpressionPtr, IExpression, Expression, EXPRESSION_INSTANCES};
+
+use super::{Expression, IExpression, EXPRESSION_INSTANCES};
 use core::fmt;
 use std::sync::Arc;
 
 #[derive(PartialEq, Eq, Hash)]
 pub struct Exponent {
-    base: ExpressionPtr,
-    power: ExpressionPtr,
+    base: Expression,
+    power: Expression,
 }
 
 impl Exponent {
-    pub fn of(base: ExpressionPtr, power: ExpressionPtr) -> ExpressionPtr {
+    pub fn of(base: Expression, power: Expression) -> Expression {
         let id = get_id(&base, &power);
 
         let mut instances = EXPRESSION_INSTANCES.lock().unwrap();
@@ -27,11 +27,11 @@ impl Exponent {
         result
     }
 
-    pub fn base(&self) -> ExpressionPtr {
+    pub fn base(&self) -> Expression {
         self.base.clone()
     }
 
-    pub fn power(&self) -> ExpressionPtr {
+    pub fn power(&self) -> Expression {
         self.power.clone()
     }
 }
@@ -56,7 +56,7 @@ impl IExpression for Exponent {
     }
 }
 
-fn get_id(base: &ExpressionPtr, power: &ExpressionPtr) -> String {
+fn get_id(base: &Expression, power: &Expression) -> String {
         format!(
             "exponent{}{}",
             &base.as_stringable().id(),

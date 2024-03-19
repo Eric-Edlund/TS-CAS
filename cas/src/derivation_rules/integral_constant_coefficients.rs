@@ -1,6 +1,6 @@
 use std::rc::Rc;
 
-use crate::{argument::Argument, derivation_rules::helpers::is_constant, expressions::{product::product_of_iter, Expression, ExpressionPtr, Integer, Integral}};
+use crate::{argument::Argument, derivation_rules::helpers::is_constant, expressions::{product::product_of_iter, Expression, Integer, Integral}};
 
 use super::DerivationRule;
 
@@ -12,7 +12,7 @@ use super::DerivationRule;
 pub struct IntegralConstCoeff {}
 
 impl DerivationRule for IntegralConstCoeff {
-    fn apply(&self, input: ExpressionPtr) -> Vec<(ExpressionPtr, Rc<Argument>)> {
+    fn apply(&self, input: Expression) -> Vec<(Expression, Rc<Argument>)> {
         let Expression::Integral(ref integral) = input 
         else {
             return vec![];
@@ -23,7 +23,7 @@ impl DerivationRule for IntegralConstCoeff {
             _ => vec![integral.integrand()],
         };
 
-        let (constant, not): (Vec<&ExpressionPtr>, Vec<&ExpressionPtr>) = factors
+        let (constant, not): (Vec<&Expression>, Vec<&Expression>) = factors
             .iter()
             .partition(|e| is_constant(e, &integral.relative_to()));
 

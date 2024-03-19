@@ -5,14 +5,13 @@ use crate::argument::Argument;
 use crate::expressions::Negation;
 use crate::expressions::Product;
 use crate::expressions::Expression;
-use crate::expressions::ExpressionPtr;
 
 use super::DerivationRule;
 
 pub struct CancelNegatives {}
 
 impl DerivationRule for CancelNegatives {
-    fn apply(&self, input: ExpressionPtr) -> Vec<(ExpressionPtr, Rc<Argument>)> {
+    fn apply(&self, input: Expression) -> Vec<(Expression, Rc<Argument>)> {
         // If true, result is negative
         let mut sign = false;
 
@@ -28,7 +27,7 @@ impl DerivationRule for CancelNegatives {
             _ => return vec![],
         };
 
-        let mut new_factors: Vec<ExpressionPtr> = vec![];
+        let mut new_factors: Vec<Expression> = vec![];
 
         for factor in product.factors() {
             match factor {
@@ -72,7 +71,7 @@ mod tests {
             Product::of(&[Negation::of(Integer::of(1)), Negation::of(Integer::of(2))]).unwrap();
         let goal = Product::of(&[Integer::of(1), Integer::of(2)]).unwrap();
         println!("Start: {}, Goal: {}", first, goal);
-        let results: Vec<ExpressionPtr> =
+        let results: Vec<Expression> =
             rule.apply(first.clone()).into_iter().map(|x| x.0).collect();
 
         assert!(

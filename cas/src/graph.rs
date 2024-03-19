@@ -1,7 +1,7 @@
 use std::rc::Rc;
 
 use crate::argument::Argument;
-use crate::expressions::ExpressionPtr;
+use crate::expressions::Expression;
 use petgraph::graph::DiGraph;
 use std::collections::HashSet;
 
@@ -27,5 +27,5 @@ pub struct Relationship {
 /**
 * Graph type for expressions
 */
-pub type Graph = DiGraph<ExpressionPtr, Relationship, u32>;
+pub type Graph = DiGraph<Expression, Relationship, u32>;
 

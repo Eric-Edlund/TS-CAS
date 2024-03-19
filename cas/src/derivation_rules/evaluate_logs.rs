@@ -1,6 +1,6 @@
 use std::rc::Rc;
 
-use crate::{expressions::{ExpressionPtr, Expression, Integer}, argument::Argument};
+use crate::{expressions::{Expression, Integer}, argument::Argument};
 
 use super::DerivationRule;
 
@@ -11,7 +11,7 @@ use super::DerivationRule;
 pub struct EvaluateLogs {}
 
 impl DerivationRule for EvaluateLogs {
-    fn apply(&self, input: ExpressionPtr) -> Vec<(ExpressionPtr, Rc<Argument>)> {
+    fn apply(&self, input: Expression) -> Vec<(Expression, Rc<Argument>)> {
         let log = match input {
             Expression::Logarithm(ref l) => l,
             _ => return vec![],

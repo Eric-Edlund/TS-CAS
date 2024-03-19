@@ -1,6 +1,6 @@
 use std::{rc::Rc, sync::Arc, collections::{HashSet, HashMap}};
 
-use crate::{derivation_rules::DerivationRule, expressions::{ExpressionPtr, Expression, Exponent, Negation, sum::sum_of, Fraction, product::{product_of_iter, product_of}}, argument::Argument, convenience_expressions::i};
+use crate::{derivation_rules::DerivationRule, expressions::{Expression, Exponent, Negation, sum::sum_of, Fraction, product::{product_of_iter, product_of}}, argument::Argument, convenience_expressions::i};
 
 pub struct SubtractExponentsOnFractions {}
 
@@ -11,7 +11,7 @@ pub struct SubtractExponentsOnFractions {}
 * putting them into the numerator and adjusting their exponents.
 */
 impl DerivationRule for SubtractExponentsOnFractions {
-    fn apply(&self, input: ExpressionPtr) -> Vec<(ExpressionPtr, Rc<Argument>)> {
+    fn apply(&self, input: Expression) -> Vec<(Expression, Rc<Argument>)> {
         let fraction = match input {
             Expression::Fraction(ref f) => f,
             _ => return vec![],

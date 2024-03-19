@@ -1,6 +1,6 @@
 use std::rc::Rc;
 
-use crate::{argument::Argument, expressions::{product::product_of, sum::sum_of, Derivative, Expression, ExpressionPtr}};
+use crate::{argument::Argument, expressions::{product::product_of, sum::sum_of, Derivative, Expression}};
 
 use super::DerivationRule;
 
@@ -8,7 +8,7 @@ use super::DerivationRule;
 pub struct ProductRule{}
 
 impl DerivationRule for ProductRule {
-    fn apply(&self, input: ExpressionPtr) -> Vec<(Expression, Rc<Argument>)> {
+    fn apply(&self, input: Expression) -> Vec<(Expression, Rc<Argument>)> {
         let derivative = match input {
             Expression::Derivative(ref d) => d,
             _ => return vec![]

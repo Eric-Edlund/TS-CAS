@@ -3,17 +3,17 @@ use std::sync::Arc;
 
 use serde_json::json;
 
-use super::{ExpressionPtr, EXPRESSION_INSTANCES, Expression, IExpression};
+use super::{EXPRESSION_INSTANCES, Expression, IExpression};
 
 
 #[derive(PartialEq, Eq, Hash)]
 pub struct Fraction {
-    numerator: ExpressionPtr,
-    denominator: ExpressionPtr,
+    numerator: Expression,
+    denominator: Expression,
 }
 
 impl Fraction {
-    pub fn of(numerator: ExpressionPtr, denominator: ExpressionPtr) -> ExpressionPtr {
+    pub fn of(numerator: Expression, denominator: Expression) -> Expression {
         let id = get_id(&numerator, &denominator);
 
         let mut instances = EXPRESSION_INSTANCES.lock().unwrap();
@@ -31,16 +31,16 @@ impl Fraction {
         result
     }
 
-    pub fn numerator(&self) -> ExpressionPtr {
+    pub fn numerator(&self) -> Expression {
         self.numerator.clone()
     }
 
-    pub fn denominator(&self) -> ExpressionPtr {
+    pub fn denominator(&self) -> Expression {
         self.denominator.clone()
     }
 }
 
-fn get_id(n: &ExpressionPtr, d: &ExpressionPtr) -> String {
+fn get_id(n: &Expression, d: &Expression) -> String {
     format!("Fraction{}{}", n.as_stringable().id(), d.as_stringable().id())
 }
 

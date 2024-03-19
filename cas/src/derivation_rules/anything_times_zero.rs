@@ -10,7 +10,7 @@ use super::DerivationRule;
 pub struct AnythingTimesZero {}
 
 impl DerivationRule for AnythingTimesZero {
-    fn apply(&self, input: crate::expressions::ExpressionPtr) -> Vec<(crate::expressions::ExpressionPtr, std::rc::Rc<crate::argument::Argument>)> {
+    fn apply(&self, input: crate::expressions::Expression) -> Vec<(crate::expressions::Expression, std::rc::Rc<crate::argument::Argument>)> {
         let product = match input {
             Expression::Product(ref p) => p,
             _ => return vec![],
@@ -32,7 +32,7 @@ impl DerivationRule for AnythingTimesZero {
 
 #[cfg(test)]
 mod tests {
-    use crate::{expressions::{Product, Integer, ExpressionPtr}, derivation_rules::DerivationRule};
+    use crate::{expressions::{Product, Integer, Expression}, derivation_rules::DerivationRule};
 
     use super::AnythingTimesZero;
 
@@ -44,8 +44,8 @@ mod tests {
         let to_zero = Product::of(&[Integer::of(1), Integer::of(0)]).unwrap();
         let not_zero = Product::of(&[Integer::of(1), Integer::of(1)]).unwrap();
 
-        let result1: Vec<ExpressionPtr> = rule.apply(to_zero).iter().map(|x| x.0.clone()).collect();
-        let result2: Vec<ExpressionPtr> = rule.apply(not_zero).iter().map(|x| x.0.clone()).collect();
+        let result1: Vec<Expression> = rule.apply(to_zero).iter().map(|x| x.0.clone()).collect();
+        let result2: Vec<Expression> = rule.apply(not_zero).iter().map(|x| x.0.clone()).collect();
 
         assert_eq!(result1[0], Integer::of(0));
         assert_eq!(result1.len(), 1);

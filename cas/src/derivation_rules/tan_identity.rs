@@ -1,8 +1,8 @@
 use std::rc::Rc;
 
-use petgraph::algo::FloatMeasure;
 
-use crate::{argument::Argument, convenience_expressions::cot, expressions::{product::product_of, trig_expression::TrigFn, Expression, ExpressionPtr, Fraction, TrigExp}};
+
+use crate::{argument::Argument, convenience_expressions::cot, expressions::{product::product_of, trig_expression::TrigFn, Expression, Fraction, TrigExp}};
 
 use super::DerivationRule;
 
@@ -14,7 +14,7 @@ use super::DerivationRule;
 pub struct TanIdentity {}
 
 impl DerivationRule for TanIdentity {
-    fn apply(&self, input: ExpressionPtr) -> Vec<(ExpressionPtr, Rc<Argument>)> {
+    fn apply(&self, input: Expression) -> Vec<(Expression, Rc<Argument>)> {
         let frac = match input {
             Expression::Fraction(ref f) => f,
             _ => return vec![]

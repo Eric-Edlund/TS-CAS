@@ -1,6 +1,6 @@
 use std::rc::Rc;
 
-use crate::{argument::Argument, convenience_expressions::sum_of_iter, expressions::{Derivative, Expression, ExpressionPtr}};
+use crate::{argument::Argument, convenience_expressions::sum_of_iter, expressions::{Derivative, Expression}};
 
 use super::DerivationRule;
 
@@ -8,7 +8,7 @@ use super::DerivationRule;
 pub struct DerivativeOfSum {}
 
 impl DerivationRule for DerivativeOfSum {
-    fn apply(&self, input: ExpressionPtr) -> Vec<(ExpressionPtr, Rc<Argument>)> {
+    fn apply(&self, input: Expression) -> Vec<(Expression, Rc<Argument>)> {
         let derivative = match input {
             Expression::Derivative(ref d) => d,
             _ => return vec![]

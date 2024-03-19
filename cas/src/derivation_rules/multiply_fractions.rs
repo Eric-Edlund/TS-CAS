@@ -1,6 +1,6 @@
 use std::rc::Rc;
 
-use crate::{argument::Argument, expressions::{product::product_of_iter, Expression, ExpressionPtr, Fraction}};
+use crate::{argument::Argument, expressions::{product::product_of_iter, Expression, Fraction}};
 
 use super::DerivationRule;
 
@@ -11,7 +11,7 @@ use super::DerivationRule;
 pub struct MultiplyFractions {}
 
 impl DerivationRule for MultiplyFractions {
-    fn apply(&self, input: ExpressionPtr) -> Vec<(ExpressionPtr, Rc<Argument>)> {
+    fn apply(&self, input: Expression) -> Vec<(Expression, Rc<Argument>)> {
         let product = match input {
             Expression::Product(ref p) => p,
             _ => return vec![]
@@ -21,6 +21,10 @@ impl DerivationRule for MultiplyFractions {
             .factors()
             .into_iter()
             .partition(|exp| matches!(exp, Expression::Fraction(_)));
+
+        if fractions.is_empty() {
+            return vec![]
+        }
 
         let result_fraction = Fraction::of(
             product_of_iter(&mut fractions.iter().map(|f| match f {

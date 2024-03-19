@@ -1,6 +1,6 @@
 use std::rc::Rc;
 
-use crate::{argument::Argument, convenience_expressions::{i, sqrt}, expressions::{constant::Constant, product::product_of, ConstantExp, Expression, ExpressionPtr, Fraction}};
+use crate::{argument::Argument, convenience_expressions::{i, sqrt}, expressions::{constant::Constant, product::product_of, ConstantExp, Expression, Fraction}};
 
 use super::DerivationRule;
 
@@ -12,7 +12,7 @@ use super::DerivationRule;
 pub struct ImaginaryIdentity {}
 
 impl DerivationRule for ImaginaryIdentity {
-    fn apply(&self, input: ExpressionPtr) -> Vec<(ExpressionPtr, Rc<Argument>)> {
+    fn apply(&self, input: Expression) -> Vec<(Expression, Rc<Argument>)> {
         let exp = match input {
             Expression::Exponent(ref e) => e,
             _ => return vec![]

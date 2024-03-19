@@ -1,6 +1,6 @@
 use std::rc::Rc;
 
-use crate::{argument::Argument, expressions::{product::product_of, Expression, ExpressionPtr}};
+use crate::{argument::Argument, expressions::{product::product_of, Expression}};
 
 use super::{helpers::is_constant, DerivationRule};
 
@@ -11,7 +11,7 @@ use super::{helpers::is_constant, DerivationRule};
 pub struct IntegralOfConst {}
 
 impl DerivationRule for IntegralOfConst {
-    fn apply(&self, input: ExpressionPtr) -> Vec<(ExpressionPtr, Rc<Argument>)> {
+    fn apply(&self, input: Expression) -> Vec<(Expression, Rc<Argument>)> {
         let integral = match input {
             Expression::Integral(ref i) => i,
             _ => return vec![]

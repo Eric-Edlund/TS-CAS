@@ -1,6 +1,6 @@
 use std::rc::Rc;
 
-use crate::{argument::Argument, expressions::{Expression, ExpressionPtr, Fraction, Negation}};
+use crate::{argument::Argument, expressions::{Expression, Fraction, Negation}};
 
 use super::DerivationRule;
 
@@ -8,7 +8,7 @@ use super::DerivationRule;
 pub struct PullNegativeOutOfFraction {}
 
 impl DerivationRule for PullNegativeOutOfFraction {
-    fn apply(&self, input: ExpressionPtr) -> Vec<(ExpressionPtr, Rc<Argument>)> {
+    fn apply(&self, input: Expression) -> Vec<(Expression, Rc<Argument>)> {
         let frac = match input {
             Expression::Fraction(ref f) => f,
             _ => return vec![]

@@ -1,6 +1,6 @@
 use std::rc::Rc;
 
-use crate::{argument::Argument, expressions::{product::product_of_iter, Derivative, Expression, ExpressionPtr, Integer}};
+use crate::{argument::Argument, expressions::{product::product_of_iter, Derivative, Expression, Integer}};
 
 use super::{helpers::is_constant, DerivationRule};
 
@@ -11,7 +11,7 @@ use super::{helpers::is_constant, DerivationRule};
 pub struct PullOutConst {}
 
 impl DerivationRule for PullOutConst {
-    fn apply(&self, input: ExpressionPtr) -> Vec<(ExpressionPtr, Rc<Argument>)> {
+    fn apply(&self, input: Expression) -> Vec<(Expression, Rc<Argument>)> {
         let derivative = match input {
             Expression::Derivative(ref d) => d,
             _ => return vec![]

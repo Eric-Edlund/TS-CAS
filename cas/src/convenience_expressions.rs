@@ -1,18 +1,18 @@
 #![allow(dead_code)]
 use std::cmp::Ordering;
 
-use crate::{derivation_rules::helpers::dependent_variables, expressions::{product::product_of, trig_expression::TrigFn, AbsoluteValue, Exponent, Expression, ExpressionPtr, Fraction, Integer, Product, Sum, TrigExp, Variable}};
+use crate::{derivation_rules::helpers::dependent_variables, expressions::{product::product_of, trig_expression::TrigFn, AbsoluteValue, Exponent, Expression, Fraction, Integer, Product, Sum, TrigExp, Variable}};
 
-pub fn product(f: ExpressionPtr, f1: ExpressionPtr) -> ExpressionPtr {
+pub fn product(f: Expression, f1: Expression) -> Expression {
     Product::of(&[f, f1]).unwrap()
 }
 
-pub fn sum(t: ExpressionPtr, t1: ExpressionPtr) -> ExpressionPtr {
+pub fn sum(t: Expression, t1: Expression) -> Expression {
     Sum::of(&[t, t1]).unwrap()
 }
 
-pub fn sum_of_iter(terms: &mut dyn Iterator<Item = ExpressionPtr>) -> ExpressionPtr {
-    let terms = terms.collect::<Vec<ExpressionPtr>>();
+pub fn sum_of_iter(terms: &mut dyn Iterator<Item = Expression>) -> Expression {
+    let terms = terms.collect::<Vec<Expression>>();
     if terms.len() == 1 {
         return terms[0].clone();
     }
@@ -20,15 +20,15 @@ pub fn sum_of_iter(terms: &mut dyn Iterator<Item = ExpressionPtr>) -> Expression
 }
 
 
-pub fn power(b: ExpressionPtr, p: ExpressionPtr) -> ExpressionPtr {
+pub fn power(b: Expression, p: Expression) -> Expression {
     Exponent::of(b, p)
 }
 
-pub fn i(value: u32) -> ExpressionPtr {
+pub fn i(value: u32) -> Expression {
     Integer::of(value)
 }
 
-pub fn v(symbol: &str) -> ExpressionPtr {
+pub fn v(symbol: &str) -> Expression {
     Variable::of(symbol)
 }
 
