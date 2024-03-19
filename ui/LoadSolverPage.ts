@@ -101,9 +101,14 @@ function onInputExpressionChanged() {
     } else {
         // Fetch the equivalents it was able to find
         console.log("No solution found.")
-        let equivalents = JSON.parse(get_all_equivalents(expression.toJSON(), 20, 
-            "evaluate_first"))["equivalents"]
+        let result = JSON.parse(get_all_equivalents(expression.toJSON(), 20, 
+            "evaluate_first"))
+        const equivalents = result["equivalents"]
         console.log("Found " + equivalents.length + " equivalents.")
+        console.log("Using rules:")
+        for (const rule of result["rules_used"]) {
+            console.log(rule)
+        }
         solutionView.value = null
         stepListView.innerHTML = ""
         for (const equiv of equivalents) {

@@ -101,8 +101,15 @@ pub fn get_all_equivalents(json_expression: &str, search_depth: u32, optimizer: 
     let mut result = Vec::new();
     result.extend(graph.node_weights().map(|e| e.as_stringable().to_json()));
 
+    let rules = graph.edge_weights()
+        .map(|e| &e.derived_from)
+        .flatten()
+        .map(|arg| arg.message().to_string())
+        .collect::<Vec<String>>();
+
     json!({
         "equivalents": &result,
+        "rules_used": rules,
     }).to_string()
 }
 
