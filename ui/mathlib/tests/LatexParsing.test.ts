@@ -30,6 +30,10 @@ test("Latex is parsed correctly", () => {
 
     function expect(latex: string, value: Expression): void {
         const result = parseExpressionLatex(latex);
+        if (result === "empty") {
+            assert(false, "Input shouldn't be empty.");
+            return
+        }
         assert(result == value, "Latex string " + latex + " parsed to "
              + result?.toUnambigiousString() + " instead of expected "
              + value.toUnambigiousString())
