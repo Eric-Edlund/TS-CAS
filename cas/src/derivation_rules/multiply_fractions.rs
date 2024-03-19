@@ -22,6 +22,10 @@ impl DerivationRule for MultiplyFractions {
             .into_iter()
             .partition(|exp| matches!(exp, Expression::Fraction(_)));
 
+        if fractions.is_empty() {
+            return vec![]
+        }
+
         let result_fraction = Fraction::of(
             product_of_iter(&mut fractions.iter().map(|f| match f {
                 Expression::Fraction(f) => f.numerator(),

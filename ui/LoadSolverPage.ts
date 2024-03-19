@@ -106,9 +106,7 @@ function onInputExpressionChanged() {
         const equivalents = result["equivalents"]
         console.log("Found " + equivalents.length + " equivalents.")
         console.log("Using rules:")
-        for (const rule of result["rules_used"]) {
-            console.log(rule)
-        }
+        console.log(result["rules_used"])
         solutionView.value = null
         stepListView.innerHTML = ""
         for (const equiv of equivalents) {

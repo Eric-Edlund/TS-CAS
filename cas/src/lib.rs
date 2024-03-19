@@ -8,6 +8,8 @@ pub mod graph;
 mod mathxml;
 mod convenience_expressions;
 
+use std::collections::HashSet;
+
 use deriver::{BruteForceProfile, Deriver, EvaluateFirstProfile, OptimizationProfile};
 use expressions::read_object_from_json;
 use graph::Graph;
@@ -105,7 +107,7 @@ pub fn get_all_equivalents(json_expression: &str, search_depth: u32, optimizer: 
         .map(|e| &e.derived_from)
         .flatten()
         .map(|arg| arg.message().to_string())
-        .collect::<Vec<String>>();
+        .collect::<HashSet<String>>();
 
     json!({
         "equivalents": &result,
