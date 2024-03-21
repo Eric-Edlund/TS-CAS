@@ -1,10 +1,6 @@
 import {
-    a,
-    b,
-    negative,
     num,
     product,
-    sum,
     x
 } from "./mathlib/ConvenientExpressions"
 import {
@@ -26,6 +22,7 @@ import { parseExpression } from "./mathlib/userinput/AntlrMathParser"
 import { Derivative } from "./mathlib/expressions/Derivative"
 import { Integral } from "./mathlib/expressions/Integral"
 import { Exponent } from "./mathlib/expressions/Exponent"
+import { load } from "mime"
 
 RelationalDerivationRule.rules.add(new SubtractFromBothSides())
 RelationalDerivationRule.rules.add(new DivideOnBothSides())
@@ -106,3 +103,5 @@ export function loadPrimaryPage(): void {
     graphView.setAttribute("id", "web-graphview")
     out.appendChild(graphView)
 }
+
+document.addEventListener('DOMContentLoaded', loadPrimaryPage)
