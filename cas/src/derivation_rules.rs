@@ -26,7 +26,6 @@ mod evaluate_logs;
 mod make_common_denominators;
 mod integration_power_rule;
 mod integral_sum_rule;
-mod integral_chain_rule;
 mod integral_constant_coefficients;
 mod integral_of_constant;
 mod derivative_of_constant;
@@ -85,7 +84,6 @@ pub static ALL_RULES: Mutex<&[&(dyn DerivationRule + Sync)]> =
     &make_common_denominators::MakeCommonDenominators {},
     &integration_power_rule::IntegralPowerRule {},
     &integral_sum_rule::IntegralSumRule {},
-    &integral_chain_rule::IntegralChainRule {},
     &integral_constant_coefficients::IntegralConstCoeff {},
     &integral_of_constant::IntegralOfConst {},
     &derivative_of_constant::DerivativeOfConst {},
