@@ -120,3 +120,5 @@ export function loadExpressionsTestPage(): void {
     p("")
     view(num(1))
 }
+
+document.addEventListener('DOMContentLoaded', loadExpressionsTestPage)

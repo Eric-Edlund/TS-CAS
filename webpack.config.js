@@ -3,9 +3,13 @@ const webpack = require('webpack');
 const WasmPackPlugin = require("@wasm-tool/wasm-pack-plugin");
 
 module.exports = {
-    entry: './ui/main.ts',
+    entry: {
+        solverPage: './ui/LoadSolverPage.ts',
+        graphPage: './ui/LoadPrimaryPage.ts',
+        expressionTestPage: './ui/LoadExpressionTestPage.ts'
+    },
     output: {
-        filename: 'bundle.js',
+        filename: '[name].js',
         path: path.resolve(__dirname, 'public'),
     },
     plugins: [
