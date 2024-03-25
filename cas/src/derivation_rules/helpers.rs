@@ -4,7 +4,7 @@
 
 use std::{collections::LinkedList, iter::once};
 
-use crate::expressions::{Expression};
+use crate::expressions::Expression;
 
 /**
 * True if the given expression does not depend on any of the variables
@@ -32,6 +32,8 @@ pub fn dependent_variables(exp: &Expression) -> Vec<Expression> {
 
 /**
 * Gets all children of given expression recursively.
+* This includes branches and leafs. Does not include the
+* given expression.
 */
 pub fn children_rec(exp: &Expression) -> impl Iterator<Item = Expression> {
     let mut children = Vec::<Expression>::new();

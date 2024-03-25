@@ -3,6 +3,7 @@ use std::{rc::Rc, sync::Mutex};
 use crate::{argument::Argument, expressions::Expression};
 
 pub mod helpers;
+pub mod derivatives;
 
 mod cancel_negatives;
 mod additive_identity;
@@ -51,6 +52,7 @@ mod multiply_fractions;
 mod pull_negative_arround_fraction;
 mod integrate_arctrig;
 mod imaginary_identity;
+mod integration_by_substitution;
 
 pub trait DerivationRule {
     /**
@@ -108,6 +110,7 @@ pub static ALL_RULES: Mutex<&[&(dyn DerivationRule + Sync)]> =
     &pull_negative_arround_fraction::PullNegativeOutOfFraction {},
     &integrate_arctrig::IntegrateArcTrig {},
     &imaginary_identity::ImaginaryIdentity {},
+    &integration_by_substitution::IntegrateBySubstitution {},
 ]);
 
 pub static STRICT_SIMPLIFYING_RULES: Mutex<&[&(dyn DerivationRule + Sync)]> =
