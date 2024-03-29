@@ -72,7 +72,56 @@ impl EvaluateFirstProfile {
     }
 }
 
+
 impl OptimizationProfile for EvaluateFirstProfile {
+    fn find_equivalents(&mut self, exp: &Expression) -> Vec<(Expression, Rc<Argument>)> {
+        if self.already_seen.contains(exp) {
+            return vec![];
+        }
+        self.already_seen.insert(exp.clone());
+        let simplifying_rules = STRICT_SIMPLIFYING_RULES.lock().unwrap();
+
+        let mut simple = simplifying_rules.iter()
+            .map(|rule| {
+                equiv(&exp, &|e| {
+                    rule.apply(e.clone())
+                })
+            })
+            .flatten()
+            .peekable();
+        
+        if simple.peek().is_some() {
+            return simple.collect();
+        }
+
+        let all_rules = ALL_RULES.lock().unwrap();
+        all_rules.iter()
+            .map(|rule| {
+                equiv(&exp, &|e| {
+                    rule.apply(e.clone())
+                })
+            })
+            .flatten()
+            .collect()
+    }
+}
+
+
+/// Applies derivative and simplifying rules only. Evaluates derivatives as 
+/// efficiently as possible. Not a general solver.
+pub struct DerivativesOnlyProfile {
+    already_seen: HashSet<Expression>,
+}
+
+impl DerivativesOnlyProfile {
+    pub fn new() -> Self {
+        Self {
+            already_seen: HashSet::new(),
+        }
+    }
+}
+
+impl OptimizationProfile for DerivativesOnlyProfile {
     fn find_equivalents(&mut self, exp: &Expression) -> Vec<(Expression, Rc<Argument>)> {
         if self.already_seen.contains(exp) {
             return vec![];

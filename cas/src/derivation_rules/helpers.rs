@@ -4,7 +4,7 @@
 
 use std::{collections::LinkedList, iter::once};
 
-use crate::expressions::Expression;
+use crate::{convenience_expressions::sum_of_iter, expressions::{product::product_of_iter, Exponent, Expression, Integral, Negation}};
 
 /**
 * True if the given expression does not depend on any of the variables
@@ -50,6 +50,7 @@ pub fn children_rec(exp: &Expression) -> impl Iterator<Item = Expression> {
     children.into_iter()
 }
 
+
 /**
 * Grabs immediate children of given expression
 */
@@ -71,6 +72,117 @@ pub fn children_of<'a>(exp: &'a Expression) -> Vec<Expression> {
     }
 }
 
+/// Substitutes all children in exp equal to this with with.
+/// Returns the substituted expression and the number of substitutions
+/// made.
+pub fn substitute_rec(exp: &Expression, this: &Expression, with: &Expression) -> impl Iterator<Item = Expression> {
+    let mut children = Vec::<Expression>::new();
+    let mut queue = LinkedList::<Expression>::new();
+
+    queue.extend(children_of(&exp));
+
+    while !queue.is_empty() {
+        let child = queue.pop_front().unwrap();
+        children.push(child.clone());
+        queue.extend(children_of(&child));
+    }
+
+    children.into_iter()
+}
+
+fn substitute<'a>(exp: &'a Expression, this: &Expression, with: &Expression) -> Expression {
+    let mut count = 0;
+    let result: Expression = match exp {
+        Expression::Integer(_) => {
+            if exp == this {
+                count += 1;
+                with.clone()
+            } else {
+                exp.clone()
+            }
+        },
+        Expression::ConstantExp(_) => {
+            if exp == this {
+                count += 1;
+                with.clone()
+            } else {
+                exp.clone()
+            }
+        },
+        Expression::Product(p) => {
+            product_of_iter(&mut p.factors().clone().into_iter()
+                .map(|exp| {
+                    if exp == *this {
+                        count += 1;
+                        with.clone()
+                    } else {
+                        exp
+                    }
+                }))
+        },
+        Expression::Sum(s) => {
+            sum_of_iter(&mut s.terms().clone().into_iter()
+                .map(|exp| {
+                    if exp == *this {
+                        count += 1;
+                        with.clone()
+                    } else {
+                        exp
+                    }
+                }))
+        },
+        Expression::Exponent(e) => {
+            let mut result: Expression = exp.clone();
+            if e.base() == *this {
+                count += 1;
+                result = Exponent::of(with.clone(), e.power());
+            }
+            if e.power() == *this {
+                count += 1;
+                result = Exponent::of(e.base(), with.clone());
+            }
+            result
+        },
+        Expression::Integral(i) => {
+            let mut result: Expression = exp.clone();
+            if i.integrand() == *this {
+                count += 1;
+                result = Integral::of(with.clone(), i.relative_to());
+            }
+            if i.relative_to() == *this {
+                count += 1;
+                result = Integral::of(i.integrand(), with.clone());
+            }
+            result
+        },
+        Expression::Negation(n) => {
+            let mut result: Expression = exp.clone();
+            if n.child() == *this {
+                count += 1;
+                result = Negation::of(with.clone());
+            }
+            result
+        },
+        Expression::Variable(_) => {
+            if exp == *this {
+                with.clone()
+            } else {
+                exp.clone()
+            }
+        },
+        Expression::Fraction(f) => {
+            let mut result: Expression = exp.clone();
+            if f.numerator() == 
+            [f.numerator(), f.denominator()].into_iter().collect()
+        },
+        Expression::Logarithm(l) => [l.base(), l.exp()].into_iter().collect(),
+        Expression::Derivative(d) => [d.exp(), d.relative_to()].into_iter().collect(),
+        Expression::Trig(t) => [t.exp()].into_iter().collect(),
+        Expression::AbsoluteValue(a) => [a.exp()].into_iter().collect(),
+    };
+
+    (result, count)
+}
 
 #[cfg(test)]
 mod tests {
