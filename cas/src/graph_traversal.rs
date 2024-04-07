@@ -2,7 +2,7 @@ use std::cmp::Ordering;
 use std::rc::Rc;
 
 use crate::derivation_rules::helpers::children_of;
-use crate::expressions::{Expression};
+use crate::expressions::Expression;
 use crate::argument::Argument;
 
 use serde::Serialize;
@@ -66,7 +66,8 @@ fn complexity(a: &Expression) -> u32 {
         Expression::AbsoluteValue(a) => {
             2 + complexity(&a.exp())
         },
-        Expression::ConstantExp(_) => 1
+        Expression::ConstantExp(_) => 1,
+        Expression::Substitution(_) => 1,
     }
 }
 

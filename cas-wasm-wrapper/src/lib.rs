@@ -5,11 +5,10 @@ use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
 pub fn simplify_with_steps(json_expression: &str, search_depth: u32, optimizer: &str) -> String {
-    cas::simplify_with_steps(json_expression, search_depth, optimizer)
+    cas::simplify_with_steps(json_expression, search_depth, optimizer, None)
 }
 
 #[wasm_bindgen]
 pub fn get_all_equivalents(json_expression: &str, search_depth: u32, optimizer: &str) -> String {
     cas::get_all_equivalents(json_expression, search_depth, optimizer)
 }
-

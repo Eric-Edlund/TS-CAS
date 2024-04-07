@@ -8,6 +8,7 @@ import { Integer } from "./expressions/Integer";
 import { Integral } from "./expressions/Integral";
 import { Logarithm } from "./expressions/Logarithm";
 import { Product } from "./expressions/Product";
+import { Substitution } from "./expressions/Substitution";
 import { Sum } from "./expressions/Sum";
 import { TrigExp } from "./expressions/TrigExp";
 import { Variable } from "./expressions/Variable";
@@ -80,5 +81,6 @@ function parseRec(obj: any): Expression {
         case "Arcsec": return TrigExp.of("Arcsec", parseRec(arr[1]));
         case "Arccot": return TrigExp.of("Arccot", parseRec(arr[1]));
         case "Abs": return AbsoluteValue.of(parseRec(arr[1]));
+        case "Substitution": return Substitution.of(parseRec(arr[2]), parseInt(arr[1]));
     }
 }

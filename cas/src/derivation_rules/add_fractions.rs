@@ -1,9 +1,12 @@
 use std::rc::Rc;
 
-use crate::{argument::Argument, convenience_expressions::sum_of_iter, expressions::{sum::sum_of, Expression, Fraction}};
+use crate::{
+    argument::Argument,
+    convenience_expressions::sum_of_iter,
+    expressions::{sum::sum_of, Expression, Fraction},
+};
 
 use super::DerivationRule;
-
 
 /**
 * Adds the numerators of fractions with common denominators.
@@ -17,11 +20,10 @@ impl DerivationRule for AddFractions {
             _ => return vec![],
         };
 
-        let denominators = sum.terms().iter()
-            .filter_map(|term| match term {
-                Expression::Fraction(f) => Some(f.denominator()),
-                _ => None
-            });
+        let denominators = sum.terms().iter().filter_map(|term| match term {
+            Expression::Fraction(f) => Some(f.denominator()),
+            _ => None,
+        });
 
         let mut results = Vec::<Expression>::new();
 
@@ -36,17 +38,25 @@ impl DerivationRule for AddFractions {
                         } else {
                             others.push(term.clone());
                         }
-                    },
+                    }
                     x => others.push(x.clone()),
                 }
             }
-            results.push(sum_of_iter(&mut others.into_iter()
-                .chain(&mut [Fraction::of(sum_of(&num_terms), den)].iter().cloned())));
+            results.push(sum_of_iter(
+                &mut others
+                    .into_iter()
+                    .chain(&mut [Fraction::of(sum_of(&num_terms), den)].iter().cloned()),
+            ));
         }
 
-        results.into_iter().map(|exp| (exp,
-            Argument::new(String::from("Add fractions"), vec![input.clone()])
-        ))
+        results
+            .into_iter()
+            .map(|exp| {
+                (
+                    exp,
+                    Argument::new(String::from("Add fractions"), vec![input.clone()]),
+                )
+            })
             .collect()
     }
 }

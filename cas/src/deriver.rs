@@ -1,16 +1,20 @@
+use std::collections::hash_map::Entry;
 use std::collections::{HashMap, HashSet};
 use std::rc::Rc;
+use std::sync::RwLock;
 
 use petgraph::data::DataMap;
 use petgraph::graph::NodeIndex;
 
 use crate::argument::Argument;
 use crate::derivation_rules::{ALL_RULES, STRICT_SIMPLIFYING_RULES};
-use crate::expressions::{AbsoluteValue, Derivative, Exponent, Expression, Fraction, Integral, Logarithm, Negation, TrigExp};
 use crate::expressions::product::product_of;
 use crate::expressions::sum::sum_of;
+use crate::expressions::{
+    AbsoluteValue, Derivative, Exponent, Expression, Fraction, Integral, Logarithm, Negation,
+    TrigExp,
+};
 use crate::graph::{Graph, RelType, Relationship};
-
 
 /**
 * An object to describe what optimization strategy should be used
@@ -18,9 +22,13 @@ use crate::graph::{Graph, RelType, Relationship};
 */
 pub trait OptimizationProfile {
     /**
-    * Generates a set of equivalent expressions from the given expression.
-    */
+     * Generates a set of equivalent expressions from the given expression.
+     */
     fn find_equivalents(&mut self, exp: &Expression) -> Vec<(Expression, Rc<Argument>)>;
+
+    /// Sets the list of rules which are allowed to be used, if supported.
+    /// Returns Err if not supported.
+    fn set_rules(&mut self, rules: &[String]) -> Result<(), ()>;
 }
 
 /**
@@ -29,36 +37,50 @@ pub trait OptimizationProfile {
 */
 pub struct BruteForceProfile {
     already_seen: HashSet<Expression>,
+    allowed_rules: HashSet<String>,
 }
 impl BruteForceProfile {
-        pub fn new() -> Box<Self> {
+    pub fn new() -> Box<Self> {
         Box::new(Self {
             already_seen: HashSet::<Expression>::new(),
+            allowed_rules: HashSet::from_iter(
+                ALL_RULES
+                    .read()
+                    .unwrap()
+                    .iter()
+                    .map(|r| std::any::type_name_of_val(r).to_owned()),
+            ),
         })
     }
 }
+
 impl OptimizationProfile for BruteForceProfile {
     fn find_equivalents(&mut self, exp: &Expression) -> Vec<(Expression, Rc<Argument>)> {
         if self.already_seen.contains(exp) {
             return vec![];
         }
         self.already_seen.insert(exp.clone());
-        let rules = *ALL_RULES.lock().unwrap();
-        rules.iter()
-            .map(|rule| {
-                equiv(&exp, &|e| {
-                    rule.apply(e.clone())
-                })
+        let rules = *ALL_RULES.read().unwrap();
+        rules
+            .iter()
+            .filter(|rule| {
+                self.allowed_rules
+                    .contains(std::any::type_name_of_val(rule))
             })
-            .flatten()
+            .flat_map(|rule| equiv(exp, &|e| rule.apply(e.clone())))
             .collect()
+    }
+
+    fn set_rules(&mut self, rules: &[String]) -> Result<(), ()> {
+        self.allowed_rules = HashSet::from_iter(rules.iter().cloned());
+        Ok(())
     }
 }
 
 /**
 * Apply evaluation/associative simplification rules with only one output
 * first. Expressions which are simplified by these rules are then excluded
-* from being used by more complex rules in later passes.
+* from being used by more <complex rules in later passes.
 */
 pub struct EvaluateFirstProfile {
     already_seen: HashSet<Expression>,
@@ -72,42 +94,36 @@ impl EvaluateFirstProfile {
     }
 }
 
-
 impl OptimizationProfile for EvaluateFirstProfile {
     fn find_equivalents(&mut self, exp: &Expression) -> Vec<(Expression, Rc<Argument>)> {
         if self.already_seen.contains(exp) {
             return vec![];
         }
         self.already_seen.insert(exp.clone());
-        let simplifying_rules = STRICT_SIMPLIFYING_RULES.lock().unwrap();
+        let simplifying_rules = STRICT_SIMPLIFYING_RULES.read().unwrap();
 
-        let mut simple = simplifying_rules.iter()
-            .map(|rule| {
-                equiv(&exp, &|e| {
-                    rule.apply(e.clone())
-                })
-            })
-            .flatten()
+        let mut simple = simplifying_rules
+            .iter()
+            .flat_map(|rule| equiv(exp, &|e| rule.apply(e.clone())))
             .peekable();
-        
+
         if simple.peek().is_some() {
             return simple.collect();
         }
 
-        let all_rules = ALL_RULES.lock().unwrap();
-        all_rules.iter()
-            .map(|rule| {
-                equiv(&exp, &|e| {
-                    rule.apply(e.clone())
-                })
-            })
-            .flatten()
+        let all_rules = ALL_RULES.read().unwrap();
+        all_rules
+            .iter()
+            .flat_map(|rule| equiv(exp, &|e| rule.apply(e.clone())))
             .collect()
+    }
+
+    fn set_rules(&mut self, _rules: &[String]) -> Result<(), ()> {
+        Err(())
     }
 }
 
-
-/// Applies derivative and simplifying rules only. Evaluates derivatives as 
+/// Applies derivative and simplifying rules only. Evaluates derivatives as
 /// efficiently as possible. Not a general solver.
 pub struct DerivativesOnlyProfile {
     already_seen: HashSet<Expression>,
@@ -127,30 +143,29 @@ impl OptimizationProfile for DerivativesOnlyProfile {
             return vec![];
         }
         self.already_seen.insert(exp.clone());
-        let simplifying_rules = STRICT_SIMPLIFYING_RULES.lock().unwrap();
+        let simplifying_rules = STRICT_SIMPLIFYING_RULES.read().unwrap();
 
-        let mut simple = simplifying_rules.iter()
-            .map(|rule| {
-                equiv(&exp, &|e| {
-                    rule.apply(e.clone())
-                })
-            })
-            .flatten()
+        let mut simple = simplifying_rules
+            .iter()
+            .flat_map(|rule| equiv(exp, &|e| rule.apply(e.clone())))
             .peekable();
-        
+
         if simple.peek().is_some() {
-            return simple.collect();
+            simple.collect()
+        } else {
+            vec![]
         }
 
-        let all_rules = ALL_RULES.lock().unwrap();
-        all_rules.iter()
-            .map(|rule| {
-                equiv(&exp, &|e| {
-                    rule.apply(e.clone())
-                })
-            })
-            .flatten()
-            .collect()
+        // let all_rules = ALL_RULES.lock().unwrap();
+        // all_rules
+        //     .iter()
+        //     .map(|rule| equiv(&exp, &|e| rule.apply(e.clone())))
+        //     .flatten()
+        //     .collect()
+    }
+
+    fn set_rules(&mut self, _rules: &[String]) -> Result<(), ()> {
+        Err(())
     }
 }
 
@@ -190,14 +205,14 @@ impl Deriver {
             let equivalents = self.optimizer.find_equivalents(&expression);
 
             for (derived, argument) in equivalents {
-                let index = if self.node_indices.contains_key(&derived) {
-                    self.node_indices[&derived]
-                } else {
+                let index = if let Entry::Vacant(e) = self.node_indices.entry(derived.clone()) {
                     let result = graph.add_node(derived.clone());
-                    self.node_indices.insert(derived, result);
+                    e.insert(result);
                     result
+                } else {
+                    self.node_indices[&derived]
                 };
-                
+
                 match graph.find_edge(i, index) {
                     Some(edge_id) => {
                         graph
@@ -225,7 +240,7 @@ type EquivList = Vec<Derivation>;
 type EquivFn = dyn Fn(&Expression) -> EquivList;
 
 /*
-* Decomposes expressions, finding equivalents for their components using 
+* Decomposes expressions, finding equivalents for their components using
 * the given equivalence finding rule.
 */
 fn equiv(exp: &Expression, direct: &EquivFn) -> EquivList {
@@ -236,6 +251,7 @@ fn equiv(exp: &Expression, direct: &EquivFn) -> EquivList {
         Expression::Variable(_) => vec![],
         Expression::Integer(_) => vec![],
         Expression::ConstantExp(_) => vec![],
+        Expression::Substitution(_) => vec![],
         Expression::Sum(_) => sum_equiv(exp, direct),
         Expression::Product(_) => product_equiv(exp, direct),
         Expression::Exponent(_) => exponent_equiv(exp, direct),
@@ -254,8 +270,7 @@ fn equiv(exp: &Expression, direct: &EquivFn) -> EquivList {
 fn sum_equiv(exp: &Expression, direct: &EquivFn) -> EquivList {
     let mut equivalent_sums = HashSet::<Derivation>::new();
 
-    let Expression::Sum(ref sum) = exp 
-    else {
+    let Expression::Sum(ref sum) = exp else {
         panic!();
     };
 
@@ -264,10 +279,7 @@ fn sum_equiv(exp: &Expression, direct: &EquivFn) -> EquivList {
         for deriv in equiv(term, direct) {
             let mut new_terms = sum.terms().clone();
             new_terms[i] = deriv.0;
-            let result = (
-                sum_of(&new_terms),
-                deriv.1
-            );
+            let result = (sum_of(&new_terms), deriv.1);
             equivalent_sums.insert(result);
         }
     }
@@ -278,20 +290,16 @@ fn sum_equiv(exp: &Expression, direct: &EquivFn) -> EquivList {
 fn product_equiv(exp: &Expression, direct: &EquivFn) -> EquivList {
     let mut equivalent_products = HashSet::<Derivation>::new();
 
-    let Expression::Product(ref product) = exp 
-    else {
+    let Expression::Product(ref product) = exp else {
         panic!();
     };
 
-    // Find equivalents for each factor 
+    // Find equivalents for each factor
     for (i, term) in product.factors().iter().enumerate() {
         for deriv in equiv(term, direct) {
             let mut new_factors = product.factors().clone();
             new_factors[i] = deriv.0;
-            let result = (
-                product_of(&new_factors),
-                deriv.1
-            );
+            let result = (product_of(&new_factors), deriv.1);
             equivalent_products.insert(result);
         }
     }
@@ -301,25 +309,18 @@ fn product_equiv(exp: &Expression, direct: &EquivFn) -> EquivList {
 
 fn exponent_equiv(exp: &Expression, direct: &EquivFn) -> EquivList {
     let mut equivalents = Vec::<Derivation>::new();
-    let Expression::Exponent(ref exponent) = exp 
-    else {
+    let Expression::Exponent(ref exponent) = exp else {
         panic!();
     };
 
     // For power
     for deriv in equiv(&exponent.power(), direct) {
-        equivalents.push(
-            (Exponent::of(exponent.base(), deriv.0),
-            deriv.1)
-        );
+        equivalents.push((Exponent::of(exponent.base(), deriv.0), deriv.1));
     }
 
     // For base
     for deriv in equiv(&exponent.base(), direct) {
-        equivalents.push(
-            (Exponent::of(deriv.0, exponent.power()),
-            deriv.1)
-        );
+        equivalents.push((Exponent::of(deriv.0, exponent.power()), deriv.1));
     }
 
     equivalents
@@ -327,24 +328,17 @@ fn exponent_equiv(exp: &Expression, direct: &EquivFn) -> EquivList {
 
 fn fraction_equiv(exp: &Expression, direct: &EquivFn) -> EquivList {
     let mut equivalents = Vec::<Derivation>::new();
-    let Expression::Fraction(ref fraction) = exp 
-    else {
+    let Expression::Fraction(ref fraction) = exp else {
         panic!();
     };
 
     // For numerator
     for deriv in equiv(&fraction.numerator(), direct) {
-        equivalents.push(
-            (Fraction::of(deriv.0, fraction.denominator()),
-            deriv.1)
-        );
+        equivalents.push((Fraction::of(deriv.0, fraction.denominator()), deriv.1));
     }
     // For denominator
     for deriv in equiv(&fraction.denominator(), direct) {
-        equivalents.push(
-            (Fraction::of(fraction.numerator(), deriv.0),
-            deriv.1)
-        );
+        equivalents.push((Fraction::of(fraction.numerator(), deriv.0), deriv.1));
     }
 
     equivalents
@@ -352,25 +346,18 @@ fn fraction_equiv(exp: &Expression, direct: &EquivFn) -> EquivList {
 
 fn integral_equiv(exp: &Expression, direct: &EquivFn) -> EquivList {
     let mut equivalents = Vec::<Derivation>::new();
-    let Expression::Integral(ref integral) = exp
-    else {
+    let Expression::Integral(ref integral) = exp else {
         panic!();
     };
 
     // for integrand
     for deriv in equiv(&integral.integrand(), direct) {
-        equivalents.push(
-            (Integral::of(deriv.0, integral.relative_to()),
-            deriv.1)
-        );
+        equivalents.push((Integral::of(deriv.0, integral.relative_to()), deriv.1));
     }
 
     // for variable
     for deriv in equiv(&integral.relative_to(), direct) {
-        equivalents.push(
-            (Integral::of(integral.integrand(), deriv.0),
-            deriv.1)
-        );
+        equivalents.push((Integral::of(integral.integrand(), deriv.0), deriv.1));
     }
 
     equivalents
@@ -378,25 +365,18 @@ fn integral_equiv(exp: &Expression, direct: &EquivFn) -> EquivList {
 
 fn derivative_equiv(exp: &Expression, direct: &EquivFn) -> EquivList {
     let mut equivalents = Vec::<Derivation>::new();
-    let Expression::Derivative(ref derivative) = exp
-    else {
+    let Expression::Derivative(ref derivative) = exp else {
         panic!();
     };
 
-    // for exp 
+    // for exp
     for deriv in equiv(&derivative.exp(), direct) {
-        equivalents.push(
-            (Derivative::of(deriv.0, derivative.relative_to()),
-            deriv.1)
-        );
+        equivalents.push((Derivative::of(deriv.0, derivative.relative_to()), deriv.1));
     }
 
     // for variable
     for deriv in equiv(&derivative.relative_to(), direct) {
-        equivalents.push(
-            (Derivative::of(derivative.exp(), deriv.0),
-            deriv.1)
-        );
+        equivalents.push((Derivative::of(derivative.exp(), deriv.0), deriv.1));
     }
 
     equivalents
@@ -404,8 +384,7 @@ fn derivative_equiv(exp: &Expression, direct: &EquivFn) -> EquivList {
 
 fn negation_equiv(exp: &Expression, direct: &EquivFn) -> EquivList {
     let mut equivalents = Vec::<Derivation>::new();
-    let Expression::Negation(ref negation) = exp 
-    else {
+    let Expression::Negation(ref negation) = exp else {
         panic!();
     };
 
@@ -417,8 +396,7 @@ fn negation_equiv(exp: &Expression, direct: &EquivFn) -> EquivList {
 
 fn trig_equiv(exp: &Expression, direct: &EquivFn) -> EquivList {
     let mut equivalents = Vec::<Derivation>::new();
-    let Expression::Trig(ref trig) = exp 
-    else {
+    let Expression::Trig(ref trig) = exp else {
         panic!();
     };
 
@@ -430,25 +408,18 @@ fn trig_equiv(exp: &Expression, direct: &EquivFn) -> EquivList {
 
 fn log_equiv(exp: &Expression, direct: &EquivFn) -> EquivList {
     let mut equivalents = Vec::<Derivation>::new();
-    let Expression::Logarithm(ref log) = exp
-    else {
+    let Expression::Logarithm(ref log) = exp else {
         panic!();
     };
 
-    // for exp 
+    // for exp
     for deriv in equiv(&log.base(), direct) {
-        equivalents.push(
-            (Logarithm::of(deriv.0, log.exp()),
-            deriv.1)
-        );
+        equivalents.push((Logarithm::of(deriv.0, log.exp()), deriv.1));
     }
 
     // for variable
     for deriv in equiv(&log.exp(), direct) {
-        equivalents.push(
-            (Logarithm::of(log.base(), deriv.0),
-            deriv.1)
-        );
+        equivalents.push((Logarithm::of(log.base(), deriv.0), deriv.1));
     }
 
     equivalents
@@ -456,28 +427,26 @@ fn log_equiv(exp: &Expression, direct: &EquivFn) -> EquivList {
 
 fn abs_equiv(exp: &Expression, direct: &EquivFn) -> EquivList {
     let mut equivalents = Vec::<Derivation>::new();
-    let Expression::AbsoluteValue(ref abs) = exp
-    else {
+    let Expression::AbsoluteValue(ref abs) = exp else {
         panic!();
     };
 
     for deriv in equiv(&abs.exp(), direct) {
-        equivalents.push(
-            (AbsoluteValue::of(deriv.0),
-            deriv.1)
-        );
+        equivalents.push((AbsoluteValue::of(deriv.0), deriv.1));
     }
 
     equivalents
 }
 
-
 #[cfg(test)]
 mod tests {
-    use crate::{expressions::{product::product_of, sum::sum_of}, convenience_expressions::i};
+    use crate::{
+        convenience_expressions::i,
+        expressions::{product::product_of, sum::sum_of},
+    };
 
     use super::*;
-    
+
     #[test]
     fn applies_multiple_rules() {
         let mut deriver = Deriver::new(BruteForceProfile::new());

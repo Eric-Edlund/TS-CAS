@@ -1,69 +1,71 @@
-use std::{rc::Rc, sync::Mutex};
+use std::{rc::Rc, sync::RwLock};
 
 use crate::{argument::Argument, expressions::Expression};
 
-pub mod helpers;
 pub mod derivatives;
+pub mod helpers;
 
-mod cancel_negatives;
+mod add_fractions;
 mod additive_identity;
 mod anything_times_zero;
 mod associative_property;
-mod evaluate_sums;
-mod multiplicative_identity;
+mod cancel_negatives;
+mod cancel_trig_arcs;
+mod cancel_trig_inverses;
 mod combine_common_factors;
-mod division_identity;
-mod log_of_one;
-mod distributive_property;
-mod exponent_to_zero;
-mod multiply_exponent_powers;
-mod divide_fractions;
-mod foil;
-mod sum_coefficients_of_terms;
-mod subtract_exponents_on_fractions;
-mod evaluate_products;
-mod evaluate_fractions;
-mod evaluate_logs;
-mod make_common_denominators;
-mod integration_power_rule;
-mod integral_sum_rule;
-mod integral_constant_coefficients;
-mod integral_of_constant;
+mod derivative_constant_coefficients;
 mod derivative_of_constant;
+mod derivative_of_negation;
 mod derivative_of_power;
 mod derivative_of_product;
 mod derivative_of_sum;
-mod derivative_of_negation;
-mod derivative_constant_coefficients;
-mod evaluate_exponents;
-mod pythagorean_identities;
-mod tan_identity;
-mod integral_of_trig;
 mod derivative_of_trig;
-mod cancel_trig_inverses;
-mod cancel_trig_arcs;
-mod trig_reflections;
-mod integral_pull_out_negative;
-mod products_into_numerator;
-mod one_to_any_power;
-mod add_fractions;
+mod distributive_property;
+mod divide_fractions;
+mod division_identity;
+mod evaluate_exponents;
+mod evaluate_fractions;
+mod evaluate_logs;
+mod evaluate_products;
+mod evaluate_sums;
+mod exponent_to_zero;
+mod foil;
 mod fractions_in_denominator;
-mod multiply_fractions;
-mod pull_negative_arround_fraction;
-mod integrate_arctrig;
 mod imaginary_identity;
+mod integral_constant_coefficients;
+mod integral_of_constant;
+mod integral_of_trig;
+mod integral_pull_out_negative;
+mod integral_sum_rule;
+mod integrate_arctrig;
 mod integration_by_substitution;
+mod integration_power_rule;
+mod log_of_one;
+mod make_common_denominators;
+mod multiplicative_identity;
+mod multiply_exponent_powers;
+mod multiply_fractions;
+mod one_to_any_power;
+mod products_into_numerator;
+mod pull_negative_arround_fraction;
+mod pythagorean_identities;
+mod subtract_exponents_on_fractions;
+mod sum_coefficients_of_terms;
+mod tan_identity;
+mod trig_reflections;
 
 pub trait DerivationRule {
-    /**
-     * Produces a set of equivalent expressions from the given
-     * one. Result does not include the input.
-     */
+    /// Produces a set of equivalent expressions from the given
+    /// one. Result does not include the input.
     fn apply(&self, input: Expression) -> Vec<(Expression, Rc<Argument>)>;
+
+    /// Returns the name for the rule so that it can be referenced.
+    fn name(&self) -> String {
+        String::from("Unnamed Rule")
+    }
 }
 
-pub static ALL_RULES: Mutex<&[&(dyn DerivationRule + Sync)]> =
-    Mutex::new(&[
+pub static ALL_RULES: RwLock<&[&(dyn DerivationRule + Sync)]> = RwLock::new(&[
     &cancel_negatives::CancelNegatives {},
     &additive_identity::AdditiveIdentity {},
     &associative_property::AssociativeProperty {},
@@ -113,8 +115,7 @@ pub static ALL_RULES: Mutex<&[&(dyn DerivationRule + Sync)]> =
     &integration_by_substitution::IntegrateBySubstitution {},
 ]);
 
-pub static STRICT_SIMPLIFYING_RULES: Mutex<&[&(dyn DerivationRule + Sync)]> =
-    Mutex::new(&[
+pub static STRICT_SIMPLIFYING_RULES: RwLock<&[&(dyn DerivationRule + Sync)]> = RwLock::new(&[
     &cancel_negatives::CancelNegatives {},
     &additive_identity::AdditiveIdentity {},
     &associative_property::AssociativeProperty {},
@@ -134,4 +135,3 @@ pub static STRICT_SIMPLIFYING_RULES: Mutex<&[&(dyn DerivationRule + Sync)]> =
     &integral_pull_out_negative::IntegralPullOutNegative {},
     &one_to_any_power::OneToAnything {},
 ]);
-

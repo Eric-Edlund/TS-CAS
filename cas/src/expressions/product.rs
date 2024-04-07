@@ -86,6 +86,17 @@ pub fn product_of_iter(factors: &mut dyn Iterator<Item = Expression>) -> Express
     Product::of(&factors).unwrap()
 }
 
+pub fn product_of_iter_ref(factors: &mut dyn Iterator<Item = &Expression>) -> Expression {
+    let factors = factors.collect::<Vec<&Expression>>();
+    if factors.len() == 0 {
+        return Integer::of(1);
+    }
+    if factors.len() == 1 {
+        return factors[0].clone();
+    }
+    Product::of(&factors.into_iter().cloned().collect::<Vec<Expression>>()).unwrap()
+}
+
 impl IExpression for Product {
     fn to_unambigious_string(&self) -> String {
         let mut result = String::from("");

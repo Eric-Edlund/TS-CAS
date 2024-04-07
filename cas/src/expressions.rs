@@ -19,6 +19,7 @@ pub mod derivative;
 pub mod integral;
 pub mod trig_expression;
 pub mod absolute_value;
+pub mod substitution;
 pub mod constant;
 mod read_from_json;
 
@@ -37,6 +38,8 @@ pub use trig_expression::TrigExp;
 pub use absolute_value::AbsoluteValue;
 pub use constant::ConstantExp;
 pub use read_from_json::*;
+
+use self::substitution::Substitution;
 
 pub trait IExpression {
     /**
@@ -88,6 +91,7 @@ pub enum Expression {
     Trig(Arc<TrigExp>),
     AbsoluteValue(Arc<AbsoluteValue>),
     ConstantExp(Arc<ConstantExp>),
+    Substitution(Arc<Substitution>),
 }
 
 impl Expression {}
@@ -108,6 +112,7 @@ impl fmt::Debug for Expression {
             Expression::Trig(p) => p as &dyn fmt::Debug,
             Expression::AbsoluteValue(p) => p as &dyn fmt::Debug,
             Expression::ConstantExp(p) => p as &dyn fmt::Debug,
+            Expression::Substitution(p) => p as &dyn fmt::Debug,
         }))
     }
 }
@@ -128,6 +133,7 @@ impl PartialEq for Expression {
             Expression::Trig(p) => p.clone(),
             Expression::AbsoluteValue(p) => p.clone(),
             Expression::ConstantExp(p) => p.clone(),
+            Expression::Substitution(p) => p.clone(),
         };
         let second: Arc<dyn IExpression> = match other {
             Expression::Negation(p) => p.clone(),
@@ -143,6 +149,7 @@ impl PartialEq for Expression {
             Expression::Trig(p) => p.clone(),
             Expression::AbsoluteValue(p) => p.clone(),
             Expression::ConstantExp(p) => p.clone(),
+            Expression::Substitution(p) => p.clone(),
         };
 
         Arc::ptr_eq(&first, &second)
@@ -172,6 +179,7 @@ impl Expression {
             Expression::Trig(t) => t.clone(),
             Expression::AbsoluteValue(a) => a.clone(),
             Expression::ConstantExp(c) => c.clone(),
+            Expression::Substitution(s) => s.clone(),
         }
     }
 
@@ -190,6 +198,7 @@ impl Expression {
             Expression::Trig(t) => t.to_json(),
             Expression::AbsoluteValue(a) => a.to_json(),
             Expression::ConstantExp(c) => c.to_json(),
+            Expression::Substitution(s) => s.to_json(),
         }
     }
 }
