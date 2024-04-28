@@ -40,4 +40,10 @@ We will need to represent substitutions somehow so that we can keep using the
 iterative rule application approach. We could also treat integrals specially
 and hide intermediate variables from the rest of the system.
 
-To limit computational redundant representations, we'll
+---
+
+Suppose we take option 3. I don't think we could keep the iterative approach we've
+been using, because sometimes multiple substitutions are necessary, and other
+integration methods might need to be applied after substitution.
+
+So I think we're stuck with 2.

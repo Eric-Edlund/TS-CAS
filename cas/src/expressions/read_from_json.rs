@@ -15,7 +15,6 @@ pub fn read_object_from_json(json: &str) -> Result<Expression, String> {
     };
 
     read_obj_rec(&obj)
-
 }
 
 fn read_obj_rec(object: &Value) -> Result<Expression, String> {

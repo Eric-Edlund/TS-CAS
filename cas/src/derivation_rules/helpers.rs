@@ -4,7 +4,12 @@
 
 use std::{collections::LinkedList, iter::once};
 
-use crate::expressions::{Expression};
+use crate::convenience_expressions::sum_of_iter;
+use crate::expressions::product::product_of_iter;
+use crate::expressions::AbsoluteValue;
+use crate::expressions::Derivative;
+use crate::expressions::Exponent;
+use crate::expressions::{Expression, Fraction, Integral, Logarithm, Negation, TrigExp};
 
 /**
 * True if the given expression does not depend on any of the variables
@@ -13,10 +18,10 @@ use crate::expressions::{Expression};
 * @param relative The "dx" or "d whatever" change variable.
 */
 pub fn is_constant(exp: &Expression, delta: &Expression) -> bool {
-    let delta_vars: Vec<Expression> = dependent_variables(&delta);
-    !children_rec(exp).chain(once(exp.clone())).any(|e|
-        matches!(e, Expression::Variable(_)) && delta_vars.contains(&e)
-    )
+    let delta_vars: Vec<Expression> = dependent_variables(delta);
+    !children_rec(exp)
+        .chain(once(exp.clone()))
+        .any(|e| matches!(e, Expression::Variable(_)) && delta_vars.contains(&e))
 }
 
 /**
@@ -27,17 +32,21 @@ pub fn dependent_variables(exp: &Expression) -> Vec<Expression> {
     if matches!(exp, Expression::Variable(_)) {
         return once(exp.clone()).collect();
     }
-    children_rec(exp).filter(|e| matches!(e, Expression::Variable(_))).collect()
+    children_rec(exp)
+        .filter(|e| matches!(e, Expression::Variable(_)))
+        .collect()
 }
 
 /**
 * Gets all children of given expression recursively.
+* This includes branches and leafs. Does not include the
+* given expression.
 */
 pub fn children_rec(exp: &Expression) -> impl Iterator<Item = Expression> {
     let mut children = Vec::<Expression>::new();
     let mut queue = LinkedList::<Expression>::new();
 
-    queue.extend(children_of(&exp));
+    queue.extend(children_of(exp));
 
     while !queue.is_empty() {
         let child = queue.pop_front().unwrap();
@@ -51,7 +60,7 @@ pub fn children_rec(exp: &Expression) -> impl Iterator<Item = Expression> {
 /**
 * Grabs immediate children of given expression
 */
-pub fn children_of<'a>(exp: &'a Expression) -> Vec<Expression> {
+pub fn children_of(exp: &Expression) -> Vec<Expression> {
     match exp {
         Expression::Integer(_) => vec![],
         Expression::ConstantExp(_) => vec![],
@@ -66,13 +75,53 @@ pub fn children_of<'a>(exp: &'a Expression) -> Vec<Expression> {
         Expression::Derivative(d) => [d.exp(), d.relative_to()].into_iter().collect(),
         Expression::Trig(t) => [t.exp()].into_iter().collect(),
         Expression::AbsoluteValue(a) => [a.exp()].into_iter().collect(),
+        Expression::Substitution(s) => vec![s.exp()],
     }
 }
 
+/// Searches the given expression, replacing all children which match the
+/// predicate with the given replacement. Traverses the tree top down.
+/// Does not traverse into subtituted expressions.
+pub fn substitute<'a, P>(
+    exp: &'a Expression,
+    replacement: &'a Expression,
+    predicate: &P,
+) -> Expression
+where
+    P: Fn(&Expression) -> bool,
+{
+    if predicate(exp) {
+        return replacement.clone();
+    }
+
+    let sub = |exp: &Expression| substitute(exp, replacement, predicate);
+
+    match exp {
+        Expression::Integer(_) => exp.clone(),
+        Expression::ConstantExp(_) => exp.clone(),
+        Expression::Variable(_) => exp.clone(),
+        Expression::Substitution(_) => exp.clone(),
+        Expression::Product(p) => product_of_iter(&mut p.factors().iter().map(sub)),
+        Expression::Sum(s) => sum_of_iter(&mut s.terms().clone().iter().map(sub)),
+        Expression::Exponent(e) => Exponent::of(sub(&e.base()), sub(&e.power())),
+        Expression::Integral(i) => Integral::of(sub(&i.integrand()), sub(&i.relative_to())),
+        Expression::Negation(n) => Negation::of(sub(&n.child())),
+        Expression::Fraction(f) => Fraction::of(sub(&f.numerator()), sub(&f.denominator())),
+        Expression::Logarithm(l) => Logarithm::of(sub(&l.base()), sub(&l.exp())),
+        Expression::Derivative(d) => Derivative::of(sub(&d.exp()), sub(&d.relative_to())),
+        Expression::Trig(t) => TrigExp::of(t.operation, sub(&t.exp())),
+        Expression::AbsoluteValue(a) => AbsoluteValue::of(sub(&a.exp())),
+    }
+}
 
 #[cfg(test)]
 mod tests {
-    use crate::{convenience_expressions::{i, v}, expressions::{product::product_of, sum::sum_of, Integer, Variable}};
+    use crate::{
+        convenience_expressions::{i, v},
+        expressions::{
+            product::product_of, sum::sum_of, trig_expression::TrigFn, Integer, Variable,
+        },
+    };
 
     use super::*;
 
@@ -95,5 +144,28 @@ mod tests {
         assert!(!is_constant(&var_exp, &delta));
         assert!(!is_constant(&var_exp2, &delta));
         assert!(is_constant(&const_exp2, &delta2));
+    }
+
+    #[test]
+    fn substitute_test() {
+        let first = Integral::of(
+            product_of(&[
+                TrigExp::of(TrigFn::Sin, v("x")),
+                TrigExp::of(TrigFn::Cos, v("x")),
+            ]),
+            v("x"),
+        );
+
+        let result = substitute(&first, &v("a"), &|exp| {
+            *exp == TrigExp::of(TrigFn::Sin, v("x"))
+        });
+
+        assert_eq!(
+            result,
+            Integral::of(
+                product_of(&[v("a"), TrigExp::of(TrigFn::Cos, v("x")),]),
+                v("x"),
+            )
+        )
     }
 }
