@@ -43,8 +43,6 @@ impl Deriver {
     }
 
     /// Expands the graph with equivalent expressions.
-    ///
-    /// - depth The number of recursions used to search for equivlaents.
     pub fn expand(&mut self, graph: &mut Graph, depth: u32, max_derivations: u32) {
         for i in graph.node_indices() {
             let node = graph.node_weight(i).unwrap();
