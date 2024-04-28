@@ -80,7 +80,14 @@ pub fn main() -> anyhow::Result<()> {
         println!("{}", json!(result));
         if report_statistics {
             println!("Rule Uses: ");
-            for entry in &debug.unwrap().borrow().rule_uses {
+            let debug = debug.unwrap().borrow().clone();
+            let mut uses: Vec<(String, u32)> = debug
+                .rule_uses
+                .iter()
+                .map(|(a, b)| (a.clone(), *b))
+                .collect();
+            uses.sort_by(|a, b| b.1.cmp(&a.1));
+            for entry in uses {
                 println!("{}: {}", entry.0, entry.1);
             }
         }
