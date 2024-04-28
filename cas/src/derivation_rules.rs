@@ -32,6 +32,7 @@ mod exponent_to_zero;
 mod foil;
 mod fractions_in_denominator;
 mod imaginary_identity;
+mod inline_substitutions;
 mod integral_constant_coefficients;
 mod integral_of_constant;
 mod integral_of_trig;
@@ -113,6 +114,7 @@ pub static ALL_RULES: RwLock<&[&(dyn DerivationRule + Sync)]> = RwLock::new(&[
     &integrate_arctrig::IntegrateArcTrig {},
     &imaginary_identity::ImaginaryIdentity {},
     &integration_by_substitution::IntegrateBySubstitution {},
+    &inline_substitutions::InlineSubstitutions {},
 ]);
 
 pub static STRICT_SIMPLIFYING_RULES: RwLock<&[&(dyn DerivationRule + Sync)]> = RwLock::new(&[
