@@ -29,7 +29,7 @@ impl DerivationRule for AdditiveIdentity {
                 Expression::Integer(i) => i.value() != 0,
                 _ => true,
             })
-            .map(|x| x.clone())
+            .cloned()
             .collect();
 
         if non_zero_terms.len() == sum.terms().len() {
@@ -39,10 +39,10 @@ impl DerivationRule for AdditiveIdentity {
             return vec![];
         }
 
-        return vec![(
+        vec![(
             sum_of(&non_zero_terms),
             Argument::new(String::from("additive identity"), vec![input.clone()]),
-        )];
+        )]
     }
 }
 

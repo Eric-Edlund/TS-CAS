@@ -14,13 +14,7 @@ use serde::Serialize;
 */
 pub fn expression_complexity_cmp(a: &Expression, b: &Expression) -> Ordering {
     let diff = complexity(b) as i32 - complexity(a) as i32;
-    if diff == 0 {
-        Ordering::Equal
-    } else if diff > 0 {
-        Ordering::Less
-    } else {
-        Ordering::Greater
-    }
+    diff.cmp(&0).reverse()
 }
 
 fn complexity(a: &Expression) -> u32 {

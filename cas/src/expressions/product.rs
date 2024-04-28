@@ -1,9 +1,9 @@
 use core::fmt;
 use std::sync::Arc;
 
-use serde_json::{Value, json};
+use serde_json::{json, Value};
 
-use super::{Expression, IExpression, EXPRESSION_INSTANCES, Integer};
+use super::{Expression, IExpression, Integer, EXPRESSION_INSTANCES};
 
 /**
 * Stores 2 or more ordered expressions as a product.
@@ -34,8 +34,8 @@ impl Product {
         let mut instances = EXPRESSION_INSTANCES.lock().unwrap();
 
         let result = instances.get(&id);
-        if result.is_some() {
-            return Ok(result.unwrap().clone());
+        if let Some(result) = result {
+            return Ok(result.clone());
         }
 
         let result = Product {
@@ -64,11 +64,12 @@ impl Product {
 pub fn product_of(factors: &[Expression]) -> Expression {
     if factors.is_empty() {
         return Integer::of(1);
-    } else if factors.len() == 1 {
+    }
+    if factors.len() == 1 {
         return factors[0].clone();
     }
     Product::of(factors).unwrap()
-} 
+}
 
 /**
 * Produces a product from the expressions.
@@ -77,24 +78,13 @@ pub fn product_of(factors: &[Expression]) -> Expression {
 */
 pub fn product_of_iter(factors: &mut dyn Iterator<Item = Expression>) -> Expression {
     let factors = factors.collect::<Vec<Expression>>();
-    if factors.len() == 0 {
+    if factors.is_empty() {
         return Integer::of(1);
     }
     if factors.len() == 1 {
         return factors[0].clone();
     }
     Product::of(&factors).unwrap()
-}
-
-pub fn product_of_iter_ref(factors: &mut dyn Iterator<Item = &Expression>) -> Expression {
-    let factors = factors.collect::<Vec<&Expression>>();
-    if factors.len() == 0 {
-        return Integer::of(1);
-    }
-    if factors.len() == 1 {
-        return factors[0].clone();
-    }
-    Product::of(&factors.into_iter().cloned().collect::<Vec<Expression>>()).unwrap()
 }
 
 impl IExpression for Product {
@@ -122,19 +112,21 @@ impl IExpression for Product {
         }
         format!("product{}", suffix)
     }
-    
+
     fn to_json(&self) -> Value {
-        json!(
-            &mut [json!("Product")].into_iter().chain(
-            self._factors.iter().map(|factor| factor.to_json()))
-                .collect::<Vec<Value>>()
-        )
+        json!(&mut [json!("Product")]
+            .into_iter()
+            .chain(self._factors.iter().map(|factor| factor.to_json()))
+            .collect::<Vec<Value>>())
     }
 }
 
 impl fmt::Debug for Product {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let factors = self._factors.iter().map(|f| format!("{:?}", f))
+        let factors = self
+            ._factors
+            .iter()
+            .map(|f| format!("{:?}", f))
             .reduce(|a, b| a + " " + &b)
             .unwrap();
         write!(f, "*({:?})", factors)
@@ -152,7 +144,7 @@ mod tests {
         let legal = Product::of(&[Integer::of(0), Integer::of(1)]);
         assert!(legal.is_ok());
         let illegal = Product::of(&[Integer::of(0)]);
-        assert!(!illegal.is_ok());
+        assert!(illegal.is_err());
     }
 
     #[test]

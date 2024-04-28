@@ -48,7 +48,7 @@ export class Substitution extends Expression {
     }
     public isConstant: boolean;
     public childCount: number;
-    public evaluate(values: VariableValueMap): number {
+    public evaluate(_values: VariableValueMap): number {
         throw new Error("Method not implemented.");
     }
     public toJSON(): string {

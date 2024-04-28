@@ -31,7 +31,7 @@ mod tests {
     fn test_1() {
         let rule = InlineSubstitutions {};
 
-        let start = Substitution::new(v("x"));
+        let start = Substitution::of(v("x"));
         let result = rule.apply(start).first().unwrap().0.clone();
 
         assert_eq!(result, v("x"));

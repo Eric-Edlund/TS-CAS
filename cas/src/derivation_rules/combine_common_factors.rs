@@ -1,9 +1,11 @@
-use std::{rc::Rc, collections::HashMap};
+use std::{collections::HashMap, rc::Rc};
 
-use crate::{argument::Argument, expressions::{Expression, Integer, product::product_of, Exponent, sum::sum_of}};
+use crate::{
+    argument::Argument,
+    expressions::{product::product_of, sum::sum_of, Exponent, Expression, Integer},
+};
 
 use super::DerivationRule;
-
 
 /**
  * Combines factors and exponents with like bases.
@@ -32,12 +34,13 @@ impl DerivationRule for CombineCommonFactors {
                     if !new_factors.contains_key(factor) {
                         new_factors.insert(factor.clone(), vec![]);
                     }
-                    new_factors.get_mut(&factor).unwrap().push(Integer::of(1));
+                    new_factors.get_mut(factor).unwrap().push(Integer::of(1));
                 }
             }
         }
 
-        let stripped = new_factors.iter()
+        let stripped = new_factors
+            .iter()
             .map(|pair| {
                 if pair.1.len() == 1 {
                     pair.0.clone()
@@ -53,14 +56,19 @@ impl DerivationRule for CombineCommonFactors {
 
         let result = product_of(&stripped);
 
-        vec![(result, 
-            Argument::new("Combine common factors".to_owned(), vec![input]))]
+        vec![(
+            result,
+            Argument::new("Combine common factors".to_owned(), vec![input]),
+        )]
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::{expressions::{product::product_of, sum::sum_of}, convenience_expressions::{power, i}};
+    use crate::{
+        convenience_expressions::{i, power},
+        expressions::{product::product_of, sum::sum_of},
+    };
 
     use super::CombineCommonFactors;
     use crate::derivation_rules::DerivationRule;
@@ -70,7 +78,10 @@ mod tests {
         let rule = CombineCommonFactors {};
         let start = product_of(&[power(i(1), i(2)), i(1)]);
         let result = rule.apply(start);
-        
-        assert_eq!(result.first().unwrap().0, power(i(1), sum_of(&[i(2), i(1)])));
+
+        assert_eq!(
+            result.first().unwrap().0,
+            power(i(1), sum_of(&[i(2), i(1)]))
+        );
     }
 }

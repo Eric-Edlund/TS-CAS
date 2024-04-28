@@ -27,7 +27,7 @@ impl ConstantExp {
             return result.clone();
         }
 
-        let result = Expression::ConstantExp(Arc::new(ConstantExp{ value }));
+        let result = Expression::ConstantExp(Arc::new(ConstantExp { value }));
 
         instances.insert(id, result.clone());
         result
@@ -58,7 +58,7 @@ impl IExpression for ConstantExp {
 
 impl fmt::Debug for ConstantExp {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}", self.to_json().to_string())
+        write!(f, "{}", self.to_json())
     }
 }
 

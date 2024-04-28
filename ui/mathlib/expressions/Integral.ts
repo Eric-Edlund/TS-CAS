@@ -1,7 +1,6 @@
 import { inParen } from "../util/MathMLHelpers"
 import { VariableValueMap } from "../VariableValueMap"
 import { Expression } from "./Expression"
-import { Integer } from "./Integer"
 import { NameTable } from "./MathElement"
 import { ProductType } from "./Product"
 import { SumType } from "./Sum"
@@ -69,7 +68,7 @@ export class Integral extends Expression {
         )
     }
 
-    public evaluate(values: VariableValueMap): number {
+    public evaluate(_values: VariableValueMap): number {
         // Nah fuck this bro
         return NaN
     }

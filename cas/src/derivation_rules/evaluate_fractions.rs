@@ -1,9 +1,11 @@
 use std::rc::Rc;
 
-use crate::{argument::Argument, expressions::{product::product_of_iter, Expression, Fraction, Integer}};
+use crate::{
+    argument::Argument,
+    expressions::{product::product_of_iter, Expression, Fraction, Integer},
+};
 
 use super::DerivationRule;
-
 
 /**
 * If the numerator and denominator both contian integers
@@ -20,31 +22,48 @@ impl DerivationRule for EvaluateFractions {
 
         let num_factors = match fraction.numerator() {
             Expression::Product(p) => p.factors().clone(),
-            x => vec![x]
+            x => vec![x],
         };
         let den_factors = match fraction.denominator() {
             Expression::Product(p) => p.factors().clone(),
-            x => vec![x]
+            x => vec![x],
         };
 
-        if num_factors.iter().filter(|x| matches!(x, Expression::Integer(_)))
-            .count() > 1 {
+        if num_factors
+            .iter()
+            .filter(|x| matches!(x, Expression::Integer(_)))
+            .count()
+            > 1
+        {
             // Let another rule combine the integers first
-            return vec![]
+            return vec![];
         }
-        if den_factors.iter().filter(|x| matches!(x, Expression::Integer(_)))
-            .count() > 1 {
-            return vec![]
+        if den_factors
+            .iter()
+            .filter(|x| matches!(x, Expression::Integer(_)))
+            .count()
+            > 1
+        {
+            return vec![];
         }
 
-        let Expression::Integer(ref num) = num_factors.iter().cloned()
+        let Expression::Integer(ref num) = num_factors
+            .iter()
             .find(|x| matches!(x, Expression::Integer(_)))
+            .cloned()
             .unwrap_or(Integer::of(1))
-        else { panic!() };
+        else {
+            panic!()
+        };
 
-        let Expression::Integer(ref den) = den_factors.iter().cloned()
+        let Expression::Integer(ref den) = den_factors
+            .iter()
             .find(|x| matches!(x, Expression::Integer(_)))
-            .unwrap_or(Integer::of(1)) else { panic!() };
+            .cloned()
+            .unwrap_or(Integer::of(1))
+        else {
+            panic!()
+        };
 
         let mut gcf = 1;
 
@@ -56,29 +75,41 @@ impl DerivationRule for EvaluateFractions {
 
         let (n, d) = (num.value() / gcf, den.value() / gcf);
         let result = Fraction::of(
-            product_of_iter(&mut [Integer::of(n)].into_iter()
-                .chain(&mut num_factors.into_iter()
-                    .filter(|x| !matches!(x, Expression::Integer(_))))
-                    ),
-            product_of_iter(&mut [Integer::of(d)].into_iter()
-                .chain(&mut den_factors.into_iter()
-                    .filter(|x| !matches!(x, Expression::Integer(_))))
-                    ),
-            );
+            product_of_iter(
+                &mut [Integer::of(n)].into_iter().chain(
+                    &mut num_factors
+                        .into_iter()
+                        .filter(|x| !matches!(x, Expression::Integer(_))),
+                ),
+            ),
+            product_of_iter(
+                &mut [Integer::of(d)].into_iter().chain(
+                    &mut den_factors
+                        .into_iter()
+                        .filter(|x| !matches!(x, Expression::Integer(_))),
+                ),
+            ),
+        );
 
         if result == input {
-            return vec![]
+            return vec![];
         }
 
-        vec![(result,
-            Argument::new(String::from("Reduce fraction"), vec![input]))]
+        vec![(
+            result,
+            Argument::new(String::from("Reduce fraction"), vec![input]),
+        )]
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{convenience_expressions::{i, power, v}, derivation_rules::DerivationRule, expressions::{product::product_of, Negation}};
+    use crate::{
+        convenience_expressions::{i, power, v},
+        derivation_rules::DerivationRule,
+        expressions::{product::product_of, Negation},
+    };
 
     #[test]
     fn test_1() {
@@ -98,16 +129,13 @@ mod tests {
         let result3 = rule.apply(start3).first().unwrap().0.clone();
 
         assert_eq!(result3, Fraction::of(i(1), i(2)));
-        
-        let start4 = Fraction::of(
-            product_of(&[i(4), power(v("x"), Negation::of(i(2)))]),
-            i(2)
-        );
+
+        let start4 = Fraction::of(product_of(&[i(4), power(v("x"), Negation::of(i(2)))]), i(2));
         let result4 = rule.apply(start4).first().unwrap().0.clone();
 
-        assert_eq!(result4, Fraction::of(
-            product_of(&[i(2), power(v("x"), Negation::of(i(2)))]),
-            i(1)
-        ));
+        assert_eq!(
+            result4,
+            Fraction::of(product_of(&[i(2), power(v("x"), Negation::of(i(2)))]), i(1))
+        );
     }
 }

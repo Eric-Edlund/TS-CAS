@@ -1,8 +1,6 @@
 import { Argument } from "../Argument"
 import { Expression } from "../expressions/Expression"
 import { GraphEdge, Graph } from "../Graph"
-import { Relationship } from "../Relationship"
-import { num } from "../ConvenientExpressions"
 import { GraphMinipulator } from "../GraphMinipulator"
 import { assert, for_all, for_some } from "../util/assert"
 import { TouchGestureRecognizer } from "./TouchGestureRecognizer"
@@ -12,7 +10,6 @@ import { ArgumentNodeView } from "./ArgumentNodeView"
 import { GraphNodeView } from "./GraphNodeView"
 import { ExplanationPopup } from "./ExplanationPopup"
 import { MathGraphNode } from "../MathGraphNode"
-import { nthRootDependencies, number } from "mathjs"
 import { Interpreter } from "../interpreting/Interpreter"
 
 /**
@@ -52,14 +49,14 @@ export class WebGraphView extends HTMLDivElement {
         this.style.position = "relative"
         this.style.overflow = "hidden"
 
-        this.addEventListener("mousedown", event => {
+        this.addEventListener("mousedown", _ => {
             this.mouseDown = true
             this.touchDown = false
         })
-        this.addEventListener("mouseup", event => {
+        this.addEventListener("mouseup", _ => {
             this.mouseDown = false
         })
-        this.addEventListener("mouseleave", event => {
+        this.addEventListener("mouseleave", _ => {
             this.mouseDown = false
         })
         this.addEventListener("mousemove", (event: MouseEvent) => {
@@ -72,8 +69,6 @@ export class WebGraphView extends HTMLDivElement {
         this.resizeObserver.observe(this)
 
         this.addEventListener("wheel", event => {
-            const mousePos = Point(event.offsetX, event.offsetY)
-
             const scaleDelta = Math.pow(0.8, event.deltaY / 360)
             this.scale = scaleDelta * this.scale
 
@@ -99,7 +94,7 @@ export class WebGraphView extends HTMLDivElement {
             this.gestureRecognizer.processTouchMove
         )
         this.gestureRecognizer.addPinchListener(
-            (center, scaleDelta, fingers) => {}
+            (_center, _scaleDelta, _fingers) => {}
         )
 
         this.setGraph(graph, roots)
@@ -124,7 +119,7 @@ export class WebGraphView extends HTMLDivElement {
         this.nodeColorFn = colorFn
         this.propogateSettingsToNodes()
     }
-    private nodeColorFn: (n: MathGraphNode) => string = n => "lightblue"
+    private nodeColorFn: (n: MathGraphNode) => string = _ => "lightblue"
 
     private propogateSettingsToNodes(): void {
         this.nodes.forEach((view, node) => {
@@ -137,7 +132,7 @@ export class WebGraphView extends HTMLDivElement {
      * False by default.
      * @param val
      */
-    public setShowArguments(val: boolean) {
+    public setShowArguments(_val: boolean) {
         this.showArguments = true
         this.readGraph()
         this.arrange()
@@ -160,11 +155,11 @@ export class WebGraphView extends HTMLDivElement {
      */
     private readGraph(): void {
         // Clear existing
-        this.nodes.forEach((view, node) => {
+        this.nodes.forEach((view, _node) => {
             this.removeChild(view)
         })
         this.nodes.clear()
-        this.edges.forEach((view, edge) => {
+        this.edges.forEach((view, _edge) => {
             this.removeChild(view)
         })
         this.edges.clear()
@@ -560,7 +555,7 @@ export class WebGraphView extends HTMLDivElement {
                     ).toString()
 
                     // Edges
-                    this.edges.forEach((edge, key) => {
+                    this.edges.forEach((edge, _key) => {
                         if (edge.first === node || edge.second === node) {
                             edge.style.zIndex = (
                                 EDGE_MAX_Z -

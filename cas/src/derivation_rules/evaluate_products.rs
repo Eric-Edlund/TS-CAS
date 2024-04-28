@@ -1,9 +1,12 @@
 use std::rc::Rc;
 
-use crate::{expressions::{Expression, product::product_of_iter}, argument::Argument, convenience_expressions::i};
+use crate::{
+    argument::Argument,
+    convenience_expressions::i,
+    expressions::{product::product_of_iter, Expression},
+};
 
 use super::DerivationRule;
-
 
 pub struct EvaluateProducts {}
 
@@ -14,33 +17,44 @@ impl DerivationRule for EvaluateProducts {
             _ => return vec![],
         };
 
-        let (ints, non_ints): (Vec<&Expression>, Vec<&Expression>) = product.factors().iter()
-            .partition(|expression| match expression {
-                Expression::Integer(_) => true,
-                _ => false
-            });
+        let (ints, non_ints): (Vec<&Expression>, Vec<&Expression>) = product
+            .factors()
+            .iter()
+            .partition(|expression| matches!(expression, Expression::Integer(_)));
 
         if ints.len() <= 1 {
             return vec![];
         }
 
-        let product = ints.into_iter().map(|i| match i {
-            Expression::Integer(i) => i.value(),
-            _ => panic!()
-        }).product();
+        let product = ints
+            .into_iter()
+            .map(|i| match i {
+                Expression::Integer(i) => i.value(),
+                _ => panic!(),
+            })
+            .product();
 
-        let result = product_of_iter(&mut [i(product)].into_iter()
-            .chain(non_ints.into_iter().cloned()));
+        let result = product_of_iter(
+            &mut [i(product)]
+                .into_iter()
+                .chain(non_ints.into_iter().cloned()),
+        );
 
-        vec![(result,
-            Argument::new(String::from("Evaluate multiplication"), vec![input]))]
+        vec![(
+            result,
+            Argument::new(String::from("Evaluate multiplication"), vec![input]),
+        )]
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::EvaluateProducts;
-    use crate::{derivation_rules::DerivationRule, expressions::product::product_of, convenience_expressions::{i, v}};
+    use crate::{
+        convenience_expressions::{i, v},
+        derivation_rules::DerivationRule,
+        expressions::product::product_of,
+    };
 
     #[test]
     fn test_1() {

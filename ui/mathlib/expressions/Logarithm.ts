@@ -1,5 +1,4 @@
 import { VariableValueMap } from "../VariableValueMap"
-import { wrapInGraph } from "../derivations/Deriver"
 import { inParen } from "../util/MathMLHelpers"
 import { ConstantExp } from "./ConstantExp"
 import { Expression } from "./Expression"
