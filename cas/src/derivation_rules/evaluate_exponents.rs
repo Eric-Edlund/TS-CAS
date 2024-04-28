@@ -1,9 +1,11 @@
 use std::rc::Rc;
 
-use crate::{argument::Argument, expressions::{Expression, Integer}};
+use crate::{
+    argument::Argument,
+    expressions::{Expression, Integer},
+};
 
 use super::DerivationRule;
-
 
 pub struct EvaluateExponents {}
 
@@ -11,23 +13,25 @@ impl DerivationRule for EvaluateExponents {
     fn apply(&self, input: Expression) -> Vec<(Expression, Rc<Argument>)> {
         let exponent = match input {
             Expression::Exponent(ref e) => e,
-            _ => return vec![]
+            _ => return vec![],
         };
 
-        let Expression::Integer(ref base) = exponent.base()
-        else {
+        let Expression::Integer(ref base) = exponent.base() else {
             return vec![];
         };
 
-        let Expression::Integer(ref power) = exponent.power()
-        else {
+        let Expression::Integer(ref power) = exponent.power() else {
             return vec![];
         };
 
         vec![(
             Integer::of(base.value().pow(power.value())),
-            Argument::new(String::from("Evaluate exponents"), vec![input])
+            Argument::new(String::from("Evaluate exponents"), vec![input]),
         )]
+    }
+
+    fn name(&self) -> String {
+        String::from("EvaluateExponents")
     }
 }
 

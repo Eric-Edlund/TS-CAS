@@ -32,6 +32,10 @@ impl DerivationRule for IntegralConstCoeff {
             Argument::new(String::from("Pull out constants"), vec![input]),
         )]
     }
+
+    fn name(&self) -> String {
+        String::from("IntegralConstCoef")
+    }
 }
 
 #[cfg(test)]

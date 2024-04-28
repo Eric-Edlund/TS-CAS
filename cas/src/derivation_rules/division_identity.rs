@@ -1,6 +1,6 @@
 use super::DerivationRule;
-use crate::expressions::{Expression};
 use crate::argument::Argument;
+use crate::expressions::Expression;
 use std::rc::Rc;
 
 /**
@@ -23,23 +23,27 @@ impl DerivationRule for DivisionIdentity {
             return vec![];
         }
 
-        vec![(fraction.numerator(),
-            Argument::new(String::from("Division identity"), vec![input]))]
+        vec![(
+            fraction.numerator(),
+            Argument::new(String::from("Division identity"), vec![input]),
+        )]
+    }
+    fn name(&self) -> String {
+        String::from("DivisionIdentity")
     }
 }
 
-
 #[cfg(test)]
 mod tests {
-    use crate::{expressions::Fraction, convenience_expressions::i};
+    use crate::{convenience_expressions::i, expressions::Fraction};
 
-    use super::DivisionIdentity;
     use super::DerivationRule;
+    use super::DivisionIdentity;
 
     #[test]
     fn test_1() {
         let start = Fraction::of(i(2), i(1));
-        let rule = DivisionIdentity{};
+        let rule = DivisionIdentity {};
         let result = rule.apply(start);
         assert_eq!(result.first().unwrap().0, i(2));
     }

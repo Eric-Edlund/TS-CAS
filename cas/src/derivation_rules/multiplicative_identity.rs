@@ -36,6 +36,9 @@ impl DerivationRule for MultiplicativeIdentity {
             Argument::new("Multiplicative identity".to_owned(), vec![input]),
         )]
     }
+    fn name(&self) -> String {
+        String::from("MultiplicativeIdentity")
+    }
 }
 
 #[cfg(test)]

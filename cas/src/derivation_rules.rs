@@ -62,9 +62,7 @@ pub trait DerivationRule {
     fn apply(&self, input: Expression) -> Vec<(Expression, Rc<Argument>)>;
 
     /// Returns the name for the rule so that it can be referenced.
-    fn name(&self) -> String {
-        String::from("Unnamed Rule")
-    }
+    fn name(&self) -> String;
 }
 
 pub static ALL_RULES: RwLock<&[&(dyn DerivationRule + Sync)]> = RwLock::new(&[

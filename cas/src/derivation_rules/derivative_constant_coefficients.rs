@@ -45,6 +45,10 @@ impl DerivationRule for PullOutConst {
             Argument::new(String::from("Pull out constants"), vec![input]),
         )]
     }
+
+    fn name(&self) -> String {
+        String::from("DerivativeConstCoef")
+    }
 }
 
 #[cfg(test)]

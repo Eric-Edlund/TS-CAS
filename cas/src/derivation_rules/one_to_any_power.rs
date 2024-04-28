@@ -1,6 +1,9 @@
 use std::rc::Rc;
 
-use crate::{argument::Argument, expressions::{Expression, Integer}};
+use crate::{
+    argument::Argument,
+    expressions::{Expression, Integer},
+};
 
 use super::DerivationRule;
 
@@ -13,11 +16,10 @@ impl DerivationRule for OneToAnything {
     fn apply(&self, input: Expression) -> Vec<(Expression, Rc<Argument>)> {
         let power = match input {
             Expression::Exponent(ref e) => e,
-            _ => return vec![]
+            _ => return vec![],
         };
 
-        let Expression::Integer(i) = power.base()
-        else {
+        let Expression::Integer(i) = power.base() else {
             return vec![];
         };
 
@@ -27,7 +29,10 @@ impl DerivationRule for OneToAnything {
 
         vec![(
             Integer::of(1),
-            Argument::new(String::from("One to anything is one"), vec![input])
+            Argument::new(String::from("One to anything is one"), vec![input]),
         )]
+    }
+    fn name(&self) -> String {
+        String::from("OneToAnyPower")
     }
 }

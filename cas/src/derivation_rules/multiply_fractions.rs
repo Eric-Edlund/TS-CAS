@@ -48,4 +48,7 @@ impl DerivationRule for MultiplyFractions {
             Argument::new(String::from("Multiply fractions"), vec![input]),
         )]
     }
+    fn name(&self) -> String {
+        String::from("MultiplyFractions")
+    }
 }

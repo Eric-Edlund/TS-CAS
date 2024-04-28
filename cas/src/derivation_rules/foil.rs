@@ -84,6 +84,10 @@ impl DerivationRule for Foil {
             })
             .collect::<Vec<(Expression, Rc<Argument>)>>()
     }
+
+    fn name(&self) -> String {
+        String::from("Foil")
+    }
 }
 
 #[cfg(test)]

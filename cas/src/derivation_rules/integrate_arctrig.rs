@@ -155,6 +155,9 @@ impl DerivationRule for IntegrateArcTrig {
             Argument::new(String::from("Arctrig integration rule"), vec![input]),
         )]
     }
+    fn name(&self) -> String {
+        String::from("IntegralArctrig")
+    }
 }
 
 #[cfg(test)]

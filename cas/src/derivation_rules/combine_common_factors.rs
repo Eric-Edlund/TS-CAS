@@ -61,6 +61,10 @@ impl DerivationRule for CombineCommonFactors {
             Argument::new("Combine common factors".to_owned(), vec![input]),
         )]
     }
+
+    fn name(&self) -> String {
+        String::from("CombineCommonFactors")
+    }
 }
 
 #[cfg(test)]

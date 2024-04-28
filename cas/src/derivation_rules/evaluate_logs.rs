@@ -1,9 +1,11 @@
 use std::rc::Rc;
 
-use crate::{expressions::{Expression, Integer}, argument::Argument};
+use crate::{
+    argument::Argument,
+    expressions::{Expression, Integer},
+};
 
 use super::DerivationRule;
-
 
 /**
 * Finds an exact integer representation of a logarithm if one exists.
@@ -17,17 +19,15 @@ impl DerivationRule for EvaluateLogs {
             _ => return vec![],
         };
 
-        let Expression::Integer(base) = log.base() 
-        else {
+        let Expression::Integer(base) = log.base() else {
             return vec![];
         };
-        let Expression::Integer(exp) = log.exp()
-        else {
+        let Expression::Integer(exp) = log.exp() else {
             return vec![];
         };
 
         if base.value() == 0 {
-            return vec![]
+            return vec![];
         }
 
         let mut value = exp.value();
@@ -39,26 +39,33 @@ impl DerivationRule for EvaluateLogs {
         }
 
         if value == 0 {
-            vec![(Integer::of(result as u32), 
-                Argument::new(String::from("Evaluate logarithm"), vec![input]))]
+            vec![(
+                Integer::of(result as u32),
+                Argument::new(String::from("Evaluate logarithm"), vec![input]),
+            )]
         } else {
             vec![]
         }
+    }
+
+    fn name(&self) -> String {
+        String::from("EvaluateLogs")
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::EvaluateLogs;
-    use crate::{derivation_rules::DerivationRule, expressions::Logarithm, convenience_expressions::i};
+    use crate::{
+        convenience_expressions::i, derivation_rules::DerivationRule, expressions::Logarithm,
+    };
 
     #[test]
     fn test_1() {
         let rule = EvaluateLogs {};
         let start = Logarithm::of(i(2), i(8));
         let result = rule.apply(start).first().unwrap().0.clone();
-        
-        assert_eq!(result, i(3));
 
+        assert_eq!(result, i(3));
     }
 }

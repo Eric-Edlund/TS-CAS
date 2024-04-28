@@ -1,9 +1,8 @@
 use std::rc::Rc;
 
-use crate::{argument::Argument, expressions::{Expression}};
+use crate::{argument::Argument, expressions::Expression};
 
 use super::DerivationRule;
-
 
 /**
 * sin(-x) = -sin(x)
@@ -22,5 +21,9 @@ impl DerivationRule for TrigReflections {
 
         // }
         vec![]
+    }
+
+    fn name(&self) -> String {
+        todo!()
     }
 }

@@ -181,6 +181,10 @@ impl DerivationRule for Pythagoras {
             })
             .collect()
     }
+
+    fn name(&self) -> String {
+        String::from("PythagoreanIdentities")
+    }
 }
 
 #[cfg(test)]

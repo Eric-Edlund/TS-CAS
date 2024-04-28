@@ -1,9 +1,11 @@
 use std::rc::Rc;
 
-use crate::{argument::Argument, expressions::{Expression, Integer}};
+use crate::{
+    argument::Argument,
+    expressions::{Expression, Integer},
+};
 
 use super::{helpers::is_constant, DerivationRule};
-
 
 /**
 * Derivative of constant is zero.
@@ -23,20 +25,26 @@ impl DerivationRule for DerivativeOfConst {
 
         vec![(
             Integer::of(0),
-            Argument::new(String::from("Derivative of constant is zero"), vec![input])
+            Argument::new(String::from("Derivative of constant is zero"), vec![input]),
         )]
+    }
+    fn name(&self) -> String {
+        String::from("DerivativeOfConst")
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::{derivation_rules::DerivationRule, expressions::{Derivative, Integer, Variable}};
+    use crate::{
+        derivation_rules::DerivationRule,
+        expressions::{Derivative, Integer, Variable},
+    };
 
     use super::DerivativeOfConst;
 
     #[test]
     fn test_1() {
-        let rule = DerivativeOfConst{};
+        let rule = DerivativeOfConst {};
 
         let start = Derivative::of(Integer::of(1), Variable::of("x"));
         let result = rule.apply(start).first().unwrap().0.clone();

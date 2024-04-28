@@ -1,8 +1,8 @@
 use super::DerivationRule;
 
+use crate::argument::Argument;
 use crate::expressions::sum::sum_of;
 use crate::expressions::{Expression, Integer, Negation};
-use crate::argument::Argument;
 use std::rc::Rc;
 
 /**
@@ -31,7 +31,7 @@ impl DerivationRule for EvaluateSums {
                     } else {
                         other_terms.push(term.clone());
                     }
-                },
+                }
                 _ => other_terms.push(term.clone()),
             }
         }
@@ -49,20 +49,23 @@ impl DerivationRule for EvaluateSums {
         other_terms.push(new_int_term);
         let result = sum_of(&other_terms);
 
-        vec![
-            (result, 
-            Argument::new(String::from("Evaluate addition"), vec![input.clone()]))
-        ]
+        vec![(
+            result,
+            Argument::new(String::from("Evaluate addition"), vec![input.clone()]),
+        )]
+    }
+    fn name(&self) -> String {
+        String::from("EvaluateSums")
     }
 }
 
 #[cfg(test)]
 mod tests {
     use crate::expressions::Negation;
-    use crate::expressions::{Integer, sum::sum_of};
+    use crate::expressions::{sum::sum_of, Integer};
 
-    use super::EvaluateSums;
     use super::DerivationRule;
+    use super::EvaluateSums;
 
     #[test]
     fn test_1() {

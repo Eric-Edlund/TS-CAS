@@ -42,4 +42,7 @@ impl DerivationRule for IntegralToNaturalLog {
             Argument::new(String::from("Integral of du/u is ln(abs(u))"), vec![input]),
         )]
     }
+    fn name(&self) -> String {
+        String::from("IntegralToNaturalLog")
+    }
 }
