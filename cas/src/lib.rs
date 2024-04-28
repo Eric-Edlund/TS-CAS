@@ -142,7 +142,12 @@ pub struct DerivationResult {
 }
 
 /// - optimizer brute_force | evaluate_first
-pub fn get_all_equivalents(json_expression: &str, search_depth: u32, optimizer: &str) -> String {
+pub fn get_all_equivalents(
+    json_expression: &str,
+    search_depth: u32,
+    optimizer: &str,
+    max_derivations: u32,
+) -> String {
     let expression = match read_object_from_json(json_expression) {
         Ok(exp) => exp,
         Err(msg) => return msg,
@@ -156,7 +161,7 @@ pub fn get_all_equivalents(json_expression: &str, search_depth: u32, optimizer: 
     let mut deriver = Deriver::new(opt);
 
     graph.add_node(expression.clone());
-    deriver.expand(&mut graph, search_depth, 100000);
+    deriver.expand(&mut graph, search_depth, max_derivations);
 
     let mut result = Vec::new();
     result.extend(graph.node_weights().map(|e| e.as_stringable().to_json()));

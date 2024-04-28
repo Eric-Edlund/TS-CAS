@@ -102,7 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Fetch the equivalents it was able to find
             console.log("No solution found.")
             let result = JSON.parse(get_all_equivalents(expression.toJSON(), 20, 
-                "evaluate_first"))
+                "evaluate_first", 500))
             const equivalents = result["equivalents"]
             console.log("Found " + equivalents.length + " equivalents.")
             console.log("Using rules:")

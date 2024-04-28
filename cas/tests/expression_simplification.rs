@@ -115,13 +115,13 @@ fn single_variable_integrals() {
         prod(four, &arctan(T)),
     );
 
-    add_test("problem 1", p1, 11);
-    add_test("problem 2", p2, 16);
-    add_test("problem 5", p5, 16);
+    add_test("problem 1", p1, 11, 500);
+    add_test("problem 2", p2, 16, 500);
+    add_test("problem 5", p5, 10, 500);
     // add_test("problem 3", p3, 16);
-    add_test("problem 4", p4, 18);
-    add_test("problem 9", p9, 6);
-    add_test("problem 11", p11, 20);
+    add_test("problem 4", p4, 18, 1000);
+    add_test("problem 9", p9, 6, 500);
+    add_test("problem 11", p11, 20, 100);
 
     report_results();
 }
