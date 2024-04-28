@@ -24,6 +24,6 @@ impl DerivationRule for TrigReflections {
     }
 
     fn name(&self) -> String {
-        todo!()
+        String::from("TrigReflection")
     }
 }
