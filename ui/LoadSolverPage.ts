@@ -85,14 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let result: {
             steps: string[],
             success: boolean
-        }
-        try {
-            result = JSON.parse(r)
-        } catch (e) {
-            console.log("Implementation error: Received error msg from backend:")
-            console.log(r)
-            return
-        }
+        } = JSON.parse(r)
 
         if (result.success) {
             solutionView.value = parseExpressionJSON(
