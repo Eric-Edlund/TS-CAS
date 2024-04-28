@@ -59,17 +59,20 @@ pub fn simplify_with_steps(
         _ => panic!("Invalid optimizer"),
     };
 
-    let result = simplify_with_steps_internal(&expression, search_depth, opt, allowed_rules, None);
+    let result =
+        simplify_with_steps_internal(&expression, search_depth, opt, allowed_rules, None, 100000);
 
     json!(result).to_string()
 }
 
+/// - max_derivations The largest number of equivalent expressions to find before giving up.
 pub fn simplify_with_steps_internal(
     expression: &Expression,
     search_depth: u32,
     optimizer: Box<dyn OptimizationProfile>,
     allowed_rules: Option<Vec<String>>,
     debug_data: Option<Rc<RefCell<DerivationDebugInfo>>>,
+    max_derivations: u32,
 ) -> DerivationResult {
     let mut optimizer = optimizer;
     if let Some(rules) = allowed_rules {
@@ -81,7 +84,7 @@ pub fn simplify_with_steps_internal(
 
     let mut deriver = Deriver::new(optimizer);
     deriver.set_debug(debug_data);
-    deriver.expand(&mut graph, search_depth);
+    deriver.expand(&mut graph, search_depth, max_derivations);
 
     let simplest_exp = graph
         .node_references()
@@ -146,7 +149,7 @@ pub fn get_all_equivalents(json_expression: &str, search_depth: u32, optimizer: 
     let mut deriver = Deriver::new(opt);
 
     graph.add_node(expression.clone());
-    deriver.expand(&mut graph, search_depth);
+    deriver.expand(&mut graph, search_depth, 100000);
 
     let mut result = Vec::new();
     result.extend(graph.node_weights().map(|e| e.as_stringable().to_json()));

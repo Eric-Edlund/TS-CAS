@@ -82,7 +82,7 @@ fn simplest_derivative(exp: &Expression, variable: &Expression) -> Option<Expres
     let mut deriver = Deriver::new(Box::new(DerivativesOnlyProfile::new()));
     let mut graph = Graph::new();
     graph.add_node(Derivative::of(exp.clone(), variable.clone()));
-    deriver.expand(&mut graph, 10);
+    deriver.expand(&mut graph, 10, 100);
 
     graph
         .node_references()

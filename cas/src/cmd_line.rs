@@ -33,6 +33,10 @@ struct Args {
     /// Report statistics about rules use during each derivation.
     #[arg(short, long, default_value_t = false)]
     report_rule_statistics: bool,
+
+    /// The maximum number of equivalent expressions to derive before stopping.
+    #[arg(short, long, default_value_t = 100000)]
+    max_derivations: u32,
 }
 
 pub fn main() -> anyhow::Result<()> {
@@ -75,6 +79,7 @@ pub fn main() -> anyhow::Result<()> {
             opt,
             args.allowed_rules.clone(),
             debug.clone(),
+            args.max_derivations,
         );
 
         println!("{}", json!(result));
