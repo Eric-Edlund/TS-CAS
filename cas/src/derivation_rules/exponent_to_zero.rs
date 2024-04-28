@@ -1,9 +1,11 @@
 use std::rc::Rc;
 
-use crate::{argument::Argument, expressions::{Expression, Integer}};
+use crate::{
+    argument::Argument,
+    expressions::{Expression, Integer},
+};
 
 use super::DerivationRule;
-
 
 pub struct ExponentToZero {}
 
@@ -22,11 +24,15 @@ impl DerivationRule for ExponentToZero {
             return vec![];
         }
 
-        vec![(Integer::of(1),
-            Argument::new(String::from("Anything to 0 is 1"), vec![input]))]
+        vec![(
+            Integer::of(1),
+            Argument::new(String::from("Anything to 0 is 1"), vec![input]),
+        )]
+    }
+    fn name(&self) -> String {
+        String::from("ExponentToZero")
     }
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -43,4 +49,3 @@ mod tests {
         assert_eq!(result.first().unwrap().0, i(1));
     }
 }
-

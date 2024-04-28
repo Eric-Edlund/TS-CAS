@@ -1,9 +1,11 @@
 use std::rc::Rc;
 
-use crate::{argument::Argument, expressions::{Expression, Integral, Negation}};
+use crate::{
+    argument::Argument,
+    expressions::{Expression, Integral, Negation},
+};
 
 use super::DerivationRule;
-
 
 pub struct IntegralPullOutNegative {}
 
@@ -11,18 +13,21 @@ impl DerivationRule for IntegralPullOutNegative {
     fn apply(&self, input: Expression) -> Vec<(Expression, Rc<Argument>)> {
         let integral = match input {
             Expression::Integral(ref i) => i,
-            _ => return vec![]
+            _ => return vec![],
         };
 
-        let Expression::Negation(ref integrand) = integral.integrand()
-        else {
-            return vec![]
+        let Expression::Negation(ref integrand) = integral.integrand() else {
+            return vec![];
         };
 
         vec![(
             Negation::of(Integral::of(integrand.child(), integral.relative_to())),
-            Argument::new(String::from("Pull out negative (constant)"), vec![input])
+            Argument::new(String::from("Pull out negative (constant)"), vec![input]),
         )]
+    }
+
+    fn name(&self) -> String {
+        String::from("IntegralPullOutNegative")
     }
 }
 

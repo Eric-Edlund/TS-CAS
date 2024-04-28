@@ -121,6 +121,10 @@ impl DerivationRule for SumCoefficientsOfTerms {
             })
             .collect()
     }
+
+    fn name(&self) -> String {
+        String::from("SumCoefficientsOfTerms")
+    }
 }
 
 #[cfg(test)]

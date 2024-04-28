@@ -1,11 +1,12 @@
 use std::rc::Rc;
 
-
-
-use crate::{argument::Argument, convenience_expressions::cot, expressions::{product::product_of, trig_expression::TrigFn, Expression, Fraction, TrigExp}};
+use crate::{
+    argument::Argument,
+    convenience_expressions::cot,
+    expressions::{product::product_of, trig_expression::TrigFn, Expression, Fraction, TrigExp},
+};
 
 use super::DerivationRule;
-
 
 /**
 * sin(x)/cos(x) = tan(x)
@@ -17,31 +18,32 @@ impl DerivationRule for TanIdentity {
     fn apply(&self, input: Expression) -> Vec<(Expression, Rc<Argument>)> {
         let frac = match input {
             Expression::Fraction(ref f) => f,
-            _ => return vec![]
+            _ => return vec![],
         };
 
         let num_factors = match frac.numerator() {
             Expression::Product(p) => p.factors().clone(),
-            _ => vec![frac.numerator()]
+            _ => vec![frac.numerator()],
         };
 
         let den_factors = match frac.denominator() {
             Expression::Product(p) => p.factors().clone(),
-            _ => vec![frac.denominator()]
+            _ => vec![frac.denominator()],
         };
 
-        let trig_params = num_factors.iter().chain(&den_factors)
-            .filter_map(|factor| {
-                match factor {
+        let trig_params =
+            num_factors
+                .iter()
+                .chain(&den_factors)
+                .filter_map(|factor| match factor {
                     Expression::Trig(t) => Some(t.exp()),
-                    _ => None
-                }
-            });
+                    _ => None,
+                });
 
         fn is(e: &Expression, trig: TrigFn, exp: &Expression) -> bool {
             match e {
                 Expression::Trig(t) => t.operation == trig && t.exp() == *exp,
-                _ => false
+                _ => false,
             }
         }
 
@@ -51,8 +53,8 @@ impl DerivationRule for TanIdentity {
             {
                 let mut found_sin = false;
                 let mut found_cos = false;
-                let (num, sin): (Vec<Expression>, Vec<Expression>) = num_factors.iter().cloned()
-                    .partition(|f| {
+                let (num, sin): (Vec<Expression>, Vec<Expression>) =
+                    num_factors.iter().cloned().partition(|f| {
                         if is(f, TrigFn::Sin, &param) && !found_sin {
                             found_sin = true;
                             false
@@ -60,8 +62,8 @@ impl DerivationRule for TanIdentity {
                             true
                         }
                     });
-                let (den, cos): (Vec<Expression>, Vec<Expression>) = den_factors.iter().cloned()
-                    .partition(|f| {
+                let (den, cos): (Vec<Expression>, Vec<Expression>) =
+                    den_factors.iter().cloned().partition(|f| {
                         if is(f, TrigFn::Cos, &param) && !found_cos {
                             found_cos = true;
                             false
@@ -71,20 +73,17 @@ impl DerivationRule for TanIdentity {
                     });
                 if !sin.is_empty() && !cos.is_empty() {
                     results.push(product_of(&[
-                        Fraction::of(
-                            product_of(&num),
-                            product_of(&den)
-                        ), 
-                        TrigExp::of(TrigFn::Tan, param.clone())
+                        Fraction::of(product_of(&num), product_of(&den)),
+                        TrigExp::of(TrigFn::Tan, param.clone()),
                     ]));
                 }
             }
-            // Check for cot 
+            // Check for cot
             {
                 let mut found_cos = false;
                 let mut found_sin = false;
-                let (num, cos): (Vec<Expression>, Vec<Expression>) = num_factors.iter().cloned()
-                    .partition(|f| {
+                let (num, cos): (Vec<Expression>, Vec<Expression>) =
+                    num_factors.iter().cloned().partition(|f| {
                         if is(f, TrigFn::Cos, &param) && !found_cos {
                             found_cos = true;
                             false
@@ -92,8 +91,8 @@ impl DerivationRule for TanIdentity {
                             true
                         }
                     });
-                let (den, sin): (Vec<Expression>, Vec<Expression>) = den_factors.iter().cloned()
-                    .partition(|f| {
+                let (den, sin): (Vec<Expression>, Vec<Expression>) =
+                    den_factors.iter().cloned().partition(|f| {
                         if is(f, TrigFn::Sin, &param) && !found_sin {
                             found_sin = true;
                             false
@@ -103,27 +102,35 @@ impl DerivationRule for TanIdentity {
                     });
                 if !cos.is_empty() && !sin.is_empty() {
                     results.push(product_of(&[
-                        Fraction::of(
-                            product_of(&num),
-                            product_of(&den)
-                        ), 
-                        cot(param.clone())
+                        Fraction::of(product_of(&num), product_of(&den)),
+                        cot(param.clone()),
                     ]));
                 }
             }
         }
 
+        results
+            .into_iter()
+            .map(|exp| {
+                (
+                    exp.clone(),
+                    Argument::new(String::from("Tan/Cot identitiy"), vec![input.clone()]),
+                )
+            })
+            .collect()
+    }
 
-        results.into_iter().map(|exp| {
-            (exp.clone(),
-            Argument::new(String::from("Tan/Cot identitiy"), vec![input.clone()]))
-        }).collect()
+    fn name(&self) -> String {
+        String::from("TanIdentity")
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::{convenience_expressions::{cos, cot, sin, tan, v}, expressions::Integer};
+    use crate::{
+        convenience_expressions::{cos, cot, sin, tan, v},
+        expressions::Integer,
+    };
 
     use super::*;
 
@@ -131,32 +138,20 @@ mod tests {
     fn test_1() {
         let rule = TanIdentity {};
 
-        let start = Fraction::of(
-            product_of(&[sin(v("x")), sin(v("y"))]),
-            cos(v("x"))
-        );
+        let start = Fraction::of(product_of(&[sin(v("x")), sin(v("y"))]), cos(v("x")));
         let result = rule.apply(start).first().unwrap().0.clone();
 
-        assert_eq!(result, product_of(&[
-            Fraction::of(
-                sin(v("y")),
-                Integer::of(1)
-            ),
-            tan(v("x"))
-        ]));
-
-        let start1 = Fraction::of(
-            cos(v("x")),
-            product_of(&[sin(v("x")), sin(v("y"))])
+        assert_eq!(
+            result,
+            product_of(&[Fraction::of(sin(v("y")), Integer::of(1)), tan(v("x"))])
         );
+
+        let start1 = Fraction::of(cos(v("x")), product_of(&[sin(v("x")), sin(v("y"))]));
         let result1 = rule.apply(start1).first().unwrap().0.clone();
 
-        assert_eq!(result1, product_of(&[
-            Fraction::of(
-                Integer::of(1),
-                sin(v("y"))
-            ),
-            cot(v("x"))
-        ]));
+        assert_eq!(
+            result1,
+            product_of(&[Fraction::of(Integer::of(1), sin(v("y"))), cot(v("x"))])
+        );
     }
 }

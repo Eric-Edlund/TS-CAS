@@ -45,6 +45,9 @@ impl DerivationRule for EvaluateProducts {
             Argument::new(String::from("Evaluate multiplication"), vec![input]),
         )]
     }
+    fn name(&self) -> String {
+        String::from("EvaluateProducts")
+    }
 }
 
 #[cfg(test)]

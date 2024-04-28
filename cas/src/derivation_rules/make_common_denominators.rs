@@ -60,6 +60,9 @@ impl DerivationRule for MakeCommonDenominators {
             })
             .collect()
     }
+    fn name(&self) -> String {
+        String::from("MakeCommonDenominators")
+    }
 }
 
 #[cfg(test)]

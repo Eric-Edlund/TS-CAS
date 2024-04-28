@@ -93,6 +93,10 @@ impl DerivationRule for DistributiveProperty {
             })
             .collect()
     }
+
+    fn name(&self) -> String {
+        String::from("Distributive Property")
+    }
 }
 
 #[cfg(test)]

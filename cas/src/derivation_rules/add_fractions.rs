@@ -59,4 +59,8 @@ impl DerivationRule for AddFractions {
             })
             .collect()
     }
+
+    fn name(&self) -> String {
+        String::from("AddFractions")
+    }
 }

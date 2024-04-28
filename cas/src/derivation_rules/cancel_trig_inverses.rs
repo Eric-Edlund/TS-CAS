@@ -87,6 +87,10 @@ impl DerivationRule for CancelTrigInverses {
             })
             .collect()
     }
+
+    fn name(&self) -> String {
+        String::from("CancelTrigInverses")
+    }
 }
 
 #[cfg(test)]

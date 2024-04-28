@@ -44,6 +44,9 @@ impl DerivationRule for AdditiveIdentity {
             Argument::new(String::from("additive identity"), vec![input.clone()]),
         )]
     }
+    fn name(&self) -> String {
+        String::from("AdditiveIdentity")
+    }
 }
 
 #[cfg(test)]

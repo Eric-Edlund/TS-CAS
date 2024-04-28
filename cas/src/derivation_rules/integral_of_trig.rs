@@ -1,16 +1,18 @@
 use std::rc::Rc;
 
-use crate::{argument::Argument, expressions::{trig_expression::TrigFn, Expression, Negation, TrigExp}};
+use crate::{
+    argument::Argument,
+    expressions::{trig_expression::TrigFn, Expression, Negation, TrigExp},
+};
 
 use super::DerivationRule;
-
 
 /**
 * Handles all the basic trig identities for integration:
 * sin(x) -> -cos(x)
 * cos(x) -> sin(x)
 */
-pub struct IntegralOfTrig{}
+pub struct IntegralOfTrig {}
 
 impl DerivationRule for IntegralOfTrig {
     fn apply(&self, input: Expression) -> Vec<(Expression, Rc<Argument>)> {
@@ -19,9 +21,8 @@ impl DerivationRule for IntegralOfTrig {
             _ => return vec![],
         };
 
-        let Expression::Trig(ref t) = integral.integrand()
-        else {
-            return vec![]
+        let Expression::Trig(ref t) = integral.integrand() else {
+            return vec![];
         };
 
         if t.exp() != integral.relative_to() {
@@ -33,13 +34,16 @@ impl DerivationRule for IntegralOfTrig {
         let result = match t.operation {
             TrigFn::Sin => Negation::of(TrigExp::of(TrigFn::Cos, exp)),
             TrigFn::Cos => TrigExp::of(TrigFn::Sin, exp),
-            _ => return vec![]
+            _ => return vec![],
         };
 
         vec![(
             result,
-            Argument::new(String::from("Integrate trig"), vec![input])
+            Argument::new(String::from("Integrate trig"), vec![input]),
         )]
+    }
+    fn name(&self) -> String {
+        String::from("IntegralOfTrig")
     }
 }
 

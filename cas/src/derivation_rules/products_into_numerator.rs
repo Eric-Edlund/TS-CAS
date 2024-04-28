@@ -65,6 +65,9 @@ impl DerivationRule for ProductsIntoNumerator {
             })
             .collect()
     }
+    fn name(&self) -> String {
+        String::from("ProductsIntoNumerator")
+    }
 }
 
 #[cfg(test)]

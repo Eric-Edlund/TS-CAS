@@ -1,7 +1,7 @@
 use std::rc::Rc;
 
-use crate::{argument::Argument, derivation_rules::DerivationRule, expressions::Expression};
 use crate::expressions::trig_expression::TrigFn;
+use crate::{argument::Argument, derivation_rules::DerivationRule, expressions::Expression};
 
 /**
 * Arcsin(sin(x)) = x
@@ -31,12 +31,12 @@ impl DerivationRule for CancelTrigArcFunctions {
     fn apply(&self, input: Expression) -> Vec<(Expression, Rc<Argument>)> {
         let parent = match input {
             Expression::Trig(ref t) => t,
-            _ => return vec![]
+            _ => return vec![],
         };
 
         let child = match parent.exp() {
             Expression::Trig(t) => t,
-            _ => return vec![]
+            _ => return vec![],
         };
 
         if parent.operation != inverse_of(child.operation) {
@@ -45,8 +45,12 @@ impl DerivationRule for CancelTrigArcFunctions {
 
         vec![(
             child.exp(),
-            Argument::new(String::from("Trig arc inverse cancel"), vec![input])
+            Argument::new(String::from("Trig arc inverse cancel"), vec![input]),
         )]
+    }
+
+    fn name(&self) -> String {
+        String::from("CancelTrigArcs")
     }
 }
 

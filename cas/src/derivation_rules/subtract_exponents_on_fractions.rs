@@ -1,6 +1,19 @@
-use std::{rc::Rc, sync::Arc, collections::{HashSet, HashMap}};
+use std::{
+    collections::{HashMap, HashSet},
+    rc::Rc,
+    sync::Arc,
+};
 
-use crate::{derivation_rules::DerivationRule, expressions::{Expression, Exponent, Negation, sum::sum_of, Fraction, product::{product_of_iter, product_of}}, argument::Argument, convenience_expressions::i};
+use crate::{
+    argument::Argument,
+    convenience_expressions::i,
+    derivation_rules::DerivationRule,
+    expressions::{
+        product::{product_of, product_of_iter},
+        sum::sum_of,
+        Exponent, Expression, Fraction, Negation,
+    },
+};
 
 pub struct SubtractExponentsOnFractions {}
 
@@ -32,31 +45,33 @@ impl DerivationRule for SubtractExponentsOnFractions {
                 _ => match Exponent::of(exp.clone(), i(1)) {
                     Expression::Exponent(e) => e.clone(),
                     _ => panic!(),
-                }
+                },
             }
         }
 
-        let top_exponents = top_factors.iter()
+        let top_exponents = top_factors
+            .iter()
             .map(as_exponent)
             .collect::<Vec<Arc<Exponent>>>();
-        let bottom_exponents = bottom_factors.iter()
+        let bottom_exponents = bottom_factors
+            .iter()
             .map(as_exponent)
             .collect::<Vec<Arc<Exponent>>>();
 
         println!("Top Exp: {:?}", top_exponents);
         println!("Bot Exp: {:?}", bottom_exponents);
-        
 
-        // Find bases shared between numerator and denominator 
-        let common_bases = top_exponents.iter()
+        // Find bases shared between numerator and denominator
+        let common_bases = top_exponents
+            .iter()
             .map(|e| e.base())
             .filter(|top_exp| {
-                bottom_exponents.iter()
+                bottom_exponents
+                    .iter()
                     .map(|e| e.base())
                     .any(|e| e == *top_exp)
             })
             .collect::<HashSet<Expression>>();
-
 
         if common_bases.is_empty() {
             return vec![];
@@ -73,7 +88,8 @@ impl DerivationRule for SubtractExponentsOnFractions {
             if !common_bases.contains(&exp.base()) {
                 continue;
             }
-            exponent_terms.get_mut(&exp.base())
+            exponent_terms
+                .get_mut(&exp.base())
                 .unwrap()
                 .push(exp.power());
         }
@@ -82,28 +98,26 @@ impl DerivationRule for SubtractExponentsOnFractions {
                 continue;
             }
             println!("Bottom Exponents Iter {:?}", exp);
-            exponent_terms.get_mut(&exp.base())
+            exponent_terms
+                .get_mut(&exp.base())
                 .unwrap()
                 .push(Negation::of(exp.power()));
         }
 
         println!("Exponent Terms {:?}", exponent_terms);
 
-        let mut result_top_factors = top_exponents.into_iter()
-            .map(|exponent| {
-                if common_bases.contains(&exponent.base()) {
-                    println!("e {:?}", exponent_terms[&exponent.base()].len());
-                    Exponent::of(exponent.base(), 
-                        sum_of(&exponent_terms[&exponent.base()]))
-                } else {
-                    Expression::Exponent(exponent)
-                }
-            });
+        let mut result_top_factors = top_exponents.into_iter().map(|exponent| {
+            if common_bases.contains(&exponent.base()) {
+                println!("e {:?}", exponent_terms[&exponent.base()].len());
+                Exponent::of(exponent.base(), sum_of(&exponent_terms[&exponent.base()]))
+            } else {
+                Expression::Exponent(exponent)
+            }
+        });
 
-        let result_bottom_factors = bottom_exponents.into_iter()
-            .filter(|exponent| {
-                !common_bases.contains(&exponent.base())
-            })
+        let result_bottom_factors = bottom_exponents
+            .into_iter()
+            .filter(|exponent| !common_bases.contains(&exponent.base()))
             .map(Expression::Exponent)
             .collect::<Vec<Expression>>();
 
@@ -112,11 +126,17 @@ impl DerivationRule for SubtractExponentsOnFractions {
             product_of(&result_bottom_factors),
         );
 
-        vec![(result, 
+        vec![(
+            result,
             Argument::new(
-            String::from("Sum exponents in both numerator and denominator"), 
-            vec![input])
-            )]
+                String::from("Sum exponents in both numerator and denominator"),
+                vec![input],
+            ),
+        )]
+    }
+
+    fn name(&self) -> String {
+        String::from("SubtractExponentsOnFractions")
     }
 }
 
@@ -132,10 +152,7 @@ mod tests {
         let rule = SubtractExponentsOnFractions {};
 
         // ab / ac
-        let start = Fraction::of(
-            product_of(&[v("a"), v("b")]),
-            product_of(&[v("a"), v("c")])
-        );
+        let start = Fraction::of(product_of(&[v("a"), v("b")]), product_of(&[v("a"), v("c")]));
         let result = rule.apply(start).first().unwrap().0.clone();
 
         assert_eq!(result, Fraction::of(v("b"), v("c")));

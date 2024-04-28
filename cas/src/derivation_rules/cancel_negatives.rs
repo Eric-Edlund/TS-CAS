@@ -2,9 +2,9 @@ use std::rc::Rc;
 use std::sync::Arc;
 
 use crate::argument::Argument;
+use crate::expressions::Expression;
 use crate::expressions::Negation;
 use crate::expressions::Product;
-use crate::expressions::Expression;
 
 use super::DerivationRule;
 
@@ -53,6 +53,10 @@ impl DerivationRule for CancelNegatives {
             Argument::new(String::from("cancelled negatives"), vec![input.clone()]),
         )]
     }
+
+    fn name(&self) -> String {
+        String::from("CancelNegatives")
+    }
 }
 
 #[cfg(test)]
@@ -71,8 +75,7 @@ mod tests {
             Product::of(&[Negation::of(Integer::of(1)), Negation::of(Integer::of(2))]).unwrap();
         let goal = Product::of(&[Integer::of(1), Integer::of(2)]).unwrap();
         println!("Start: {}, Goal: {}", first, goal);
-        let results: Vec<Expression> =
-            rule.apply(first.clone()).into_iter().map(|x| x.0).collect();
+        let results: Vec<Expression> = rule.apply(first.clone()).into_iter().map(|x| x.0).collect();
 
         assert!(
             !results.contains(&first),

@@ -100,6 +100,9 @@ impl DerivationRule for EvaluateFractions {
             Argument::new(String::from("Reduce fraction"), vec![input]),
         )]
     }
+    fn name(&self) -> String {
+        String::from("EvaluateFractions")
+    }
 }
 
 #[cfg(test)]

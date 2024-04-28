@@ -35,6 +35,9 @@ impl DerivationRule for IntegralSumRule {
             Argument::new(String::from("Split integral over addition"), vec![input]),
         )]
     }
+    fn name(&self) -> String {
+        String::from("IntegralSumRule")
+    }
 }
 
 #[cfg(test)]
