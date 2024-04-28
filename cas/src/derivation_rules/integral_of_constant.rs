@@ -19,7 +19,7 @@ impl DerivationRule for IntegralOfConst {
             _ => return vec![],
         };
 
-        if !is_constant(&integral.integrand(), &integral.relative_to()) {
+        if !is_constant(&integral.integrand(), &integral.variable()) {
             return vec![];
         }
 
@@ -27,7 +27,7 @@ impl DerivationRule for IntegralOfConst {
         let integrand = integral.integrand();
 
         vec![(
-            product_of(&[integrand, integral.relative_to()]),
+            product_of(&[integrand, integral.variable()]),
             Argument::new(String::from("Integrate constant"), vec![input]),
         )]
     }

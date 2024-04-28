@@ -37,7 +37,7 @@ fn complexity(a: &Expression) -> u32 {
         Expression::Fraction(f) => 2 + complexity(&f.numerator()) + complexity(&f.denominator()),
         Expression::Logarithm(l) => 1 + complexity(&l.base()) + complexity(&l.exp()),
         Expression::Derivative(d) => 3 + complexity(&d.exp()) + complexity(&d.relative_to()),
-        Expression::Integral(i) => 15 + complexity(&i.integrand()) + complexity(&i.relative_to()),
+        Expression::Integral(i) => 15 + complexity(&i.integrand()) + complexity(&i.variable()),
         Expression::Trig(t) => 2 + complexity(&t.exp()) + if t.arc() { 2 } else { 0 },
         Expression::AbsoluteValue(a) => 2 + complexity(&a.exp()),
         Expression::ConstantExp(_) => 1,

@@ -24,8 +24,7 @@ impl DerivationRule for IntegralPowerRule {
         // constant power.
         let (base, power) = match integral.integrand() {
             Expression::Exponent(e) => {
-                if e.base() == integral.relative_to()
-                    && is_constant(&e.power(), &integral.relative_to())
+                if e.base() == integral.variable() && is_constant(&e.power(), &integral.variable())
                 {
                     (e.base(), e.power())
                 } else {
@@ -33,13 +32,21 @@ impl DerivationRule for IntegralPowerRule {
                 }
             }
             exp => {
-                if exp == integral.relative_to() {
+                if exp == integral.variable() {
                     (exp, Integer::of(1))
                 } else {
                     return vec![];
                 }
             }
         };
+
+        if let Expression::Negation(ref n) = power {
+            if let Expression::Integer(i) = n.child() {
+                if i.value() == 1 {
+                    return vec![];
+                }
+            }
+        }
 
         vec![(
             Fraction::of(

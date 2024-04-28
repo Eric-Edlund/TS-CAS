@@ -34,7 +34,7 @@ impl DerivationRule for IntegrateBySubstitution {
         for u_exp in sub_expressions {
             let u_sub = Substitution::of(u_exp.clone());
 
-            let du = match simplest_derivative(&u_exp, &integral.relative_to()) {
+            let du = match simplest_derivative(&u_exp, &integral.variable()) {
                 Some(e) => e,
                 None => {
                     println!("No derivative found");
