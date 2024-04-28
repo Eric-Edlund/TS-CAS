@@ -6,7 +6,7 @@ import { Integer, IntegerType } from "./Integer"
 import { NameTable } from "./MathElement"
 import { ProductType } from "./Product"
 import { SumType } from "./Sum"
-import { TrigType } from "./TrigExp"
+import { TrigExp, TrigType } from "./TrigExp"
 
 export class Exponent extends Expression {
     public static of(base: Expression, power: Expression): Exponent {
@@ -33,6 +33,11 @@ export class Exponent extends Expression {
         if (this.power === Fraction.of(Integer.of(1), Integer.of(2))) {
             return `<msqrt>${this.base.toMathXML(table)}</msqrt>`
         }
+
+        if (this.base.class == TrigType) {
+            return (this.base as TrigExp).toMathXMLWithInlinePower(table, this.power)
+        }
+
         return (
             "<msup>" +
             wrapIfNeeded(this.base) +
