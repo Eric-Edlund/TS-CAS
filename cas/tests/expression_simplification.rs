@@ -86,24 +86,20 @@ fn single_variable_integrals() {
     //     ),
     // );
 
-    // let _p8: Problem = (
-    //     int(
-    //         &frac(
-    //             &sum3(
-    //                 &prod(three, &pow(X, two)),
-    //                 &prod(four, X),
-    //                 one
-    //             ),
-    //             &prod(two, X)
-    //         ),
-    //         X
-    //     ),
-    //     sum3(
-    //         &pow(X, two),
-    //         &prod(two, X),
-    //         &prod(&frac(one, two), &ln(&abs(X)))
-    //     )
-    // );
+    let p8: Problem = (
+        int(
+            &frac(
+                &sum3(&prod(three, &pow(X, two)), &prod(four, X), one),
+                &prod(two, X),
+            ),
+            X,
+        ),
+        sum3(
+            &pow(X, two),
+            &prod(two, X),
+            &prod(&frac(one, two), &ln(&abs(X))),
+        ),
+    );
 
     let p9: Problem = (
         int(&sum(&prod(two, &sin(X)), &prod(three, &cos(X))), X),
@@ -118,6 +114,7 @@ fn single_variable_integrals() {
     add_test("problem 1", p1, 11, 500);
     add_test("problem 2", p2, 16, 500);
     add_test("problem 5", p5, 10, 500);
+    add_test("problem 8", p8, 10, 500);
     // add_test("problem 3", p3, 16);
     add_test("problem 4", p4, 18, 1000);
     add_test("problem 9", p9, 6, 500);

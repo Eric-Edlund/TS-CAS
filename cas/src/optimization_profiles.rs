@@ -178,3 +178,30 @@ impl OptimizationProfile for DerivativesOnlyProfile {
         }
     }
 }
+
+// pub struct WalkBackEvaluateFirstProfile {
+//     evaluate_first: Box<EvaluateFirstProfile>,
+// }
+//
+// impl WalkBackEvaluateFirstProfile {
+//     pub fn new() -> Box<Self> {
+//         Self {
+//             evaluate_first: EvaluateFirstProfile::new(),
+//         }
+//         .into()
+//     }
+// }
+//
+// impl OptimizationProfile for WalkBackEvaluateFirstProfile {
+//     fn find_equivalents(&mut self, exp: &Expression) -> Vec<(Expression, Rc<Argument>)> {
+//         let result = self.evaluate_first.find_equivalents()
+//     }
+//
+//     fn set_rules(&mut self, rules: &[String]) -> Result<(), ()> {
+//         self.evaluate_first.set_rules(rules)
+//     }
+//
+//     fn set_debug(&mut self, debug: Rc<RefCell<DerivationDebugInfo>>) -> Result<(), ()> {
+//         self.evaluate_first.set_debug(debug)
+//     }
+// }
