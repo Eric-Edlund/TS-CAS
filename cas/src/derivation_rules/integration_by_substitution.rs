@@ -2,24 +2,20 @@ use std::rc::Rc;
 
 use petgraph::visit::IntoNodeReferences;
 
+use crate::deriver::Deriver;
+use crate::expressions::derivative::Derivative;
+use crate::optimization_profiles::DerivativesOnlyProfile;
 use crate::{
     argument::Argument,
-    convenience_expressions::i,
     derivation_rules::helpers::{children_rec, substitute},
-    deriver::{DerivativesOnlyProfile, Deriver},
-    expressions::{
-        derivative::Derivative, product::product_of, substitution::Substitution, Expression,
-        Fraction, Integral,
-    },
+    expressions::{substitution::Substitution, Expression, Integral},
     graph::Graph,
     graph_traversal::expression_complexity_cmp,
 };
 
 use super::{helpers::without_factor, DerivationRule};
 
-///
 /// U-substitution
-///
 pub struct IntegrateBySubstitution {}
 
 impl DerivationRule for IntegrateBySubstitution {

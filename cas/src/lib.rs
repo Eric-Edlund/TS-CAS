@@ -4,16 +4,19 @@ mod argument;
 mod convenience_expressions;
 mod derivation_rules;
 mod deriver;
+mod equivalence_disbatchers;
 pub mod graph;
 mod graph_traversal;
 mod mathxml;
+mod optimization_profiles;
 
 use std::collections::HashSet;
 
-use deriver::{BruteForceProfile, Deriver, EvaluateFirstProfile, OptimizationProfile};
+use deriver::Deriver;
 use expressions::read_object_from_json;
 use graph::Graph;
 use graph_traversal::{expression_complexity_cmp, Path};
+use optimization_profiles::{BruteForceProfile, EvaluateFirstProfile, OptimizationProfile};
 use petgraph::{algo::astar, visit::IntoNodeReferences};
 use serde_json::json;
 
