@@ -42,12 +42,20 @@ pub fn pow(base: &str, pow: &str) -> String {
 pub fn log(base: &str, exp: &str) -> String {
     format!("[\"Logarithm\",{},{}]", base, exp)
 }
-pub fn ln(_exp: &str) -> String {
-    todo!()
-    // format!("[\"Logarithm\",{},{}]", base, exp)
+pub fn ln(exp: &str) -> String {
+    format!("[\"Logarithm\",{},{}]", e(), exp)
 }
-pub fn abs(_exp: &str) -> String {
-    todo!()
+pub fn e() -> String {
+    String::from("E")
+}
+pub fn pi() -> String {
+    String::from("Pi")
+}
+pub fn imag() -> String {
+    String::from("ImaginaryUnit")
+}
+pub fn abs(exp: &str) -> String {
+    format!("[\"Abs\",{}]", exp)
 }
 pub fn sin(exp: &str) -> String {
     format!("[\"Sin\",{}]", exp)
