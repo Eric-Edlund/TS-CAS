@@ -38,6 +38,7 @@ mod integral_of_constant;
 mod integral_of_trig;
 mod integral_pull_out_negative;
 mod integral_sum_rule;
+mod integral_to_natural_log;
 mod integrate_arctrig;
 mod integration_by_substitution;
 mod integration_power_rule;
@@ -115,6 +116,7 @@ pub static ALL_RULES: RwLock<&[&(dyn DerivationRule + Sync)]> = RwLock::new(&[
     &imaginary_identity::ImaginaryIdentity {},
     &integration_by_substitution::IntegrateBySubstitution {},
     &inline_substitutions::InlineSubstitutions {},
+    &integral_to_natural_log::IntegralToNaturalLog {},
 ]);
 
 pub static STRICT_SIMPLIFYING_RULES: RwLock<&[&(dyn DerivationRule + Sync)]> = RwLock::new(&[
@@ -136,4 +138,5 @@ pub static STRICT_SIMPLIFYING_RULES: RwLock<&[&(dyn DerivationRule + Sync)]> = R
     &derivative_of_trig::DerivativeOfTrig {},
     &integral_pull_out_negative::IntegralPullOutNegative {},
     &one_to_any_power::OneToAnything {},
+    &integral_to_natural_log::IntegralToNaturalLog {},
 ]);

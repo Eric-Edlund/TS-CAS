@@ -15,7 +15,7 @@ use crate::{
     graph_traversal::expression_complexity_cmp,
 };
 
-use super::DerivationRule;
+use super::{helpers::without_factor, DerivationRule};
 
 ///
 /// U-substitution
@@ -76,40 +76,6 @@ impl DerivationRule for IntegrateBySubstitution {
 
     fn name(&self) -> String {
         "u-sub".into()
-    }
-}
-
-/// Removes the given factor from the expression once. If the expression does
-/// not contain the expression, returns none.
-fn without_factor(exp: &Expression, factor: &Expression) -> Option<Expression> {
-    // Pull apart fractions, products, etc.
-    // Fraction denominator terms -> 1/part
-
-    let mut factors = factors_in(exp);
-
-    for i in 0..factors.len() {
-        if &factors[i] == factor {
-            factors.remove(i);
-            return Some(product_of(&factors));
-        }
-    }
-
-    None
-}
-
-fn factors_in(exp: &Expression) -> Vec<Expression> {
-    match exp {
-        Expression::Product(p) => p.factors().clone(),
-        Expression::Fraction(f) => {
-            let mut facts = factors_in(&f.numerator());
-            facts.extend(
-                factors_in(&f.denominator())
-                    .into_iter()
-                    .map(|exp| Fraction::of(i(1), exp)),
-            );
-            facts
-        }
-        _ => vec![exp.clone()],
     }
 }
 
