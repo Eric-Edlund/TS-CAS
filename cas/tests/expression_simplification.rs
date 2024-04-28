@@ -16,16 +16,12 @@ fn single_variable_integrals() {
     let eight = &num(8);
     let nine = &num(9);
     let p1: Problem = (
-        int(&sum3(
-            &pow(X, four), 
-            &neg(&pow(X,three)), 
-            &pow(X, two)
-        ), X),
+        int(&sum3(&pow(X, four), &neg(&pow(X, three)), &pow(X, two)), X),
         sum3(
             &frac(&pow(X, five), five),
             &neg(&frac(&pow(X, four), four)),
-            &frac(&pow(X, three), three)
-        )
+            &frac(&pow(X, three), three),
+        ),
     );
 
     let p2: Problem = (
@@ -34,45 +30,44 @@ fn single_variable_integrals() {
                 &prod(five, &pow(T, eight)),
                 &neg(&prod(two, &pow(T, four))),
                 T,
-                three
+                three,
             ),
-            T
+            T,
         ),
         sum4(
             &frac(&prod(five, &pow(T, nine)), nine),
             &neg(&frac(&prod(two, &pow(T, five)), five)),
             &frac(&pow(T, two), two),
-            &prod(three, T)
-        )
+            &prod(three, T),
+        ),
     );
 
     let _p3: Problem = (
         int(
             &sum(
                 &prod(seven, &pow(X, &frac(three, two))),
-                &prod(two, &pow(X, &frac(one, two))
-                ),
+                &prod(two, &pow(X, &frac(one, two))),
             ),
-            X
+            X,
         ),
         sum(
-            &frac(&prod(&num(14), &pow(X,&frac(five, two))), five),
-            &frac(&prod(four, &pow(X, &frac(three, two))), three)
-        )
+            &frac(&prod(&num(14), &pow(X, &frac(five, two))), five),
+            &frac(&prod(four, &pow(X, &frac(three, two))), three),
+        ),
     );
 
     let p4: Problem = (
         int(
             &sum(
                 &prod(three, &pow(X, &neg(two))),
-                &neg(&prod(four, &pow(X, &neg(three))))
+                &neg(&prod(four, &pow(X, &neg(three)))),
             ),
-            X
+            X,
         ),
         sum(
             &neg(&prod(three, &pow(X, &neg(one)))),
             &prod(two, &pow(X, &neg(two))),
-        )
+        ),
     );
 
     // let _p5: Problem = (
@@ -114,28 +109,13 @@ fn single_variable_integrals() {
     // );
 
     let p9: Problem = (
-        int(
-            &sum(
-                &prod(two, &sin(X)),
-                &prod(three, &cos(X))
-            ),
-            X
-        ),
-        sum(
-            &neg(&prod(two, &cos(X))),
-            &prod(three, &sin(X))
-        )
+        int(&sum(&prod(two, &sin(X)), &prod(three, &cos(X))), X),
+        sum(&neg(&prod(two, &cos(X))), &prod(three, &sin(X))),
     );
 
     let p11: Problem = (
-        int(
-            &frac(
-                four,
-                &sum(one, &pow(T, two))
-            ),
-            T
-        ),
-        prod(seven, &arctan(T))
+        int(&frac(four, &sum(one, &pow(T, two))), T),
+        prod(four, &arctan(T)),
     );
 
     add_test("problem 1", p1, 11);
