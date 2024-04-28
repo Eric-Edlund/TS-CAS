@@ -4,8 +4,19 @@ use wasm_bindgen::prelude::*;
 /// target.
 
 #[wasm_bindgen]
-pub fn simplify_with_steps(json_expression: &str, search_depth: u32, optimizer: &str) -> String {
-    cas::simplify_with_steps(json_expression, search_depth, optimizer, None)
+pub fn simplify_with_steps(
+    json_expression: &str,
+    search_depth: u32,
+    optimizer: &str,
+    max_derivations: u32,
+) -> String {
+    cas::simplify_with_steps(
+        json_expression,
+        search_depth,
+        optimizer,
+        None,
+        max_derivations,
+    )
 }
 
 #[wasm_bindgen]

@@ -48,6 +48,7 @@ pub fn simplify_with_steps(
     search_depth: u32,
     optimizer: &str,
     allowed_rules: Option<Vec<String>>,
+    max_derivations: u32,
 ) -> String {
     let expression = match read_object_from_json(json_expression) {
         Ok(exp) => exp,
@@ -59,8 +60,14 @@ pub fn simplify_with_steps(
         _ => panic!("Invalid optimizer"),
     };
 
-    let result =
-        simplify_with_steps_internal(&expression, search_depth, opt, allowed_rules, None, 100000);
+    let result = simplify_with_steps_internal(
+        &expression,
+        search_depth,
+        opt,
+        allowed_rules,
+        None,
+        max_derivations,
+    );
 
     json!(result).to_string()
 }

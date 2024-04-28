@@ -80,7 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         console.log("Parsed " + expression.toJSON())
 
-        let r = simplify_with_steps(expression.toJSON(), 20, "evaluate_first")
+        let r = simplify_with_steps(expression.toJSON(), 20, "evaluate_first", 500)
 
         let result: {
             steps: string[],
