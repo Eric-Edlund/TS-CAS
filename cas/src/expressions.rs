@@ -7,37 +7,37 @@ use std::{
 
 use once_cell::sync::Lazy;
 
+pub mod absolute_value;
+pub mod constant;
+pub mod derivative;
 pub mod exponent;
+pub mod fraction;
 pub mod integer;
+pub mod integral;
+pub mod logarithm;
 pub mod negation;
 pub mod product;
-pub mod sum;
-pub mod variable;
-pub mod fraction;
-pub mod logarithm;
-pub mod derivative;
-pub mod integral;
-pub mod trig_expression;
-pub mod absolute_value;
-pub mod substitution;
-pub mod constant;
 mod read_from_json;
+pub mod substitution;
+pub mod sum;
+pub mod trig_expression;
+pub mod variable;
 
-pub use integer::Integer;
-pub use negation::Negation;
-pub use product::Product;
-use serde_json::Value;
-pub use sum::Sum;
-pub use exponent::Exponent;
-pub use variable::Variable;
-pub use fraction::Fraction;
-pub use logarithm::Logarithm;
-pub use derivative::Derivative;
-pub use integral::Integral;
-pub use trig_expression::TrigExp;
 pub use absolute_value::AbsoluteValue;
 pub use constant::ConstantExp;
+pub use derivative::Derivative;
+pub use exponent::Exponent;
+pub use fraction::Fraction;
+pub use integer::Integer;
+pub use integral::Integral;
+pub use logarithm::Logarithm;
+pub use negation::Negation;
+pub use product::Product;
 pub use read_from_json::*;
+use serde_json::Value;
+pub use sum::Sum;
+pub use trig_expression::TrigExp;
+pub use variable::Variable;
 
 use self::substitution::Substitution;
 
@@ -56,8 +56,8 @@ pub trait IExpression {
     fn id(&self) -> String;
 
     /**
-    * Produce JSON object representing the expression.
-    */
+     * Produce JSON object representing the expression.
+     */
     fn to_json(&self) -> Value;
 }
 
@@ -98,22 +98,26 @@ impl Expression {}
 
 impl fmt::Debug for Expression {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}", format!("{:?}", match self {
-            Expression::Negation(ref p) => p as &dyn fmt::Debug,
-            Expression::Integer(p) => p as &dyn fmt::Debug,
-            Expression::Product(p) => p as &dyn fmt::Debug,
-            Expression::Exponent(p) => p as &dyn fmt::Debug,
-            Expression::Sum(p) => p as &dyn fmt::Debug,
-            Expression::Variable(p) => p as &dyn fmt::Debug,
-            Expression::Fraction(p) => p as &dyn fmt::Debug,
-            Expression::Logarithm(p) => p as &dyn fmt::Debug,
-            Expression::Derivative(p) => p as &dyn fmt::Debug,
-            Expression::Integral(p) => p as &dyn fmt::Debug,
-            Expression::Trig(p) => p as &dyn fmt::Debug,
-            Expression::AbsoluteValue(p) => p as &dyn fmt::Debug,
-            Expression::ConstantExp(p) => p as &dyn fmt::Debug,
-            Expression::Substitution(p) => p as &dyn fmt::Debug,
-        }))
+        write!(
+            f,
+            "{:?}",
+            match self {
+                Expression::Negation(ref p) => p as &dyn fmt::Debug,
+                Expression::Integer(p) => p as &dyn fmt::Debug,
+                Expression::Product(p) => p as &dyn fmt::Debug,
+                Expression::Exponent(p) => p as &dyn fmt::Debug,
+                Expression::Sum(p) => p as &dyn fmt::Debug,
+                Expression::Variable(p) => p as &dyn fmt::Debug,
+                Expression::Fraction(p) => p as &dyn fmt::Debug,
+                Expression::Logarithm(p) => p as &dyn fmt::Debug,
+                Expression::Derivative(p) => p as &dyn fmt::Debug,
+                Expression::Integral(p) => p as &dyn fmt::Debug,
+                Expression::Trig(p) => p as &dyn fmt::Debug,
+                Expression::AbsoluteValue(p) => p as &dyn fmt::Debug,
+                Expression::ConstantExp(p) => p as &dyn fmt::Debug,
+                Expression::Substitution(p) => p as &dyn fmt::Debug,
+            }
+        )
     }
 }
 

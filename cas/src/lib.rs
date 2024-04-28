@@ -101,9 +101,7 @@ pub fn simplify_with_steps(
     .to_string()
 }
 
-/**
-* @param optimizer brute_force | evaluate_first
-*/
+/// - optimizer brute_force | evaluate_first
 pub fn get_all_equivalents(json_expression: &str, search_depth: u32, optimizer: &str) -> String {
     let expression = match read_object_from_json(json_expression) {
         Ok(exp) => exp,
@@ -125,8 +123,7 @@ pub fn get_all_equivalents(json_expression: &str, search_depth: u32, optimizer: 
 
     let rules = graph
         .edge_weights()
-        .map(|e| &e.derived_from)
-        .flatten()
+        .flat_map(|e| &e.derived_from)
         .map(|arg| arg.message().to_string())
         .collect::<HashSet<String>>();
 
