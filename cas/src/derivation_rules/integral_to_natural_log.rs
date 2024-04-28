@@ -30,7 +30,7 @@ impl DerivationRule for IntegralToNaturalLog {
             return vec![];
         }
 
-        if fraction.denominator() != integral.relative_to() {
+        if fraction.denominator() != integral.variable() {
             return vec![];
         }
 

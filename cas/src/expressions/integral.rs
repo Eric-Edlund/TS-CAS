@@ -2,18 +2,17 @@ use std::sync::Arc;
 
 use serde_json::json;
 
-use super::{IExpression, EXPRESSION_INSTANCES, Expression};
-
+use super::{Expression, IExpression, EXPRESSION_INSTANCES};
 
 #[derive(PartialEq, Eq, Hash, Debug)]
 pub struct Integral {
     integrand: Expression,
-    relative_to: Expression,
+    variable: Expression,
 }
 
 impl Integral {
-    pub fn of(integrand: Expression, relative_to: Expression) -> Expression {
-        let id = get_id(&integrand, &relative_to);
+    pub fn of(integrand: Expression, variable: Expression) -> Expression {
+        let id = get_id(&integrand, &variable);
 
         let mut instances = EXPRESSION_INSTANCES.lock().unwrap();
 
@@ -23,7 +22,7 @@ impl Integral {
 
         let result = Expression::Integral(Arc::new(Integral {
             integrand,
-            relative_to
+            variable,
         }));
 
         instances.insert(id, result.clone());
@@ -34,33 +33,37 @@ impl Integral {
         self.integrand.clone()
     }
 
-    pub fn relative_to(&self) -> Expression {
-        self.relative_to.clone()
+    pub fn variable(&self) -> Expression {
+        self.variable.clone()
     }
 }
 
 fn get_id(integrand: &Expression, relative_to: &Expression) -> String {
-    format!("Integral{}{}", 
-        integrand.as_stringable().id(), 
-        relative_to.as_stringable().id())
+    format!(
+        "Integral{}{}",
+        integrand.as_stringable().id(),
+        relative_to.as_stringable().id()
+    )
 }
 
 impl IExpression for Integral {
     fn to_unambigious_string(&self) -> String {
-        format!("int{}d{}",
+        format!(
+            "int{}d{}",
             self.integrand.as_stringable().to_unambigious_string(),
-            self.relative_to.as_stringable().to_unambigious_string())
+            self.variable.as_stringable().to_unambigious_string()
+        )
     }
 
     fn id(&self) -> String {
-        get_id(&self.integrand, &self.relative_to)
+        get_id(&self.integrand, &self.variable)
     }
 
     fn to_json(&self) -> serde_json::Value {
         json!([
             "Integral",
             self.integrand.to_json(),
-            self.relative_to.to_json()
+            self.variable.to_json()
         ])
     }
 }

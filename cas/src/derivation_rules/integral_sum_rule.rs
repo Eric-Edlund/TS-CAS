@@ -30,7 +30,7 @@ impl DerivationRule for IntegralSumRule {
                 &mut sum
                     .terms()
                     .iter()
-                    .map(|term| Integral::of(term.clone(), integral.relative_to())),
+                    .map(|term| Integral::of(term.clone(), integral.variable())),
             ),
             Argument::new(String::from("Split integral over addition"), vec![input]),
         )]

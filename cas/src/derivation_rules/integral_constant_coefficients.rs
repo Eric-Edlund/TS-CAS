@@ -21,14 +21,14 @@ impl DerivationRule for IntegralConstCoeff {
         };
 
         let (constant, not) =
-            separate_constant_factors(&integral.integrand(), &integral.relative_to());
+            separate_constant_factors(&integral.integrand(), &integral.variable());
 
         if is_one(&constant) {
             return vec![];
         }
 
         vec![(
-            product_of(&[constant, Integral::of(not, integral.relative_to())]),
+            product_of(&[constant, Integral::of(not, integral.variable())]),
             Argument::new(String::from("Pull out constants"), vec![input]),
         )]
     }

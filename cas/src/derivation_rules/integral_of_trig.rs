@@ -25,7 +25,7 @@ impl DerivationRule for IntegralOfTrig {
             return vec![];
         };
 
-        if t.exp() != integral.relative_to() {
+        if t.exp() != integral.variable() {
             return vec![];
         };
 

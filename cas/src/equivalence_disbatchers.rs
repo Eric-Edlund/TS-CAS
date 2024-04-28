@@ -123,11 +123,11 @@ fn integral_equiv(exp: &Expression, direct: &EquivFn) -> EquivList {
 
     // for integrand
     for deriv in equiv(&integral.integrand(), direct) {
-        equivalents.push((Integral::of(deriv.0, integral.relative_to()), deriv.1));
+        equivalents.push((Integral::of(deriv.0, integral.variable()), deriv.1));
     }
 
     // for variable
-    for deriv in equiv(&integral.relative_to(), direct) {
+    for deriv in equiv(&integral.variable(), direct) {
         equivalents.push((Integral::of(integral.integrand(), deriv.0), deriv.1));
     }
 

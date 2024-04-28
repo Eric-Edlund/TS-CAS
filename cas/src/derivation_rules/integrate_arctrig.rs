@@ -26,7 +26,7 @@ impl DerivationRule for IntegrateArcTrig {
             return vec![];
         };
 
-        let numerator = if !is_constant(&f.numerator(), &integral.relative_to()) {
+        let numerator = if !is_constant(&f.numerator(), &integral.variable()) {
             return vec![];
         } else {
             f.numerator()
@@ -40,7 +40,7 @@ impl DerivationRule for IntegrateArcTrig {
 
             let (constant, not): (Vec<&Expression>, Vec<&Expression>) = terms
                 .iter()
-                .partition(|x| is_constant(x, &integral.relative_to()));
+                .partition(|x| is_constant(x, &integral.variable()));
 
             if not.first().is_none() {
                 return vec![];
@@ -50,14 +50,14 @@ impl DerivationRule for IntegrateArcTrig {
             }
 
             let a = *constant.first().unwrap();
-            if not.first().unwrap() != &&Exponent::of(integral.relative_to(), Integer::of(2)) {
+            if not.first().unwrap() != &&Exponent::of(integral.variable(), Integer::of(2)) {
                 return vec![];
             }
 
             product_of(&[
                 numerator,
                 Fraction::of(Integer::of(1), sqrt(a.clone())),
-                arctan(Fraction::of(integral.relative_to(), sqrt(a.clone()))),
+                arctan(Fraction::of(integral.variable(), sqrt(a.clone()))),
             ])
         } else if let Expression::Exponent(root) = f.denominator() {
             if root.power() != Fraction::of(i(1), i(2)) {
@@ -67,15 +67,12 @@ impl DerivationRule for IntegrateArcTrig {
                 return vec![];
             };
             let terms = sum.terms();
-            let a = if !terms
-                .iter()
-                .any(|t| is_constant(t, &integral.relative_to()))
-            {
+            let a = if !terms.iter().any(|t| is_constant(t, &integral.variable())) {
                 return vec![];
             } else {
                 terms
                     .iter()
-                    .find(|t| is_constant(t, &integral.relative_to()))
+                    .find(|t| is_constant(t, &integral.variable()))
                     .unwrap()
             };
 
@@ -85,7 +82,7 @@ impl DerivationRule for IntegrateArcTrig {
 
             product_of(&[
                 numerator,
-                arcsin(Fraction::of(integral.relative_to(), sqrt(a.clone()))),
+                arcsin(Fraction::of(integral.variable(), sqrt(a.clone()))),
             ])
         } else if let Expression::Product(prod) = f.denominator() {
             let factors = prod.factors();
@@ -93,7 +90,7 @@ impl DerivationRule for IntegrateArcTrig {
                 return vec![];
             }
 
-            if !factors.contains(&integral.relative_to()) {
+            if !factors.contains(&integral.variable()) {
                 return vec![];
             }
 
@@ -118,7 +115,7 @@ impl DerivationRule for IntegrateArcTrig {
 
             let mut a: Option<Expression> = None;
             for term in terms {
-                if is_constant(term, &integral.relative_to()) {
+                if is_constant(term, &integral.variable()) {
                     let Expression::Negation(n) = term else {
                         return vec![];
                     };
@@ -127,7 +124,7 @@ impl DerivationRule for IntegrateArcTrig {
                     let Expression::Exponent(e) = term else {
                         return vec![];
                     };
-                    if e.base() != integral.relative_to() {
+                    if e.base() != integral.variable() {
                         return vec![];
                     }
                 }
@@ -142,7 +139,7 @@ impl DerivationRule for IntegrateArcTrig {
                 numerator,
                 Fraction::of(Integer::of(1), sqrt(a_final.clone())),
                 arcsec(Fraction::of(
-                    AbsoluteValue::of(integral.relative_to()),
+                    AbsoluteValue::of(integral.variable()),
                     sqrt(a_final.clone()),
                 )),
             ])
