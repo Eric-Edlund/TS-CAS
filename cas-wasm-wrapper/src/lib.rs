@@ -20,6 +20,11 @@ pub fn simplify_with_steps(
 }
 
 #[wasm_bindgen]
-pub fn get_all_equivalents(json_expression: &str, search_depth: u32, optimizer: &str) -> String {
-    cas::get_all_equivalents(json_expression, search_depth, optimizer)
+pub fn get_all_equivalents(
+    json_expression: &str,
+    search_depth: u32,
+    optimizer: &str,
+    max_derived: u32,
+) -> String {
+    cas::get_all_equivalents(json_expression, search_depth, optimizer, max_derived)
 }

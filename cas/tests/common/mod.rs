@@ -46,13 +46,13 @@ pub fn ln(exp: &str) -> String {
     format!("[\"Logarithm\",{},{}]", e(), exp)
 }
 pub fn e() -> String {
-    String::from("E")
+    String::from("\"E\"")
 }
 pub fn pi() -> String {
-    String::from("Pi")
+    String::from("\"Pi\"")
 }
 pub fn imag() -> String {
-    String::from("ImaginaryUnit")
+    String::from("\"ImaginaryUnit\"")
 }
 pub fn abs(exp: &str) -> String {
     format!("[\"Abs\",{}]", exp)
@@ -78,8 +78,8 @@ pub type Problem = (String, String);
 /// and runs the deriver. Tests if the expected value is derived
 /// and marked as the simplest equivalent found.
 /// Returns true if the expected simplification was derived.
-fn assert_simplify(start: &str, expected: &str, depth: u32) -> bool {
-    let result_json = get_all_equivalents(start, depth, "evaluate_first");
+fn assert_simplify(start: &str, expected: &str, depth: u32, max_derivations: u32) -> bool {
+    let result_json = get_all_equivalents(start, depth, "evaluate_first", max_derivations);
     let json = serde_json::from_str(&result_json).unwrap();
     let Value::Object(obj) = json else { panic!() };
     let Value::Array(ref equivalents) = obj["equivalents"] else {
@@ -95,11 +95,11 @@ fn assert_simplify(start: &str, expected: &str, depth: u32) -> bool {
 /// Specifies a problem with several parameters for the deriver to use.
 /// Tests that the problem's solution can be found within the given
 /// parameters. Does this in a different thread.
-pub fn add_test(name: &str, p: Problem, depth: u32) {
+pub fn add_test(name: &str, p: Problem, depth: u32, max_derivations: u32) {
     let n = name.to_string();
 
     let thread = thread::spawn(move || {
-        let result = assert_simplify(&p.0, &p.1, depth);
+        let result = assert_simplify(&p.0, &p.1, depth, max_derivations);
         TEST_RESULTS.lock().unwrap().push(TestResult {
             test: (n.to_string(), p, depth),
             success: result,
