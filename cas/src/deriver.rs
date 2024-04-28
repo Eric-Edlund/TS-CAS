@@ -45,14 +45,15 @@ impl Deriver {
     /// Expands the graph with equivalent expressions.
     ///
     /// - depth The number of recursions used to search for equivlaents.
-    /// - debug If present, the expand operation is tracked in the borrowed struct.
-    ///
-    pub fn expand(&mut self, graph: &mut Graph, depth: u32) {
+    pub fn expand(&mut self, graph: &mut Graph, depth: u32, max_derivations: u32) {
         for i in graph.node_indices() {
             let node = graph.node_weight(i).unwrap();
             self.node_indices.insert(node.clone(), i);
         }
         for _ in 0..depth {
+            if graph.node_count() as u32 >= max_derivations {
+                return;
+            }
             self.pass(graph);
         }
     }
@@ -109,7 +110,7 @@ mod tests {
         let mut graph = Graph::new();
         let start = sum_of(&[i(1), i(3), i(3), product_of(&[i(3), i(3)])]);
         graph.add_node(start);
-        deriver.expand(&mut graph, 5);
+        deriver.expand(&mut graph, 5, 10000);
 
         assert!(graph.node_weights().any(|exp| *exp == i(16)));
     }
