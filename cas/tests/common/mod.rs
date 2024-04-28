@@ -1,5 +1,5 @@
-use std::{collections::{HashSet}, sync::Mutex, thread::{JoinHandle}};
 use std::thread;
+use std::{collections::HashSet, sync::Mutex, thread::JoinHandle};
 
 use cas::get_all_equivalents;
 use once_cell::sync::Lazy;
@@ -13,7 +13,7 @@ use serde_json::Value;
 pub fn int(exp: &str, var: &str) -> String {
     format!("[\"Integral\",{},{}]", exp, var)
 }
-pub fn  num(value: u32) -> String {
+pub fn num(value: u32) -> String {
     format!("{{\"num\":{}}}", value)
 }
 pub fn frac(num: &str, den: &str) -> String {
@@ -39,7 +39,7 @@ pub fn pow(base: &str, pow: &str) -> String {
 }
 pub fn log(base: &str, exp: &str) -> String {
     format!("[\"Logarithm\",{},{}]", base, exp)
-} 
+}
 pub fn ln(_exp: &str) -> String {
     todo!()
     // format!("[\"Logarithm\",{},{}]", base, exp)
@@ -57,7 +57,6 @@ pub fn arctan(exp: &str) -> String {
     format!("[\"Arctan\",{}]", exp)
 }
 
-
 pub const X: &str = "{\"var\":\"x\"}";
 pub const T: &str = "{\"var\":\"t\"}";
 
@@ -65,21 +64,22 @@ pub const T: &str = "{\"var\":\"t\"}";
 /// and expected solution.
 pub type Problem = (String, String);
 
-
-/// Takes a start and expected expression in MathJSON format 
+/// Takes a start and expected expression in MathJSON format
 /// and runs the deriver. Tests if the expected value is derived
 /// and marked as the simplest equivalent found.
 /// Returns true if the expected simplification was derived.
 fn assert_simplify(start: &str, expected: &str, depth: u32) -> bool {
     let result_json = get_all_equivalents(start, depth, "evaluate_first");
     let json = serde_json::from_str(&result_json).unwrap();
-    let Value::Object(obj) = json
-    else { panic!() };
-    let Value::Array(ref equivalents) = obj["equivalents"]
-    else { panic!() };
-    let result = equivalents.iter().map(|x|x.to_string())
+    let Value::Object(obj) = json else { panic!() };
+    let Value::Array(ref equivalents) = obj["equivalents"] else {
+        panic!()
+    };
+    let result = equivalents
+        .iter()
+        .map(|x| x.to_string())
         .collect::<HashSet<String>>();
-    if !result.contains(expected){
+    if !result.contains(expected) {
         false
     } else {
         true
@@ -117,8 +117,8 @@ pub fn report_results() {
             println!("Test {} passed.", &result.test.0);
         } else {
             println!("Test {} FAILED.", &result.test.0);
-            println!("\nInitial: {}", result.test.1.0);
-            println!("\nExpected (not found): {}", result.test.1.1);
+            println!("\nInitial: {}", result.test.1 .0);
+            println!("\nExpected (not found): {}", result.test.1 .1);
             passed_all = false;
         }
     }
@@ -133,8 +133,5 @@ struct TestResult {
     success: bool,
 }
 
-static RUNNING_TESTS: Lazy<Mutex<Vec<JoinHandle<()>>>>
-     = Lazy::new(|| Mutex::new(Vec::new()));
-static TEST_RESULTS: Lazy<Mutex<Vec<TestResult>>>
-     = Lazy::new(|| Mutex::new(Vec::new()));
-
+static RUNNING_TESTS: Lazy<Mutex<Vec<JoinHandle<()>>>> = Lazy::new(|| Mutex::new(Vec::new()));
+static TEST_RESULTS: Lazy<Mutex<Vec<TestResult>>> = Lazy::new(|| Mutex::new(Vec::new()));
