@@ -57,7 +57,7 @@ impl OptimizationProfile for BruteForceProfile {
 
 /// Apply evaluation/associative simplification rules with only one output
 /// first. Expressions which are simplified by these rules are then excluded
-/// from being used by more <complex rules in later passes.
+/// from being used by more complex rules in later passes.
 pub struct EvaluateFirstProfile {
     already_seen: HashSet<Expression>,
 }
