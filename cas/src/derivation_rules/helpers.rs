@@ -4,11 +4,14 @@
 
 use std::{collections::LinkedList, iter::once};
 
+use crate::convenience_expressions::i;
 use crate::convenience_expressions::sum_of_iter;
+use crate::expressions::product::product_of;
 use crate::expressions::product::product_of_iter;
 use crate::expressions::AbsoluteValue;
 use crate::expressions::Derivative;
 use crate::expressions::Exponent;
+use crate::expressions::Integer;
 use crate::expressions::{Expression, Fraction, Integral, Logarithm, Negation, TrigExp};
 
 /**
@@ -55,6 +58,88 @@ pub fn children_rec(exp: &Expression) -> impl Iterator<Item = Expression> {
     }
 
     children.into_iter()
+}
+
+/// Lists all the factors in the given expression.
+/// Will search inside products and fractions. If it's a fraction,
+/// each factor of the denominator is pulled out as a separate 1/x.
+pub fn factors_in(exp: &Expression) -> Vec<Expression> {
+    match exp {
+        Expression::Product(p) => p.factors().clone(),
+        Expression::Fraction(f) => {
+            let mut facts = factors_in(&f.numerator());
+            facts.extend(
+                factors_in(&f.denominator())
+                    .into_iter()
+                    .map(|exp| Fraction::of(i(1), exp)),
+            );
+            facts
+        }
+        _ => vec![exp.clone()],
+    }
+}
+
+/// Removes the given factor from the expression once. If the expression does
+/// not contain the expression, returns none.
+pub fn without_factor(exp: &Expression, factor: &Expression) -> Option<Expression> {
+    // Pull apart fractions, products, etc.
+    // Fraction denominator terms -> 1/part
+
+    let mut factors = factors_in(exp);
+
+    for i in 0..factors.len() {
+        if &factors[i] == factor {
+            factors.remove(i);
+            return Some(product_of(&factors));
+        }
+    }
+
+    None
+}
+
+/// Checks if the given expression is equal to the integer 1
+pub fn is_one(exp: &Expression) -> bool {
+    match exp {
+        Expression::Integer(i) => i.value() == 1,
+        _ => false,
+    }
+}
+
+/// Separates the given expression into a product of factors constant relative to
+/// the given variable and a product of factors dependent on the variable.
+/// Either expression will be set to 1 if there was no respective part.
+pub fn separate_constant_factors(
+    exp: &Expression,
+    variable: &Expression,
+) -> (Expression, Expression) {
+    match exp {
+        Expression::Product(p) => {
+            let factors = p.factors();
+            let (constant, not): (Vec<&Expression>, Vec<&Expression>) =
+                factors.iter().partition(|e| is_constant(e, variable));
+
+            (
+                product_of_iter(&mut constant.into_iter().cloned()),
+                product_of_iter(&mut not.into_iter().cloned()),
+            )
+        }
+        Expression::Fraction(f) => {
+            let (const_num, var_num) = separate_constant_factors(&f.numerator(), variable);
+            let (const_dom, var_dom) = separate_constant_factors(&f.denominator(), variable);
+
+            (
+                Fraction::of(const_num, const_dom),
+                Fraction::of(var_num, var_dom),
+            )
+        }
+        e => {
+            if is_constant(e, variable) {
+                (e.clone(), Integer::of(1))
+            } else {
+                (Integer::of(1), e.clone())
+            }
+        }
+    }
 }
 
 /**

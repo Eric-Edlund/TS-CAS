@@ -2,8 +2,8 @@ use std::rc::Rc;
 
 use crate::{
     argument::Argument,
-    derivation_rules::helpers::is_constant,
-    expressions::{product::product_of_iter, Expression, Integer, Integral},
+    derivation_rules::helpers::{is_one, separate_constant_factors},
+    expressions::{product::product_of, Expression, Integral},
 };
 
 use super::DerivationRule;
@@ -20,33 +20,15 @@ impl DerivationRule for IntegralConstCoeff {
             return vec![];
         };
 
-        let factors = match integral.integrand() {
-            Expression::Product(p) => p.factors().clone(),
-            _ => vec![integral.integrand()],
-        };
+        let (constant, not) =
+            separate_constant_factors(&integral.integrand(), &integral.relative_to());
 
-        let (constant, not): (Vec<&Expression>, Vec<&Expression>) = factors
-            .iter()
-            .partition(|e| is_constant(e, &integral.relative_to()));
-
-        if constant.is_empty() {
-            return vec![];
-        }
-
-        if constant.len() == 1 && **constant.first().unwrap() == Integer::of(1) {
+        if is_one(&constant) {
             return vec![];
         }
 
         vec![(
-            product_of_iter(
-                &mut constant
-                    .into_iter()
-                    .chain(&[Integral::of(
-                        product_of_iter(&mut not.into_iter().cloned()),
-                        integral.relative_to(),
-                    )])
-                    .cloned(),
-            ),
+            product_of(&[constant, Integral::of(not, integral.relative_to())]),
             Argument::new(String::from("Pull out constants"), vec![input]),
         )]
     }
@@ -71,7 +53,10 @@ mod tests {
 
         assert_eq!(
             result,
-            product_of(&[i(1), i(2), v("a"), Integral::of(i(1), v("x"))])
+            product_of(&[
+                product_of(&[i(1), i(2), v("a")]),
+                Integral::of(i(1), v("x"))
+            ])
         );
 
         let start2 = Integral::of(product_of(&[i(3), v("x"), v("y")]), v("y"));
@@ -79,7 +64,7 @@ mod tests {
 
         assert_eq!(
             result2,
-            product_of(&[i(3), v("x"), Integral::of(v("y"), v("y"))])
+            product_of(&[product_of(&[i(3), v("x")]), Integral::of(v("y"), v("y"))])
         );
 
         let start3 = Integral::of(product_of(&[v("x"), v("y")]), v("y"));
