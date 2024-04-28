@@ -81,7 +81,7 @@ export class TrigExp extends Expression {
         return this.operation + this.exp.hash
     }
 
-    public evaluate(values: VariableValueMap): number {
+    public evaluate(_values: VariableValueMap): number {
         throw new Error("Not implemented")
     }
 

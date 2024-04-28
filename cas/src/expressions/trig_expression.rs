@@ -23,20 +23,24 @@ pub enum TrigFn {
 
 impl fmt::Display for TrigFn {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}", match self {
-            TrigFn::Sin => "Sin",
-            TrigFn::Cos => "Cos",
-            TrigFn::Tan => "Tan",
-            TrigFn::Csc => "Csc",
-            TrigFn::Sec => "Sec",
-            TrigFn::Cot => "Cot",
-            TrigFn::ArcSin => "Arcsin",
-            TrigFn::ArcCos => "Arccos",
-            TrigFn::ArcTan => "Arctan",
-            TrigFn::ArcSec => "Arcsec",
-            TrigFn::ArcCsc => "Arccsc",
-            TrigFn::ArcCot => "Arccot",
-        })
+        write!(
+            f,
+            "{}",
+            match self {
+                TrigFn::Sin => "Sin",
+                TrigFn::Cos => "Cos",
+                TrigFn::Tan => "Tan",
+                TrigFn::Csc => "Csc",
+                TrigFn::Sec => "Sec",
+                TrigFn::Cot => "Cot",
+                TrigFn::ArcSin => "Arcsin",
+                TrigFn::ArcCos => "Arccos",
+                TrigFn::ArcTan => "Arctan",
+                TrigFn::ArcSec => "Arcsec",
+                TrigFn::ArcCsc => "Arccsc",
+                TrigFn::ArcCot => "Arccot",
+            }
+        )
     }
 }
 
@@ -59,7 +63,7 @@ impl TrigExp {
             return result.clone();
         }
 
-        let result = Expression::Trig(Arc::new(TrigExp {operation, exp}));
+        let result = Expression::Trig(Arc::new(TrigExp { operation, exp }));
 
         instances.insert(id, result.clone());
         result
@@ -70,18 +74,18 @@ impl TrigExp {
     }
 
     /**
-    * True if the expression is an arc trig function.
-    */
+     * True if the expression is an arc trig function.
+     */
     pub fn arc(&self) -> bool {
-        match self.operation {
-            TrigFn::ArcSin => true,
-            TrigFn::ArcCos => true,
-            TrigFn::ArcTan => true,
-            TrigFn::ArcSec => true,
-            TrigFn::ArcCsc => true,
-            TrigFn::ArcCot => true,
-            _ => false,
-        }
+        matches!(
+            self.operation,
+            TrigFn::ArcSin
+                | TrigFn::ArcCos
+                | TrigFn::ArcTan
+                | TrigFn::ArcSec
+                | TrigFn::ArcCsc
+                | TrigFn::ArcCot
+        )
     }
 }
 
@@ -91,9 +95,11 @@ fn get_id(op: &TrigFn, exp: &Expression) -> String {
 
 impl IExpression for TrigExp {
     fn to_unambigious_string(&self) -> String {
-        format!("{}({})", 
-            self.operation, 
-            self.exp.as_stringable().to_unambigious_string())
+        format!(
+            "{}({})",
+            self.operation,
+            self.exp.as_stringable().to_unambigious_string()
+        )
     }
 
     fn id(&self) -> String {
@@ -110,4 +116,3 @@ impl fmt::Debug for TrigExp {
         write!(f, "{}({:?})", self.operation, self.exp)
     }
 }
-

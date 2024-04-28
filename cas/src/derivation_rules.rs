@@ -79,7 +79,7 @@ pub static ALL_RULES: RwLock<&[&(dyn DerivationRule + Sync)]> = RwLock::new(&[
     &exponent_to_zero::ExponentToZero {},
     &multiply_exponent_powers::MultiplyExponentPowers {},
     &divide_fractions::DivideFractions {},
-    &foil::FOIL {},
+    &foil::Foil {},
     // TODO: These rules aren't passing tests yet
     // &sum_coefficients_of_terms::SumCoefficientsOfTerms {},
     // &subtract_exponents_on_fractions::SubtractExponentsOnFractions {},

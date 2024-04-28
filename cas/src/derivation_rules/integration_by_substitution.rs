@@ -36,7 +36,7 @@ impl DerivationRule for IntegrateBySubstitution {
         let mut substitutions = Vec::<Expression>::new();
 
         for u_exp in sub_expressions {
-            let u_sub = Substitution::new(u_exp.clone());
+            let u_sub = Substitution::of(u_exp.clone());
 
             let du = match simplest_derivative(&u_exp, &integral.relative_to()) {
                 Some(e) => e,
@@ -46,7 +46,7 @@ impl DerivationRule for IntegrateBySubstitution {
                 }
             };
 
-            let sub = Substitution::new(du.clone());
+            let sub = Substitution::of(du.clone());
 
             // Search the integrand for du
             let substituted = substitute(

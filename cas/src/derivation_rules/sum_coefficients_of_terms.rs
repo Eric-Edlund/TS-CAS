@@ -1,13 +1,12 @@
-use std::{rc::Rc, collections::HashSet};
 use std::hash::Hash;
+use std::{collections::HashSet, rc::Rc};
 
 use crate::convenience_expressions::sum_of_iter;
-use crate::expressions::Negation;
 use crate::expressions::product::{product_of, product_of_iter};
-use crate::{expressions::{Expression}, argument::Argument};
+use crate::expressions::Negation;
+use crate::{argument::Argument, expressions::Expression};
 
 use super::DerivationRule;
-
 
 /**
 * a + 2a = (1 + 2)a
@@ -18,21 +17,23 @@ pub struct SumCoefficientsOfTerms {}
 
 // Excludes the empty set
 fn power_set<T>(set: Vec<T>) -> Vec<Vec<T>>
-where T: PartialEq + Eq + Hash + Clone {
+where
+    T: PartialEq + Eq + Hash + Clone,
+{
     let mut power_set = Vec::<Vec<T>>::new();
 
     let base: u32 = 2;
     for i in 1..base.pow(set.len() as u32) {
         let mut subset = Vec::<T>::new();
-        for j in 0..set.len() {
+        (0..set.len()).for_each(|j| {
             if i & (1 << j) != 0 {
-                subset.push(set[j as usize].clone());
+                subset.push(set[j].clone());
             }
-        }
+        });
         power_set.push(subset);
     }
 
-    return power_set;
+    power_set
 }
 
 impl DerivationRule for SumCoefficientsOfTerms {
@@ -42,24 +43,21 @@ impl DerivationRule for SumCoefficientsOfTerms {
             _ => return vec![],
         };
 
-        let expanded_terms = terms.iter()
-            .map(|term| {
-                match term {
-                    Expression::Negation(n) => (true, n.child()),
-                    _ => (false, term.clone()),
-                }
+        let expanded_terms = terms
+            .iter()
+            .map(|term| match term {
+                Expression::Negation(n) => (true, n.child()),
+                _ => (false, term.clone()),
             })
-            .map(|term| {
-                match term.1 {
-                    Expression::Product(p) => (term.0, p.factors().clone()),
-                    _ => (term.0, vec![term.1.clone()]),
-                }
+            .map(|term| match term.1 {
+                Expression::Product(p) => (term.0, p.factors().clone()),
+                _ => (term.0, vec![term.1.clone()]),
             })
             .collect::<Vec<(bool, Vec<Expression>)>>();
 
-        let factors = expanded_terms.iter()
-            .map(|term| term.1.clone())
-            .flatten()
+        let factors = expanded_terms
+            .iter()
+            .flat_map(|term| term.1.clone())
             .collect::<HashSet<Expression>>()
             .into_iter()
             .collect();
@@ -75,7 +73,7 @@ impl DerivationRule for SumCoefficientsOfTerms {
                 let mut overlaps_subset = false;
                 for factor in &subset {
                     //TODO: Check tonains all temrs
-                    if term.1.contains(&factor) {
+                    if term.1.contains(factor) {
                         overlaps_subset = true;
                     }
                 }
@@ -91,49 +89,48 @@ impl DerivationRule for SumCoefficientsOfTerms {
                 continue;
             }
 
-            fn remove_factors(exp: &[Expression], exclude: &Vec<Expression>) -> Expression {
-                product_of_iter(&mut exp.into_iter()
-                    .filter(|f| !exclude.contains(*f))
-                    .map(|f| f.clone()))
-
+            fn remove_factors(exp: &[Expression], exclude: &[Expression]) -> Expression {
+                product_of_iter(&mut exp.iter().filter(|f| !exclude.contains(*f)).cloned())
             }
 
             // Remove the pulled out factors
-            let mut filtered_terms = relevant.into_iter()
-                .map(|exp| {
-                    (exp.0, remove_factors(&exp.1, &subset))
-                })
-                .map(|exp| {
-                    if exp.0 {
-                        Negation::of(exp.1)
-                    } else {
-                        exp.1
-                    }
-                });
-                
+            let mut filtered_terms = relevant
+                .into_iter()
+                .map(|exp| (exp.0, remove_factors(&exp.1, &subset)))
+                .map(|exp| if exp.0 { Negation::of(exp.1) } else { exp.1 });
+
             let sum = sum_of_iter(&mut filtered_terms);
 
             let product = product_of(&[sum, product_of(&subset)]);
 
-            let result = sum_of_iter(&mut [product].into_iter()
-                .chain(others.into_iter()));
+            let result = sum_of_iter(&mut [product].into_iter().chain(others.into_iter()));
 
             equivalents.push(result);
         }
-        
-        equivalents.into_iter().map(|exp| {
-            (exp, Argument::new(
-                String::from("Sum coefficients of terms"), 
-                vec![input.clone()])
-            )
-        }).collect()
+
+        equivalents
+            .into_iter()
+            .map(|exp| {
+                (
+                    exp,
+                    Argument::new(
+                        String::from("Sum coefficients of terms"),
+                        vec![input.clone()],
+                    ),
+                )
+            })
+            .collect()
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{derivation_rules::DerivationRule, convenience_expressions::{v, i}, expressions::sum::sum_of};
+    use crate::{
+        convenience_expressions::{i, v},
+        derivation_rules::DerivationRule,
+        expressions::sum::sum_of,
+    };
 
     #[test]
     fn test_1() {
@@ -142,17 +139,14 @@ mod tests {
         let start = sum_of(&[
             product_of(&[v("a"), v("b")]),
             product_of(&[v("a"), v("c")]),
-            i(1)
+            i(1),
         ]);
 
         let result = rule.apply(start).first().unwrap().0.clone();
         // (b + c)a + 1
-        assert_eq!(result, sum_of(&[
-            product_of(&[
-                sum_of(&[v("b"), v("c")]),
-                v("a")
-            ]),
-            i(1)
-        ]));
+        assert_eq!(
+            result,
+            sum_of(&[product_of(&[sum_of(&[v("b"), v("c")]), v("a")]), i(1)])
+        );
     }
 }

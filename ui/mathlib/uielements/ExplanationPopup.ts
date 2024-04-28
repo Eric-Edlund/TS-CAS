@@ -1,6 +1,5 @@
 import { Argument } from "../Argument"
 import { Expression } from "../expressions/Expression"
-import { GraphEdge } from "../Graph"
 import { inMath, inMathBlock, inRow } from "../util/MathMLHelpers"
 
 export class ExplanationPopup extends HTMLDivElement {
@@ -11,7 +10,7 @@ export class ExplanationPopup extends HTMLDivElement {
      */
     public constructor(arg: Argument, onClose: () => void) {
         super()
-        this.arg = arg
+        this._arg = arg
         this.onClose = onClose
 
         const closeButton = document.createElement("b")
@@ -59,7 +58,7 @@ export class ExplanationPopup extends HTMLDivElement {
         MathJax.typeset([this])
     }
 
-    private readonly arg: Argument
+    private readonly _arg: Argument
     private readonly onClose: () => void
 }
 

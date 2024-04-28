@@ -6,8 +6,6 @@ import { MathElement } from "../expressions/MathElement"
 export class EditableMathView extends HTMLDivElement {
     public constructor() {
         super()
-
-        this.addEventListener("click", event => {})
     }
 
     public connectedCallback(): void {}

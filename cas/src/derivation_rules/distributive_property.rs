@@ -1,13 +1,16 @@
 use std::rc::Rc;
 
-use crate::{expressions::{Expression, product::product_of_iter, sum::sum_of}, argument::Argument};
+use crate::{
+    argument::Argument,
+    expressions::{product::product_of_iter, sum::sum_of, Expression},
+};
 
 use super::DerivationRule;
 
 /**
 * Distributes multiplication over addition.
 *
-* a(b+c) = ab + ac 
+* a(b+c) = ab + ac
 *
 */
 pub struct DistributiveProperty {}
@@ -20,11 +23,10 @@ impl DerivationRule for DistributiveProperty {
         };
 
         // Get all the factors which are themselves sums
-        let sum_factors = product.factors().iter()
-            .filter(|factor| match factor {
-                Expression::Sum(_) => true,
-                _ => false,
-            });
+        let sum_factors = product
+            .factors()
+            .iter()
+            .filter(|factor| matches!(factor, Expression::Sum(_)));
 
         let mut equivalents: Vec<Expression> = vec![];
 
@@ -38,36 +40,41 @@ impl DerivationRule for DistributiveProperty {
                 _ => panic!(),
             };
             // For each subset of the other factors
-            let other_factors: Vec<&Expression> = product.factors().iter()
-                .filter(|f| *f != sum)
-                .collect();
+            let other_factors: Vec<&Expression> =
+                product.factors().iter().filter(|f| *f != sum).collect();
 
             // Powerset of the other factors, excluding empty set
             let base: u32 = 2;
             for s in 1..base.pow(other_factors.len() as u32) {
-                let (to_distribute, others) = { 
+                let (to_distribute, others) = {
                     let mut subset: Vec<&Expression> = vec![];
                     let mut complement: Vec<&Expression> = vec![];
-                    for i in 0..other_factors.len() {
+                    (0..other_factors.len()).for_each(|i| {
                         if s & (1 << i) != 0 {
                             subset.push(other_factors[i]);
                         } else {
                             complement.push(other_factors[i]);
                         }
-                    };
+                    });
                     (subset, complement)
                 };
 
-                let new_terms = terms.iter()
+                let new_terms = terms
+                    .iter()
                     .map(|term| {
-                        product_of_iter(&mut [term].iter().map(|e| (*e).clone())
-                            .chain(to_distribute.iter().map(|e| (*e).clone())))
+                        product_of_iter(
+                            &mut [term]
+                                .iter()
+                                .map(|e| (*e).clone())
+                                .chain(to_distribute.iter().map(|e| (*e).clone())),
+                        )
                     })
                     .collect::<Vec<Expression>>();
 
-                let new_factors = &mut new_terms.iter()
+                let new_factors = &mut new_terms
+                    .iter()
                     .chain(others)
-                    .map(|e| e.clone())
+                    .cloned()
                     .collect::<Vec<Expression>>();
 
                 let equivalent = sum_of(new_factors);
@@ -76,9 +83,14 @@ impl DerivationRule for DistributiveProperty {
             }
         }
 
-        equivalents.iter().map(|eq| {
-            (eq.clone(), Argument::new(String::from("Divide fractions"), vec![input.clone()]))
-        })
+        equivalents
+            .iter()
+            .map(|eq| {
+                (
+                    eq.clone(),
+                    Argument::new(String::from("Divide fractions"), vec![input.clone()]),
+                )
+            })
             .collect()
     }
 }
@@ -86,7 +98,10 @@ impl DerivationRule for DistributiveProperty {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{derivation_rules::DerivationRule, convenience_expressions::v, expressions::product::product_of};
+    use crate::{
+        convenience_expressions::v, derivation_rules::DerivationRule,
+        expressions::product::product_of,
+    };
 
     #[test]
     fn test_1() {
@@ -97,7 +112,7 @@ mod tests {
         let result = rule.apply(start).first().unwrap().0.clone();
 
         // ac + bc
-        let expected = sum_of(&[product_of(&[v("a"), v("c")]), product_of(&[v("b"), v("c")])]); 
+        let expected = sum_of(&[product_of(&[v("a"), v("c")]), product_of(&[v("b"), v("c")])]);
         assert_eq!(result, expected);
     }
 }

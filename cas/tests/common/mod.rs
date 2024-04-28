@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 use std::thread;
 use std::{collections::HashSet, sync::Mutex, thread::JoinHandle};
 
@@ -79,11 +81,7 @@ fn assert_simplify(start: &str, expected: &str, depth: u32) -> bool {
         .iter()
         .map(|x| x.to_string())
         .collect::<HashSet<String>>();
-    if !result.contains(expected) {
-        false
-    } else {
-        true
-    }
+    result.contains(expected)
 }
 
 /// Specifies a problem with several parameters for the deriver to use.
@@ -106,7 +104,7 @@ pub fn add_test(name: &str, p: Problem, depth: u32) {
 /// for all the results.
 pub fn report_results() {
     let running = &mut *RUNNING_TESTS.lock().unwrap();
-    while running.len() > 0 {
+    while !running.is_empty() {
         let _ = running.pop().unwrap().join();
     }
 

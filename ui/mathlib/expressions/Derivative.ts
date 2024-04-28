@@ -1,13 +1,9 @@
 import { VariableValueMap } from "../VariableValueMap"
 import { Expression } from "./Expression"
-import { Integer } from "./Integer"
 import { NameTable } from "./MathElement"
-import { Product, ProductType } from "./Product"
+import { ProductType } from "./Product"
 import { SumType } from "./Sum"
 
-/**
- *
- */
 export class Derivative extends Expression {
     public static of(exp: Expression, relativeTo: Expression): Derivative {
         const hash = exp.hash + relativeTo.hash
@@ -64,7 +60,7 @@ export class Derivative extends Expression {
         )
     }
 
-    public evaluate(values: VariableValueMap): number {
+    public evaluate(_values: VariableValueMap): number {
         // Maybe later
         return NaN
     }

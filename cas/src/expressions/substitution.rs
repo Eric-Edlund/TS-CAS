@@ -17,7 +17,7 @@ impl Substitution {
     /// Creates a new Substitution, not equal to any either substitution.
     /// Creating a substitution for 1 twice will produce two different
     /// substitutions.
-    pub fn new(exp: Expression) -> Expression {
+    pub fn of(exp: Expression) -> Expression {
         let mut counter = SUBSTITUTION_COUNTER.lock().unwrap();
         let next_sub_id = *counter;
         *counter += 1;
@@ -72,8 +72,8 @@ mod tests {
 
     #[test]
     fn flywheel() {
-        let a = Substitution::new(Integer::of(1));
-        let b = Substitution::new(Integer::of(1));
+        let a = Substitution::of(Integer::of(1));
+        let b = Substitution::of(Integer::of(1));
 
         assert_ne!(a, b);
     }

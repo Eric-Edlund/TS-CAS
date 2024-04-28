@@ -161,7 +161,7 @@ impl PartialEq for Expression {
 }
 
 // We implement Flywheel in all expression subclasses
-pub(self) static EXPRESSION_INSTANCES: Lazy<Mutex<HashMap<ExpressionId, Expression>>> =
+static EXPRESSION_INSTANCES: Lazy<Mutex<HashMap<ExpressionId, Expression>>> =
     Lazy::new(|| Mutex::new(HashMap::new()));
 
 impl Expression {

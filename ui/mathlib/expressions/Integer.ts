@@ -47,7 +47,7 @@ export class Integer extends Expression {
         return "Int" + this.value
     }
 
-    public evaluate(values: VariableValueMap): number {
+    public evaluate(_values: VariableValueMap): number {
         return this.value
     }
 

@@ -19,10 +19,8 @@ import { Interpreter } from "./mathlib/interpreting/Interpreter"
 import { RULE_ID as Evaluate_Sums_Rule } from "./mathlib/derivations/simplifications/EvaluateSums"
 import { setOf } from "./mathlib/util/ThingsThatShouldBeInTheStdLib"
 import { parseExpression } from "./mathlib/userinput/AntlrMathParser"
-import { Derivative } from "./mathlib/expressions/Derivative"
 import { Integral } from "./mathlib/expressions/Integral"
 import { Exponent } from "./mathlib/expressions/Exponent"
-import { load } from "mime"
 
 RelationalDerivationRule.rules.add(new SubtractFromBothSides())
 RelationalDerivationRule.rules.add(new DivideOnBothSides())
