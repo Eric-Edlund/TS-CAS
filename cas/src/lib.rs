@@ -10,14 +10,16 @@ mod graph_traversal;
 mod mathxml;
 mod optimization_profiles;
 
-use std::collections::HashSet;
+use std::{cell::RefCell, collections::HashSet, rc::Rc};
 
+pub use deriver::DerivationDebugInfo;
 use deriver::Deriver;
-use expressions::read_object_from_json;
+pub use expressions::{read_object_from_json, Expression};
 use graph::Graph;
 use graph_traversal::{expression_complexity_cmp, Path};
-use optimization_profiles::{BruteForceProfile, EvaluateFirstProfile, OptimizationProfile};
+pub use optimization_profiles::{BruteForceProfile, EvaluateFirstProfile, OptimizationProfile};
 use petgraph::{algo::astar, visit::IntoNodeReferences};
+use serde::Serialize;
 use serde_json::json;
 
 /// Takes an expression in JSON form, parses, simplifies then returns
@@ -51,20 +53,34 @@ pub fn simplify_with_steps(
         Ok(exp) => exp,
         Err(msg) => return msg,
     };
-    let mut graph = Graph::new();
-    let mut opt: Box<dyn OptimizationProfile> = match optimizer {
+    let opt: Box<dyn OptimizationProfile> = match optimizer {
         "brute_force" => BruteForceProfile::new(),
         "evaluate_first" => EvaluateFirstProfile::new(),
         _ => panic!("Invalid optimizer"),
     };
 
+    let result = simplify_with_steps_internal(&expression, search_depth, opt, allowed_rules, None);
+
+    json!(result).to_string()
+}
+
+pub fn simplify_with_steps_internal(
+    expression: &Expression,
+    search_depth: u32,
+    optimizer: Box<dyn OptimizationProfile>,
+    allowed_rules: Option<Vec<String>>,
+    debug_data: Option<Rc<RefCell<DerivationDebugInfo>>>,
+) -> DerivationResult {
+    let mut optimizer = optimizer;
     if let Some(rules) = allowed_rules {
-        let _ = opt.set_rules(&rules);
+        let _ = optimizer.set_rules(&rules);
     }
 
-    let mut deriver = Deriver::new(opt);
-
+    let mut graph = Graph::new();
     let start = graph.add_node(expression.clone());
+
+    let mut deriver = Deriver::new(optimizer);
+    deriver.set_debug(debug_data);
     deriver.expand(&mut graph, search_depth);
 
     let simplest_exp = graph
@@ -75,7 +91,7 @@ pub fn simplify_with_steps(
     let shortest_path = astar(&graph, start, |n| n == simplest_exp.0, |_| 1, |_| 0)
         .expect("There must be a path because the graph is connected");
 
-    let mut result = Path {
+    let mut result_path = Path {
         start: expression.clone(),
         steps: vec![],
     };
@@ -83,7 +99,7 @@ pub fn simplify_with_steps(
     let mut last_node = start;
     for step in shortest_path.1.iter().skip(1) {
         let edge_id = graph.find_edge(last_node, *step).unwrap();
-        result.steps.push((
+        result_path.steps.push((
             graph
                 .edge_weight(edge_id)
                 .unwrap()
@@ -97,11 +113,22 @@ pub fn simplify_with_steps(
         last_node = *step;
     }
 
-    json!({
-        "steps": &result,
-        "success": &expression != simplest_exp.1
-    })
-    .to_string()
+    let success = expression != simplest_exp.1;
+
+    DerivationResult {
+        success,
+        steps: if success { Some(result_path) } else { None },
+    }
+}
+
+#[derive(Serialize)]
+pub struct DerivationResult {
+    /// The derivation produced an equivalent expression of lower complexity than
+    /// the given one.
+    pub success: bool,
+
+    /// Present if the result was successful.
+    pub steps: Option<Path>,
 }
 
 /// - optimizer brute_force | evaluate_first

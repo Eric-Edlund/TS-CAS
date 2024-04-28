@@ -1,5 +1,7 @@
+use std::cell::RefCell;
 use std::collections::hash_map::Entry;
 use std::collections::{HashMap, HashSet};
+use std::rc::Rc;
 
 use petgraph::data::DataMap;
 use petgraph::graph::NodeIndex;
@@ -10,10 +12,17 @@ use crate::{
     optimization_profiles::OptimizationProfile,
 };
 
+#[derive(Clone)]
+pub struct DerivationDebugInfo {
+    /// How many times each rule was applied and returned an expression.
+    pub rule_uses: HashMap<String, u32>,
+}
+
 /// Object used to expand graphs.
 pub struct Deriver {
     node_indices: HashMap<Expression, NodeIndex>,
     optimizer: Box<dyn OptimizationProfile>,
+    debug_info: Option<Rc<RefCell<DerivationDebugInfo>>>,
 }
 
 impl Deriver {
@@ -21,13 +30,23 @@ impl Deriver {
         Deriver {
             node_indices: HashMap::new(),
             optimizer,
+            debug_info: None,
         }
     }
 
-    /*
-     * Expands the graph with equivalent expressions.
-     * @param depth The number of recursions used to search for equivlaents.
-     */
+    pub fn set_debug(&mut self, debug: Option<Rc<RefCell<DerivationDebugInfo>>>) {
+        self.debug_info = debug;
+
+        if let Some(ref debug) = self.debug_info {
+            let _ = self.optimizer.set_debug(debug.clone());
+        }
+    }
+
+    /// Expands the graph with equivalent expressions.
+    ///
+    /// - depth The number of recursions used to search for equivlaents.
+    /// - debug If present, the expand operation is tracked in the borrowed struct.
+    ///
     pub fn expand(&mut self, graph: &mut Graph, depth: u32) {
         for i in graph.node_indices() {
             let node = graph.node_weight(i).unwrap();

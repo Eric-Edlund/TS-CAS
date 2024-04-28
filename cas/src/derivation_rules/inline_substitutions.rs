@@ -19,6 +19,10 @@ impl DerivationRule for InlineSubstitutions {
             Argument::new(String::from("Inline substitution"), vec![input]),
         )]
     }
+
+    fn name(&self) -> String {
+        String::from("InlineSubstitution")
+    }
 }
 
 #[cfg(test)]
