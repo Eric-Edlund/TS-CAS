@@ -65,6 +65,7 @@ export class TrigExp extends Expression {
             this.operation.toLowerCase() + 
             "</mtext>" +
             (power != null ? `${power.toMathXML(table)}</msup>` : "") + 
+            "<mspace width=\"0.5em\"/>" + 
             "<mrow>" + wrapIfNeeded(this.exp) + "</mrow></mrow>"
 
     }
