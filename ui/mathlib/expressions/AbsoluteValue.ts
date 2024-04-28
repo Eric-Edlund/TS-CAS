@@ -1,5 +1,6 @@
 import { VariableValueMap } from "../VariableValueMap";
 import { Expression } from "./Expression"
+import { NameTable } from "./MathElement";
 
 
 export class AbsoluteValue extends Expression {
@@ -16,8 +17,8 @@ export class AbsoluteValue extends Expression {
         super()
         this.exp = exp
     }
-    public toMathXML(): string {
-        return `<mrow><mo>|</mo>${this.exp.toMathXML()}<mo>|</mo></mrow>`
+    public toMathXML(table: NameTable): string {
+        return `<mrow><mo>|</mo>${this.exp.toMathXML(table)}<mo>|</mo></mrow>`
     }
     public isReducible: boolean;
     public class: string;

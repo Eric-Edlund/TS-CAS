@@ -25,23 +25,25 @@ export class ExplanationPopup extends HTMLDivElement {
 
         const text = document.createElement("div")
         text.innerHTML = arg.argument + "<br>"
+        const table = {}
         if (
             arg.claim.n instanceof Expression &&
             arg.claim.n1 instanceof Expression
-        )
+        ) {
             text.innerHTML +=
                 inMathBlock(
                     inRow(
-                        arg.claim.n.toMathXML() +
+                        arg.claim.n.toMathXML(table) +
                             " <mo>" +
                             arg.claim.r +
                             "</mo> " +
-                            arg.claim.n1.toMathXML()
+                            arg.claim.n1.toMathXML(table)
                     )
                 ) + "<br> Derived from: <br>"
+        }
         for (const ground of arg.grounds) {
             if (ground instanceof Expression)
-                text.innerHTML += inMath(ground.toMathXML()) + "<br>"
+                text.innerHTML += inMath(ground.toMathXML(table)) + "<br>"
         }
         this.append(text)
 

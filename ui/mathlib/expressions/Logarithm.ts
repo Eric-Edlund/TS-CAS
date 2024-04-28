@@ -4,6 +4,7 @@ import { inParen } from "../util/MathMLHelpers"
 import { ConstantExp } from "./ConstantExp"
 import { Expression } from "./Expression"
 import { Integer } from "./Integer"
+import { NameTable } from "./MathElement"
 import { ProductType } from "./Product"
 import { SumType } from "./Sum"
 
@@ -26,12 +27,12 @@ export class Logarithm extends Expression {
         this.childCount = 2 + exp.childCount + base.childCount
     }
 
-    public toMathXML(): string {
+    public toMathXML(table: NameTable): string {
         let text = "log"
         if (this.base === ConstantExp.of("Euler")) {
             text = "ln"
         }
-        let base = this.base.toMathXML()
+        let base = this.base.toMathXML(table)
         if (text === "ln") {
             base = ""
         } else if (text === "log" && this.base === Integer.of(10)) {
@@ -40,9 +41,9 @@ export class Logarithm extends Expression {
         function wrapIfNeeded(exp: Expression): string {
             if (exp.class === ProductType
             || exp.class === SumType) {
-                return inParen(exp.toMathXML())
+                return inParen(exp.toMathXML(table))
             }
-            return exp.toMathXML()
+            return exp.toMathXML(table)
         }
         if (base === "") {
             return `<mrow>

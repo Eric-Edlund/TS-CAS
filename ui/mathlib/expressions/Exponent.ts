@@ -3,6 +3,7 @@ import { VariableValueMap } from "../VariableValueMap"
 import { Expression } from "./Expression"
 import { Fraction, FractionType } from "./Fraction"
 import { Integer, IntegerType } from "./Integer"
+import { NameTable } from "./MathElement"
 import { ProductType } from "./Product"
 import { SumType } from "./Sum"
 import { TrigType } from "./TrigExp"
@@ -18,7 +19,7 @@ export class Exponent extends Expression {
     private static instances = new Map<string, Exponent>()
 
     public class: string = ExponentType
-    public toMathXML(): string {
+    public toMathXML(table: NameTable): string {
         function wrapIfNeeded(exp: Expression): string {
             if (
                 exp.class == SumType ||
@@ -26,16 +27,16 @@ export class Exponent extends Expression {
                 exp.class == FractionType ||
                 exp.class == TrigType
             )
-                return inRow(inParen(exp.toMathXML()))
-            return exp.toMathXML()
+                return inRow(inParen(exp.toMathXML(table)))
+            return exp.toMathXML(table)
         }
         if (this.power === Fraction.of(Integer.of(1), Integer.of(2))) {
-            return `<msqrt>${this.base.toMathXML()}</msqrt>`
+            return `<msqrt>${this.base.toMathXML(table)}</msqrt>`
         }
         return (
             "<msup>" +
             wrapIfNeeded(this.base) +
-            inRow(this.power.toMathXML()) +
+            inRow(this.power.toMathXML(table)) +
             "</msup>"
         )
     }
