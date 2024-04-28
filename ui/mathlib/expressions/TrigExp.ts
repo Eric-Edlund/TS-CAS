@@ -40,7 +40,15 @@ export class TrigExp extends Expression {
     }
 
     public class: string = TrigType
+
+    public toMathXMLWithInlinePower(table: NameTable, power: Expression): string {
+        return this.mathXMLImpl(table, power)
+    }
     public toMathXML(table: NameTable): string {
+        return this.mathXMLImpl(table, null)
+    }
+
+    private mathXMLImpl(table: NameTable, power: Expression | null): string {
         function wrapIfNeeded(exp: Expression): string {
             if (exp.class !== IntegerType 
                 && exp.class !== VariableType
@@ -51,8 +59,14 @@ export class TrigExp extends Expression {
             return exp.toMathXML(table);
         }
 
-        return "<mrow><mtext>" + this.operation.toLowerCase() + 
-            "</mtext><mrow>" + wrapIfNeeded(this.exp) + "</mrow></mrow>"
+        return "<mrow>" + 
+            (power != null ? "<msup>" : "") + 
+            "<mtext>" +
+            this.operation.toLowerCase() + 
+            "</mtext>" +
+            (power != null ? `${power.toMathXML(table)}</msup>` : "") + 
+            "<mrow>" + wrapIfNeeded(this.exp) + "</mrow></mrow>"
+
     }
 
     public toString(): string {
