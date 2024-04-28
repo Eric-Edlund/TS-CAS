@@ -2,6 +2,7 @@ import { assert } from "../util/assert"
 import { VariableValueMap } from "../VariableValueMap"
 import { Expression } from "./Expression"
 import { Integer, IntegerType } from "./Integer"
+import { NameTable } from "./MathElement"
 import { Product } from "./Product"
 import { VariableType } from "./Variable"
 
@@ -61,11 +62,11 @@ export class Sum extends Expression {
         return Sum.of(newTerms)
     }
 
-    public toMathXML(): string {
+    public toMathXML(table: NameTable): string {
         function wrapIfNeeded(exp: Expression): string {
             if (exp.class == SumType)
-                return "<mo>(</mo>" + exp.toMathXML() + "<mo>)</mo>"
-            return exp.toMathXML()
+                return "<mo>(</mo>" + exp.toMathXML(table) + "<mo>)</mo>"
+            return exp.toMathXML(table)
         }
 
         let out = wrapIfNeeded(this.terms[0])

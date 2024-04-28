@@ -1,6 +1,7 @@
 import { VariableValueMap } from "../VariableValueMap"
 import { Expression } from "./Expression"
 import { Integer } from "./Integer"
+import { NameTable } from "./MathElement"
 import { Product, ProductType } from "./Product"
 import { SumType } from "./Sum"
 
@@ -49,11 +50,11 @@ export class Derivative extends Expression {
         return this.class + this.exp.hash + this.relativeTo.hash
     }
 
-    public toMathXML(): string {
+    public toMathXML(table: NameTable): string {
         function wrapIfNeeded(exp: Expression): string {
             if (exp.class == SumType || exp.class == ProductType)
-                return "<mo>(</mo>" + exp.toMathXML() + "<mo>)</mo>"
-            return exp.toMathXML()
+                return "<mo>(</mo>" + exp.toMathXML(table) + "<mo>)</mo>"
+            return exp.toMathXML(table)
         }
         return (
             "<mfrac><mn>d</mn><mrow><mn>d</mn>" +

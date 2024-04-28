@@ -4,6 +4,7 @@ import { VariableValueMap } from "../VariableValueMap"
 import { Exponent } from "./Exponent" 
 import { Expression } from "./Expression"
 import { Integer, IntegerType } from "./Integer"
+import { NameTable } from "./MathElement"
 import { SumType } from "./Sum"
 import { Variable } from "./Variable"
 
@@ -103,12 +104,12 @@ export class Product extends Expression {
         return Product.of(newFactors)
     }
 
-    public toMathXML(): string {
+    public toMathXML(table: NameTable): string {
         let out = ""
         function wrapIfNeeded(exp: Expression): string {
             if (exp.class == ProductType || exp.class == SumType)
-                return "<mo>(</mo>" + exp.toMathXML() + "<mo>)</mo>"
-            return exp.toMathXML()
+                return "<mo>(</mo>" + exp.toMathXML(table) + "<mo>)</mo>"
+            return exp.toMathXML(table)
         }
 
         // Either this is a negation, or a list of products

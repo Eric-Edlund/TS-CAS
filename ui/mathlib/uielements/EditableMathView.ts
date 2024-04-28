@@ -15,7 +15,7 @@ export class EditableMathView extends HTMLDivElement {
     public set value(e: MathElement | null) {
         this._value = e
         this.innerHTML =
-            "<math display='block'>" + (e?.toMathXML() ?? "") + "</math>"
+            "<math display='block'>" + (e?.toMathXML({}) ?? "") + "</math>"
         this.listeners.forEach(l => l(this._value))
         MathJax.typeset([this])
     }

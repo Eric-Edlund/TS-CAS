@@ -1,6 +1,6 @@
 import { MathGraphNode } from "../MathGraphNode"
 import { VariableValueMap } from "../VariableValueMap"
-import { MathElement } from "./MathElement"
+import { MathElement, NameTable } from "./MathElement"
 
 export interface JSONMath {
     /**
@@ -19,7 +19,7 @@ export abstract class Expression
     extends MathGraphNode
     implements MathElement, JSONMath
 {
-    public abstract toMathXML(): string
+    public abstract toMathXML(table: NameTable): string
 
     /**
      * True if the expression could be written as an

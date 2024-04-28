@@ -1,5 +1,6 @@
 import { VariableValueMap } from "../VariableValueMap"
 import { Expression } from "./Expression"
+import { NameTable } from "./MathElement"
 
 export class Fraction extends Expression {
     public static of(numerator: Expression, denominator: Expression): Fraction {
@@ -42,12 +43,12 @@ export class Fraction extends Expression {
         return FractionType + this.numerator.hash + this.denominator.hash
     }
     public readonly isConstant: boolean
-    public toMathXML(): string {
+    public toMathXML(table: NameTable): string {
         return (
             "<mfrac><mrow>" +
-            this.numerator.toMathXML() +
+            this.numerator.toMathXML(table) +
             "</mrow><mrow>" +
-            this.denominator.toMathXML() +
+            this.denominator.toMathXML(table) +
             "</mrow></mfrac>"
         )
     }

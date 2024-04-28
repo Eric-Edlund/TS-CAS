@@ -2,6 +2,7 @@ import { inParen } from "../util/MathMLHelpers"
 import { VariableValueMap } from "../VariableValueMap"
 import { Expression } from "./Expression"
 import { Integer } from "./Integer"
+import { NameTable } from "./MathElement"
 import { ProductType } from "./Product"
 import { SumType } from "./Sum"
 
@@ -52,11 +53,11 @@ export class Integral extends Expression {
         return "∫" + this.integrand.toString() + this.relativeTo.toString()
     }
     public readonly isConstant: boolean
-    public toMathXML(): string {
+    public toMathXML(table: NameTable): string {
         function wrapIfNeeded(exp: Expression): string {
             if (exp.class == SumType || exp.class == ProductType)
-                return inParen(exp.toMathXML())
-            return exp.toMathXML()
+                return inParen(exp.toMathXML(table))
+            return exp.toMathXML(table)
         }
 
         return (
