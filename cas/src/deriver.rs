@@ -1,7 +1,6 @@
 use std::collections::hash_map::Entry;
 use std::collections::{HashMap, HashSet};
 use std::rc::Rc;
-use std::sync::RwLock;
 
 use petgraph::data::DataMap;
 use petgraph::graph::NodeIndex;
@@ -43,13 +42,7 @@ impl BruteForceProfile {
     pub fn new() -> Box<Self> {
         Box::new(Self {
             already_seen: HashSet::<Expression>::new(),
-            allowed_rules: HashSet::from_iter(
-                ALL_RULES
-                    .read()
-                    .unwrap()
-                    .iter()
-                    .map(|r| std::any::type_name_of_val(r).to_owned()),
-            ),
+            allowed_rules: HashSet::from_iter(ALL_RULES.read().unwrap().iter().map(|r| r.name())),
         })
     }
 }
@@ -63,10 +56,7 @@ impl OptimizationProfile for BruteForceProfile {
         let rules = *ALL_RULES.read().unwrap();
         rules
             .iter()
-            .filter(|rule| {
-                self.allowed_rules
-                    .contains(std::any::type_name_of_val(rule))
-            })
+            .filter(|rule| self.allowed_rules.contains(&rule.name()))
             .flat_map(|rule| equiv(exp, &|e| rule.apply(e.clone())))
             .collect()
     }
@@ -155,13 +145,6 @@ impl OptimizationProfile for DerivativesOnlyProfile {
         } else {
             vec![]
         }
-
-        // let all_rules = ALL_RULES.lock().unwrap();
-        // all_rules
-        //     .iter()
-        //     .map(|rule| equiv(&exp, &|e| rule.apply(e.clone())))
-        //     .flatten()
-        //     .collect()
     }
 
     fn set_rules(&mut self, _rules: &[String]) -> Result<(), ()> {

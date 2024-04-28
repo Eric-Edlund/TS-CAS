@@ -15,11 +15,17 @@ struct Args {
     /// The optimization profile to use.
     #[arg(short, long)]
     optimizer: Option<String>,
+
+    /// Set the maximum search depth of the derivation.
+    /// Defaults to 20 which can be quite slow for complex problems.
+    #[arg(short, long)]
+    depth: Option<u32>,
 }
 
 pub fn main() -> io::Result<()> {
     let args = Args::parse();
     let optimizer = args.optimizer.unwrap_or("brute_force".to_string());
+    let depth = args.depth.unwrap_or(20);
 
     let mut reader = BufReader::new(io::stdin());
     let mut input = String::new();
@@ -31,7 +37,7 @@ pub fn main() -> io::Result<()> {
         }
         println!(
             "{}",
-            &simplify_with_steps(&input, 20, &optimizer, args.allowed_rules.clone())
+            &simplify_with_steps(&input, depth, &optimizer, args.allowed_rules.clone())
         );
     }
 }
