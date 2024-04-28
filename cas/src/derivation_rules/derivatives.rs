@@ -1,7 +1,7 @@
 
 // Contains all the logic for recursive derivation
 
-use crate::{convenience_expressions::{i, power, sum_of_iter, v}, derivation_rules::helpers::children_rec, expressions::{product::{product_of, product_of_iter}, sum::sum_of, Derivative, Exponent, Expression, Fraction, Integer, Logarithm, Negation, Product, Sum}};
+use crate::{convenience_expressions::{i, power, sum_of_iter, v}, derivation_rules::helpers::children_rec, expressions::{product::{product_of}, sum::sum_of, Derivative, Expression, Fraction, Integer, Logarithm, Negation, Product, Sum}};
 
 use super::helpers::is_constant;
 
