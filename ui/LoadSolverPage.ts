@@ -27,6 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
     */
     async function loadSolverPage(): Promise<void> {
         await initWasm()
+        const view = document.createElement('textarea')
         const quill = MQ.MathField(inputView, {
             handlers: {
                 edit: function() {
@@ -49,8 +50,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     onInputExpressionChanged()
                 }
             },
-            autoCommands: 'int pi sqrt'
+            autoCommands: 'int pi sqrt',
+            substituteTextarea: function() {
+                return view
+            },
         })
+        view.focus()
 
         answerSummary.replaceChildren(solutionView)
 
