@@ -1,6 +1,15 @@
-use cas::simplify_with_steps;
+use cas::{
+    read_object_from_json, simplify_with_steps_internal, BruteForceProfile, DerivationDebugInfo,
+    EvaluateFirstProfile, OptimizationProfile,
+};
 use clap::Parser;
-use std::io::{self, BufRead, BufReader};
+use serde_json::json;
+use std::{
+    cell::RefCell,
+    collections::HashMap,
+    io::{self, BufRead, BufReader},
+    rc::Rc,
+};
 
 /// Commandline utility to test the deriver.
 /// Expressions are read from stdin in json format
@@ -20,12 +29,17 @@ struct Args {
     /// Defaults to 20 which can be quite slow for complex problems.
     #[arg(short, long)]
     depth: Option<u32>,
+
+    /// Report statistics about rules use during each derivation.
+    #[arg(short, long, default_value_t = false)]
+    report_rule_statistics: bool,
 }
 
-pub fn main() -> io::Result<()> {
+pub fn main() -> anyhow::Result<()> {
     let args = Args::parse();
     let optimizer = args.optimizer.unwrap_or("brute_force".to_string());
     let depth = args.depth.unwrap_or(20);
+    let report_statistics = args.report_rule_statistics;
 
     let mut reader = BufReader::new(io::stdin());
     let mut input = String::new();
@@ -35,9 +49,40 @@ pub fn main() -> io::Result<()> {
         if read == 0 {
             return Ok(());
         }
-        println!(
-            "{}",
-            &simplify_with_steps(&input, depth, &optimizer, args.allowed_rules.clone())
+
+        let debug = if report_statistics {
+            Some(Rc::new(RefCell::new(DerivationDebugInfo {
+                rule_uses: HashMap::new(),
+            })))
+        } else {
+            None
+        };
+
+        let expression = match read_object_from_json(&input) {
+            Ok(e) => e,
+            _ => continue,
+        };
+
+        let opt: Box<dyn OptimizationProfile> = match optimizer.as_str() {
+            "brute_force" => BruteForceProfile::new(),
+            "evaluate_first" => EvaluateFirstProfile::new(),
+            _ => panic!("Invalid optimizer"),
+        };
+
+        let result = &simplify_with_steps_internal(
+            &expression,
+            depth,
+            opt,
+            args.allowed_rules.clone(),
+            debug.clone(),
         );
+
+        println!("{}", json!(result));
+        if report_statistics {
+            println!("Rule Uses: ");
+            for entry in &debug.unwrap().borrow().rule_uses {
+                println!("{}: {}", entry.0, entry.1);
+            }
+        }
     }
 }
