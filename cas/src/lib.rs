@@ -16,7 +16,7 @@ pub use deriver::DerivationDebugInfo;
 use deriver::Deriver;
 pub use expressions::{read_object_from_json, Expression};
 use graph::Graph;
-use graph_traversal::{expression_complexity_cmp, Path};
+use graph_traversal::{better_solution_cmp, expression_complexity_cmp, Path};
 pub use optimization_profiles::{BruteForceProfile, EvaluateFirstProfile, OptimizationProfile};
 use petgraph::{algo::astar, visit::IntoNodeReferences};
 use serde::Serialize;
@@ -95,39 +95,43 @@ pub fn simplify_with_steps_internal(
 
     let simplest_exp = graph
         .node_references()
-        .min_by(|a, b| expression_complexity_cmp(a.1, b.1))
+        .min_by(|a, b| better_solution_cmp(a.1, b.1))
         .expect("There must be at least one node");
+    let success = expression != simplest_exp.1;
 
     let shortest_path = astar(&graph, start, |n| n == simplest_exp.0, |_| 1, |_| 0)
         .expect("There must be a path because the graph is connected");
 
-    let mut result_path = Path {
-        start: expression.clone(),
-        steps: vec![],
+    let result_path = if success {
+        let mut p = Path {
+            start: expression.clone(),
+            steps: vec![],
+        };
+
+        let mut last_node = start;
+        for step in shortest_path.1.iter().skip(1) {
+            let edge_id = graph.find_edge(last_node, *step).unwrap();
+            p.steps.push((
+                graph
+                    .edge_weight(edge_id)
+                    .unwrap()
+                    .derived_from
+                    .iter()
+                    .next()
+                    .unwrap()
+                    .clone(),
+                graph.node_weight(*step).unwrap().clone(),
+            ));
+            last_node = *step;
+        }
+        Some(p)
+    } else {
+        None
     };
-
-    let mut last_node = start;
-    for step in shortest_path.1.iter().skip(1) {
-        let edge_id = graph.find_edge(last_node, *step).unwrap();
-        result_path.steps.push((
-            graph
-                .edge_weight(edge_id)
-                .unwrap()
-                .derived_from
-                .iter()
-                .next()
-                .unwrap()
-                .clone(),
-            graph.node_weight(*step).unwrap().clone(),
-        ));
-        last_node = *step;
-    }
-
-    let success = expression != simplest_exp.1;
 
     DerivationResult {
         success,
-        steps: if success { Some(result_path) } else { None },
+        steps: result_path,
     }
 }
 
@@ -137,7 +141,7 @@ pub struct DerivationResult {
     /// the given one.
     pub success: bool,
 
-    /// Present if the result was successful.
+    /// If success, present and the last step will be the solution.
     pub steps: Option<Path>,
 }
 

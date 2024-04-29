@@ -2,46 +2,95 @@ use std::cmp::Ordering;
 use std::rc::Rc;
 
 use crate::argument::Argument;
-use crate::derivation_rules::helpers::children_of;
+use crate::derivation_rules::helpers::{children_of, children_rec};
 use crate::expressions::Expression;
 
 use serde::ser::SerializeSeq;
 use serde::Serialize;
 
-/**
-* Compares the human perceived complexity of the given expressions.
-* Expressions with fewer children and components are simpler.
-*/
+/// Ideally, the developer would be an ML expert and have some better metric for
+/// how *solved* a given expression is compared to another. Instead, here we have
+/// several approximations.
+///
+/// - A solution without an integral is ideal
+/// - Substitutions in expressions without integrals should be punished
+/// - Substitutions in expressions with integrals are ok
+
+/// Compares the human perceived complexity of the given expressions.
+/// Expressions with fewer children and components are simpler.
 pub fn expression_complexity_cmp(a: &Expression, b: &Expression) -> Ordering {
-    let diff = complexity(b) as i32 - complexity(a) as i32;
+    let diff = complexity_rec(b) as i32 - complexity_rec(a) as i32;
     diff.cmp(&0).reverse()
 }
 
-fn complexity(a: &Expression) -> u32 {
+/// Tries to guess which expression is closer to being solved for cases when
+/// there is no final solution.
+pub fn better_solution_cmp(a: &Expression, b: &Expression) -> Ordering {
+    fn contains_integral(e: &Expression) -> bool {
+        children_rec(e)
+            .chain([e.clone()])
+            .any(|e| matches!(e, Expression::Integral(_)))
+    }
+
+    if contains_integral(a) && !contains_integral(b) {
+        return Ordering::Greater;
+    }
+    if !contains_integral(a) && contains_integral(b) {
+        return Ordering::Less;
+    }
+
+    fn contains_substitution(e: &Expression) -> bool {
+        children_rec(e)
+            .chain([e.clone()])
+            .any(|e| matches!(e, Expression::Substitution(_)))
+    }
+
+    if contains_integral(a) && contains_integral(b) {
+        return complexity_rec(a).cmp(&complexity_rec(b));
+    }
+
+    if contains_substitution(a) && !contains_substitution(b) {
+        return Ordering::Greater;
+    }
+    if !contains_substitution(a) && contains_substitution(b) {
+        return Ordering::Less;
+    }
+
+    complexity_rec(a).cmp(&complexity_rec(b))
+}
+
+/// Does not enter substitutions
+fn complexity_rec(a: &Expression) -> u32 {
     match a {
         Expression::Product(p) => {
             p.factors().len() as u32
-                + p.factors().iter().map(complexity).sum::<u32>()
+                + p.factors().iter().map(complexity_rec).sum::<u32>()
                 + children_of(a)
                     .iter()
                     .filter(|x| matches!(x, Expression::Negation(_)))
                     .count() as u32
         }
         Expression::Sum(s) => {
-            s.terms().len() as u32 + s.terms().iter().map(complexity).sum::<u32>()
+            s.terms().len() as u32 + s.terms().iter().map(complexity_rec).sum::<u32>()
         }
-        Expression::Negation(n) => 1 + complexity(&n.child()),
-        Expression::Exponent(e) => 2 + complexity(&e.base()) + complexity(&e.power()),
+        Expression::Negation(n) => 1 + complexity_rec(&n.child()),
+        Expression::Exponent(e) => 2 + complexity_rec(&e.base()) + complexity_rec(&e.power()),
         Expression::Integer(_) => 1,
         Expression::Variable(_) => 1,
-        Expression::Fraction(f) => 2 + complexity(&f.numerator()) + complexity(&f.denominator()),
-        Expression::Logarithm(l) => 1 + complexity(&l.base()) + complexity(&l.exp()),
-        Expression::Derivative(d) => 3 + complexity(&d.exp()) + complexity(&d.relative_to()),
-        Expression::Integral(i) => 15 + complexity(&i.integrand()) + complexity(&i.variable()),
-        Expression::Trig(t) => 2 + complexity(&t.exp()) + if t.arc() { 2 } else { 0 },
-        Expression::AbsoluteValue(a) => 2 + complexity(&a.exp()),
+        Expression::Fraction(f) => {
+            2 + complexity_rec(&f.numerator()) + complexity_rec(&f.denominator())
+        }
+        Expression::Logarithm(l) => 1 + complexity_rec(&l.base()) + complexity_rec(&l.exp()),
+        Expression::Derivative(d) => {
+            3 + complexity_rec(&d.exp()) + complexity_rec(&d.relative_to())
+        }
+        Expression::Integral(i) => {
+            10 + complexity_rec(&i.integrand()) + complexity_rec(&i.variable())
+        }
+        Expression::Trig(t) => 2 + complexity_rec(&t.exp()) + if t.arc() { 2 } else { 0 },
+        Expression::AbsoluteValue(a) => 2 + complexity_rec(&a.exp()),
         Expression::ConstantExp(_) => 1,
-        Expression::Substitution(_) => 9999,
+        Expression::Substitution(_) => 1,
     }
 }
 
