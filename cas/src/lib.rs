@@ -10,7 +10,7 @@ mod graph_traversal;
 mod mathxml;
 mod optimization_profiles;
 
-use std::{cell::RefCell, collections::HashSet, rc::Rc};
+use std::{cell::RefCell, collections::HashSet, rc::Rc, sync::Arc};
 
 pub use deriver::DerivationDebugInfo;
 use deriver::Deriver;
@@ -72,6 +72,41 @@ pub fn simplify_with_steps(
     json!(result).to_string()
 }
 
+pub fn simplify_with_steps_incremental(
+    json_expression: &str,
+    search_depth: u32,
+    optimizer: &str,
+    allowed_rules: Option<Vec<String>>,
+    max_derivations: u32,
+    callback: &dyn Fn(String),
+) {
+    let expression = match read_object_from_json(json_expression) {
+        Ok(exp) => exp,
+        Err(msg) => {
+            callback(json!(IncrementalResult::failed(msg)).to_string());
+            return
+        },
+    };
+    let opt: Box<dyn OptimizationProfile> = match optimizer {
+        "brute_force" => BruteForceProfile::new(),
+        "evaluate_first" => EvaluateFirstProfile::new(),
+        _ => panic!("Invalid optimizer"),
+    };
+
+    simplify_with_steps_internal_incremental(
+        &expression,
+        search_depth,
+        opt,
+        allowed_rules,
+        None,
+        max_derivations,
+        &|res| {
+            let json_res = json!(res);
+            callback(json_res.to_string())
+        },
+    );
+}
+
 /// - max_derivations The largest number of equivalent expressions to find before giving up.
 pub fn simplify_with_steps_internal(
     expression: &Expression,
@@ -131,6 +166,74 @@ pub fn simplify_with_steps_internal(
     }
 }
 
+pub fn simplify_with_steps_internal_incremental(
+    expression: &Expression,
+    search_depth: u32,
+    optimizer: Box<dyn OptimizationProfile>,
+    allowed_rules: Option<Vec<String>>,
+    debug_data: Option<Rc<RefCell<DerivationDebugInfo>>>,
+    max_derivations: u32,
+    callback: &dyn Fn(IncrementalResult),
+) {
+    let mut optimizer = optimizer;
+    if let Some(rules) = allowed_rules {
+        let _ = optimizer.set_rules(&rules);
+    }
+
+    let mut graph = Graph::new();
+    let start = graph.add_node(expression.clone());
+
+    let mut deriver = Deriver::new(optimizer);
+    deriver.set_debug(debug_data);
+
+    let mut depth = search_depth;
+    let mut last: Option<Expression> = None;
+    while depth > 0 {
+        deriver.expand_increment(&mut graph, &mut depth, max_derivations);
+        let simplest_exp = graph
+            .node_references()
+            .min_by(|a, b| expression_complexity_cmp(a.1, b.1))
+            .expect("There must be at least one node");
+
+        if let Some(ref last) = last {
+            if last == simplest_exp.1 {
+                continue
+            }
+        }
+        last = Some(simplest_exp.1.clone());
+
+        let shortest_path = astar(&graph, start, |n| n == simplest_exp.0, |_| 1, |_| 0)
+            .expect("There must be a path because the graph is connected");
+
+        let mut result_path = Path {
+            start: expression.clone(),
+            steps: vec![],
+        };
+
+        let mut last_node = start;
+        for step in shortest_path.1.iter().skip(1) {
+            let edge_id = graph.find_edge(last_node, *step).unwrap();
+            result_path.steps.push((
+                graph
+                    .edge_weight(edge_id)
+                    .unwrap()
+                    .derived_from
+                    .iter()
+                    .next()
+                    .unwrap()
+                    .clone(),
+                graph.node_weight(*step).unwrap().clone(),
+            ));
+            last_node = *step;
+        }
+
+        callback(IncrementalResult {
+            steps: Some(result_path),
+            failed: None,
+        })
+    }
+}
+
 #[derive(Serialize)]
 pub struct DerivationResult {
     /// The derivation produced an equivalent expression of lower complexity than
@@ -139,6 +242,24 @@ pub struct DerivationResult {
 
     /// Present if the result was successful.
     pub steps: Option<Path>,
+}
+
+#[derive(Serialize)]
+pub struct IncrementalResult {
+    /// The path to the current simplest expression.
+    pub steps: Option<Path>,
+
+    /// If true, the operation is over.
+    pub failed: Option<String>,
+}
+
+impl IncrementalResult {
+    pub fn failed(reason: String) -> Self {
+        Self {
+            steps: None,
+            failed: Some(reason)
+        }
+    }
 }
 
 /// - optimizer brute_force | evaluate_first

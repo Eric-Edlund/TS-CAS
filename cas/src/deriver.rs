@@ -56,6 +56,20 @@ impl Deriver {
         }
     }
 
+    pub fn expand_increment(&mut self, graph: &mut Graph, depth: &mut u32, max_derviations: u32) {
+        for i in graph.node_indices() {
+            let node = graph.node_weight(i).unwrap();
+            self.node_indices.insert(node.clone(), i);
+        }
+        for _ in 0..*depth {
+            if graph.node_count() as u32 >= max_derviations {
+                return;
+            }
+            self.pass(graph);
+        }
+        *depth -= 1;
+    }
+
     fn pass(&mut self, graph: &mut Graph) {
         for i in graph.node_indices() {
             let expression = graph.node_weight(i).unwrap().clone();
