@@ -52,6 +52,7 @@ mod one_to_any_power;
 mod products_into_numerator;
 mod pull_negative_arround_fraction;
 mod pythagorean_identities;
+mod split_fractions_over_addition;
 mod subtract_exponents_on_fractions;
 mod sum_coefficients_of_terms;
 mod tan_identity;
@@ -117,6 +118,7 @@ pub static ALL_RULES: RwLock<&[&(dyn DerivationRule + Sync)]> = RwLock::new(&[
     &inline_substitutions::InlineSubstitutions {},
     &integral_to_natural_log::IntegralToNaturalLog {},
     &integral_of_negative_one::FlipNegativeOne {},
+    &split_fractions_over_addition::SplitFractionsAddition {},
 ]);
 
 pub static STRICT_SIMPLIFYING_RULES: RwLock<&[&(dyn DerivationRule + Sync)]> = RwLock::new(&[
