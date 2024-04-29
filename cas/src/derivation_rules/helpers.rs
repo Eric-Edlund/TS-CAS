@@ -128,8 +128,16 @@ pub fn separate_constant_factors(
             let (const_dom, var_dom) = separate_constant_factors(&f.denominator(), variable);
 
             (
-                Fraction::of(const_num, const_dom),
-                Fraction::of(var_num, var_dom),
+                if is_one(&const_num) && is_one(&const_dom) {
+                    Integer::of(1)
+                } else {
+                    Fraction::of(const_num, const_dom)
+                },
+                if is_one(&var_num) && is_one(&var_dom) {
+                    Integer::of(1)
+                } else {
+                    Fraction::of(var_num, var_dom)
+                },
             )
         }
         e => {
