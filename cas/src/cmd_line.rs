@@ -1,6 +1,6 @@
 use cas::{
-    read_object_from_json, simplify_with_steps_internal, BruteForceProfile, DerivationDebugInfo,
-    EvaluateFirstProfile, OptimizationProfile,
+    get_all_equivalents, read_object_from_json, simplify_with_steps_internal, BruteForceProfile,
+    DerivationDebugInfo, EvaluateFirstProfile, OptimizationProfile,
 };
 use clap::Parser;
 use serde_json::json;
@@ -95,6 +95,13 @@ pub fn main() -> anyhow::Result<()> {
             for entry in uses {
                 println!("{}: {}", entry.0, entry.1);
             }
+        }
+
+        if !result.success {
+            println!(
+                "{}",
+                get_all_equivalents(&input, depth, &optimizer, args.max_derivations)
+            )
         }
     }
 }
