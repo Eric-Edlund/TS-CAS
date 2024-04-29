@@ -2,7 +2,7 @@ use std::{cell::RefCell, collections::HashSet, rc::Rc};
 
 use crate::{
     argument::Argument,
-    derivation_rules::{ALL_RULES, STRICT_SIMPLIFYING_RULES},
+    derivation_rules::{ALL_RULES, ARITHMETIC, IDENTITIES, STRICT_SIMPLIFYING_RULES},
     deriver::DerivationDebugInfo,
     equivalence_disbatchers::equiv,
     expressions::Expression,
@@ -81,14 +81,18 @@ impl OptimizationProfile for BruteForceProfile {
 /// first. Expressions which are simplified by these rules are then excluded
 /// from being used by more complex rules in later passes.
 pub struct EvaluateFirstProfile {
-    already_seen: HashSet<Expression>,
+    defeated_by_identities: HashSet<Expression>,
+    defeated_by_arithmetic: HashSet<Expression>,
+    seen_by_strict_simplifying_rules: HashSet<Expression>,
     debug: Option<Rc<RefCell<DerivationDebugInfo>>>,
 }
 
 impl EvaluateFirstProfile {
     pub fn new() -> Box<Self> {
         Box::new(Self {
-            already_seen: HashSet::<Expression>::new(),
+            defeated_by_identities: HashSet::new(),
+            defeated_by_arithmetic: HashSet::new(),
+            seen_by_strict_simplifying_rules: HashSet::new(),
             debug: None,
         })
     }
@@ -96,13 +100,47 @@ impl EvaluateFirstProfile {
 
 impl OptimizationProfile for EvaluateFirstProfile {
     fn find_equivalents(&mut self, exp: &Expression) -> Vec<(Expression, Rc<Argument>)> {
-        if self.already_seen.contains(exp) {
+        if self.defeated_by_identities.contains(exp) {
             return vec![];
         }
-        self.already_seen.insert(exp.clone());
-        let simplifying_rules = STRICT_SIMPLIFYING_RULES.read().unwrap();
 
-        let mut simple = simplifying_rules
+        for identity in *IDENTITIES.read().unwrap() {
+            let result = identity.apply(exp.clone());
+            if !result.is_empty() {
+                if let Option::Some(ref debug) = self.debug {
+                    *debug
+                        .borrow_mut()
+                        .rule_uses
+                        .entry(identity.name())
+                        .or_insert(0) += 1;
+                }
+                self.defeated_by_identities.insert(exp.clone());
+                return result;
+            }
+        }
+
+        if self.defeated_by_arithmetic.contains(exp) {
+            return vec![];
+        }
+
+        for rule in *ARITHMETIC.read().unwrap() {
+            let result = rule.apply(exp.clone());
+            if !result.is_empty() {
+                if let Option::Some(ref debug) = self.debug {
+                    *debug.borrow_mut().rule_uses.entry(rule.name()).or_insert(0) += 1;
+                }
+                self.defeated_by_arithmetic.insert(exp.clone());
+                return result;
+            }
+        }
+
+        if self.seen_by_strict_simplifying_rules.contains(exp) {
+            return vec![];
+        }
+        self.seen_by_strict_simplifying_rules.insert(exp.clone());
+        let mut strict_simplifying = STRICT_SIMPLIFYING_RULES
+            .read()
+            .unwrap()
             .iter()
             .flat_map(|rule| {
                 let result = equiv(exp, &|e| rule.apply(e.clone()));
@@ -115,8 +153,8 @@ impl OptimizationProfile for EvaluateFirstProfile {
             })
             .peekable();
 
-        if simple.peek().is_some() {
-            return simple.collect();
+        if strict_simplifying.peek().is_some() {
+            return strict_simplifying.collect();
         }
 
         let all_rules = ALL_RULES.read().unwrap();

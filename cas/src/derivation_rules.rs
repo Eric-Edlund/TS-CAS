@@ -121,25 +121,39 @@ pub static ALL_RULES: RwLock<&[&(dyn DerivationRule + Sync)]> = RwLock::new(&[
     &split_fractions_over_addition::SplitFractionsAddition {},
 ]);
 
+/// These rules always bring us closer to a simplified expression. Once all of
+/// them have been applied to an expression, if any of them yielded a result,
+/// we are confident that he original expression is no longer of interest.
 pub static STRICT_SIMPLIFYING_RULES: RwLock<&[&(dyn DerivationRule + Sync)]> = RwLock::new(&[
-    &cancel_negatives::CancelNegatives {},
-    &additive_identity::AdditiveIdentity {},
     &associative_property::AssociativeProperty {},
+    &integral_constant_coefficients::IntegralConstCoeff {},
+    &derivative_constant_coefficients::PullOutConst {},
+    &derivative_of_trig::DerivativeOfTrig {},
+    &integral_pull_out_negative::IntegralPullOutNegative {},
+    &integral_to_natural_log::IntegralToNaturalLog {},
+    &integral_of_negative_one::FlipNegativeOne {},
+]);
+
+/// These rules evaluate numeric expressions without losing any percision.
+pub static ARITHMETIC: RwLock<&[&(dyn DerivationRule + Sync)]> = RwLock::new(&[
     &evaluate_sums::EvaluateSums {},
+    &evaluate_products::EvaluateProducts {},
+    &evaluate_logs::EvaluateLogs {},
+    &evaluate_exponents::EvaluateExponents {},
+    &evaluate_fractions::EvaluateFractions {},
+]);
+
+/// These rules could by applied in any order one at a time and in every case
+/// that an equivalent is derived, the expression it was derived from may be
+/// safetly ignored.
+pub static IDENTITIES: RwLock<&[&(dyn DerivationRule + Sync)]> = RwLock::new(&[
+    &integral_of_constant::IntegralOfConst {},
+    &one_to_any_power::OneToAnything {},
     &multiplicative_identity::MultiplicativeIdentity {},
     &division_identity::DivisionIdentity {},
     &log_of_one::LogOfOne {},
     &exponent_to_zero::ExponentToZero {},
-    &evaluate_products::EvaluateProducts {},
-    &evaluate_logs::EvaluateLogs {},
-    &integral_constant_coefficients::IntegralConstCoeff {},
-    &integral_of_constant::IntegralOfConst {},
+    &cancel_negatives::CancelNegatives {},
+    &additive_identity::AdditiveIdentity {},
     &derivative_of_constant::DerivativeOfConst {},
-    &derivative_constant_coefficients::PullOutConst {},
-    &evaluate_exponents::EvaluateExponents {},
-    &derivative_of_trig::DerivativeOfTrig {},
-    &integral_pull_out_negative::IntegralPullOutNegative {},
-    &one_to_any_power::OneToAnything {},
-    &integral_to_natural_log::IntegralToNaturalLog {},
-    &integral_of_negative_one::FlipNegativeOne {},
 ]);

@@ -1,5 +1,8 @@
 import { EditableMathView } from "./mathlib/uielements/EditableMathView"
-import initWasm, { get_all_equivalents, simplify_with_steps } from "../cas-wasm-wrapper/pkg"
+import initWasm, {
+    get_all_equivalents,
+    simplify_with_steps
+} from "../cas-wasm-wrapper/pkg"
 import { Expression } from "./mathlib/expressions/Expression"
 import { parseExpressionJSON } from "./mathlib/expressions-from-json"
 import { parseExpressionLatex } from "./mathlib/userinput/LatexParser"
@@ -8,8 +11,7 @@ declare const MathJax: any
 declare const MQ: any
 declare const M: any
 
-document.addEventListener('DOMContentLoaded', () => {
-
+document.addEventListener("DOMContentLoaded", () => {
     const answerSummary = document.getElementById(
         "answerSummary"
     )! as HTMLDivElement
@@ -23,15 +25,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const inputView = document.getElementById("input")
 
     /**
-    * Called after the DOM is loaded.
-    */
+     * Called after the DOM is loaded.
+     */
     async function loadSolverPage(): Promise<void> {
         await initWasm()
-        const view = document.createElement('textarea')
+        const view = document.createElement("textarea")
         const quill = MQ.MathField(inputView, {
             handlers: {
-                edit: function() {
-                    const parseResult = parseExpressionLatex(quill.latex());
+                edit: function () {
+                    const parseResult = parseExpressionLatex(quill.latex())
                     if (parseResult === "empty") {
                         expression = null
                         onInputExpressionChanged()
@@ -40,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     expression = parseResult
                     if (expression == null) {
                         inputView.style.color = "red"
-                        // Also set border color 
+                        // Also set border color
                         // https://docs.mathquill.com/en/latest/Config/#changing-colors
                         inputView.style.borderColor = "red"
                     } else {
@@ -50,27 +52,27 @@ document.addEventListener('DOMContentLoaded', () => {
                     onInputExpressionChanged()
                 }
             },
-            autoCommands: 'int pi sqrt',
-            substituteTextarea: function() {
+            autoCommands: "int pi sqrt",
+            substituteTextarea: function () {
                 return view
-            },
+            }
         })
         view.focus()
 
         answerSummary.replaceChildren(solutionView)
 
-        var elems = document.querySelectorAll('.sidenav');
-        M.Sidenav.init(elems, {});
+        var elems = document.querySelectorAll(".sidenav")
+        M.Sidenav.init(elems, {})
     }
 
     // The last valid entered expression
     let expression: Expression | null
 
     /**
- * Calculates the new answer and displays it.
- * @effects The solution steps view and summary div.
- *      Does not effect the input area.
- */
+     * Calculates the new answer and displays it.
+     * @effects The solution steps view and summary div.
+     *      Does not effect the input area.
+     */
     function onInputExpressionChanged() {
         if (expression === undefined) return
         if (expression === null) {
@@ -80,10 +82,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         console.log("Parsed " + expression.toJSON())
 
-        let r = simplify_with_steps(expression.toJSON(), 20, "evaluate_first", 500)
+        let r = simplify_with_steps(
+            expression.toJSON(),
+            20,
+            "evaluate_first",
+            1000
+        )
 
         let result: {
-            steps: string[],
+            steps: string[]
             success: boolean
         } = JSON.parse(r)
 
@@ -101,8 +108,14 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             // Fetch the equivalents it was able to find
             console.log("No solution found.")
-            let result = JSON.parse(get_all_equivalents(expression.toJSON(), 20, 
-                "evaluate_first", 500))
+            let result = JSON.parse(
+                get_all_equivalents(
+                    expression.toJSON(),
+                    20,
+                    "evaluate_first",
+                    5000
+                )
+            )
             const equivalents = result["equivalents"]
             console.log("Found " + equivalents.length + " equivalents.")
             console.log("Using rules:")
@@ -111,19 +124,18 @@ document.addEventListener('DOMContentLoaded', () => {
             stepListView.innerHTML = ""
             for (const equiv of equivalents) {
                 if (new String("" + equiv).includes("Integral")) {
-                    continue;
+                    continue
                 }
                 stepListView.appendChild(row(JSON.stringify(equiv), equiv))
             }
         }
 
-
         MathJax.typeset([answerSummary, stepListView])
     }
 
     /**
- * Creates an argument row for the solution steps list.
- */
+     * Creates an argument row for the solution steps list.
+     */
     function row(argument: string, expression: string): HTMLDivElement {
         const row = document.createElement("div")
         row.classList.add("row")
@@ -142,4 +154,3 @@ document.addEventListener('DOMContentLoaded', () => {
 
     loadSolverPage()
 })
-
