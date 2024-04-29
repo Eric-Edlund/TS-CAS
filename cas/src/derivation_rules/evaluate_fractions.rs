@@ -74,6 +74,9 @@ impl DerivationRule for EvaluateFractions {
         }
 
         let (n, d) = (num.value() / gcf, den.value() / gcf);
+        if n == 1 && d == 1 {
+            return vec![];
+        }
         let result = Fraction::of(
             product_of_iter(
                 &mut [Integer::of(n)].into_iter().chain(

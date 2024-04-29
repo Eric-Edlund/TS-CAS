@@ -57,6 +57,7 @@ mod subtract_exponents_on_fractions;
 mod sum_coefficients_of_terms;
 mod tan_identity;
 mod trig_reflections;
+mod unit_fraction;
 
 pub trait DerivationRule {
     /// Produces a set of equivalent expressions from the given
@@ -119,6 +120,7 @@ pub static ALL_RULES: RwLock<&[&(dyn DerivationRule + Sync)]> = RwLock::new(&[
     &integral_to_natural_log::IntegralToNaturalLog {},
     &integral_of_negative_one::FlipNegativeOne {},
     &split_fractions_over_addition::SplitFractionsAddition {},
+    &unit_fraction::UnitFraction {},
 ]);
 
 /// These rules always bring us closer to a simplified expression. Once all of
@@ -156,4 +158,5 @@ pub static IDENTITIES: RwLock<&[&(dyn DerivationRule + Sync)]> = RwLock::new(&[
     &cancel_negatives::CancelNegatives {},
     &additive_identity::AdditiveIdentity {},
     &derivative_of_constant::DerivativeOfConst {},
+    &unit_fraction::UnitFraction {},
 ]);
