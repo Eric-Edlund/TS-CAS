@@ -18,7 +18,10 @@ pub use expressions::{read_object_from_json, Expression};
 use graph::Graph;
 use graph_traversal::{better_solution_cmp, expression_complexity_cmp, Path};
 pub use optimization_profiles::{BruteForceProfile, EvaluateFirstProfile, OptimizationProfile};
-use petgraph::{algo::astar, visit::IntoNodeReferences};
+use petgraph::{
+    algo::{astar, dijkstra},
+    visit::IntoNodeReferences,
+};
 use serde::Serialize;
 use serde_json::json;
 
@@ -84,8 +87,8 @@ pub fn simplify_with_steps_incremental(
         Ok(exp) => exp,
         Err(msg) => {
             callback(json!(IncrementalResult::failed(msg)).to_string());
-            return
-        },
+            return;
+        }
     };
     let opt: Box<dyn OptimizationProfile> = match optimizer {
         "brute_force" => BruteForceProfile::new(),
@@ -194,14 +197,26 @@ pub fn simplify_with_steps_internal_incremental(
     let mut last: Option<Expression> = None;
     while depth > 0 {
         deriver.expand_increment(&mut graph, &mut depth, max_derivations);
-        let simplest_exp = graph
+        let mut simplest_exp = graph
             .node_references()
             .min_by(|a, b| expression_complexity_cmp(a.1, b.1))
             .expect("There must be at least one node");
 
+        if simplest_exp.1 == expression {
+            simplest_exp.1 = graph
+                .node_weight(
+                    *dijkstra(&graph, simplest_exp.0, None, |_| 1)
+                        .iter()
+                        .max_by(|a, b| b.1.cmp(a.1))
+                        .unwrap()
+                        .0,
+                )
+                .unwrap();
+        }
+
         if let Some(ref last) = last {
             if last == simplest_exp.1 {
-                continue
+                continue;
             }
         }
         last = Some(simplest_exp.1.clone());
@@ -261,7 +276,7 @@ impl IncrementalResult {
     pub fn failed(reason: String) -> Self {
         Self {
             steps: None,
-            failed: Some(reason)
+            failed: Some(reason),
         }
     }
 }
