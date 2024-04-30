@@ -2,7 +2,7 @@ use std::cmp::Ordering;
 use std::rc::Rc;
 
 use crate::argument::Argument;
-use crate::derivation_rules::helpers::{children_of, children_rec};
+use crate::derivation_rules::helpers::{children_of, children_rec, factors_in};
 use crate::expressions::Expression;
 
 use serde::ser::SerializeSeq;
@@ -89,6 +89,8 @@ pub fn complexity_rec(a: &Expression) -> u32 {
         Expression::Integral(i) => {
             // Prefer several simple integrals over 1 complicated one
             5 + complexity_rec(&i.integrand()).pow(2) + complexity_rec(&i.variable())
+            // Prefer integrands with fewer occurances of the variable
+            + children_rec(&i.integrand()).filter(|f| f == &i.variable()).count() as u32
         }
         Expression::Trig(t) => 2 + complexity_rec(&t.exp()) + if t.arc() { 2 } else { 0 },
         Expression::AbsoluteValue(a) => 2 + complexity_rec(&a.exp()),
