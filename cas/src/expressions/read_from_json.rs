@@ -5,6 +5,7 @@ use super::{
     variable::Variable, AbsoluteValue, ConstantExp, Derivative, Exponent, Expression, Fraction,
     Integer, Integral, Logarithm, Negation, TrigExp,
 };
+use anyhow::anyhow;
 use serde_json::{from_str, Value};
 
 /// Reads expression objects out of JSON expressions
@@ -12,16 +13,16 @@ use serde_json::{from_str, Value};
 /**
 * Reads a JSON string into an expression or give an error message.
 */
-pub fn read_object_from_json(json: &str) -> Result<Expression, String> {
+pub fn read_object_from_json(json: &str) -> Result<Expression, anyhow::Error> {
     let obj: Value = match from_str(json) {
         Ok(val) => val,
-        Err(_) => return Err("Not a json".to_owned()),
+        Err(_) => return Err(anyhow!("Not a json")),
     };
 
     read_obj_rec(&obj)
 }
 
-fn read_obj_rec(object: &Value) -> Result<Expression, String> {
+fn read_obj_rec(object: &Value) -> Result<Expression, anyhow::Error> {
     match object {
         Value::Array(arr) => match arr.first().unwrap().as_str().unwrap() {
             "Sum" => {
@@ -29,7 +30,7 @@ fn read_obj_rec(object: &Value) -> Result<Expression, String> {
 
                 for t in terms.clone() {
                     if t.is_err() {
-                        return Err("Undefined sub expression".to_owned());
+                        return Err(anyhow!("Undefined sub expression"));
                     }
                 }
                 Ok(sum_of(
@@ -39,7 +40,7 @@ fn read_obj_rec(object: &Value) -> Result<Expression, String> {
             "Product" => {
                 let factors = arr.iter().skip(1).map(read_obj_rec);
                 if factors.clone().any(|f| f.is_err()) {
-                    return Err("Undefined sub expression".to_owned());
+                    return Err(anyhow!("Undefined sub expression"));
                 }
                 Ok(product_of(
                     &factors.map(|f| f.unwrap()).collect::<Vec<Expression>>(),
@@ -95,14 +96,14 @@ fn read_obj_rec(object: &Value) -> Result<Expression, String> {
             } else if obj.contains_key("var") {
                 Ok(Variable::of(obj["var"].as_str().unwrap()))
             } else {
-                Err(format!("Invalid object {:?}", obj))
+                Err(anyhow!(format!("Invalid object {:?}", obj)))
             }
         }
         Value::String(s) => match s.as_str() {
             "E" => Ok(ConstantExp::of(Constant::Euler)),
             "Pi" => Ok(ConstantExp::of(Constant::Pi)),
             "ImaginaryUnit" => Ok(ConstantExp::of(Constant::Imaginary)),
-            _ => Err(format!("Invalid string {:?}", s)),
+            _ => Err(anyhow!(format!("Invalid string {:?}", s))),
         },
         _ => panic!("Not implemented {}, {}", object, object.as_str().unwrap()),
     }

@@ -2,13 +2,13 @@ import { EditableMathView } from "./mathlib/uielements/EditableMathView"
 import { Expression } from "./mathlib/expressions/Expression"
 import { parseExpressionJSON } from "./mathlib/expressions-from-json"
 import { parseExpressionLatex } from "./mathlib/userinput/LatexParser"
-import { CasWorkerMsg } from "./CasWorkerTypes"
+import { CasWorkerMsg, IncrementalResult } from "./CasWorkerTypes"
 
 declare const MathJax: any
 declare const MQ: any
 declare const M: any
 
-let casWorker: Worker
+let casWorker = new Worker("casWorker.js")
 
 document.addEventListener("DOMContentLoaded", () => {
     const answerSummary = document.getElementById(
@@ -67,6 +67,25 @@ document.addEventListener("DOMContentLoaded", () => {
     // The last valid entered expression
     let expression: Expression | null
 
+    casWorker.onmessage = (incrementalResult: MessageEvent<IncrementalResult>) => {
+        const { steps, failed } = incrementalResult.data
+
+        if (failed) {
+            return
+        }
+
+        console.log(JSON.stringify(steps))
+        solutionView.value = parseExpressionJSON(steps[steps.length - 1])
+        stepListView.innerHTML = ""
+        for (let i = 1; i + 1 < steps.length; i += 2) {
+            let argument = steps[i]
+            let expression = steps[i + 1]
+
+            stepListView.appendChild(row(argument, expression))
+        }
+        MathJax.typeset([answerSummary, stepListView])
+    }
+
     /**
      * Starts solving it in the background.
      * @effects The solution steps view and summary div.
@@ -77,83 +96,17 @@ document.addEventListener("DOMContentLoaded", () => {
         if (expression === null) {
             solutionView.innerHTML = ""
             stepListView.innerHTML = ""
+            casWorker.postMessage({
+                cancel: true
+            })
             return
         }
+
         console.log("Parsed " + expression.toJSON())
 
-        // TODO: Redo the incremental solution model so that a JS timer checks
-        // in with Rust at an interval. This way, we won't have to kill the 
-        // worker and reload the wasm.
-        casWorker?.terminate()
-        casWorker = new Worker("casWorker.js")
         casWorker.postMessage({
             expressionJson: expression.toJSON()
         } as CasWorkerMsg)
-
-        casWorker.onmessage = (incrementalResult: MessageEvent<any>) => {
-            const { steps, failed } = incrementalResult.data
-
-            console.log(JSON.stringify(steps))
-            solutionView.value = parseExpressionJSON(steps[steps.length - 1])
-            stepListView.innerHTML = ""
-            for (let i = 1; i + 1 < steps.length; i += 2) {
-                let argument = steps[i]
-                let expression = steps[i + 1]
-
-                stepListView.appendChild(row(argument, expression))
-            }
-            MathJax.typeset([answerSummary, stepListView])
-        }
-
-        // let r = simplify_with_steps(
-        //     expression.toJSON(),
-        //     20,
-        //     "evaluate_first",
-        //     1000
-        // )
-        //
-        // const result: {
-        //     steps: string[]
-        //     success: boolean
-        // } = JSON.parse(r)
-        //
-        // if (result.success) {
-        //     solutionView.value = parseExpressionJSON(
-        //         result.steps[result.steps.length - 1]
-        //     )
-        //     stepListView.innerHTML = ""
-        //     for (let i = 1; i + 1 < result.steps.length; i += 2) {
-        //         let argument = result.steps[i]
-        //         let expression = result.steps[i + 1]
-        //
-        //         stepListView.appendChild(row(argument, expression))
-        //     }
-        // } else {
-        //     // Fetch the equivalents it was able to find
-        //     console.log("No solution found.")
-        //     let result = JSON.parse(
-        //         get_all_equivalents(
-        //             expression.toJSON(),
-        //             20,
-        //             "evaluate_first",
-        //             5000
-        //         )
-        //     )
-        //     const equivalents = result["equivalents"]
-        //     console.log("Found " + equivalents.length + " equivalents.")
-        //     console.log("Using rules:")
-        //     console.log(result["rules_used"])
-        //     solutionView.value = null
-        //     stepListView.innerHTML = ""
-        //     for (const equiv of equivalents) {
-        //         if (new String("" + equiv).includes("Integral")) {
-        //             continue
-        //         }
-        //         stepListView.appendChild(row(JSON.stringify(equiv), equiv))
-        //     }
-        // }
-        //
-        // MathJax.typeset([answerSummary, stepListView])
     }
 
     /**

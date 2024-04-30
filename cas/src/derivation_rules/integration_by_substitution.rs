@@ -79,12 +79,12 @@ impl DerivationRule for IntegrateBySubstitution {
 /// which doesn't include derivatives of the given variable,
 /// or None if the derivative couldn't be solved.
 fn simplest_derivative(exp: &Expression, variable: &Expression) -> Option<Expression> {
-    let mut deriver = Deriver::new(Box::new(DerivativesOnlyProfile::new()));
     let mut graph = Graph::new();
     graph.add_node(Derivative::of(exp.clone(), variable.clone()));
-    deriver.expand(&mut graph, 10, 100);
+    let mut deriver = Deriver::new(graph, Box::new(DerivativesOnlyProfile::new()), None, None);
+    deriver.expand_to_constraint(10, 100);
 
-    graph
+    deriver
         .node_references()
         .map(|x| x.1.clone())
         .filter(|x| children_rec(x).all(|e| !matches!(e, Expression::Derivative(_))))

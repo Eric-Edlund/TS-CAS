@@ -1,5 +1,5 @@
 use cas::{
-    get_all_equivalents, read_object_from_json, simplify_with_steps_internal, BruteForceProfile,
+    get_all_equivalents, read_object_from_json, simplify_internal, BruteForceProfile,
     DerivationDebugInfo, EvaluateFirstProfile, OptimizationProfile,
 };
 use clap::Parser;
@@ -73,7 +73,7 @@ pub fn main() -> anyhow::Result<()> {
             _ => panic!("Invalid optimizer"),
         };
 
-        let result = &simplify_with_steps_internal(
+        let result = &simplify_internal(
             &expression,
             depth,
             opt,
