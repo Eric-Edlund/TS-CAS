@@ -72,7 +72,7 @@ impl DerivationRule for EvaluateFractions {
         }
 
         let (n, d) = (num.value() / gcf, den.value() / gcf);
-        if n == 1 && d == 1 {
+        if (n == 1 && d == 1) || n == 0 || d == 0 {
             return vec![];
         }
         let result = Fraction::of(
