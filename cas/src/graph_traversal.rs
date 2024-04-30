@@ -60,7 +60,9 @@ pub fn better_solution_cmp(a: &Expression, b: &Expression) -> Ordering {
 }
 
 /// Does not enter substitutions
-fn complexity_rec(a: &Expression) -> u32 {
+/// Gets an integer heuristic representing the complexity of an expression. Higher is more
+/// complex.
+pub fn complexity_rec(a: &Expression) -> u32 {
     match a {
         Expression::Product(p) => {
             p.factors().len() as u32
