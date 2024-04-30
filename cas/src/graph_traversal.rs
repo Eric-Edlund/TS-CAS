@@ -85,7 +85,8 @@ fn complexity_rec(a: &Expression) -> u32 {
             3 + complexity_rec(&d.exp()) + complexity_rec(&d.relative_to())
         }
         Expression::Integral(i) => {
-            10 + complexity_rec(&i.integrand()) + complexity_rec(&i.variable())
+            // Prefer several simple integrals over 1 complicated one
+            5 + complexity_rec(&i.integrand()).pow(2) + complexity_rec(&i.variable())
         }
         Expression::Trig(t) => 2 + complexity_rec(&t.exp()) + if t.arc() { 2 } else { 0 },
         Expression::AbsoluteValue(a) => 2 + complexity_rec(&a.exp()),
