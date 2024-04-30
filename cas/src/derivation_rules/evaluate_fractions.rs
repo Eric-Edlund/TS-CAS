@@ -7,10 +7,8 @@ use crate::{
 
 use super::DerivationRule;
 
-/**
-* If the numerator and denominator both contian integers
-* and they can be reduced to a simpler fraction do so.
-*/
+/// If the numerator and denominator both contian integers
+/// and they can be reduced to a simpler fraction do so.
 pub struct EvaluateFractions {}
 
 impl DerivationRule for EvaluateFractions {
@@ -143,5 +141,14 @@ mod tests {
             result4,
             Fraction::of(product_of(&[i(2), power(v("x"), Negation::of(i(2)))]), i(1))
         );
+
+        // False positives
+        let start5 = Fraction::of(i(1), i(1));
+        let result5 = rule.apply(start5).first().is_none();
+        assert!(result5);
+
+        let start6 = Fraction::of(product_of(&[i(1), v("x")]), i(1));
+        let result6 = rule.apply(start6).first().is_none();
+        assert!(result6);
     }
 }
