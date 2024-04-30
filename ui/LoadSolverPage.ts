@@ -68,9 +68,9 @@ document.addEventListener("DOMContentLoaded", () => {
     let expression: Expression | null
 
     casWorker.onmessage = (incrementalResult: MessageEvent<IncrementalResult>) => {
-        const { steps, failed } = incrementalResult.data
+        const { steps, failed, forProblem } = incrementalResult.data
 
-        if (failed) {
+        if (failed || forProblem != expression.toJSON()) {
             return
         }
 
