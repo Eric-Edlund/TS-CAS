@@ -22,8 +22,8 @@ struct Args {
     allowed_rules: Option<Vec<String>>,
 
     /// The optimization profile to use.
-    #[arg(short, long)]
-    optimizer: Option<String>,
+    #[arg(short, long, default_value_t = String::from("evaluate_first"))]
+    optimizer: String,
 
     /// Set the maximum search depth of the derivation.
     /// Defaults to 20 which can be quite slow for complex problems.
@@ -32,7 +32,7 @@ struct Args {
 
     /// Report statistics about rules use during each derivation.
     #[arg(short, long, default_value_t = false)]
-    report_rule_statistics: bool,
+    report_statistics: bool,
 
     /// The maximum number of equivalent expressions to derive before stopping.
     #[arg(short, long, default_value_t = 100000)]
@@ -41,9 +41,9 @@ struct Args {
 
 pub fn main() -> anyhow::Result<()> {
     let args = Args::parse();
-    let optimizer = args.optimizer.unwrap_or("brute_force".to_string());
+    let optimizer = args.optimizer;
     let depth = args.depth.unwrap_or(20);
-    let report_statistics = args.report_rule_statistics;
+    let report_statistics = args.report_statistics;
 
     let mut reader = BufReader::new(io::stdin());
     let mut input = String::new();
