@@ -91,6 +91,7 @@ fn complexity_rec(a: &Expression) -> u32 {
         Expression::AbsoluteValue(a) => 2 + complexity_rec(&a.exp()),
         Expression::ConstantExp(_) => 1,
         Expression::Substitution(_) => 1,
+        Expression::Undefined => 0,
     }
 }
 

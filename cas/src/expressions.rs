@@ -2,6 +2,7 @@ use core::fmt;
 use std::{
     collections::HashMap,
     fmt::Display,
+    ops::Deref,
     sync::{Arc, Mutex},
 };
 
@@ -21,6 +22,7 @@ mod read_from_json;
 pub mod substitution;
 pub mod sum;
 pub mod trig_expression;
+mod undefined;
 pub mod variable;
 
 pub use absolute_value::AbsoluteValue;
@@ -39,7 +41,7 @@ pub use sum::Sum;
 pub use trig_expression::TrigExp;
 pub use variable::Variable;
 
-use self::substitution::Substitution;
+use self::{substitution::Substitution, undefined::UNDEFINED};
 
 pub trait IExpression {
     /**
@@ -92,6 +94,7 @@ pub enum Expression {
     AbsoluteValue(Arc<AbsoluteValue>),
     ConstantExp(Arc<ConstantExp>),
     Substitution(Arc<Substitution>),
+    Undefined,
 }
 
 impl Expression {}
@@ -116,6 +119,9 @@ impl fmt::Debug for Expression {
                 Expression::AbsoluteValue(p) => p as &dyn fmt::Debug,
                 Expression::ConstantExp(p) => p as &dyn fmt::Debug,
                 Expression::Substitution(p) => p as &dyn fmt::Debug,
+                Expression::Undefined => {
+                    return write!(f, "Undefined");
+                }
             }
         )
     }
@@ -123,6 +129,9 @@ impl fmt::Debug for Expression {
 
 impl PartialEq for Expression {
     fn eq(&self, other: &Self) -> bool {
+        if matches!(self, Expression::Undefined) && matches!(other, Expression::Undefined) {
+            return true;
+        }
         let first: Arc<dyn IExpression> = match self {
             Expression::Negation(p) => p.clone(),
             Expression::Integer(p) => p.clone(),
@@ -138,6 +147,7 @@ impl PartialEq for Expression {
             Expression::AbsoluteValue(p) => p.clone(),
             Expression::ConstantExp(p) => p.clone(),
             Expression::Substitution(p) => p.clone(),
+            Expression::Undefined => return false,
         };
         let second: Arc<dyn IExpression> = match other {
             Expression::Negation(p) => p.clone(),
@@ -154,6 +164,7 @@ impl PartialEq for Expression {
             Expression::AbsoluteValue(p) => p.clone(),
             Expression::ConstantExp(p) => p.clone(),
             Expression::Substitution(p) => p.clone(),
+            Expression::Undefined => return false,
         };
 
         Arc::ptr_eq(&first, &second)
@@ -184,6 +195,7 @@ impl Expression {
             Expression::AbsoluteValue(a) => a.clone(),
             Expression::ConstantExp(c) => c.clone(),
             Expression::Substitution(s) => s.clone(),
+            Expression::Undefined => Arc::new(UNDEFINED),
         }
     }
 
@@ -203,6 +215,7 @@ impl Expression {
             Expression::AbsoluteValue(a) => a.to_json(),
             Expression::ConstantExp(c) => c.to_json(),
             Expression::Substitution(s) => s.to_json(),
+            Expression::Undefined => UNDEFINED.to_json(),
         }
     }
 }

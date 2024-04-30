@@ -57,6 +57,7 @@ mod subtract_exponents_on_fractions;
 mod sum_coefficients_of_terms;
 mod tan_identity;
 mod trig_reflections;
+mod undefined_fractions;
 mod unit_fraction;
 mod zero_times_anything;
 
@@ -123,6 +124,7 @@ pub static ALL_RULES: RwLock<&[&(dyn DerivationRule + Sync)]> = RwLock::new(&[
     &split_fractions_over_addition::SplitFractionsAddition {},
     &unit_fraction::UnitFraction {},
     &anything_times_zero::AnythingTimesZero {},
+    &undefined_fractions::UndefinedFractions {},
 ]);
 
 /// These rules always bring us closer to a simplified expression. Once all of
@@ -162,4 +164,5 @@ pub static IDENTITIES: RwLock<&[&(dyn DerivationRule + Sync)]> = RwLock::new(&[
     &derivative_of_constant::DerivativeOfConst {},
     &unit_fraction::UnitFraction {},
     &anything_times_zero::AnythingTimesZero {},
+    &undefined_fractions::UndefinedFractions {},
 ]);

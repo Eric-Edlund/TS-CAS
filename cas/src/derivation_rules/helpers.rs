@@ -169,6 +169,7 @@ pub fn children_of(exp: &Expression) -> Vec<Expression> {
         Expression::Trig(t) => [t.exp()].into_iter().collect(),
         Expression::AbsoluteValue(a) => [a.exp()].into_iter().collect(),
         Expression::Substitution(s) => vec![s.exp()],
+        Expression::Undefined => vec![],
     }
 }
 
@@ -204,6 +205,7 @@ where
         Expression::Derivative(d) => Derivative::of(sub(&d.exp()), sub(&d.relative_to())),
         Expression::Trig(t) => TrigExp::of(t.operation, sub(&t.exp())),
         Expression::AbsoluteValue(a) => AbsoluteValue::of(sub(&a.exp())),
+        Expression::Undefined => exp.clone(),
     }
 }
 
