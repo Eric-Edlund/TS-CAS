@@ -2,6 +2,7 @@ use std::rc::Rc;
 
 use crate::{
     argument::Argument,
+    derivation_rules::helpers::is_one,
     expressions::{
         product::product_of, sum::sum_of, Exponent, Expression, Fraction, Integer, Negation,
     },
@@ -85,7 +86,11 @@ impl DerivationRule for DivideFractions {
             *bottom_match = Integer::of(1);
         }
 
-        let result = Fraction::of(product_of(&numerator), product_of(&denominator));
+        let result = if is_one(&product_of(&denominator)) {
+            product_of(&numerator)
+        } else {
+            Fraction::of(product_of(&numerator), product_of(&denominator))
+        };
 
         if result == input {
             return vec![];
