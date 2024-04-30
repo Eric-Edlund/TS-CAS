@@ -130,11 +130,15 @@ pub fn separate_constant_factors(
             (
                 if is_one(&const_num) && is_one(&const_dom) {
                     Integer::of(1)
+                } else if is_one(&const_dom) {
+                    const_num
                 } else {
                     Fraction::of(const_num, const_dom)
                 },
                 if is_one(&var_num) && is_one(&var_dom) {
                     Integer::of(1)
+                } else if is_one(&var_dom) {
+                    var_num
                 } else {
                     Fraction::of(var_num, var_dom)
                 },
