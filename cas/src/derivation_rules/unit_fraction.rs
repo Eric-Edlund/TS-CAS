@@ -25,6 +25,6 @@ impl DerivationRule for UnitFraction {
     }
 
     fn name(&self) -> String {
-        todo!()
+        String::from("UnitFraction")
     }
 }

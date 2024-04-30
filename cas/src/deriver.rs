@@ -1,9 +1,9 @@
 use std::cell::RefCell;
 use std::collections::hash_map::Entry;
-use std::collections::{HashMap, HashSet};
+use std::collections::{HashMap, HashSet, LinkedList};
+use std::ops::Deref;
 use std::rc::Rc;
 
-use petgraph::data::DataMap;
 use petgraph::graph::NodeIndex;
 
 use crate::expressions::Expression;
@@ -20,73 +20,109 @@ pub struct DerivationDebugInfo {
 
 /// Object used to expand graphs.
 pub struct Deriver {
-    node_indices: HashMap<Expression, NodeIndex>,
+    graph: Graph,
     optimizer: Box<dyn OptimizationProfile>,
-    debug_info: Option<Rc<RefCell<DerivationDebugInfo>>>,
+    _debug_info: Option<Rc<RefCell<DerivationDebugInfo>>>,
+    _allowed_rules: Option<Vec<String>>,
+    node_indices: HashMap<Expression, NodeIndex>,
+    derivation_queue: LinkedList<NodeIndex>,
 }
 
 impl Deriver {
-    pub fn new(optimizer: Box<dyn OptimizationProfile>) -> Deriver {
-        Deriver {
-            node_indices: HashMap::new(),
+    pub fn new(
+        graph: Graph,
+        optimizer: Box<dyn OptimizationProfile>,
+        allowed_rules: Option<Vec<String>>,
+        debug_info: Option<Rc<RefCell<DerivationDebugInfo>>>,
+    ) -> Self {
+        let mut optimizer = optimizer;
+
+        if let Some(debug) = debug_info.clone() {
+            let _ = optimizer.set_debug(debug);
+        }
+
+        let mut derivation_queue = LinkedList::<NodeIndex>::new();
+        derivation_queue.extend(graph.node_indices());
+
+        Self {
+            graph,
             optimizer,
-            debug_info: None,
+            _debug_info: debug_info,
+            _allowed_rules: allowed_rules,
+            node_indices: HashMap::new(),
+            derivation_queue,
         }
     }
 
-    pub fn set_debug(&mut self, debug: Option<Rc<RefCell<DerivationDebugInfo>>>) {
-        self.debug_info = debug;
-
-        if let Some(ref debug) = self.debug_info {
-            let _ = self.optimizer.set_debug(debug.clone());
-        }
-    }
-
-    /// Expands the graph with equivalent expressions.
-    pub fn expand(&mut self, graph: &mut Graph, depth: u32, max_derivations: u32) {
-        for i in graph.node_indices() {
-            let node = graph.node_weight(i).unwrap();
+    /// Expands the graph until one of the given constraints is met.
+    pub fn expand_to_constraint(&mut self, depth: u32, max_derivations: u32) {
+        for i in self.graph.node_indices() {
+            let node = self.graph.node_weight(i).unwrap();
             self.node_indices.insert(node.clone(), i);
         }
         for _ in 0..depth {
-            if graph.node_count() as u32 >= max_derivations {
+            if self.graph.node_count() as u32 >= max_derivations {
                 return;
             }
-            self.pass(graph);
+            for i in self.graph.node_indices() {
+                let expression = self.graph.node_weight(i).unwrap().clone();
+                let equivalents = self.optimizer.find_equivalents(&expression);
+
+                for (derived, argument) in equivalents {
+                    let index = if let Entry::Vacant(e) = self.node_indices.entry(derived.clone()) {
+                        let result = self.graph.add_node(derived.clone());
+                        e.insert(result);
+                        result
+                    } else {
+                        self.node_indices[&derived]
+                    };
+
+                    match self.graph.find_edge(i, index) {
+                        Some(edge_id) => {
+                            self.graph
+                                .edge_weight_mut(edge_id)
+                                .unwrap()
+                                .derived_from
+                                .insert(argument);
+                        }
+                        None => {
+                            let mut new_edge = Relationship {
+                                r_type: RelType::Equal,
+                                derived_from: HashSet::new(),
+                            };
+                            new_edge.derived_from.insert(argument);
+                            self.graph.add_edge(i, index, new_edge);
+                        }
+                    }
+                }
+            }
         }
     }
 
-    pub fn expand_increment(&mut self, graph: &mut Graph, depth: &mut u32, max_derviations: u32) {
-        for i in graph.node_indices() {
-            let node = graph.node_weight(i).unwrap();
-            self.node_indices.insert(node.clone(), i);
-        }
-        for _ in 0..*depth {
-            if graph.node_count() as u32 >= max_derviations {
-                return;
-            }
-            self.pass(graph);
-        }
-        *depth -= 1;
-    }
+    /// We might go slightly over max_new_derivations
+    /// Returns true if nothing left to derive.
+    pub fn expand_increment(&mut self, max_new_derivations: u32) -> bool {
+        let mut derivations = 0;
 
-    fn pass(&mut self, graph: &mut Graph) {
-        for i in graph.node_indices() {
-            let expression = graph.node_weight(i).unwrap().clone();
+        while let Some(curr_index) = self.derivation_queue.pop_front() {
+            let expression = self.graph.node_weight(curr_index).unwrap().clone();
+
             let equivalents = self.optimizer.find_equivalents(&expression);
 
             for (derived, argument) in equivalents {
                 let index = if let Entry::Vacant(e) = self.node_indices.entry(derived.clone()) {
-                    let result = graph.add_node(derived.clone());
+                    let result = self.graph.add_node(derived.clone());
                     e.insert(result);
+                    derivations += 1;
+                    self.derivation_queue.push_back(result);
                     result
                 } else {
                     self.node_indices[&derived]
                 };
 
-                match graph.find_edge(i, index) {
+                match self.graph.find_edge(curr_index, index) {
                     Some(edge_id) => {
-                        graph
+                        self.graph
                             .edge_weight_mut(edge_id)
                             .unwrap()
                             .derived_from
@@ -98,11 +134,24 @@ impl Deriver {
                             derived_from: HashSet::new(),
                         };
                         new_edge.derived_from.insert(argument);
-                        graph.add_edge(i, index, new_edge);
+                        self.graph.add_edge(curr_index, index, new_edge);
                     }
                 }
             }
+
+            if derivations >= max_new_derivations {
+                return false;
+            }
         }
+        true
+    }
+}
+
+impl Deref for Deriver {
+    type Target = Graph;
+
+    fn deref(&self) -> &Self::Target {
+        &self.graph
     }
 }
 
@@ -118,12 +167,12 @@ mod tests {
 
     #[test]
     fn applies_multiple_rules() {
-        let mut deriver = Deriver::new(BruteForceProfile::new());
         let mut graph = Graph::new();
         let start = sum_of(&[i(1), i(3), i(3), product_of(&[i(3), i(3)])]);
         graph.add_node(start);
-        deriver.expand(&mut graph, 5, 10000);
+        let mut deriver = Deriver::new(graph, BruteForceProfile::new(), None, None);
+        deriver.expand_to_constraint(5, 10000);
 
-        assert!(graph.node_weights().any(|exp| *exp == i(16)));
+        assert!(deriver.node_weights().any(|exp| *exp == i(16)));
     }
 }
