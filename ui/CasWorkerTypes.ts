@@ -5,6 +5,7 @@ export type CasWorkerMsg = {
 }
 
 export type IncrementalResult = {
+    forProblem: string
     steps: string[]
     failed: string | null
     finished: boolean
