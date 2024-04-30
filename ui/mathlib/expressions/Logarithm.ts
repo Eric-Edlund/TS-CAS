@@ -38,23 +38,26 @@ export class Logarithm extends Expression {
             base = ""
         }
         function wrapIfNeeded(exp: Expression): string {
-            if (exp.class === ProductType
-            || exp.class === SumType) {
+            if (exp.class === ProductType || exp.class === SumType) {
                 return inParen(exp.toMathXML(table))
             }
             return exp.toMathXML(table)
         }
+
+        let result: string;
         if (base === "") {
-            return `<mrow>
+            result = `<mrow>
 <mtext>${text}</mtext>
 <mrow>${wrapIfNeeded(this.exp)}</mrow>
-</row>`
+</mrow>`
         } else {
-            return `<mrow>
+            result = `<mrow>
 <msub><mtext>${text}</mtext>${base}</msub>
 <mrow>${wrapIfNeeded(this.exp)}</mrow>
-</row>`
+</mrow>`
         }
+        
+        return result
     }
     public isReducible: boolean
     public readonly class: string = LogType
