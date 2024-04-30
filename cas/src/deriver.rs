@@ -1,12 +1,13 @@
 use std::cell::RefCell;
 use std::collections::hash_map::Entry;
-use std::collections::{HashMap, HashSet, LinkedList};
+use std::collections::{BinaryHeap, HashMap, HashSet, LinkedList};
 use std::ops::Deref;
 use std::rc::Rc;
 
 use petgraph::graph::NodeIndex;
 
 use crate::expressions::Expression;
+use crate::graph_traversal::complexity_rec;
 use crate::{
     graph::{Graph, RelType, Relationship},
     optimization_profiles::OptimizationProfile,
@@ -25,7 +26,8 @@ pub struct Deriver {
     _debug_info: Option<Rc<RefCell<DerivationDebugInfo>>>,
     _allowed_rules: Option<Vec<String>>,
     node_indices: HashMap<Expression, NodeIndex>,
-    derivation_queue: LinkedList<NodeIndex>,
+    // Tuples are compared lexographically, so the sort descriminant is first
+    derivation_queue: BinaryHeap<(u32, NodeIndex)>,
 }
 
 impl Deriver {
@@ -41,8 +43,8 @@ impl Deriver {
             let _ = optimizer.set_debug(debug);
         }
 
-        let mut derivation_queue = LinkedList::<NodeIndex>::new();
-        derivation_queue.extend(graph.node_indices());
+        let mut derivation_queue = BinaryHeap::<(u32, NodeIndex)>::new();
+        derivation_queue.extend(graph.node_indices().map(|n| (u32::MAX, n)));
 
         Self {
             graph,
@@ -104,7 +106,7 @@ impl Deriver {
     pub fn expand_increment(&mut self, max_new_derivations: u32) -> bool {
         let mut derivations = 0;
 
-        while let Some(curr_index) = self.derivation_queue.pop_front() {
+        while let Some((_, curr_index)) = self.derivation_queue.pop() {
             let expression = self.graph.node_weight(curr_index).unwrap().clone();
 
             let equivalents = self.optimizer.find_equivalents(&expression);
@@ -114,7 +116,7 @@ impl Deriver {
                     let result = self.graph.add_node(derived.clone());
                     e.insert(result);
                     derivations += 1;
-                    self.derivation_queue.push_back(result);
+                    self.derivation_queue.push((u32::MAX - complexity_rec(&derived), result));
                     result
                 } else {
                     self.node_indices[&derived]
