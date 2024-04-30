@@ -35,7 +35,7 @@ async function init_wasm_in_worker() {
 
             let incrementInterval = setInterval(() => {
                 count++
-                const incrementalResult = JSON.parse(handle.do_pass(10)) as IncrementalResult
+                const incrementalResult = JSON.parse(handle.do_pass(50)) as IncrementalResult
                 postMessage(incrementalResult)
                 if (expression !== queuedExpression || count >= 1000 || incrementalResult.finished || incrementalResult.failed) {
                     handle.free()
