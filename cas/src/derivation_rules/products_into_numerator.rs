@@ -8,9 +8,9 @@ use crate::{
 
 use super::DerivationRule;
 
-/**
-* a(b/c) = (ab)/c
-*/
+/// a(b/c) = (ab)/c
+///
+/// But not when a is complicated and pulling it in doesn't help us.
 pub struct ProductsIntoNumerator {}
 
 impl DerivationRule for ProductsIntoNumerator {
@@ -25,6 +25,10 @@ impl DerivationRule for ProductsIntoNumerator {
             .iter()
             .partition(|x| matches!(x, Expression::Fraction(_)));
 
+        let (should_not, should_pull): (Vec<&Expression>, Vec<&Expression>) = not
+            .into_iter()
+            .partition(|e| matches!(e, Expression::Integral(_)));
+
         if fractions.is_empty() {
             return vec![];
         }
@@ -32,17 +36,17 @@ impl DerivationRule for ProductsIntoNumerator {
         let mut results = Vec::<Expression>::new();
         for f in &fractions {
             let Expression::Fraction(fraction) = f else {
-                panic!()
+                unreachable!()
             };
             // Pull all factors into the fraction, not the powerset, too expensive
             let new_num = ordered(product_of_iter(
                 &mut [fraction.numerator()]
                     .iter()
-                    .chain(&mut not.iter().cloned())
+                    .chain(&mut should_pull.iter().cloned())
                     .cloned(),
             ));
 
-            results.push(product_of_iter(
+            let result = product_of_iter(
                 &mut [Fraction::of(new_num, fraction.denominator())]
                     .iter()
                     .chain(
@@ -51,8 +55,13 @@ impl DerivationRule for ProductsIntoNumerator {
                             .filter(|fr| fr != &&&Expression::Fraction(fraction.clone()))
                             .cloned(),
                     )
+                    .chain(should_not.iter().cloned())
                     .cloned(),
-            ));
+            );
+
+            if result != input {
+                results.push(result)
+            }
         }
 
         results
@@ -72,7 +81,11 @@ impl DerivationRule for ProductsIntoNumerator {
 
 #[cfg(test)]
 mod tests {
-    use crate::{convenience_expressions::v, expressions::product::product_of};
+    use crate::{
+        convenience_expressions::{i, v},
+        derivation_rules::helpers::expect_no_result,
+        expressions::{product::product_of, Integral},
+    };
 
     use super::*;
 
@@ -84,5 +97,10 @@ mod tests {
         let result = rule.apply(start).first().unwrap().0.clone();
 
         assert_eq!(result, Fraction::of(product_of(&[v("a"), v("x")]), v("b")));
+
+        expect_no_result(
+            &rule,
+            product_of(&[Fraction::of(i(1), i(2)), Integral::of(v("x"), v("x"))]),
+        );
     }
 }
