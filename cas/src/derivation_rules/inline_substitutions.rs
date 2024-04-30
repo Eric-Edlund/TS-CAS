@@ -4,7 +4,7 @@ use crate::{argument::Argument, expressions::Expression};
 
 use super::DerivationRule;
 
-/// Inlines substitution expressions.
+/// Inlines substitution expressions outside of integrals.
 pub struct InlineSubstitutions {}
 
 impl DerivationRule for InlineSubstitutions {
