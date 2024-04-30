@@ -51,6 +51,7 @@ mod multiply_fractions;
 mod one_to_any_power;
 mod products_into_numerator;
 mod pull_negative_arround_fraction;
+mod pull_out_unit_fractions;
 mod pythagorean_identities;
 mod split_fractions_over_addition;
 mod subtract_exponents_on_fractions;
@@ -125,6 +126,7 @@ pub static ALL_RULES: RwLock<&[&(dyn DerivationRule + Sync)]> = RwLock::new(&[
     &unit_fraction::UnitFraction {},
     &anything_times_zero::AnythingTimesZero {},
     &undefined_fractions::UndefinedFractions {},
+    &pull_out_unit_fractions::PullOutUnitFractions {},
 ]);
 
 /// These rules always bring us closer to a simplified expression. Once all of
@@ -138,6 +140,7 @@ pub static STRICT_SIMPLIFYING_RULES: RwLock<&[&(dyn DerivationRule + Sync)]> = R
     &integral_pull_out_negative::IntegralPullOutNegative {},
     &integral_to_natural_log::IntegralToNaturalLog {},
     &integral_of_negative_one::FlipNegativeOne {},
+    &pull_out_unit_fractions::PullOutUnitFractions {},
 ]);
 
 /// These rules evaluate numeric expressions without losing any percision.

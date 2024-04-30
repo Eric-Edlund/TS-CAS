@@ -14,6 +14,8 @@ use crate::expressions::Exponent;
 use crate::expressions::Integer;
 use crate::expressions::{Expression, Fraction, Integral, Logarithm, Negation, TrigExp};
 
+use super::DerivationRule;
+
 /**
 * True if the given expression does not depend on any of the variables
 * in the given delta expression.
@@ -211,6 +213,17 @@ where
         Expression::AbsoluteValue(a) => AbsoluteValue::of(sub(&a.exp())),
         Expression::Undefined => exp.clone(),
     }
+}
+
+/// Asserts that the given rule derives expected from start.
+pub fn expect_result(rule: &dyn DerivationRule, start: Expression, expected: Expression) {
+    let result = rule.apply(start).first().unwrap().0.clone();
+    assert_eq!(result, expected);
+}
+
+/// Asserts that the given rule derives nothing from start.
+pub fn expect_no_result(rule: &dyn DerivationRule, start: Expression) {
+    assert_eq!(None, rule.apply(start).first());
 }
 
 #[cfg(test)]

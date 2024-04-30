@@ -10,11 +10,9 @@ use crate::{
 
 use super::DerivationRule;
 
-/**
-* (ab)/(ac) = b/c
-*
-* a^5/a^4 = a/1
-*/
+/// TODO: Not (ab)/(ac) = (a/a)(b/c),
+///
+/// Only: a^5/a^4 = a/1
 pub struct DivideFractions {}
 
 impl DerivationRule for DivideFractions {
