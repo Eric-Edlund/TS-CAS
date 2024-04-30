@@ -11,6 +11,7 @@ import { Product } from "./expressions/Product";
 import { Substitution } from "./expressions/Substitution";
 import { Sum } from "./expressions/Sum";
 import { TrigExp } from "./expressions/TrigExp";
+import { UNDEFINED_EXP } from "./expressions/UndefinedExp";
 import { Variable } from "./expressions/Variable";
 
 /**
@@ -37,6 +38,8 @@ function parseRec(obj: any): Expression {
             return ConstantExp.of("Pi")
         } else if (obj === "ImaginaryUnit") {
             return ConstantExp.of("Imaginary")
+        } else if (obj === "Undefined") {
+            return UNDEFINED_EXP
         }
     }
 

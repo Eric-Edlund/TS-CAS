@@ -33,6 +33,7 @@ pub fn equiv(exp: &Expression, direct: &EquivFn) -> EquivList {
         Expression::Trig(_) => trig_equiv(exp, direct),
         Expression::Logarithm(_) => log_equiv(exp, direct),
         Expression::AbsoluteValue(_) => abs_equiv(exp, direct),
+        Expression::Undefined => vec![],
     });
 
     result.into_iter().collect()
