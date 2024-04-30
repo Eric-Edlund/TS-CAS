@@ -62,6 +62,31 @@ pub fn children_rec(exp: &Expression) -> impl Iterator<Item = Expression> {
     children.into_iter()
 }
 
+/// Gets all children of given expression recursively, iterating over
+/// the set of leaf expressions. Does not enter substitutions.
+pub fn unique_child_leaves(exp: &Expression) -> impl Iterator<Item = Expression> {
+    let mut leaves = Vec::<Expression>::new();
+    let mut queue = LinkedList::<Expression>::new();
+
+    queue.extend(children_of(exp));
+
+    while let Some(top) = queue.pop_front() {
+        let children = if matches!(top, Expression::Substitution(_)) {
+            leaves.push(top);
+            continue;
+        } else {
+            children_of(&top)
+        };
+        if children.is_empty() {
+            leaves.push(top);
+        } else {
+            queue.extend(children);
+        }
+    }
+
+    leaves.into_iter()
+}
+
 /// Lists all the factors in the given expression.
 /// Will search inside products and fractions. If it's a fraction,
 /// each factor of the denominator is pulled out as a separate 1/x.
@@ -195,6 +220,49 @@ where
     }
 
     let sub = |exp: &Expression| substitute(exp, replacement, predicate);
+
+    match exp {
+        Expression::Integer(_) => exp.clone(),
+        Expression::ConstantExp(_) => exp.clone(),
+        Expression::Variable(_) => exp.clone(),
+        Expression::Substitution(_) => exp.clone(),
+        Expression::Product(p) => product_of_iter(&mut p.factors().iter().map(sub)),
+        Expression::Sum(s) => sum_of_iter(&mut s.terms().clone().iter().map(sub)),
+        Expression::Exponent(e) => Exponent::of(sub(&e.base()), sub(&e.power())),
+        Expression::Integral(i) => Integral::of(sub(&i.integrand()), sub(&i.variable())),
+        Expression::Negation(n) => Negation::of(sub(&n.child())),
+        Expression::Fraction(f) => Fraction::of(sub(&f.numerator()), sub(&f.denominator())),
+        Expression::Logarithm(l) => Logarithm::of(sub(&l.base()), sub(&l.exp())),
+        Expression::Derivative(d) => Derivative::of(sub(&d.exp()), sub(&d.relative_to())),
+        Expression::Trig(t) => TrigExp::of(t.operation, sub(&t.exp())),
+        Expression::AbsoluteValue(a) => AbsoluteValue::of(sub(&a.exp())),
+        Expression::Undefined => exp.clone(),
+    }
+}
+
+/// Searches the given expression, replacing all children which match the
+/// predicate with the given replacement. Traverses the tree top down.
+/// Does not traverse into subtituted expressions. Only enters into expressions
+/// satisfying the guard predicate.
+pub fn substitute_guarded<'a, RP, GP>(
+    exp: &'a Expression,
+    replacement: &'a Expression,
+    replace_predicate: &RP,
+    guard_predicate: &GP,
+) -> Expression
+where
+    RP: Fn(&Expression) -> bool,
+    GP: Fn(&Expression) -> bool,
+{
+    if !guard_predicate(exp) {
+        return exp.clone();
+    }
+    if replace_predicate(exp) {
+        return replacement.clone();
+    }
+
+    let sub =
+        |exp: &Expression| substitute_guarded(exp, replacement, replace_predicate, guard_predicate);
 
     match exp {
         Expression::Integer(_) => exp.clone(),
