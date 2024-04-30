@@ -2,7 +2,6 @@ use core::fmt;
 use std::{
     collections::HashMap,
     fmt::Display,
-    ops::Deref,
     sync::{Arc, Mutex},
 };
 

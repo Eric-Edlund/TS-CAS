@@ -1,3 +1,5 @@
+use std::rc::Rc;
+
 use crate::{
     argument::Argument,
     expressions::{product::product_of, sum::sum_of, Expression},
@@ -11,13 +13,7 @@ use super::DerivationRule;
 pub struct AssociativeProperty {}
 
 impl DerivationRule for AssociativeProperty {
-    fn apply(
-        &self,
-        input: crate::expressions::Expression,
-    ) -> Vec<(
-        crate::expressions::Expression,
-        std::rc::Rc<crate::argument::Argument>,
-    )> {
+    fn apply(&self, input: Expression) -> Vec<(Expression, Rc<Argument>)> {
         if let Expression::Sum(ref sum) = input {
             let mut new_terms: Vec<Expression> = vec![];
 
