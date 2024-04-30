@@ -2,6 +2,7 @@ use std::rc::Rc;
 
 use crate::{
     argument::Argument,
+    derivation_rules::helpers::is_one,
     expressions::{product::product_of_iter, Expression, Fraction, Integer},
 };
 
@@ -75,22 +76,24 @@ impl DerivationRule for EvaluateFractions {
         if (n == 1 && d == 1) || n == 0 || d == 0 {
             return vec![];
         }
-        let result = Fraction::of(
+        let (result_num, result_den) = (
             product_of_iter(
-                &mut [Integer::of(n)].into_iter().chain(
+                &mut [Integer::of(n)].into_iter().filter(|e| !is_one(e)).chain(
                     &mut num_factors
                         .into_iter()
                         .filter(|x| !matches!(x, Expression::Integer(_))),
                 ),
             ),
             product_of_iter(
-                &mut [Integer::of(d)].into_iter().chain(
+                &mut [Integer::of(d)].into_iter().filter(|e| !is_one(e)).chain(
                     &mut den_factors
                         .into_iter()
                         .filter(|x| !matches!(x, Expression::Integer(_))),
                 ),
             ),
         );
+
+        let result = Fraction::of(result_num, result_den);
 
         if result == input {
             return vec![];
@@ -150,5 +153,8 @@ mod tests {
         let start6 = Fraction::of(product_of(&[i(1), v("x")]), i(1));
         let result6 = rule.apply(start6).first().is_none();
         assert!(result6);
+
+        let start7 = Fraction::of(i(2), Fraction::of(v("x"), i(2)));
+        assert_eq!(rule.apply(start7).first(), None);
     }
 }

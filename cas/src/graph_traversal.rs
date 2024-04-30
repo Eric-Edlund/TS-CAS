@@ -2,7 +2,7 @@ use std::cmp::Ordering;
 use std::rc::Rc;
 
 use crate::argument::Argument;
-use crate::derivation_rules::helpers::{children_of, children_rec, factors_in};
+use crate::derivation_rules::helpers::{children_of, children_rec};
 use crate::expressions::Expression;
 
 use serde::ser::SerializeSeq;

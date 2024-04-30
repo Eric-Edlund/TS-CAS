@@ -112,7 +112,7 @@ pub static ALL_RULES: RwLock<&[&(dyn DerivationRule + Sync)]> = RwLock::new(&[
     &products_into_numerator::ProductsIntoNumerator {},
     &one_to_any_power::OneToAnything {},
     &add_fractions::AddFractions {},
-    &fractions_in_denominator::FractionInDenominator {},
+    &fractions_in_denominator::NestedFractions {},
     &multiply_fractions::MultiplyFractions {},
     &pull_negative_arround_fraction::PullNegativeOutOfFraction {},
     &integrate_arctrig::IntegrateArcTrig {},
