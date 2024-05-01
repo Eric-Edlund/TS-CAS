@@ -27,7 +27,6 @@ document.addEventListener("DOMContentLoaded", () => {
      * Called after the DOM is loaded.
      */
     async function loadSolverPage(): Promise<void> {
-        // await initWasm()
         const view = document.createElement("textarea")
         const quill = MQ.MathField(inputView, {
             handlers: {
@@ -62,6 +61,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
         var elems = document.querySelectorAll(".sidenav")
         M.Sidenav.init(elems, {})
+
+        // Shortcuts
+        document.getElementById('body').addEventListener('keypress', () => {
+            view.focus()
+        })
     }
 
     // The last valid entered expression
@@ -130,3 +134,4 @@ document.addEventListener("DOMContentLoaded", () => {
 
     loadSolverPage()
 })
+
