@@ -8,11 +8,11 @@ use crate::{
 
 use super::DerivationRule;
 
-/**
-* Accepts sums with at least one fraction term and at least one non-fraction term.
-* For each fraction term, converts all non-fraction terms to fractions with
-* the same base.
-*/
+/// Accepts sums with at least one fraction term and at least one non-fraction term.
+/// For each fraction term, converts all non-fraction terms to fractions with
+/// the same base.
+///
+/// Doesn't convert integrals.
 pub struct MakeCommonDenominators {}
 
 impl DerivationRule for MakeCommonDenominators {
@@ -39,6 +39,7 @@ impl DerivationRule for MakeCommonDenominators {
             equivalents.push(sum_of_iter(&mut sum.terms().iter().map(
                 |term| match term {
                     Expression::Fraction(_) => term.clone(),
+                    Expression::Integral(_) => term.clone(),
                     x => Fraction::of(
                         product_of(&[x.clone(), denominator.clone()]),
                         denominator.clone(),
@@ -49,6 +50,7 @@ impl DerivationRule for MakeCommonDenominators {
 
         equivalents
             .into_iter()
+            .filter(|exp| exp != &input)
             .map(|exp| {
                 (
                     exp,
@@ -67,7 +69,11 @@ impl DerivationRule for MakeCommonDenominators {
 
 #[cfg(test)]
 mod tests {
-    use crate::{convenience_expressions::v, expressions::sum::sum_of};
+    use crate::{
+        convenience_expressions::v,
+        derivation_rules::helpers::expect_no_result,
+        expressions::{sum::sum_of, Integral},
+    };
 
     use super::*;
 
@@ -84,6 +90,11 @@ mod tests {
                 Fraction::of(product_of(&[v("x"), v("z")]), v("z")),
                 Fraction::of(v("y"), v("z"))
             ])
-        )
+        );
+
+        expect_no_result(
+            &rule,
+            sum_of(&[Integral::of(v("x"), v("x")), Fraction::of(v("a"), v("b"))]),
+        );
     }
 }
