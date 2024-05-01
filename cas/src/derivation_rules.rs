@@ -155,17 +155,19 @@ pub static ARITHMETIC: RwLock<&[&(dyn DerivationRule + Sync)]> = RwLock::new(&[
 /// These rules could by applied in any order one at a time and in every case
 /// that an equivalent is derived, the expression it was derived from may be
 /// safetly ignored.
+///
+/// These identities are applied in order.
 pub static IDENTITIES: RwLock<&[&(dyn DerivationRule + Sync)]> = RwLock::new(&[
-    &integral_of_constant::IntegralOfConst {},
-    &one_to_any_power::OneToAnything {},
-    &multiplicative_identity::MultiplicativeIdentity {},
-    &division_identity::DivisionIdentity {},
-    &log_of_one::LogOfOne {},
-    &exponent_to_zero::ExponentToZero {},
-    &cancel_negatives::CancelNegatives {},
-    &additive_identity::AdditiveIdentity {},
-    &derivative_of_constant::DerivativeOfConst {},
-    &unit_fraction::UnitFraction {},
-    &anything_times_zero::AnythingTimesZero {},
     &undefined_fractions::UndefinedFractions {},
+    &anything_times_zero::AnythingTimesZero {},
+    &additive_identity::AdditiveIdentity {},
+    &cancel_negatives::CancelNegatives {},
+    &exponent_to_zero::ExponentToZero {},
+    &log_of_one::LogOfOne {},
+    &multiplicative_identity::MultiplicativeIdentity {},
+    &one_to_any_power::OneToAnything {},
+    &division_identity::DivisionIdentity {},
+    &unit_fraction::UnitFraction {},
+    &integral_of_constant::IntegralOfConst {},
+    &derivative_of_constant::DerivativeOfConst {},
 ]);
