@@ -9,6 +9,8 @@ import { GivenEdge, Graph } from "./mathlib/Graph"
 import { CasWorkerMsg, IncrementalGraphResult } from "./CasWorkerTypes"
 import { parseExpressionJSON } from "./mathlib/expressions-from-json"
 import { Relationship } from "./mathlib/Relationship"
+import { Argument } from "./mathlib/Argument"
+import { setOf } from "./mathlib/util/ThingsThatShouldBeInTheStdLib"
 
 declare const MQ: any
 
@@ -77,7 +79,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         for (const { source, target } of newData) {
-            graph.addEdge(parseExpressionJSON(source), parseExpressionJSON(target), new GivenEdge(Relationship.Equal))
+            let n = parseExpressionJSON(source)
+            let n1 = parseExpressionJSON(target)
+            graph.addEdge(n, n1, new Argument(setOf(n), {n: n, r: Relationship.Equal, n1: n1}, "From backend", "unknown"))
         }
 
         graphView.setGraph(graph, new Set([expression]))
