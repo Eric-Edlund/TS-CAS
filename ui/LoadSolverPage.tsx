@@ -3,6 +3,7 @@ import { Expression } from "./mathlib/expressions/Expression"
 import { parseExpressionJSON } from "./mathlib/expressions-from-json"
 import { parseExpressionLatex } from "./mathlib/userinput/LatexParser"
 import { CasWorkerMsg, IncrementalSimplifyResult } from "./CasWorkerTypes"
+import { createRoot } from "solid-js"
 
 declare const MathJax: any
 declare const MQ: any
@@ -21,7 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Displays sequence of steps leading to the final answer
     const stepListView = document.getElementById("stepsView")! as HTMLDivElement
 
-    const inputView = document.getElementById("input")
+    const inputView = document.getElementById("input")!
 
     // The last valid entered expression
     let expression: Expression | null
@@ -31,7 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
     ) => {
         const { steps, failed, forProblem } = incrementalResult.data
 
-        if (failed || forProblem != expression.toJSON()) {
+        if (failed || forProblem != expression!.toJSON()) {
             return
         }
 
@@ -42,7 +43,7 @@ document.addEventListener("DOMContentLoaded", () => {
             let argument = steps[i]
             let expression = steps[i + 1]
 
-            stepListView.appendChild(row(argument, expression))
+            stepListView.appendChild(<Row argument={argument} expression={expression}></Row>)
         }
         MathJax.typeset([answerSummary, stepListView])
     }
@@ -69,25 +70,6 @@ document.addEventListener("DOMContentLoaded", () => {
             expressionJson: expression.toJSON(),
             operation: "simplify"
         } as CasWorkerMsg)
-    }
-
-    /**
-     * Creates an argument row for the solution steps list.
-     */
-    function row(argument: string, expression: string): HTMLDivElement {
-        const row = document.createElement("div")
-        row.classList.add("row")
-
-        const argumentView = document.createElement("p")
-        argumentView.innerText = argument
-        argumentView.classList.add("col", "s6")
-        row.appendChild(argumentView)
-
-        const expressionView = new EditableMathView()
-        expressionView.value = parseExpressionJSON(expression)
-        row.appendChild(expressionView)
-
-        return row
     }
 
     const view = document.createElement("textarea")
@@ -126,7 +108,31 @@ document.addEventListener("DOMContentLoaded", () => {
     M.Sidenav.init(elems, {})
 
     // Shortcuts
-    document.getElementById("body").addEventListener("keypress", () => {
+    document.getElementById("body")!.addEventListener("keypress", () => {
         view.focus()
     })
 })
+
+interface RowProps {
+    argument: string
+    expression: string
+}
+
+/**
+ * Creates an argument row for the solution steps list.
+ */
+function Row({argument, expression}: RowProps): HTMLDivElement {
+    const row = document.createElement("div")
+    row.classList.add("row")
+
+    const argumentView = document.createElement("p")
+    argumentView.innerText = argument
+    argumentView.classList.add("col", "s6")
+    row.appendChild(argumentView)
+
+    const expressionView = new EditableMathView()
+    expressionView.value = parseExpressionJSON(expression)
+    row.appendChild(expressionView)
+
+    return row
+}
