@@ -116,7 +116,8 @@ impl Deriver {
                     let result = self.graph.add_node(derived.clone());
                     e.insert(result);
                     derivations += 1;
-                    self.derivation_queue.push((u32::MAX - complexity_rec(&derived), result));
+                    self.derivation_queue
+                        .push((u32::MAX - complexity_rec(&derived), result));
                     result
                 } else {
                     self.node_indices[&derived]

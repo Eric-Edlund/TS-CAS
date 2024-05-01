@@ -312,7 +312,10 @@ export class WebGraphView extends HTMLDivElement {
                                 levels.get(depth - 1)!.has(n) &&
                                 lastPositions!.has(n)
                         )[0]
-                    const idealAngle = lastPositions.get(parent)!
+                    // TODO: This fixes a bug where the ideal angle is undefined.
+                    // It should never be undefined in the first place.
+                    // Figure out why it is undefined.
+                    const idealAngle = lastPositions.get(parent) ?? 0
                     idealAngles.set(n, idealAngle)
                 }
 
@@ -573,6 +576,7 @@ export class WebGraphView extends HTMLDivElement {
         assert(GraphMinipulator.isConnected(this.graph), "Graph not connected")
         if (this.showArguments)
             assert(this.graph.getNodes().size == this.nodes.size)
+        assert(for_all(this.graph.getNodes(), (n) => n != null && n != undefined), "Graph contains null node")
     }
 
     private graph: Graph

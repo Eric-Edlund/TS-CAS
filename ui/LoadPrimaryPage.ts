@@ -1,105 +1,118 @@
 import {
-    num,
-    product,
-    x
-} from "./mathlib/ConvenientExpressions"
-import {
     WebGraphView,
     WebGraphViewInitSettings
 } from "./mathlib/uielements/WebGraphView"
-import { deriveExpand, wrapInGraph } from "./mathlib/derivations/Deriver"
 import { Expression } from "./mathlib/expressions/Expression"
-import { RelationalDerivationRule } from "./mathlib/derivations/RelationalDerivationRule"
-import { SubtractFromBothSides } from "./mathlib/derivations/algebra/SubtractFromBothSides"
-import { DivideOnBothSides } from "./mathlib/derivations/algebra/DivideOnBothSides"
-import { Variable } from "./mathlib/expressions/Variable"
-import { Product } from "./mathlib/expressions/Product"
-import { Sum } from "./mathlib/expressions/Sum"
 import { Interpreter } from "./mathlib/interpreting/Interpreter"
-import { RULE_ID as Evaluate_Sums_Rule } from "./mathlib/derivations/simplifications/EvaluateSums"
-import { setOf } from "./mathlib/util/ThingsThatShouldBeInTheStdLib"
-import { parseExpression } from "./mathlib/userinput/AntlrMathParser"
-import { Integral } from "./mathlib/expressions/Integral"
-import { Exponent } from "./mathlib/expressions/Exponent"
+import { parseExpressionLatex } from "./mathlib/userinput/LatexParser"
+import { GivenEdge, Graph } from "./mathlib/Graph"
+import { CasWorkerMsg, IncrementalGraphResult } from "./CasWorkerTypes"
+import { parseExpressionJSON } from "./mathlib/expressions-from-json"
+import { Relationship } from "./mathlib/Relationship"
 
-RelationalDerivationRule.rules.add(new SubtractFromBothSides())
-RelationalDerivationRule.rules.add(new DivideOnBothSides())
+declare const MQ: any
+
+const casWorker = new Worker("casWorker.js")
+
+const config: WebGraphViewInitSettings = {
+    showArguments: false,
+    drawEdgeLines: true,
+    debugCornerEnabled: true
+}
+
+let graph = new Graph()
+let graphView: WebGraphView | null = null;
+
 
 /**
  * Called after DOM is loaded.
  * Substitutes the body element in the document
  * with the primary integrator view.
  */
-export function loadPrimaryPage(): void {
-    //product(sum(a, b), sum(a, negative(b)), a, a)
-    let root: Expression | null = Integral.of(
-        product(num(10), Exponent.of(x, num(2))),
-        x
-    )
+document.addEventListener("DOMContentLoaded", () => {
+    console.log("Loading")
+    const inputDiv = document.getElementById("input") as HTMLDivElement
+    const input = document.createElement("textarea")
+    const out = document.getElementById("outputbox")!
 
-    let derivationResult = deriveExpand(wrapInGraph(root), 30, true)
-    const graph = derivationResult.graph
+    let expression: Expression | null = null
 
-    const interpreter = new Interpreter({
-        skips: setOf(Evaluate_Sums_Rule)
+    const quill = MQ.MathField(inputDiv, {
+        handlers: {
+            edit: function () {
+                const parseResult = parseExpressionLatex(quill.latex())
+                if (parseResult === "empty") {
+                    expression = null
+                    onInputExpressionChanged()
+                    return
+                }
+                expression = parseResult
+                onInputExpressionChanged()
+            }
+        },
+        autoCommands: "int pi sqrt",
+        substituteTextarea: function () {
+            return input
+        }
+    })
+    input.focus()
+    // Shortcuts
+    document.getElementById("body").addEventListener("keypress", () => {
+        input.focus()
     })
 
-    const input = document.getElementById("input") as HTMLTextAreaElement
-    input!.addEventListener("keydown", e => {
-        if (e.key !== "Enter") return
-        e.preventDefault()
+    casWorker.onmessage = (
+        incrementalResult: MessageEvent<IncrementalGraphResult>
+    ) => {
+        const { newData, failed, forProblem } = incrementalResult.data
 
-        input.value = input.value.trimEnd()
-
-        try {
-            root = parseExpression(input.value)
-        } catch (e) {
-            root = null
-            alert("Not a valid input")
+        if (failed || forProblem != expression?.toJSON()) {
             return
         }
 
-        derivationResult = deriveExpand(wrapInGraph(root), 5, true)
-        const graph = derivationResult.graph
+        // A practical limit to the number of nodes we can afford to render
+        if (graph.numNodes() > 100) {
+            return
+        }
 
-        graphView.setGraph(graph, setOf(root))
-    })
 
-    const out = document.getElementById("outputbox")!
+        for (const { source, target } of newData) {
+            graph.addEdge(parseExpressionJSON(source), parseExpressionJSON(target), new GivenEdge(Relationship.Equal))
+        }
 
-    const config: WebGraphViewInitSettings = {
-        showArguments: false,
-        drawEdgeLines: true,
-        debugCornerEnabled: true
+        graphView.setGraph(graph, new Set([expression]))
     }
 
-    const graphView = new WebGraphView(
-        graph,
-        new Set([root]),
-        interpreter,
-        config
-    )
-    graphView.setNodeColoringScheme(n => {
-        if (n instanceof Expression) {
-            if (!derivationResult.isSimplified(n)) return "lightgray"
-
-            if (n instanceof Product)
-                if (derivationResult.passedFactoringSimplification.has(n))
-                    return "coral"
-            if (n instanceof Sum)
-                if (derivationResult.passedPolynomialSimplification.has(n))
-                    return "yellow"
-            if (derivationResult.passedConvergentSimplification.has(n))
-                return "lightgreen"
-
-            if (n instanceof Variable) return "orange"
-
-            return "lightblue"
+    /**
+     * Starts solving it in the background.
+     * @effects The solution steps view and summary div.
+     *      Does not effect the input area.
+     */
+    function onInputExpressionChanged() {
+        if (expression === undefined) return
+        if (expression === null) {
+            casWorker.postMessage({
+                cancel: true
+            })
+            return
         }
-        return "black"
-    })
-    graphView.setAttribute("id", "web-graphview")
-    out.appendChild(graphView)
-}
 
-document.addEventListener('DOMContentLoaded', loadPrimaryPage)
+        console.log("Parsed " + expression.toJSON())
+        graph = new Graph()
+        graph.addNode(expression)
+
+        graphView = new WebGraphView(
+            graph,
+            new Set([expression]),
+            new Interpreter({ skips: new Set() }),
+            config
+        )
+        graphView.setAttribute("id", "web-graphview")
+        out.replaceChildren(graphView)
+
+        casWorker.postMessage({
+            expressionJson: expression.toJSON(),
+            operation: "graph"
+        } as CasWorkerMsg)
+    }
+})

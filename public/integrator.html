@@ -1,24 +1,31 @@
 <!doctype html>
 
 <html>
-    <head>
-        <title>Integrator</title>
-        <link rel="icon" href="icon.ico" />
-        <meta charset="UTF-8" />
-        <link rel="stylesheet" href="css/style.css" />
-        <script>
-            var exports = {}
-        </script>
-        <script
-            async
-            src="https://polyfill.io/v3/polyfill.min.js?features=es6"
-        ></script>
-        <script id="MathJax-script" src="mathjax/tex-mml-chtml.js"></script>
-    </head>
-    <body id="body"> 
-        <textarea id="input" cols="30" rows="1"></textarea>
-        <div id="outputbox"></div>
-    </body>
 
-    <script src="graphPage.js"></script>
+<head>
+    <title>Integrator</title>
+    <link rel="icon" href="icon.ico" />
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="css/style.css" />
+    <script>
+        var exports = {}
+    </script>
+    <script async src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" src="mathjax/tex-mml-chtml.js"></script>
+    <!--MathQuill Imports-->
+    <link rel="stylesheet" href="mathquill/mathquill.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script src="mathquill/mathquill.js"></script>
+    <script>
+        var MQ = MathQuill.getInterface(2)
+    </script>
+</head>
+
+<body id="body">
+    <div id="input"></div>
+    <div id="outputbox"></div>
+</body>
+
+<script src="graphPage.js" type="module"></script>
+
 </html>

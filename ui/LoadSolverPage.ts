@@ -2,13 +2,13 @@ import { EditableMathView } from "./mathlib/uielements/EditableMathView"
 import { Expression } from "./mathlib/expressions/Expression"
 import { parseExpressionJSON } from "./mathlib/expressions-from-json"
 import { parseExpressionLatex } from "./mathlib/userinput/LatexParser"
-import { CasWorkerMsg, IncrementalResult } from "./CasWorkerTypes"
+import { CasWorkerMsg, IncrementalSimplifyResult } from "./CasWorkerTypes"
 
 declare const MathJax: any
 declare const MQ: any
 declare const M: any
 
-let casWorker = new Worker("casWorker.js")
+const casWorker = new Worker("casWorker.js")
 
 document.addEventListener("DOMContentLoaded", () => {
     const answerSummary = document.getElementById(
@@ -23,55 +23,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const inputView = document.getElementById("input")
 
-    /**
-     * Called after the DOM is loaded.
-     */
-    async function loadSolverPage(): Promise<void> {
-        const view = document.createElement("textarea")
-        const quill = MQ.MathField(inputView, {
-            handlers: {
-                edit: function () {
-                    const parseResult = parseExpressionLatex(quill.latex())
-                    if (parseResult === "empty") {
-                        expression = null
-                        onInputExpressionChanged()
-                        return
-                    }
-                    expression = parseResult
-                    if (expression == null) {
-                        inputView.style.color = "red"
-                        // Also set border color
-                        // https://docs.mathquill.com/en/latest/Config/#changing-colors
-                        inputView.style.borderColor = "red"
-                    } else {
-                        inputView.style.color = "black"
-                        inputView.style.borderColor = "black"
-                    }
-                    onInputExpressionChanged()
-                }
-            },
-            autoCommands: "int pi sqrt",
-            substituteTextarea: function () {
-                return view
-            }
-        })
-        view.focus()
-
-        answerSummary.replaceChildren(solutionView)
-
-        var elems = document.querySelectorAll(".sidenav")
-        M.Sidenav.init(elems, {})
-
-        // Shortcuts
-        document.getElementById('body').addEventListener('keypress', () => {
-            view.focus()
-        })
-    }
-
     // The last valid entered expression
     let expression: Expression | null
 
-    casWorker.onmessage = (incrementalResult: MessageEvent<IncrementalResult>) => {
+    casWorker.onmessage = (
+        incrementalResult: MessageEvent<IncrementalSimplifyResult>
+    ) => {
         const { steps, failed, forProblem } = incrementalResult.data
 
         if (failed || forProblem != expression.toJSON()) {
@@ -109,7 +66,8 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log("Parsed " + expression.toJSON())
 
         casWorker.postMessage({
-            expressionJson: expression.toJSON()
+            expressionJson: expression.toJSON(),
+            operation: "simplify"
         } as CasWorkerMsg)
     }
 
@@ -132,6 +90,43 @@ document.addEventListener("DOMContentLoaded", () => {
         return row
     }
 
-    loadSolverPage()
-})
+    const view = document.createElement("textarea")
+    const quill = MQ.MathField(inputView, {
+        handlers: {
+            edit: function () {
+                const parseResult = parseExpressionLatex(quill.latex())
+                if (parseResult === "empty") {
+                    expression = null
+                    onInputExpressionChanged()
+                    return
+                }
+                expression = parseResult
+                if (expression == null) {
+                    inputView.style.color = "red"
+                    // Also set border color
+                    // https://docs.mathquill.com/en/latest/Config/#changing-colors
+                    inputView.style.borderColor = "red"
+                } else {
+                    inputView.style.color = "black"
+                    inputView.style.borderColor = "black"
+                }
+                onInputExpressionChanged()
+            }
+        },
+        autoCommands: "int pi sqrt",
+        substituteTextarea: function () {
+            return view
+        }
+    })
+    view.focus()
 
+    answerSummary.replaceChildren(solutionView)
+
+    var elems = document.querySelectorAll(".sidenav")
+    M.Sidenav.init(elems, {})
+
+    // Shortcuts
+    document.getElementById("body").addEventListener("keypress", () => {
+        view.focus()
+    })
+})
