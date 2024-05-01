@@ -19,13 +19,37 @@
     <script>
         var MQ = MathQuill.getInterface(2)
     </script>
+    <style>
+        #input {
+            font-size: 2em;
+            text-align: center;
+            padding: 0.5em;
+            width: 100%;
+            margin-top: 2em;
+        }
+
+        #outputbox {
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+        }
+    </style>
+    <!--Import Google Icon Font-->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <!--Import materialize.css-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" />
 </head>
 
 <body id="body">
-    <div id="input"></div>
+    <div class="container row" style="z-index: 20">
+        <div id="input" class="col s12"></div>
+    </div>
     <div id="outputbox"></div>
 </body>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 <script src="graphPage.js" type="module"></script>
 
 </html>
