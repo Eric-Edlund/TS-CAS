@@ -5,7 +5,7 @@ import {
 import { Expression } from "./mathlib/expressions/Expression"
 import { Interpreter } from "./mathlib/interpreting/Interpreter"
 import { parseExpressionLatex } from "./mathlib/userinput/LatexParser"
-import { GivenEdge, Graph } from "./mathlib/Graph"
+import { Graph } from "./mathlib/Graph"
 import { CasWorkerMsg, IncrementalGraphResult } from "./CasWorkerTypes"
 import { parseExpressionJSON } from "./mathlib/expressions-from-json"
 import { Relationship } from "./mathlib/Relationship"
@@ -58,8 +58,9 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     })
     input.focus()
+
     // Shortcuts
-    document.getElementById("body").addEventListener("keypress", () => {
+    document.getElementById("body")!.addEventListener("keypress", () => {
         input.focus()
     })
 
@@ -84,7 +85,7 @@ document.addEventListener("DOMContentLoaded", () => {
             graph.addEdge(n, n1, new Argument(setOf(n), {n: n, r: Relationship.Equal, n1: n1}, "From backend", "unknown"))
         }
 
-        graphView.setGraph(graph, new Set([expression]))
+        graphView!.setGraph(graph, new Set([expression]))
     }
 
     /**

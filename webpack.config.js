@@ -4,7 +4,7 @@ const WasmPackPlugin = require("@wasm-tool/wasm-pack-plugin")
 
 module.exports = {
     entry: {
-        solverPage: "./ui/LoadSolverPage.ts",
+        solverPage: "./ui/LoadSolverPage.tsx",
         graphPage: "./ui/LoadPrimaryPage.ts",
         expressionTestPage: "./ui/LoadExpressionTestPage.ts",
         casWorker: "./ui/CasWorker.ts"
@@ -22,15 +22,14 @@ module.exports = {
             // Default arguments are `--typescript --target browser --mode normal`.
             extraArgs: "--target no-modules",
 
-            outDir: path.resolve(__dirname, "public/cas-wasm"),
-
+            outDir: path.resolve(__dirname, "public/cas-wasm")
         }),
         // Have this example work in Edge which doesn't ship `TextEncoder` or
         // `TextDecoder` at this time.
         new webpack.ProvidePlugin({
             TextDecoder: ["text-encoding", "TextDecoder"],
             TextEncoder: ["text-encoding", "TextEncoder"]
-        }),
+        })
     ],
     mode: "development",
     devtool: "inline-source-map",
@@ -40,14 +39,21 @@ module.exports = {
         }
     },
     resolve: {
-        extensions: [".ts", ".js"]
+        extensions: [".ts", ".js", ".tsx", ".jsx"]
     },
     module: {
         rules: [
             {
-                test: /\.ts$/,
+                test: /\.tsx?$/,
                 use: "ts-loader",
-                exclude: /node_modules/
+                exclude: /node_modules/,
+                use: {
+                    loader: "babel-loader",
+                    options: {
+                        presets: ["@babel/preset-env", "@babel/preset-typescript"],
+                        plugins: ["@babel/plugin-transform-react-jsx"],
+                    },
+                }
             }
         ]
     },
