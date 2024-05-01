@@ -1,7 +1,5 @@
-import { WebGraphView } from "../uielements/WebGraphView"
 import { a, b, c, equivalenceArgument, sum } from "../ConvenientExpressions"
 import { Graph } from "../Graph"
-import { Argument } from "../Argument"
 
 test("WebGraphView constructs", () => {
     const graph = new Graph()

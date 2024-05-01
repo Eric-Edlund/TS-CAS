@@ -127,6 +127,10 @@ impl DerivationHandle {
             finished,
         }
     }
+
+    pub fn get_deriver(&self) -> &Deriver {
+        &self.deriver
+    }
 }
 
 fn build_path(graph: &Graph, start_exp: &Expression, start: NodeIndex, end: NodeIndex) -> Path {
