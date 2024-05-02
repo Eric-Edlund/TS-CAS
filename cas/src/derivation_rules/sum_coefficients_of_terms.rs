@@ -116,6 +116,7 @@ impl DerivationRule for SumCoefficientsOfTerms {
                     Argument::new(
                         String::from("Sum coefficients of terms"),
                         vec![input.clone()],
+                        self.name(),
                     ),
                 )
             })

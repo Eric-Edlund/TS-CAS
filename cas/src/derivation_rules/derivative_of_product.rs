@@ -33,7 +33,7 @@ impl DerivationRule for ProductRule {
 
         vec![(
             sum_of(&result),
-            Argument::new(String::from("Product rule"), vec![input]),
+            Argument::new(String::from("Product rule"), vec![input], self.name()),
         )]
     }
     fn name(&self) -> String {

@@ -25,7 +25,7 @@ impl DerivationRule for DivisionIdentity {
 
         vec![(
             fraction.numerator(),
-            Argument::new(String::from("Division identity"), vec![input]),
+            Argument::new(String::from("Division identity"), vec![input], self.name()),
         )]
     }
     fn name(&self) -> String {

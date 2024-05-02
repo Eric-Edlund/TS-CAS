@@ -19,7 +19,11 @@ impl DerivationRule for ZeroTimesAnything {
 
         vec![(
             Integer::of(0),
-            Argument::new(String::from("Anything times zero is zero"), vec![input]),
+            Argument::new(
+                String::from("Anything times zero is zero"),
+                vec![input],
+                self.name(),
+            ),
         )]
     }
 

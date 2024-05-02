@@ -50,7 +50,11 @@ impl DerivationRule for CancelNegatives {
 
         vec![(
             result,
-            Argument::new(String::from("cancelled negatives"), vec![input.clone()]),
+            Argument::new(
+                String::from("cancelled negatives"),
+                vec![input.clone()],
+                self.name(),
+            ),
         )]
     }
 

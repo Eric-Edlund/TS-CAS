@@ -28,7 +28,7 @@ impl DerivationRule for IntegralOfConst {
 
         vec![(
             product_of(&[integrand, integral.variable()]),
-            Argument::new(String::from("Integrate constant"), vec![input]),
+            Argument::new(String::from("Integrate constant"), vec![input], self.name()),
         )]
     }
     fn name(&self) -> String {

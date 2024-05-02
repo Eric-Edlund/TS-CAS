@@ -39,7 +39,7 @@ impl DerivationRule for IntegralOfTrig {
 
         vec![(
             result,
-            Argument::new(String::from("Integrate trig"), vec![input]),
+            Argument::new(String::from("Integrate trig"), vec![input], self.name()),
         )]
     }
     fn name(&self) -> String {

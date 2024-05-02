@@ -55,6 +55,7 @@ impl DerivationRule for PullOutUnitFractions {
             Argument::new(
                 String::from("Pull same out of top and bottom of fraction"),
                 vec![input],
+                self.name(),
             ),
         )]
     }

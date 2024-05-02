@@ -51,7 +51,11 @@ impl DerivationRule for EvaluateSums {
 
         vec![(
             result,
-            Argument::new(String::from("Evaluate addition"), vec![input.clone()]),
+            Argument::new(
+                String::from("Evaluate addition"),
+                vec![input.clone()],
+                self.name(),
+            ),
         )]
     }
     fn name(&self) -> String {

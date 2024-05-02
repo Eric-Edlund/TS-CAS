@@ -22,7 +22,11 @@ impl DerivationRule for IntegralPullOutNegative {
 
         vec![(
             Negation::of(Integral::of(integrand.child(), integral.variable())),
-            Argument::new(String::from("Pull out negative (constant)"), vec![input]),
+            Argument::new(
+                String::from("Pull out negative (constant)"),
+                vec![input],
+                self.name(),
+            ),
         )]
     }
 

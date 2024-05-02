@@ -27,7 +27,11 @@ impl DerivationRule for MultiplyExponentPowers {
 
         vec![(
             power(outer.base(), product_of(&[inner.base(), inner.power()])),
-            Argument::new("Nested exponents multiply".to_owned(), vec![input]),
+            Argument::new(
+                "Nested exponents multiply".to_owned(),
+                vec![input],
+                self.name(),
+            ),
         )]
     }
 

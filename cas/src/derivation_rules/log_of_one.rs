@@ -26,7 +26,7 @@ impl DerivationRule for LogOfOne {
 
         vec![(
             Integer::of(0),
-            Argument::new(String::from("Log of 1 is 0"), vec![input]),
+            Argument::new(String::from("Log of 1 is 0"), vec![input], self.name()),
         )]
     }
     fn name(&self) -> String {

@@ -29,7 +29,11 @@ impl DerivationRule for SplitFractionsAddition {
 
         vec![(
             result,
-            Argument::new(String::from("Split fraction over addition"), vec![input]),
+            Argument::new(
+                String::from("Split fraction over addition"),
+                vec![input],
+                self.name(),
+            ),
         )]
     }
 

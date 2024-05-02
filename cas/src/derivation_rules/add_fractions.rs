@@ -54,7 +54,11 @@ impl DerivationRule for AddFractions {
             .map(|exp| {
                 (
                     exp,
-                    Argument::new(String::from("Add fractions"), vec![input.clone()]),
+                    Argument::new(
+                        String::from("Add fractions"),
+                        vec![input.clone()],
+                        self.name(),
+                    ),
                 )
             })
             .collect()

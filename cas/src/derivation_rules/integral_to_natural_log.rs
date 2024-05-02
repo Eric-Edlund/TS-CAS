@@ -39,7 +39,11 @@ impl DerivationRule for IntegralToNaturalLog {
                 ConstantExp::of(Constant::Euler),
                 AbsoluteValue::of(fraction.denominator()),
             ),
-            Argument::new(String::from("Integral of du/u is ln(abs(u))"), vec![input]),
+            Argument::new(
+                String::from("Integral of du/u is ln(abs(u))"),
+                vec![input],
+                self.name(),
+            ),
         )]
     }
     fn name(&self) -> String {

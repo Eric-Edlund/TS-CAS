@@ -26,7 +26,7 @@ impl DerivationRule for ExponentToZero {
 
         vec![(
             Integer::of(1),
-            Argument::new(String::from("Anything to 0 is 1"), vec![input]),
+            Argument::new(String::from("Anything to 0 is 1"), vec![input], self.name()),
         )]
     }
     fn name(&self) -> String {

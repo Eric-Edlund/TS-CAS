@@ -79,7 +79,7 @@ impl DerivationRule for Foil {
             .map(|expression| {
                 (
                     expression.clone(),
-                    Argument::new(String::from("FOIL"), vec![input.clone()]),
+                    Argument::new(String::from("FOIL"), vec![input.clone()], self.name()),
                 )
             })
             .collect::<Vec<(Expression, Rc<Argument>)>>()

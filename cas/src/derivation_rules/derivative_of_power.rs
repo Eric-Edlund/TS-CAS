@@ -41,7 +41,7 @@ impl DerivationRule for PowerRule {
                 power.clone(),
                 Exponent::of(base, sum_of(&[power, Negation::of(i(1))])),
             ]),
-            Argument::new(String::from("Apply power rule"), vec![input]),
+            Argument::new(String::from("Apply power rule"), vec![input], self.name()),
         )]
     }
     fn name(&self) -> String {

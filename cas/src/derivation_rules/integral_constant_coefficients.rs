@@ -29,7 +29,7 @@ impl DerivationRule for IntegralConstCoeff {
 
         vec![(
             product_of(&[constant, Integral::of(not, integral.variable())]),
-            Argument::new(String::from("Pull out constants"), vec![input]),
+            Argument::new(String::from("Pull out constants"), vec![input], self.name()),
         )]
     }
 

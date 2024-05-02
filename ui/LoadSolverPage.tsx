@@ -49,8 +49,23 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         const tmpSteps: Step[] = []
+
+        // Contract Uninteresting Steps
+        const UNINTERESTING_STEPS = new Set([
+            "EvaluateSums", "MultiplicativeIdentity"
+        ])
+        let i = 0;
+        while (i+2 < res.length) {
+            let argument = JSON.parse(JSON.stringify(res[i+1]))
+            if (UNINTERESTING_STEPS.has(argument.rule_name)) {
+                res.splice(i, 2)
+                continue
+            }
+            i += 2
+        }
+
         for (let i = 1; i + 1 < res.length; i += 2) {
-            let argument = res[i]
+            let argument = JSON.parse(JSON.stringify(res[i]))
             let expression = res[i + 1]
 
             tmpSteps.push({

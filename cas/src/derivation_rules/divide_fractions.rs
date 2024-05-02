@@ -96,7 +96,7 @@ impl DerivationRule for DivideFractions {
 
         vec![(
             result,
-            Argument::new(String::from("Divided fraction"), vec![input]),
+            Argument::new(String::from("Divided fraction"), vec![input], self.name()),
         )]
     }
     fn name(&self) -> String {

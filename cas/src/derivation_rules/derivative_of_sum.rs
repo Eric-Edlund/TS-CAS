@@ -28,7 +28,11 @@ impl DerivationRule for DerivativeOfSum {
                     .iter()
                     .map(|term| Derivative::of(term.clone(), derivative.relative_to())),
             ),
-            Argument::new(String::from("Split derivative over addition"), vec![input]),
+            Argument::new(
+                String::from("Split derivative over addition"),
+                vec![input],
+                self.name(),
+            ),
         )]
     }
     fn name(&self) -> String {

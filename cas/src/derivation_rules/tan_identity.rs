@@ -114,7 +114,11 @@ impl DerivationRule for TanIdentity {
             .map(|exp| {
                 (
                     exp.clone(),
-                    Argument::new(String::from("Tan/Cot identitiy"), vec![input.clone()]),
+                    Argument::new(
+                        String::from("Tan/Cot identitiy"),
+                        vec![input.clone()],
+                        self.name(),
+                    ),
                 )
             })
             .collect()

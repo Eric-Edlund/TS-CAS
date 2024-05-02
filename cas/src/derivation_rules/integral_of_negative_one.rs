@@ -35,7 +35,7 @@ impl DerivationRule for FlipNegativeOne {
 
         vec![(
             Integral::of(Fraction::of(Integer::of(1), e.base()), integral.variable()),
-            Argument::new(String::from("x^-1 = 1/x"), vec![input]),
+            Argument::new(String::from("x^-1 = 1/x"), vec![input], self.name()),
         )]
     }
 

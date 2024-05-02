@@ -1,14 +1,16 @@
 import { Accessor, For, createEffect } from "solid-js"
 import { Expression } from "../mathlib/expressions/Expression"
-import { SolutionStep } from "./SolutionStep";
+import { SolutionStep } from "./SolutionStep"
 
-declare const MathJax: any;
+declare const MathJax: any
 
 export interface Step {
-    argument: string
+    argument: {
+        message: string
+        rule_name: string
+    }
     expression: Expression
 }
-
 
 export interface Props {
     steps: Accessor<Step[]>
@@ -24,7 +26,7 @@ export function StepList({ steps }: Props): Element {
             <For each={steps()}>
                 {step => (
                     <SolutionStep
-                        argument={step.argument}
+                        argument={step.argument.message}
                         expression={step.expression}
                     />
                 )}
@@ -32,4 +34,3 @@ export function StepList({ steps }: Props): Element {
         </div>
     )
 }
-

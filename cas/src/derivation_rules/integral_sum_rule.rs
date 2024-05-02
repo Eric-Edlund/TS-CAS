@@ -32,7 +32,11 @@ impl DerivationRule for IntegralSumRule {
                     .iter()
                     .map(|term| Integral::of(term.clone(), integral.variable())),
             ),
-            Argument::new(String::from("Split integral over addition"), vec![input]),
+            Argument::new(
+                String::from("Split integral over addition"),
+                vec![input],
+                self.name(),
+            ),
         )]
     }
     fn name(&self) -> String {

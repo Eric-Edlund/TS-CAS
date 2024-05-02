@@ -20,7 +20,11 @@ impl DerivationRule for UndefinedFractions {
 
         vec![(
             Expression::Undefined,
-            Argument::new(String::from("Division by zero is undefined"), vec![]),
+            Argument::new(
+                String::from("Division by zero is undefined"),
+                vec![],
+                self.name(),
+            ),
         )]
     }
 

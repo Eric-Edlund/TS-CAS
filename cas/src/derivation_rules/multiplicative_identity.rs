@@ -33,7 +33,11 @@ impl DerivationRule for MultiplicativeIdentity {
 
         vec![(
             result,
-            Argument::new("Multiplicative identity".to_owned(), vec![input]),
+            Argument::new(
+                "Multiplicative identity".to_owned(),
+                vec![input],
+                self.name(),
+            ),
         )]
     }
     fn name(&self) -> String {

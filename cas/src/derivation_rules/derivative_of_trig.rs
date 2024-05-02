@@ -92,7 +92,11 @@ impl DerivationRule for DerivativeOfTrig {
 
         vec![(
             result,
-            Argument::new(String::from("Apply trig derivation rule"), vec![input]),
+            Argument::new(
+                String::from("Apply trig derivation rule"),
+                vec![input],
+                self.name(),
+            ),
         )]
     }
     fn name(&self) -> String {

@@ -43,8 +43,8 @@ async function init_wasm_in_worker() {
 
             let incrementInterval = setInterval(() => {
                 count++
-                let incrementalResult = JSON.parse(handle.do_pass(50)) as IncrementalResult & IncrementalGraphResult
-                if ( op == 'graph') {
+                let incrementalResult = JSON.parse(handle.do_pass(50)) as IncrementalSimplifyResult & IncrementalGraphResult
+                if (op == 'graph') {
                     // @ts-ignore
                     incrementalResult.newData = JSON.parse(handle.get_graph_difference()) as IncrementalGraphResult
                 }

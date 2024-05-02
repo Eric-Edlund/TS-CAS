@@ -25,7 +25,11 @@ impl DerivationRule for DerivativeOfConst {
 
         vec![(
             Integer::of(0),
-            Argument::new(String::from("Derivative of constant is zero"), vec![input]),
+            Argument::new(
+                String::from("Derivative of constant is zero"),
+                vec![input],
+                self.name(),
+            ),
         )]
     }
     fn name(&self) -> String {

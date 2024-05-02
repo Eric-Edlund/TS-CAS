@@ -31,7 +31,11 @@ impl DerivationRule for AnythingTimesZero {
 
         vec![(
             Integer::of(0),
-            Argument::new(String::from("anything times zero is zero"), vec![input]),
+            Argument::new(
+                String::from("anything times zero is zero"),
+                vec![input],
+                self.name(),
+            ),
         )]
     }
 

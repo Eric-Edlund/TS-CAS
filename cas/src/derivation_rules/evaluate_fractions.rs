@@ -101,7 +101,7 @@ impl DerivationRule for EvaluateFractions {
 
         vec![(
             result,
-            Argument::new(String::from("Reduce fraction"), vec![input]),
+            Argument::new(String::from("Reduce fraction"), vec![input], self.name()),
         )]
     }
     fn name(&self) -> String {

@@ -82,6 +82,7 @@ impl DerivationRule for CancelTrigInverses {
                     Argument::new(
                         String::from("Cancel trigonomic inverses"),
                         vec![input.clone()],
+                        self.name(),
                     ),
                 )
             })

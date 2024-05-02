@@ -131,6 +131,7 @@ impl DerivationRule for SubtractExponentsOnFractions {
             Argument::new(
                 String::from("Sum exponents in both numerator and denominator"),
                 vec![input],
+                self.name(),
             ),
         )]
     }
