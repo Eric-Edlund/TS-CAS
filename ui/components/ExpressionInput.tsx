@@ -14,6 +14,7 @@ export function ExpressionInput({ editCb }: Props) {
     wrappingView.style.height = "100%"
     wrappingView.style.margin = "0"
     wrappingView.style.padding = "0.5em"
+    wrappingView.style.backgroundColor = "white"
     const view = document.createElement("textarea")
     const quill = MQ.MathField(wrappingView, {
         handlers: {
