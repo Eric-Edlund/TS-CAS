@@ -20,6 +20,8 @@ const [showLoadBar, setShowLoadBar] = createSignal(false)
 createEffect(() => {
     if (steps().length > 0) {
         setAnswer(steps()[steps().length - 1].expression)
+    } else {
+        setAnswer(null)
     }
 })
 
@@ -36,7 +38,14 @@ document.addEventListener("DOMContentLoaded", () => {
     const answerSummary = document.getElementById(
         "answerSummary"
     )! as HTMLDivElement
-    render(() => <MathViewSolid expression={answer} />, answerSummary)
+    render(
+        () => (
+            <Show when={answer() !== null}>
+                <MathViewSolid expression={answer} />
+            </Show>
+        ),
+        answerSummary
+    )
 
     const stepListView = document.getElementById("stepsView")! as HTMLDivElement
     render(() => <StepList steps={steps} />, stepListView)
@@ -60,7 +69,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     <div className="indeterminate"></div>
                 </div>
             </Show>
-
         ),
         loadBar
     )
@@ -77,6 +85,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (failed || forProblem != expression()?.toJSON()) {
             setWorking()
+            return
+        }
+
+        // TODO: Define a real interface for result so we don't have to guess what's there
+        if (res === undefined) {
+            setSteps([])
             return
         }
 
