@@ -20,7 +20,6 @@ async function init_wasm_in_worker() {
     onmessage = function (this, e: MessageEvent<CasWorkerMsg>) {
         const { expressionJson, cancel, operation } = e.data
 
-        // Is this how JS works?
         if (queuedTask == e.data) {
             return
         }
@@ -39,10 +38,18 @@ async function init_wasm_in_worker() {
             let expression: string = expressionJson
             let op = operation
             let handle = simplify_incremental(expressionJson, "evaluate_first")
-            let count = 0;
+            function giveUp() {
+                handle.free()
+                clearInterval(incrementInterval)
+                clearTimeout(timeout)
+                res()
+            }
+            let timeout = setTimeout(() => {
+                postMessage({finished: true} as IncrementalSimplifyResult)
+                giveUp()
+            }, 3000)
 
             let incrementInterval = setInterval(() => {
-                count++
                 let incrementalResult = JSON.parse(handle.do_pass(50)) as IncrementalSimplifyResult & IncrementalGraphResult
                 if (op == 'graph') {
                     // @ts-ignore
@@ -50,10 +57,9 @@ async function init_wasm_in_worker() {
                 }
                 incrementalResult.forProblem = expression
                 postMessage(incrementalResult)
-                if (expression !== queuedExpression || count >= 1000 || incrementalResult.finished || incrementalResult.failed) {
-                    handle.free()
-                    clearInterval(incrementInterval)
-                    res()
+                if (expression !== queuedExpression || incrementalResult.finished || incrementalResult.failed) {
+                    postMessage({finished: true, failed: incrementalResult.failed} as IncrementalSimplifyResult)
+                    giveUp()
                     return
                 }
             }, 1)

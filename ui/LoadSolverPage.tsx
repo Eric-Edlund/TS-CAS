@@ -3,7 +3,7 @@ import { MathView } from "./mathlib/uielements/EditableMathView"
 import { Expression } from "./mathlib/expressions/Expression"
 import { parseExpressionJSON } from "./mathlib/expressions-from-json"
 import { CasWorkerMsg, IncrementalSimplifyResult } from "./CasWorkerTypes"
-import { Accessor, createEffect, createSignal } from "solid-js"
+import { Accessor, Show, createEffect, createSignal } from "solid-js"
 import { Step, StepList } from "./components/StepList"
 import { ExpressionInput } from "./components/ExpressionInput"
 
