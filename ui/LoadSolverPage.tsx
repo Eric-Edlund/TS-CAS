@@ -101,7 +101,8 @@ document.addEventListener("DOMContentLoaded", () => {
         const UNINTERESTING_STEPS = new Set([
             "EvaluateSums",
             "MultiplicativeIdentity",
-            "ExponentToOne"
+            "ExponentToOne",
+            "UnitFraction"
         ])
         let i = 0
         while (i + 2 < res.length) {
