@@ -60,7 +60,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         // A practical limit to the number of nodes we can afford to render
-        if (graph().numNodes() > 100) {
+        if (graph().numNodes() > 50) {
             return
         }
 
