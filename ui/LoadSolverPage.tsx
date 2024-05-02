@@ -85,7 +85,7 @@ document.addEventListener("DOMContentLoaded", () => {
         } = incrementalResult.data
 
         if (failed || forProblem != expression()?.toJSON()) {
-            setWorking()
+            setWorking(false)
             return
         }
 
@@ -134,6 +134,7 @@ document.addEventListener("DOMContentLoaded", () => {
     createEffect(() => {
         if (expression() === null) {
             setWorking(false)
+            setSteps([])
             casWorker.postMessage({
                 cancel: true
             })
