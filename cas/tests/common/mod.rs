@@ -1,11 +1,10 @@
 #![allow(dead_code)]
 
 use std::thread;
-use std::{collections::HashSet, sync::Mutex, thread::JoinHandle};
+use std::{sync::Mutex, thread::JoinHandle};
 
-use cas::get_all_equivalents;
+use cas::{read_object_from_json, simplify_incremental_js};
 use once_cell::sync::Lazy;
-use serde_json::Value;
 
 /// Functions used to generate JSON expressions for testing the API.
 ///
@@ -78,30 +77,31 @@ pub type Problem = (String, String);
 /// and runs the deriver. Tests if the expected value is derived
 /// and marked as the simplest equivalent found.
 /// Returns true if the expected simplification was derived.
-fn assert_simplify(start: &str, expected: &str, depth: u32, max_derivations: u32) -> bool {
-    let result_json = get_all_equivalents(start, depth, "evaluate_first", max_derivations);
-    let json = serde_json::from_str(&result_json).unwrap();
-    let Value::Object(obj) = json else { panic!() };
-    let Value::Array(ref equivalents) = obj["equivalents"] else {
-        panic!()
+fn assert_simplify(start: &str, expected: &str, max_derivations: u32) -> bool {
+    let Ok(mut handle) = simplify_incremental_js(start, "evaluate_first") else {
+        println!("Failed to parse input expression.");
+        return false;
     };
-    let result = equivalents
-        .iter()
-        .map(|x| x.to_string())
-        .collect::<HashSet<String>>();
-    result.contains(expected)
+    handle.do_pass(max_derivations);
+    let graph = handle.get_deriver();
+
+    let Ok(expected_exp) = read_object_from_json(expected) else {
+        println!("Failed to parse expected expression.");
+        return false;
+    };
+
+    graph.node_weights().any(|exp| *exp == expected_exp)
 }
 
-/// Specifies a problem with several parameters for the deriver to use.
 /// Tests that the problem's solution can be found within the given
 /// parameters. Does this in a different thread.
-pub fn add_test(name: &str, p: Problem, depth: u32, max_derivations: u32) {
+pub fn add_test(name: &str, p: Problem, max_derivations: u32) {
     let n = name.to_string();
 
     let thread = thread::spawn(move || {
-        let result = assert_simplify(&p.0, &p.1, depth, max_derivations);
+        let result = assert_simplify(&p.0, &p.1, max_derivations);
         TEST_RESULTS.lock().unwrap().push(TestResult {
-            test: (n.to_string(), p, depth),
+            test: (n.to_string(), p, max_derivations),
             success: result,
         });
     });
@@ -111,28 +111,30 @@ pub fn add_test(name: &str, p: Problem, depth: u32, max_derivations: u32) {
 /// Waits for all added tests to complete then prints diagnostics
 /// for all the results.
 pub fn report_results() {
-    let running = &mut *RUNNING_TESTS.lock().unwrap();
-    while !running.is_empty() {
-        let _ = running.pop().unwrap().join();
-    }
-
     let mut passed_all = true;
-    let results = &*TEST_RESULTS.lock().unwrap();
-    for result in results {
-        if result.success {
-            println!("Test {} passed.", &result.test.0);
-        } else {
-            println!("Test {} FAILED.", &result.test.0);
-            println!("\nInitial: {}", result.test.1 .0);
-            println!("\nExpected (not found): {}", result.test.1 .1);
-            passed_all = false;
+    {
+        let running = &mut *RUNNING_TESTS.lock().unwrap();
+        while !running.is_empty() {
+            let _ = running.pop().unwrap().join();
+        }
+
+        let results = &*TEST_RESULTS.lock().unwrap();
+        for result in results {
+            if result.success {
+                println!("Test {} passed.", &result.test.0);
+            } else {
+                println!("Test {} FAILED.", &result.test.0);
+                println!("\nInitial: {}", result.test.1 .0);
+                println!("\nExpected (not found): {}", result.test.1 .1);
+                passed_all = false;
+            }
         }
     }
 
     assert!(passed_all);
 }
 
-/// Name, problem, search depth
+/// Name, problem, max derivations
 type Test = (String, Problem, u32);
 struct TestResult {
     test: Test,

@@ -25,6 +25,10 @@ createEffect(() => {
     }
 })
 
+createEffect(() => {
+    console.log("Answer: " + answer()?.toJSON())
+})
+
 document.addEventListener("DOMContentLoaded", () => {
     const { mathInput: expressionInput, setFocused } = ExpressionInput({
         editCb: setExpression
