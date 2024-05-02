@@ -28,6 +28,7 @@ mod evaluate_fractions;
 mod evaluate_logs;
 mod evaluate_products;
 mod evaluate_sums;
+mod exponent_to_one;
 mod exponent_to_zero;
 mod foil;
 mod fractions_in_denominator;
@@ -127,6 +128,7 @@ pub static ALL_RULES: RwLock<&[&(dyn DerivationRule + Sync)]> = RwLock::new(&[
     &anything_times_zero::AnythingTimesZero {},
     &undefined_fractions::UndefinedFractions {},
     &pull_out_unit_fractions::PullOutUnitFractions {},
+    &exponent_to_one::ExponentToOne {},
 ]);
 
 /// These rules always bring us closer to a simplified expression. Once all of
@@ -163,6 +165,7 @@ pub static IDENTITIES: RwLock<&[&(dyn DerivationRule + Sync)]> = RwLock::new(&[
     &additive_identity::AdditiveIdentity {},
     &cancel_negatives::CancelNegatives {},
     &exponent_to_zero::ExponentToZero {},
+    &exponent_to_one::ExponentToOne {},
     &log_of_one::LogOfOne {},
     &multiplicative_identity::MultiplicativeIdentity {},
     &one_to_any_power::OneToAnything {},
