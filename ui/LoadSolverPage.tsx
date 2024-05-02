@@ -3,7 +3,7 @@ import { MathView } from "./mathlib/uielements/EditableMathView"
 import { Expression } from "./mathlib/expressions/Expression"
 import { parseExpressionJSON } from "./mathlib/expressions-from-json"
 import { CasWorkerMsg, IncrementalSimplifyResult } from "./CasWorkerTypes"
-import { Accessor, Show, Suspense, createEffect, createSignal } from "solid-js"
+import { Accessor, Show, createEffect, createSignal } from "solid-js"
 import { Step, StepList } from "./components/StepList"
 import { ExpressionInput } from "./components/ExpressionInput"
 
@@ -53,12 +53,27 @@ document.addEventListener("DOMContentLoaded", () => {
             setShowLoadBar(false)
         }
     })
-    render(() => <Show when={showLoadBar()} ><div className="progress"><div className="indeterminate"></div></div></Show>, loadBar)
+    render(
+        () => (
+            <Show when={showLoadBar()}>
+                <div className="progress">
+                    <div className="indeterminate"></div>
+                </div>
+            </Show>
+
+        ),
+        loadBar
+    )
 
     casWorker.onmessage = (
         incrementalResult: MessageEvent<IncrementalSimplifyResult>
     ) => {
-        const { steps: res, failed, forProblem, finished } = incrementalResult.data
+        const {
+            steps: res,
+            failed,
+            forProblem,
+            finished
+        } = incrementalResult.data
 
         if (failed || forProblem != expression()?.toJSON()) {
             setWorking()
@@ -69,11 +84,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Contract Uninteresting Steps
         const UNINTERESTING_STEPS = new Set([
-            "EvaluateSums", "MultiplicativeIdentity", "ExponentToOne"
+            "EvaluateSums",
+            "MultiplicativeIdentity",
+            "ExponentToOne"
         ])
-        let i = 0;
-        while (i+2 < res.length) {
-            let argument = JSON.parse(JSON.stringify(res[i+1]))
+        let i = 0
+        while (i + 2 < res.length) {
+            let argument = JSON.parse(JSON.stringify(res[i + 1]))
             if (UNINTERESTING_STEPS.has(argument.rule_name)) {
                 res.splice(i, 2)
                 continue
@@ -119,7 +136,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     var elems = document.querySelectorAll(".sidenav")
     M.Sidenav.init(elems, {})
-
 })
 
 interface MathViewSolidProps {

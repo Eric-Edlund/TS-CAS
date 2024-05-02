@@ -41,12 +41,14 @@
     "webpack-merge": "^5.9.0"
   },
   "dependencies": {
+    "@solid-primitives/transition-group": "^1.0.5",
     "antlr4": "^4.13.0",
     "babel-preset-solid": "^1.8.17",
     "mathjax": "^3.2.2",
     "mathjs": "^11.8.0",
     "ngraph.graph": "^20.0.1",
     "ngraph.path": "^1.4.0",
-    "solid-js": "^1.8.17"
+    "solid-js": "^1.8.17",
+    "solid-transition-group": "^0.2.3"
   }
 }
