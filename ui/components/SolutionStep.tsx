@@ -6,7 +6,7 @@ interface Props {
     expression: Expression
 }
 
-export function SolutionStep({ argument, expression }: Props): Element {
+export function SolutionStep({ argument, expression }: Props) {
     return (
         <div className="row">
             <p className="col s6">{argument}</p>
