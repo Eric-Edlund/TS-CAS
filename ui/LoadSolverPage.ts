@@ -1,10 +1,8 @@
-import { render } from "solid-js/web"
 import { MathView } from "./mathlib/uielements/EditableMathView"
 import { Expression } from "./mathlib/expressions/Expression"
 import { parseExpressionJSON } from "./mathlib/expressions-from-json"
 import { parseExpressionLatex } from "./mathlib/userinput/LatexParser"
 import { CasWorkerMsg, IncrementalSimplifyResult } from "./CasWorkerTypes"
-import { Accessor, For, createEffect, createSignal } from "solid-js"
 
 declare const MathJax: any
 declare const MQ: any
@@ -12,15 +10,13 @@ declare const M: any
 
 const casWorker = new Worker("casWorker.js")
 
-interface Step {
-    argument: string
-    expression: Expression
-}
-
 document.addEventListener("DOMContentLoaded", () => {
     const answerSummary = document.getElementById(
         "answerSummary"
     )! as HTMLDivElement
+
+    // Displays the final answer
+    const solutionView = new MathView()
 
     // Displays sequence of steps leading to the final answer
     const stepListView = document.getElementById("stepsView")! as HTMLDivElement
@@ -28,58 +24,52 @@ document.addEventListener("DOMContentLoaded", () => {
     const inputView = document.getElementById("input")!
 
     // The last valid entered expression
-    const [expression, setExpression] = createSignal<Expression | null>(null)
-    const [steps, setSteps] = createSignal<Step[]>([])
-    const [answer, setAnswer] = createSignal<Expression | null>(null)
-    createEffect(() => {
-        if (steps().length > 0) {
-            setAnswer(steps()[steps().length - 1].expression)
-        }
-    })
-
-    // Displays the final answer
-    render(() => <MathViewSolid expression={answer} />, answerSummary)
+    let expression: Expression | null
 
     casWorker.onmessage = (
         incrementalResult: MessageEvent<IncrementalSimplifyResult>
     ) => {
-        const { steps: res, failed, forProblem } = incrementalResult.data
+        const { steps, failed, forProblem } = incrementalResult.data
 
-        if (failed || forProblem != expression()!.toJSON()) {
+        if (failed || forProblem != expression!.toJSON()) {
             return
         }
 
-        const resSteps: Step[] = []
-        for (let i = 1; i + 1 < res.length; i += 2) {
-            let argument = res[i]
-            let expression = res[i + 1]
-
-            resSteps.push({
-                argument: argument,
-                expression: parseExpressionJSON(expression)
-            })
-        }
-
-        setSteps(resSteps)
-
         console.log(JSON.stringify(steps))
+        solutionView.value = parseExpressionJSON(steps[steps.length - 1])
+        stepListView.innerHTML = ""
+        for (let i = 1; i + 1 < steps.length; i += 2) {
+            let argument = steps[i]
+            let expression = steps[i + 1]
+
+            stepListView.appendChild(<Row argument={argument} expression={expression}></Row>)
+        }
+        MathJax.typeset([answerSummary, stepListView])
     }
 
-    createEffect(() => {
-        if (expression() === null) {
+    /**
+     * Starts solving it in the background.
+     * @effects The solution steps view and summary div.
+     *      Does not effect the input area.
+     */
+    function onInputExpressionChanged() {
+        if (expression === undefined) return
+        if (expression === null) {
+            solutionView.innerHTML = ""
+            stepListView.innerHTML = ""
             casWorker.postMessage({
                 cancel: true
             })
             return
         }
 
-        console.log("Parsed " + expression()!.toJSON())
+        console.log("Parsed " + expression.toJSON())
 
         casWorker.postMessage({
-            expressionJson: expression()!.toJSON(),
+            expressionJson: expression.toJSON(),
             operation: "simplify"
         } as CasWorkerMsg)
-    }, expression)
+    }
 
     const view = document.createElement("textarea")
     const quill = MQ.MathField(inputView, {
@@ -87,11 +77,12 @@ document.addEventListener("DOMContentLoaded", () => {
             edit: function () {
                 const parseResult = parseExpressionLatex(quill.latex())
                 if (parseResult === "empty") {
-                    setExpression(null)
+                    expression = null
+                    onInputExpressionChanged()
                     return
                 }
-                setExpression(parseResult)
-                if (expression() == null) {
+                expression = parseResult
+                if (expression == null) {
                     inputView.style.color = "red"
                     // Also set border color
                     // https://docs.mathquill.com/en/latest/Config/#changing-colors
@@ -100,6 +91,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     inputView.style.color = "black"
                     inputView.style.borderColor = "black"
                 }
+                onInputExpressionChanged()
             }
         },
         autoCommands: "int pi sqrt",
@@ -109,6 +101,8 @@ document.addEventListener("DOMContentLoaded", () => {
     })
     view.focus()
 
+    answerSummary.replaceChildren(solutionView)
+
     var elems = document.querySelectorAll(".sidenav")
     M.Sidenav.init(elems, {})
 
@@ -116,55 +110,28 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("body")!.addEventListener("keypress", () => {
         view.focus()
     })
-
-    render(() => <StepList steps={steps}/>, stepListView)
 })
-
-interface StepListProp {
-    steps: Accessor<Step[]>
-}
-
-function StepList({ steps }: StepListProp): Element {
-    console.log("Creating step list")
-    createEffect(() => {
-        MathJax.typeset()
-    }, steps())
-
-    return (
-        <div>
-            <For each={steps()}>
-                {step => (
-                    <Row
-                        argument={step.argument}
-                        expression={step.expression}
-                    />
-                )}
-            </For>
-        </div>
-    )
-}
 
 interface RowProps {
     argument: string
-    expression: Expression
+    expression: string
 }
 
 /**
  * Creates an argument row for the solution steps list.
  */
-function Row({ argument, expression }: RowProps): Element {
-    return (
-        <div className="row">
-            <p className="col s6">{argument}</p>
-            {new MathView(expression)}
-        </div>
-    )
-}
+function Row({argument, expression}: RowProps): HTMLDivElement {
+    const row = document.createElement("div")
+    row.classList.add("row")
 
-interface MathViewSolidProps {
-    expression: Accessor<Expression | null>
-}
+    const argumentView = document.createElement("p")
+    argumentView.innerText = argument
+    argumentView.classList.add("col", "s6")
+    row.appendChild(argumentView)
 
-function MathViewSolid({ expression }: MathViewSolidProps): Element {
-    return (<>{new MathView(expression())}</>)
+    const expressionView = new MathView()
+    expressionView.value = parseExpressionJSON(expression)
+    row.appendChild(expressionView)
+
+    return row
 }
