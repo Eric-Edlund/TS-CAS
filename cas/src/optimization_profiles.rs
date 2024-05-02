@@ -105,7 +105,7 @@ impl OptimizationProfile for EvaluateFirstProfile {
         }
 
         for identity in *IDENTITIES.read().unwrap() {
-            let result = identity.apply(exp.clone());
+            let result = equiv(exp, &|e| identity.apply(e.clone()));
             if !result.is_empty() {
                 if let Option::Some(ref debug) = self.debug {
                     *debug
@@ -124,7 +124,7 @@ impl OptimizationProfile for EvaluateFirstProfile {
         }
 
         for rule in *ARITHMETIC.read().unwrap() {
-            let result = rule.apply(exp.clone());
+            let result = equiv(exp, &|e| rule.apply(e.clone()));
             if !result.is_empty() {
                 if let Option::Some(ref debug) = self.debug {
                     *debug.borrow_mut().rule_uses.entry(rule.name()).or_insert(0) += 1;
@@ -243,3 +243,36 @@ impl OptimizationProfile for DerivativesOnlyProfile {
 //         self.evaluate_first.set_debug(debug)
 //     }
 // }
+
+#[cfg(test)]
+mod tests {
+    use crate::{
+        convenience_expressions::{i, v},
+        expressions::{product::product_of, sum::sum_of, Exponent, Fraction, Integral},
+    };
+
+    use super::*;
+
+    #[test]
+    fn evaluate_first() {
+        let mut profile = EvaluateFirstProfile::new();
+
+        let start = Integral::of(
+            Fraction::of(
+                sum_of(&[product_of(&[i(2), Exponent::of(v("x"), i(2))]), v("x")]),
+                v("x"),
+            ),
+            v("x"),
+        );
+
+        let first = profile.find_equivalents(&start);
+        dbg!(&first);
+
+        let second = profile
+            .find_equivalents(&first.first().unwrap().0)
+            .first()
+            .unwrap()
+            .0
+            .clone();
+    }
+}
