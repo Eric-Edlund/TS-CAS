@@ -5,7 +5,7 @@ const WasmPackPlugin = require("@wasm-tool/wasm-pack-plugin")
 module.exports = {
     entry: {
         solverPage: "./ui/LoadSolverPage.tsx",
-        graphPage: "./ui/LoadPrimaryPage.ts",
+        graphPage: "./ui/LoadPrimaryPage.tsx",
         expressionTestPage: "./ui/LoadExpressionTestPage.ts",
         casWorker: "./ui/CasWorker.ts"
     },

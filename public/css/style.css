@@ -19,8 +19,3 @@ body {
 #outputbox {
     flex-grow: 1;
 }
-
-#web-graphview {
-    width: 100%;
-    height: 100%;
-}

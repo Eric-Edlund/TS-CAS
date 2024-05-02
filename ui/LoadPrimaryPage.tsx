@@ -11,6 +11,9 @@ import { parseExpressionJSON } from "./mathlib/expressions-from-json"
 import { Relationship } from "./mathlib/Relationship"
 import { Argument } from "./mathlib/Argument"
 import { setOf } from "./mathlib/util/ThingsThatShouldBeInTheStdLib"
+import { Accessor, Show, createEffect, createSignal } from "solid-js"
+import { render } from "solid-js/web"
+import { Integer } from "./mathlib/expressions/Integer"
 
 declare const MQ: any
 
@@ -22,34 +25,23 @@ const config: WebGraphViewInitSettings = {
     debugCornerEnabled: true
 }
 
-let graph = new Graph()
-let graphView: WebGraphView | null = null;
+const [expression, setExpression] = createSignal<Expression | null>(null)
+const [graph, setGraph] = createSignal(new Graph(), {equals: false})
 
-
-/**
- * Called after DOM is loaded.
- * Substitutes the body element in the document
- * with the primary integrator view.
- */
 document.addEventListener("DOMContentLoaded", () => {
-    console.log("Loading")
     const inputDiv = document.getElementById("input") as HTMLDivElement
     const input = document.createElement("textarea")
     const out = document.getElementById("outputbox")!
-
-    let expression: Expression | null = null
 
     const quill = MQ.MathField(inputDiv, {
         handlers: {
             edit: function () {
                 const parseResult = parseExpressionLatex(quill.latex())
                 if (parseResult === "empty") {
-                    expression = null
-                    onInputExpressionChanged()
+                    setExpression(null)
                     return
                 }
-                expression = parseResult
-                onInputExpressionChanged()
+                setExpression(parseResult)
             }
         },
         autoCommands: "int pi sqrt",
@@ -69,55 +61,73 @@ document.addEventListener("DOMContentLoaded", () => {
     ) => {
         const { newData, failed, forProblem } = incrementalResult.data
 
-        if (failed || forProblem != expression?.toJSON()) {
+        if (failed || forProblem != expression()?.toJSON()) {
             return
         }
 
         // A practical limit to the number of nodes we can afford to render
-        if (graph.numNodes() > 100) {
+        if (graph().numNodes() > 100) {
             return
         }
-
 
         for (const { source, target } of newData) {
             let n = parseExpressionJSON(source)
             let n1 = parseExpressionJSON(target)
-            graph.addEdge(n, n1, new Argument(setOf(n), {n: n, r: Relationship.Equal, n1: n1}, "From backend", "unknown"))
+            graph().addEdge(
+                n,
+                n1,
+                new Argument(
+                    setOf(n),
+                    { n: n, r: Relationship.Equal, n1: n1 },
+                    "From backend",
+                    "unknown"
+                )
+            )
         }
-
-        graphView!.setGraph(graph, new Set([expression]))
+        setGraph(graph())
     }
+    
+    render(() => <GraphView graph={graph} root={expression}/>, out)
 
-    /**
-     * Starts solving it in the background.
-     * @effects The solution steps view and summary div.
-     *      Does not effect the input area.
-     */
-    function onInputExpressionChanged() {
-        if (expression === undefined) return
-        if (expression === null) {
+    createEffect(() => {
+        if (expression() === null) {
             casWorker.postMessage({
                 cancel: true
             })
             return
         }
 
-        console.log("Parsed " + expression.toJSON())
-        graph = new Graph()
-        graph.addNode(expression)
-
-        graphView = new WebGraphView(
-            graph,
-            new Set([expression]),
-            new Interpreter({ skips: new Set() }),
-            config
-        )
-        graphView.setAttribute("id", "web-graphview")
-        out.replaceChildren(graphView)
+        console.log("Parsed " + expression()!.toJSON())
+        const newGraph = new Graph()
+        newGraph.addNode(expression()!)
+        setGraph(newGraph)
 
         casWorker.postMessage({
-            expressionJson: expression.toJSON(),
+            expressionJson: expression()!.toJSON(),
             operation: "graph"
         } as CasWorkerMsg)
-    }
+    })
 })
+
+interface GraphViewProps {
+    graph: Accessor<Graph>
+    root: Accessor<Expression | null>
+}
+function GraphView({graph, root}: GraphViewProps): Element {
+    const tmp = new Graph()
+    const one = Integer.of(1)
+    tmp.addNode(one)
+    const view = new WebGraphView(tmp, new Set([one]), new Interpreter({skips: setOf()}), config)
+    view.style.width = "100%"
+    view.style.height = "100%"
+    createEffect(() => {
+        if (graph().numNodes() > 0 && root()) {
+            view.setGraph(graph(), new Set([root()!]))
+        }
+    })
+
+    return (<Show when={graph().numNodes() > 0 && root()} >
+        {view}
+    </Show>)
+    
+}
