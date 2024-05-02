@@ -1,0 +1,13 @@
+{
+    "problems": [
+        {
+            "input": ["Integral",["Divide",["Sum",["Product",{"num":2},["Exponent",{"var":"x"},{"num":2}]],{"var":"x"},{"num":1}],["Product",{"num":2},{"var":"x"}]],{"var":"x"}],
+            "expected":["Divide",["Sum",["Exponent",{"var":"x"},{"num":2}],{"var":"x"},["Logarithm","E",["Abs",{"var":"x"}]]],{"num":2}]
+        },
+        {
+            "input": ["Integral",["Divide",["Sum",["Product",{"num":2},["Exponent",{"var":"x"},{"num":2}]],{"var":"x"},{"num":1}],["Product",{"num":2},{"var":"x"}]],{"var":"x"}],
+            "expected":["Divide",["Sum",["Exponent",{"var":"x"},{"num":2}],{"var":"x"},["Logarithm","E",["Abs",{"var":"x"}]]],{"num":2}]
+        }
+
+    ]
+}

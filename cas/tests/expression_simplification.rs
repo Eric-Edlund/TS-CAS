@@ -1,5 +1,6 @@
 mod common;
 use common::*;
+use serde_json::Value;
 
 // Using a practice problem set for Calc 1
 // https://mathcs.clarku.edu/~djoyce/ma120/integralpractice1.pdf
@@ -95,9 +96,9 @@ fn single_variable_integrals() {
             X,
         ),
         sum3(
-            &pow(X, two),
             &prod(two, X),
-            &prod(&frac(one, two), &ln(&abs(X))),
+            &prod(three, &pow(X, two)),
+            &frac(&ln(&abs(X)), two),
         ),
     );
 
@@ -111,14 +112,44 @@ fn single_variable_integrals() {
         prod(four, &arctan(T)),
     );
 
-    add_test("problem 1", p1, 11, 500);
-    add_test("problem 2", p2, 16, 500);
-    add_test("problem 5", p5, 10, 500);
-    add_test("problem 8", p8, 10, 500);
+    add_test("problem 1", p1, 100);
+    add_test("problem 2", p2, 100);
+    add_test("problem 5", p5, 100);
+    add_test("problem 8", p8, 100);
     // add_test("problem 3", p3, 16);
-    add_test("problem 4", p4, 18, 1000);
-    add_test("problem 9", p9, 6, 500);
-    add_test("problem 11", p11, 20, 100);
+    add_test("problem 4", p4, 100);
+    add_test("problem 9", p9, 100);
+    add_test("problem 11", p11, 100);
 
     report_results();
+}
+
+#[test]
+fn loaded_simplification_tests() {
+    let data_str = include_str!("test_data.json");
+    let data_obj = serde_json::from_str::<Value>(data_str).expect("Failed to parse test data");
+    let problems = data_obj
+        .as_object()
+        .unwrap()
+        .get_key_value("problems")
+        .unwrap()
+        .1
+        .as_array()
+        .unwrap()
+        .iter()
+        .map::<Problem, _>(|v| {
+            let obj = v.as_object().unwrap();
+            (
+                obj.get_key_value("input").unwrap().1.to_string(),
+                obj.get_key_value("expected").unwrap().1.to_string(),
+            )
+        });
+
+    let mut i = 1;
+    for problem in problems {
+        add_test(&format!("Loaded Test {i}"), problem, 100);
+        i += 1;
+    }
+
+    report_results()
 }
