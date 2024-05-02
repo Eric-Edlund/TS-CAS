@@ -51,6 +51,7 @@ mod multiply_exponent_powers;
 mod multiply_fractions;
 mod one_to_any_power;
 mod products_into_numerator;
+mod propogate_undefined;
 mod pull_negative_arround_fraction;
 mod pull_out_unit_fractions;
 mod pythagorean_identities;
@@ -129,6 +130,7 @@ pub static ALL_RULES: RwLock<&[&(dyn DerivationRule + Sync)]> = RwLock::new(&[
     &undefined_fractions::UndefinedFractions {},
     &pull_out_unit_fractions::PullOutUnitFractions {},
     &exponent_to_one::ExponentToOne {},
+    &propogate_undefined::PropogateUndefined {},
 ]);
 
 /// These rules always bring us closer to a simplified expression. Once all of
@@ -160,6 +162,7 @@ pub static ARITHMETIC: RwLock<&[&(dyn DerivationRule + Sync)]> = RwLock::new(&[
 ///
 /// These identities are applied in order.
 pub static IDENTITIES: RwLock<&[&(dyn DerivationRule + Sync)]> = RwLock::new(&[
+    &propogate_undefined::PropogateUndefined {},
     &undefined_fractions::UndefinedFractions {},
     &anything_times_zero::AnythingTimesZero {},
     &additive_identity::AdditiveIdentity {},
