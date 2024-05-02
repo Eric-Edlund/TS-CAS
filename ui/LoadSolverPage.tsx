@@ -15,6 +15,7 @@ const [expression, setExpression] = createSignal<Expression | null>(null)
 const [steps, setSteps] = createSignal<Step[]>([])
 const [answer, setAnswer] = createSignal<Expression | null>(null)
 const [working, setWorking] = createSignal(false)
+const [showLoadBar, setShowLoadBar] = createSignal(false)
 
 createEffect(() => {
     if (steps().length > 0) {
@@ -41,7 +42,18 @@ document.addEventListener("DOMContentLoaded", () => {
     render(() => <StepList steps={steps} />, stepListView)
 
     const loadBar = document.getElementById("loadDiv")!
-    render(() => <Show when={working()} ><div className="progress"><div className="indeterminate"></div></div></Show>, loadBar)
+    createEffect(() => {
+        if (working()) {
+            setTimeout(() => {
+                if (working()) {
+                    setShowLoadBar(true)
+                }
+            }, 200)
+        } else {
+            setShowLoadBar(false)
+        }
+    })
+    render(() => <Show when={showLoadBar()} ><div className="progress"><div className="indeterminate"></div></div></Show>, loadBar)
 
     casWorker.onmessage = (
         incrementalResult: MessageEvent<IncrementalSimplifyResult>
