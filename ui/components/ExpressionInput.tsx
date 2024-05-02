@@ -52,7 +52,6 @@ export function ExpressionInput({ editCb }: Props) {
 
     return {
         mathInput: wrappingView,
-        quill,
         focused,
         setFocused
     }

@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", () => {
     })
     render(() => expressionInput, document.getElementById("input")!)
     setFocused(true)
-    document.getElementById("body")!.addEventListener("keypress", () => {
+    window.addEventListener("keypress", () => {
         setFocused(true)
     })
 
@@ -87,6 +87,6 @@ interface MathViewSolidProps {
     expression: Accessor<Expression | null>
 }
 
-function MathViewSolid({ expression }: MathViewSolidProps): Element {
+function MathViewSolid({ expression }: MathViewSolidProps) {
     return <>{new MathView(expression())}</>
 }

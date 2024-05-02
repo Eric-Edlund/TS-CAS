@@ -14,6 +14,8 @@ import { setOf } from "./mathlib/util/ThingsThatShouldBeInTheStdLib"
 import { Accessor, Show, createEffect, createSignal } from "solid-js"
 import { render } from "solid-js/web"
 import { Integer } from "./mathlib/expressions/Integer"
+import { GraphView } from "./components/GraphView"
+import { ExpressionInput } from "./components/ExpressionInput"
 
 declare const MQ: any
 
@@ -26,35 +28,27 @@ const config: WebGraphViewInitSettings = {
 }
 
 const [expression, setExpression] = createSignal<Expression | null>(null)
-const [graph, setGraph] = createSignal(new Graph(), {equals: false})
+const [graph, setGraph] = createSignal(new Graph(), { equals: false })
 
 document.addEventListener("DOMContentLoaded", () => {
     const inputDiv = document.getElementById("input") as HTMLDivElement
-    const input = document.createElement("textarea")
+    const { mathInput, setFocused } = ExpressionInput({ editCb: setExpression })
+    render(() => mathInput, inputDiv)
+    setFocused(true)
+    window.addEventListener("keypress", () => setFocused(true))
+
     const out = document.getElementById("outputbox")!
-
-    const quill = MQ.MathField(inputDiv, {
-        handlers: {
-            edit: function () {
-                const parseResult = parseExpressionLatex(quill.latex())
-                if (parseResult === "empty") {
-                    setExpression(null)
-                    return
-                }
-                setExpression(parseResult)
-            }
-        },
-        autoCommands: "int pi sqrt",
-        substituteTextarea: function () {
-            return input
-        }
-    })
-    input.focus()
-
-    // Shortcuts
-    document.getElementById("body")!.addEventListener("keypress", () => {
-        input.focus()
-    })
+    render(
+        () => (
+            <GraphView
+                graph={graph}
+                root={expression}
+                interpreter={new Interpreter({ skips: setOf() })}
+                config={config}
+            />
+        ),
+        out
+    )
 
     casWorker.onmessage = (
         incrementalResult: MessageEvent<IncrementalGraphResult>
@@ -86,8 +80,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         setGraph(graph())
     }
-    
-    render(() => <GraphView graph={graph} root={expression}/>, out)
+
 
     createEffect(() => {
         if (expression() === null) {
@@ -108,26 +101,3 @@ document.addEventListener("DOMContentLoaded", () => {
         } as CasWorkerMsg)
     })
 })
-
-interface GraphViewProps {
-    graph: Accessor<Graph>
-    root: Accessor<Expression | null>
-}
-function GraphView({graph, root}: GraphViewProps): Element {
-    const tmp = new Graph()
-    const one = Integer.of(1)
-    tmp.addNode(one)
-    const view = new WebGraphView(tmp, new Set([one]), new Interpreter({skips: setOf()}), config)
-    view.style.width = "100%"
-    view.style.height = "100%"
-    createEffect(() => {
-        if (graph().numNodes() > 0 && root()) {
-            view.setGraph(graph(), new Set([root()!]))
-        }
-    })
-
-    return (<Show when={graph().numNodes() > 0 && root()} >
-        {view}
-    </Show>)
-    
-}
