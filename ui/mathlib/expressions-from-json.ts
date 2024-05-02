@@ -86,4 +86,6 @@ function parseRec(obj: any): Expression {
         case "Abs": return AbsoluteValue.of(parseRec(arr[1]));
         case "Substitution": return Substitution.of(parseRec(arr[2]), parseInt(arr[1]));
     }
+    
+    throw new Error("Failed to parse " + JSON.parse(obj))
 }

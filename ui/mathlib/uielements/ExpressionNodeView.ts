@@ -1,6 +1,6 @@
 import { Expression } from "../expressions/Expression"
 import { Variable } from "../expressions/Variable"
-import { EditableMathView } from "./EditableMathView"
+import { MathView } from "./EditableMathView"
 import { GraphNodeView } from "./GraphNodeView"
 
 /**
@@ -14,7 +14,7 @@ export class ExpressionNodeView extends GraphNodeView {
         super(setStyle)
         this.node = node
 
-        this.editableMathView = new EditableMathView()
+        this.editableMathView = new MathView()
         this.editableMathView.value = this.node
         this.appendChild(this.editableMathView)
 
@@ -28,7 +28,7 @@ export class ExpressionNodeView extends GraphNodeView {
     }
 
     protected readonly node: Expression
-    private readonly editableMathView: EditableMathView
+    private readonly editableMathView: MathView
 }
 customElements.define("expression-nodeview", ExpressionNodeView, {
     extends: "div"

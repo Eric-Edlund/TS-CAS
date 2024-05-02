@@ -3,9 +3,10 @@ import { MathElement } from "../expressions/MathElement"
 /**
  * Displays math and is editable.
  */
-export class EditableMathView extends HTMLDivElement {
-    public constructor() {
+export class MathView extends HTMLDivElement {
+    public constructor(expression: MathElement | null = null) {
         super()
+        this.value = expression
     }
 
     public connectedCallback(): void {}
@@ -36,6 +37,6 @@ export class EditableMathView extends HTMLDivElement {
 
 export type EditableMathListener = (e: MathElement | null) => void
 
-customElements.define("editable-mathview", EditableMathView, { extends: "div" })
+customElements.define("editable-mathview", MathView, { extends: "div" })
 
 declare const MathJax: any

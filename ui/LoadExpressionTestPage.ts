@@ -15,7 +15,7 @@ import { Exponent } from "./mathlib/expressions/Exponent"
 import { Expression } from "./mathlib/expressions/Expression"
 import { Fraction } from "./mathlib/expressions/Fraction"
 import { Integral } from "./mathlib/expressions/Integral"
-import { EditableMathView } from "./mathlib/uielements/EditableMathView"
+import { MathView } from "./mathlib/uielements/EditableMathView"
 
 /**
  * Called after the dom is loaded.
@@ -32,8 +32,7 @@ export function loadExpressionsTestPage(): void {
     }
 
     function view(exp: Expression) {
-        const e = new EditableMathView()
-        e.value = exp
+        const e = new MathView(exp)
         page.append(e)
     }
 
