@@ -8,8 +8,8 @@ interface Props {
 
 export function SolutionStep({ argument, expression }: Props) {
     return (
-        <div className="row">
-            <p className="col s6">{argument}</p>
+        <div class="row">
+            <p class="col s6">{argument}</p>
             {new MathView(expression)}
         </div>
     )

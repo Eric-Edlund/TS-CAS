@@ -42,6 +42,7 @@ document.addEventListener("DOMContentLoaded", () => {
         () => (
             <Show when={answer() !== null}>
                 <MathViewSolid expression={answer} />
+                <div class="divider"></div>
             </Show>
         ),
         answerSummary
@@ -65,8 +66,8 @@ document.addEventListener("DOMContentLoaded", () => {
     render(
         () => (
             <Show when={showLoadBar()}>
-                <div className="progress">
-                    <div className="indeterminate"></div>
+                <div class="progress">
+                    <div class="indeterminate"></div>
                 </div>
             </Show>
         ),
