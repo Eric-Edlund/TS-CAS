@@ -14,6 +14,7 @@ const casWorker = new Worker("casWorker.js")
 const [expression, setExpression] = createSignal<Expression | null>(null)
 const [steps, setSteps] = createSignal<Step[]>([])
 const [answer, setAnswer] = createSignal<Expression | null>(null)
+const [working, setWorking] = createSignal(false)
 
 createEffect(() => {
     if (steps().length > 0) {
@@ -39,10 +40,17 @@ document.addEventListener("DOMContentLoaded", () => {
     const stepListView = document.getElementById("stepsView")! as HTMLDivElement
     render(() => <StepList steps={steps} />, stepListView)
 
+    const loadBar = document.getElementById("loadDiv")!
+    render(() => <Show when={working()} ><div className="progress"><div className="indeterminate"></div></div></Show>, loadBar)
+
     casWorker.onmessage = (
         incrementalResult: MessageEvent<IncrementalSimplifyResult>
     ) => {
-        const { steps: res, failed, forProblem } = incrementalResult.data
+        const { steps: res, failed, forProblem, finished } = incrementalResult.data
+
+        if (failed || finished) {
+            setWorking(false)
+        }
 
         if (failed || forProblem != expression()?.toJSON()) {
             return
@@ -79,11 +87,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     createEffect(() => {
         if (expression() === null) {
+            setWorking(false)
             casWorker.postMessage({
                 cancel: true
             })
             return
         }
+
+        setWorking(true)
 
         console.log("Parsed " + expression()!.toJSON())
 
