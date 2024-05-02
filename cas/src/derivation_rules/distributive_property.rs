@@ -88,7 +88,11 @@ impl DerivationRule for DistributiveProperty {
             .map(|eq| {
                 (
                     eq.clone(),
-                    Argument::new(String::from("Divide fractions"), vec![input.clone()]),
+                    Argument::new(
+                        String::from("Divide fractions"),
+                        vec![input.clone()],
+                        self.name(),
+                    ),
                 )
             })
             .collect()

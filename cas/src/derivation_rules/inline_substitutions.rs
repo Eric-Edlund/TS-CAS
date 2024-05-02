@@ -16,7 +16,11 @@ impl DerivationRule for InlineSubstitutions {
 
         vec![(
             sub.exp(),
-            Argument::new(String::from("Inline substitution"), vec![input]),
+            Argument::new(
+                String::from("Inline substitution"),
+                vec![input],
+                self.name(),
+            ),
         )]
     }
 

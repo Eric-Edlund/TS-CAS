@@ -53,7 +53,7 @@ impl DerivationRule for IntegralPowerRule {
                 Exponent::of(base, sum_of(&[power.clone(), Integer::of(1)])),
                 sum_of(&[power, Integer::of(1)]),
             ),
-            Argument::new(String::from("Reverse power rule"), vec![input]),
+            Argument::new(String::from("Reverse power rule"), vec![input], self.name()),
         )]
     }
 

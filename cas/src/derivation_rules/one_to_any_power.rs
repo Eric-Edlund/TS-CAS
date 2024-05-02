@@ -29,7 +29,11 @@ impl DerivationRule for OneToAnything {
 
         vec![(
             Integer::of(1),
-            Argument::new(String::from("One to anything is one"), vec![input]),
+            Argument::new(
+                String::from("One to anything is one"),
+                vec![input],
+                self.name(),
+            ),
         )]
     }
     fn name(&self) -> String {

@@ -45,7 +45,7 @@ impl DerivationRule for MultiplyFractions {
                     .into_iter()
                     .chain(&mut not.into_iter().cloned()),
             ),
-            Argument::new(String::from("Multiply fractions"), vec![input]),
+            Argument::new(String::from("Multiply fractions"), vec![input], self.name()),
         )]
     }
     fn name(&self) -> String {

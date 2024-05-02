@@ -69,7 +69,11 @@ impl DerivationRule for ProductsIntoNumerator {
             .map(|exp| {
                 (
                     exp,
-                    Argument::new(String::from("Product into numerator"), vec![input.clone()]),
+                    Argument::new(
+                        String::from("Product into numerator"),
+                        vec![input.clone()],
+                        self.name(),
+                    ),
                 )
             })
             .collect()

@@ -45,7 +45,11 @@ impl DerivationRule for CancelTrigArcFunctions {
 
         vec![(
             child.exp(),
-            Argument::new(String::from("Trig arc inverse cancel"), vec![input]),
+            Argument::new(
+                String::from("Trig arc inverse cancel"),
+                vec![input],
+                self.name(),
+            ),
         )]
     }
 

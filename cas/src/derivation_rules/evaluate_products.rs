@@ -42,7 +42,11 @@ impl DerivationRule for EvaluateProducts {
 
         vec![(
             result,
-            Argument::new(String::from("Evaluate multiplication"), vec![input]),
+            Argument::new(
+                String::from("Evaluate multiplication"),
+                vec![input],
+                self.name(),
+            ),
         )]
     }
     fn name(&self) -> String {

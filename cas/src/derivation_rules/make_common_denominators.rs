@@ -57,6 +57,7 @@ impl DerivationRule for MakeCommonDenominators {
                     Argument::new(
                         String::from("Make common denominators"),
                         vec![input.clone()],
+                        self.name(),
                     ),
                 )
             })

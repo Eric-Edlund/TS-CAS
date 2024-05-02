@@ -149,7 +149,11 @@ impl DerivationRule for IntegrateArcTrig {
 
         vec![(
             result,
-            Argument::new(String::from("Arctrig integration rule"), vec![input]),
+            Argument::new(
+                String::from("Arctrig integration rule"),
+                vec![input],
+                self.name(),
+            ),
         )]
     }
     fn name(&self) -> String {

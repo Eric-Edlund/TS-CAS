@@ -41,7 +41,11 @@ impl DerivationRule for AdditiveIdentity {
 
         vec![(
             sum_of(&non_zero_terms),
-            Argument::new(String::from("additive identity"), vec![input.clone()]),
+            Argument::new(
+                String::from("additive identity"),
+                vec![input.clone()],
+                self.name(),
+            ),
         )]
     }
     fn name(&self) -> String {

@@ -35,7 +35,11 @@ impl DerivationRule for PullNegativeOutOfFraction {
 
         vec![(
             result,
-            Argument::new(String::from("Pull negative out of fraction"), vec![input]),
+            Argument::new(
+                String::from("Pull negative out of fraction"),
+                vec![input],
+                self.name(),
+            ),
         )]
     }
 

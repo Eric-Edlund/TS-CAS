@@ -64,7 +64,11 @@ impl DerivationRule for IntegrateBySubstitution {
             .map(|exp| {
                 (
                     exp,
-                    Argument::new(String::from("U-substitution"), vec![input.clone()]),
+                    Argument::new(
+                        String::from("U-substitution"),
+                        vec![input.clone()],
+                        self.name(),
+                    ),
                 )
             })
             .collect()

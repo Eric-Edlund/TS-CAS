@@ -52,7 +52,11 @@ impl DerivationRule for NestedFractions {
 
         vec![(
             result,
-            Argument::new(String::from("Flip out nested fractions"), vec![input]),
+            Argument::new(
+                String::from("Flip out nested fractions"),
+                vec![input],
+                self.name(),
+            ),
         )]
     }
     fn name(&self) -> String {

@@ -43,7 +43,7 @@ impl DerivationHandle {
             .map(|edge| {
                 json!({
                     "source": new_graph.node_weight(edge.source()).unwrap().to_json(),
-                    "edge": format!("{:?}", edge.weight),
+                    "edge": edge.weight.derived_from.iter().next().unwrap().rule_name(),
                     "target": new_graph.node_weight(edge.target()).unwrap().to_json(),
                 })
             })

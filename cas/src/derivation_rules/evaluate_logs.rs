@@ -41,7 +41,7 @@ impl DerivationRule for EvaluateLogs {
         if value == 0 {
             vec![(
                 Integer::of(result as u32),
-                Argument::new(String::from("Evaluate logarithm"), vec![input]),
+                Argument::new(String::from("Evaluate logarithm"), vec![input], self.name()),
             )]
         } else {
             vec![]

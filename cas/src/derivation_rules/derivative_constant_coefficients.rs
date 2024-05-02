@@ -42,7 +42,7 @@ impl DerivationRule for PullOutConst {
                     )])
                     .cloned(),
             ),
-            Argument::new(String::from("Pull out constants"), vec![input]),
+            Argument::new(String::from("Pull out constants"), vec![input], self.name()),
         )]
     }
 

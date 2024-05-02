@@ -26,7 +26,7 @@ impl DerivationRule for EvaluateExponents {
 
         vec![(
             Integer::of(base.value().pow(power.value())),
-            Argument::new(String::from("Evaluate exponents"), vec![input]),
+            Argument::new(String::from("Evaluate exponents"), vec![input], self.name()),
         )]
     }
 

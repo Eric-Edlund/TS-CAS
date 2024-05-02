@@ -58,7 +58,11 @@ impl DerivationRule for CombineCommonFactors {
 
         vec![(
             result,
-            Argument::new("Combine common factors".to_owned(), vec![input]),
+            Argument::new(
+                "Combine common factors".to_owned(),
+                vec![input],
+                self.name(),
+            ),
         )]
     }
 

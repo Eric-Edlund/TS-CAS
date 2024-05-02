@@ -176,7 +176,11 @@ impl DerivationRule for Pythagoras {
             .map(|equiv| {
                 (
                     equiv,
-                    Argument::new(String::from("Pythagorean identity"), vec![input.clone()]),
+                    Argument::new(
+                        String::from("Pythagorean identity"),
+                        vec![input.clone()],
+                        self.name(),
+                    ),
                 )
             })
             .collect()

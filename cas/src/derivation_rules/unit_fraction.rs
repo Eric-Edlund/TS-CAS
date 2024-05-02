@@ -20,7 +20,7 @@ impl DerivationRule for UnitFraction {
 
         vec![(
             Integer::of(1),
-            Argument::new(String::from("x/x = 1"), vec![input]),
+            Argument::new(String::from("x/x = 1"), vec![input], self.name()),
         )]
     }
 

@@ -37,6 +37,7 @@ impl DerivationRule for AssociativeProperty {
                 Argument::new(
                     String::from("Associative property of addition"),
                     vec![input.clone()],
+                    self.name(),
                 ),
             )]
         } else if let Expression::Product(ref product) = input {
@@ -62,6 +63,7 @@ impl DerivationRule for AssociativeProperty {
                 Argument::new(
                     String::from("Associative property of multiplication"),
                     vec![input.clone()],
+                    self.name(),
                 ),
             )]
         } else {
