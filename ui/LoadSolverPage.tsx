@@ -52,7 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Contract Uninteresting Steps
         const UNINTERESTING_STEPS = new Set([
-            "EvaluateSums", "MultiplicativeIdentity"
+            "EvaluateSums", "MultiplicativeIdentity", "ExponentToOne"
         ])
         let i = 0;
         while (i+2 < res.length) {
