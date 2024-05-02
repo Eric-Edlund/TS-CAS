@@ -102,7 +102,8 @@ document.addEventListener("DOMContentLoaded", () => {
             "EvaluateSums",
             "MultiplicativeIdentity",
             "ExponentToOne",
-            "UnitFraction"
+            "UnitFraction",
+            "PropogateUndefined",
         ])
         let i = 0
         while (i + 2 < res.length) {
