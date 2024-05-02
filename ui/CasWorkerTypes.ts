@@ -14,7 +14,7 @@ export interface IncrementalResult {
      */
     failed: string | null
     /**
-     * The operation is compelete and no further results will come.
+     * The operation is compelete or the timout was reached and no further results will come.
      */
     finished: boolean
 }
