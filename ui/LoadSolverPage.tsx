@@ -17,14 +17,6 @@ const [answer, setAnswer] = createSignal<Expression | null>(null)
 const [working, setWorking] = createSignal(false)
 const [showLoadBar, setShowLoadBar] = createSignal(false)
 
-// createEffect(() => {
-//     if (steps().length > 0) {
-//         setAnswer(steps()[steps().length - 1].expression)
-//     } else {
-//         setAnswer(null)
-//     }
-// })
-
 createEffect(() => {
     console.log("Answer: " + answer()?.toJSON())
 })
