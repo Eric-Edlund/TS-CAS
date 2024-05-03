@@ -28,6 +28,7 @@ test("Latex is parsed correctly", () => {
     const EXP_15 = "\\sqrt x"
     const EXP_16 = "\\frac{4}{11}"
     const EXP_17 = "x^{11}"
+    const EXP_18 = "x^{2x}"
     // TODO: logs
 
     function expect(latex: string, value: Expression): void {
@@ -71,4 +72,5 @@ test("Latex is parsed correctly", () => {
     expect(EXP_15, Exponent.of(v("x"), Fraction.of(num(1), num(2))))
     expect(EXP_16, Fraction.of(num(4), num(11)))
     expect(EXP_17, Exponent.of(v("x"), num(11)))
+    expect(EXP_18, Exponent.of(v("x"), product(num(2), v("x"))))
 })
