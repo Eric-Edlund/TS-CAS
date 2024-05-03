@@ -81,6 +81,8 @@ pub fn complexity_rec(a: &Expression) -> u32 {
         Expression::Variable(_) => 1,
         Expression::Fraction(f) => {
             2 + complexity_rec(&f.numerator()) + complexity_rec(&f.denominator())
+            // Punish nested fractions
+            + children_of(a).iter().filter(|e| matches!(e, Expression::Fraction(_))).count() as u32
         }
         Expression::Logarithm(l) => 1 + complexity_rec(&l.base()) + complexity_rec(&l.exp()),
         Expression::Derivative(d) => {
