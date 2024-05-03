@@ -48,6 +48,7 @@ mod log_of_one;
 mod make_common_denominators;
 mod multiplicative_identity;
 mod multiply_exponent_powers;
+mod multiply_exponents;
 mod multiply_fractions;
 mod one_to_any_power;
 mod products_into_numerator;
@@ -131,6 +132,7 @@ pub static ALL_RULES: RwLock<&[&(dyn DerivationRule + Sync)]> = RwLock::new(&[
     &pull_out_unit_fractions::PullOutUnitFractions {},
     &exponent_to_one::ExponentToOne {},
     &propogate_undefined::PropogateUndefined {},
+    &multiply_exponents::MultiplyExponents {},
 ]);
 
 /// These rules always bring us closer to a simplified expression. Once all of
@@ -145,6 +147,7 @@ pub static STRICT_SIMPLIFYING_RULES: RwLock<&[&(dyn DerivationRule + Sync)]> = R
     &integral_to_natural_log::IntegralToNaturalLog {},
     &integral_of_negative_one::FlipNegativeOne {},
     &pull_out_unit_fractions::PullOutUnitFractions {},
+    &multiply_exponents::MultiplyExponents {},
 ]);
 
 /// These rules evaluate numeric expressions without losing any percision.
