@@ -108,7 +108,14 @@ impl OptimizationProfile for EvaluateFirstProfile {
         }
 
         for identity in *IDENTITIES.read().unwrap() {
-            let result = equiv(exp, &|e| identity.apply(e.clone()), &|_| true);
+            let mut result = equiv(exp, &|e| identity.apply(e.clone()), &|_| true);
+            // Remove derivations we've already seen so we can add fractions with created common
+            // denominators.
+            result.retain(|(e, _)| {
+                !self.defeated_by_identities.contains(e)
+                    && !self.defeated_by_arithmetic.contains(e)
+                    && !self.seen_by_strict_simplifying_rules.contains(e)
+            });
             if !result.is_empty() {
                 if let Option::Some(ref debug) = self.debug {
                     *debug
