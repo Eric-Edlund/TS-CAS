@@ -27,7 +27,7 @@ export class Exponent extends Expression {
                 exp.class == FractionType ||
                 exp.class == TrigType
             )
-                return inRow(inParen(exp.toMathXML(table)))
+                return inParen(exp.toMathXML(table))
             return exp.toMathXML(table)
         }
         if (this.power === Fraction.of(Integer.of(1), Integer.of(2))) {
