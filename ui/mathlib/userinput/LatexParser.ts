@@ -27,6 +27,7 @@ export function parseExpressionLatex(source: string): Expression | null | "empty
 
     if (ast == undefined) return "empty"
     if (ast.length == 0) return "empty"
+    reparseExponents(ast)
     groupNumbers(ast)
     dropParenMacros(ast)
     trimWhiteSpace(ast)
@@ -34,6 +35,44 @@ export function parseExpressionLatex(source: string): Expression | null | "empty
 
     return group(ast)
 }
+
+/**
+ * The latex library parses latex inside expression macros differently.
+ * This reparses them to fit everything else.
+ *
+ * Specifically, numbers and letters are combined into a single string,
+ * and we separate them.
+ */
+function reparseExponents(nodes: Ast.Node[]): void {
+    function applies(node: Ast.Node): boolean {
+        if (node.type === "macro" && node.content === '^') {
+            const power = node.args[0].content ?? []
+            return power.length === 1 && power[0].type === "string"
+        }
+    }
+
+    for (let i=0; i<nodes.length; i++) {
+        if (applies(nodes[i])) {
+            // @ts-ignore
+            const node = nodes[i].args[0].content[0]
+            if (node.type === "string") { // Always true
+                // @ts-ignore
+                nodes[i].args[0].content = parseMath(node.content)
+            }
+        }
+    }
+
+    for (const child of nodes) {
+        if (child.type === "macro") {
+            for (const argChild of child.args ?? []) {
+                if (argChild.type === "argument") { // It always will
+                    reparseExponents(argChild.content)
+                }
+            }
+        }
+    }
+}
+
 
 /**
  * Groups adjacent numbers left to right
@@ -96,6 +135,16 @@ function dropParenMacros(nodes: Ast.Node[]): void {
         ) {
             nodes.splice(i, 1)
             i--
+        }
+    }
+
+    for (const child of nodes) {
+        if (child.type === "macro") {
+            for (const argChild of child.args ?? []) {
+                if (argChild.type === "argument") { // It always will
+                    dropParenMacros(argChild.content)
+                }
+            }
         }
     }
 }
