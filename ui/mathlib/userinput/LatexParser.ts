@@ -68,6 +68,16 @@ function groupNumbers(nodes: Ast.Node[]): void {
             i--
         }
     }
+
+    for (const child of nodes) {
+        if (child.type === "macro") {
+            for (const argChild of child.args ?? []) {
+                if (argChild.type === "argument") { // It always will
+                    groupNumbers(argChild.content)
+                }
+            }
+        }
+    }
 }
 
 /**
