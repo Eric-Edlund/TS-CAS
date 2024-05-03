@@ -1,7 +1,7 @@
 import { productOrNot } from "../ConvenientExpressions"
 import { assert } from "../util/assert" 
 import { VariableValueMap } from "../VariableValueMap" 
-import { Exponent } from "./Exponent" 
+import { Exponent, ExponentType } from "./Exponent" 
 import { Expression } from "./Expression"
 import { Integer, IntegerType } from "./Integer"
 import { NameTable } from "./MathElement"
@@ -107,7 +107,9 @@ export class Product extends Expression {
     public toMathXML(table: NameTable): string {
         let out = ""
         function wrapIfNeeded(exp: Expression): string {
-            if (exp.class == ProductType || exp.class == SumType)
+            if (exp.class == ProductType || exp.class == SumType || (
+                exp.class == ExponentType && (exp as Exponent).base.class == IntegerType
+            ))
                 return "<mo>(</mo>" + exp.toMathXML(table) + "<mo>)</mo>"
             return exp.toMathXML(table)
         }
