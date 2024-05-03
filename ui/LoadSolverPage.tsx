@@ -17,13 +17,13 @@ const [answer, setAnswer] = createSignal<Expression | null>(null)
 const [working, setWorking] = createSignal(false)
 const [showLoadBar, setShowLoadBar] = createSignal(false)
 
-createEffect(() => {
-    if (steps().length > 0) {
-        setAnswer(steps()[steps().length - 1].expression)
-    } else {
-        setAnswer(null)
-    }
-})
+// createEffect(() => {
+//     if (steps().length > 0) {
+//         setAnswer(steps()[steps().length - 1].expression)
+//     } else {
+//         setAnswer(null)
+//     }
+// })
 
 createEffect(() => {
     console.log("Answer: " + answer()?.toJSON())
@@ -99,8 +99,6 @@ document.addEventListener("DOMContentLoaded", () => {
             return
         }
 
-        const tmpSteps: Step[] = []
-
         // Contract Uninteresting Steps
         const UNINTERESTING_STEPS = new Set([
             "EvaluateSums",
@@ -121,6 +119,8 @@ document.addEventListener("DOMContentLoaded", () => {
             i += 2
         }
 
+        const tmpSteps: Step[] = []
+
         for (let i = 1; i + 1 < res.length; i += 2) {
             let argument = JSON.parse(JSON.stringify(res[i]))
             let expression = res[i + 1]
@@ -136,6 +136,9 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         setSteps(tmpSteps)
+        if (res[res.length - 1]) {
+            setAnswer(parseExpressionJSON(res[res.length - 1]))
+        }
     }
 
     createEffect(() => {
