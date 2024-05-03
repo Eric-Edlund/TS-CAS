@@ -152,8 +152,10 @@ pub static STRICT_SIMPLIFYING_RULES: RwLock<&[&(dyn DerivationRule + Sync)]> = R
 
 /// These rules have the same properties as arithmetic rules when their
 /// input contains no variables.
-pub static ARITHMETIC_IF_CONSTANT: RwLock<&[&(dyn DerivationRule + Sync)]> =
-    RwLock::new(&[&make_common_denominators::MakeCommonDenominators {}]);
+pub static ARITHMETIC_IF_CONSTANT: RwLock<&[&(dyn DerivationRule + Sync)]> = RwLock::new(&[
+    &make_common_denominators::MakeCommonDenominators {},
+    &combine_common_factors::CombineCommonFactors {},
+]);
 
 /// These rules evaluate numeric expressions without losing any percision.
 pub static ARITHMETIC: RwLock<&[&(dyn DerivationRule + Sync)]> = RwLock::new(&[
