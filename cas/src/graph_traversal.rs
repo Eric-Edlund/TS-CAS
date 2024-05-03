@@ -2,8 +2,11 @@ use std::cmp::Ordering;
 use std::rc::Rc;
 
 use crate::argument::Argument;
-use crate::derivation_rules::helpers::{children_of, children_rec};
-use crate::expressions::Expression;
+use crate::derivation_rules::helpers::{
+    children_of, children_rec, dependent_variables, factors_in,
+};
+
+use crate::expressions::{Expression, Variable};
 
 use serde::ser::SerializeSeq;
 use serde::Serialize;
@@ -56,7 +59,121 @@ pub fn better_solution_cmp(a: &Expression, b: &Expression) -> Ordering {
         return Ordering::Less;
     }
 
-    complexity_rec(a).cmp(&complexity_rec(b))
+    match complexity_rec(a).cmp(&complexity_rec(b)) {
+        // Check for conventional polynomial ordering
+        Ordering::Equal => {
+            polynomial_ordering_violations(a).cmp(&polynomial_ordering_violations(b))
+        }
+        c => c,
+    }
+}
+
+/// Counts the number of deviations from the conventional ordering of polynomial functions
+/// recursively.
+fn polynomial_ordering_violations(exp: &Expression) -> u32 {
+    children_rec(exp)
+        .filter(|child| match child {
+            Expression::Sum(s) => {
+                let mut sorted = s.terms().clone();
+                sorted.sort_by(polynomial_term_ordering);
+                sorted != *s.terms()
+            }
+            Expression::Product(p) => {
+                let mut sorted = p.factors().clone();
+                sorted.sort_by(polynomial_product_ordering);
+                sorted != *p.factors()
+            }
+            _ => false,
+        })
+        .count() as u32
+}
+
+/// Sorts factors in products
+fn polynomial_product_ordering(a: &Expression, b: &Expression) -> Ordering {
+    if dependent_variables(a).is_empty() && !dependent_variables(b).is_empty() {
+        return Ordering::Less;
+    }
+    if !dependent_variables(a).is_empty() && dependent_variables(b).is_empty() {
+        return Ordering::Greater;
+    }
+    if dependent_variables(a).is_empty() && dependent_variables(b).is_empty() {
+        return Ordering::Equal;
+    }
+
+    let a_variable = match a {
+        Expression::Variable(v) => v.symbol().to_string(),
+        Expression::Exponent(e) => match e.base() {
+            Expression::Variable(b) => b.symbol().to_string(),
+            _ => return Ordering::Equal,
+        },
+        _ => return Ordering::Equal,
+    };
+    let b_variable = match b {
+        Expression::Variable(v) => v.symbol().to_string(),
+        Expression::Exponent(e) => match e.base() {
+            Expression::Variable(b) => b.symbol().to_string(),
+            _ => return Ordering::Equal,
+        },
+        _ => return Ordering::Equal,
+    };
+
+    a_variable.cmp(&b_variable)
+}
+
+/// Sorts terms in a polynomial
+fn polynomial_term_ordering(a: &Expression, b: &Expression) -> Ordering {
+    let a: Vec<Expression> = factors_in(a);
+    let b: Vec<Expression> = factors_in(b);
+    let mut variables = a
+        .iter()
+        .map(dependent_variables)
+        .chain(b.iter().map(dependent_variables))
+        .flatten()
+        .map(|e| {
+            let Expression::Variable(v) = e else {
+                unreachable!()
+            };
+            v
+        })
+        .collect::<Vec<_>>();
+    variables.sort_by(|a, b| a.symbol().cmp(b.symbol()));
+
+    fn power(factors: &[Expression], v: &Variable) -> Option<i32> {
+        factors
+            .iter()
+            .filter_map(|factor| match factor {
+                Expression::Exponent(e) => {
+                    let Expression::Variable(var) = e.base() else {
+                        return None;
+                    };
+                    if *var != *v {
+                        return None;
+                    }
+                    let Expression::Integer(i) = e.power() else {
+                        return None;
+                    };
+                    Some(i.value() as i32)
+                }
+                Expression::Variable(var) => (**var == *v).then_some(1),
+                _ => Some(0),
+            })
+            .max()
+    }
+
+    for variable in variables {
+        let Some(a_power) = power(&a, &variable) else {
+            continue;
+        };
+        let Some(b_power) = power(&b, &variable) else {
+            continue;
+        };
+
+        if a_power.cmp(&b_power) != Ordering::Equal {
+            return a_power.cmp(&b_power);
+        }
+    }
+
+    Ordering::Equal
 }
 
 /// Does not enter substitutions
@@ -125,12 +242,26 @@ impl Serialize for Path {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::expressions::{Integer, Sum};
+    use crate::{
+        convenience_expressions::{i, v},
+        expressions::{product::product_of, Exponent, Integer, Sum},
+    };
 
     #[test]
     fn test_1() {
         let exp1 = Integer::of(1);
         let exp2 = Sum::of(&[Integer::of(1), Integer::of(1)]).unwrap();
         assert_eq!(expression_complexity_cmp(&exp1, &exp2), Ordering::Less);
+    }
+
+    #[test]
+    fn polynomial_ordering() {
+        assert_eq!(
+            polynomial_term_ordering(
+                &product_of(&[v("x"), v("y")]),
+                &product_of(&[Exponent::of(v("x"), i(2)), v("y")])
+            ),
+            Ordering::Less
+        );
     }
 }
