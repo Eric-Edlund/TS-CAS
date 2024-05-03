@@ -1,4 +1,5 @@
 use std::cmp::Ordering;
+use std::collections::HashSet;
 use std::rc::Rc;
 
 use crate::argument::Argument;
@@ -188,6 +189,8 @@ pub fn complexity_rec(a: &Expression) -> u32 {
                     .iter()
                     .filter(|x| matches!(x, Expression::Negation(_)))
                     .count() as u32
+            // Punish repeated factors
+            + (p.factors().len() - p.factors().iter().collect::<HashSet<_>>().len()) as u32
         }
         Expression::Sum(s) => {
             s.terms().len() as u32 + s.terms().iter().map(complexity_rec).sum::<u32>()
