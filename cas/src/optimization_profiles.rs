@@ -2,7 +2,10 @@ use std::{cell::RefCell, collections::HashSet, rc::Rc};
 
 use crate::{
     argument::Argument,
-    derivation_rules::{ALL_RULES, ARITHMETIC, IDENTITIES, STRICT_SIMPLIFYING_RULES},
+    derivation_rules::{
+        helpers::unique_child_leaves, ALL_RULES, ARITHMETIC, ARITHMETIC_IF_CONSTANT, IDENTITIES,
+        STRICT_SIMPLIFYING_RULES,
+    },
     deriver::DerivationDebugInfo,
     equivalence_disbatchers::equiv,
     expressions::Expression,
@@ -55,7 +58,7 @@ impl OptimizationProfile for BruteForceProfile {
             .iter()
             .filter(|rule| self.allowed_rules.contains(&rule.name()))
             .flat_map(|rule| {
-                let result = equiv(exp, &|e| rule.apply(e.clone()));
+                let result = equiv(exp, &|e| rule.apply(e.clone()), &|_| true);
                 if let Option::Some(ref debug) = self.debug {
                     if !result.is_empty() {
                         *debug.borrow_mut().rule_uses.entry(rule.name()).or_insert(0) += 1;
@@ -105,7 +108,7 @@ impl OptimizationProfile for EvaluateFirstProfile {
         }
 
         for identity in *IDENTITIES.read().unwrap() {
-            let result = equiv(exp, &|e| identity.apply(e.clone()));
+            let result = equiv(exp, &|e| identity.apply(e.clone()), &|_| true);
             if !result.is_empty() {
                 if let Option::Some(ref debug) = self.debug {
                     *debug
@@ -124,7 +127,20 @@ impl OptimizationProfile for EvaluateFirstProfile {
         }
 
         for rule in *ARITHMETIC.read().unwrap() {
-            let result = equiv(exp, &|e| rule.apply(e.clone()));
+            let result = equiv(exp, &|e| rule.apply(e.clone()), &|_| true);
+            if !result.is_empty() {
+                if let Option::Some(ref debug) = self.debug {
+                    *debug.borrow_mut().rule_uses.entry(rule.name()).or_insert(0) += 1;
+                }
+                self.defeated_by_arithmetic.insert(exp.clone());
+                return result;
+            }
+        }
+
+        for rule in *ARITHMETIC_IF_CONSTANT.read().unwrap() {
+            let result = equiv(exp, &|e| rule.apply(e.clone()), &|e| {
+                unique_child_leaves(e).all(|e| matches!(e, Expression::Integer(_)))
+            });
             if !result.is_empty() {
                 if let Option::Some(ref debug) = self.debug {
                     *debug.borrow_mut().rule_uses.entry(rule.name()).or_insert(0) += 1;
@@ -143,7 +159,7 @@ impl OptimizationProfile for EvaluateFirstProfile {
             .unwrap()
             .iter()
             .flat_map(|rule| {
-                let result = equiv(exp, &|e| rule.apply(e.clone()));
+                let result = equiv(exp, &|e| rule.apply(e.clone()), &|_| true);
                 if let Option::Some(ref debug) = self.debug {
                     if !result.is_empty() {
                         *debug.borrow_mut().rule_uses.entry(rule.name()).or_insert(0) += 1;
@@ -161,7 +177,7 @@ impl OptimizationProfile for EvaluateFirstProfile {
         all_rules
             .iter()
             .flat_map(|rule| {
-                let result = equiv(exp, &|e| rule.apply(e.clone()));
+                let result = equiv(exp, &|e| rule.apply(e.clone()), &|_| true);
                 if let Option::Some(ref debug) = self.debug {
                     if !result.is_empty() {
                         *debug.borrow_mut().rule_uses.entry(rule.name()).or_insert(0) += 1;
@@ -206,7 +222,7 @@ impl OptimizationProfile for DerivativesOnlyProfile {
 
         let mut simple = simplifying_rules
             .iter()
-            .flat_map(|rule| equiv(exp, &|e| rule.apply(e.clone())))
+            .flat_map(|rule| equiv(exp, &|e| rule.apply(e.clone()), &|_| true))
             .peekable();
 
         if simple.peek().is_some() {
@@ -268,7 +284,7 @@ mod tests {
         let first = profile.find_equivalents(&start);
         dbg!(&first);
 
-        let second = profile
+        profile
             .find_equivalents(&first.first().unwrap().0)
             .first()
             .unwrap()

@@ -2,6 +2,7 @@
 * Helper functions for derivation rules.
 */
 
+use std::collections::HashSet;
 use std::{collections::LinkedList, iter::once};
 
 use crate::convenience_expressions::i;
@@ -65,20 +66,20 @@ pub fn children_rec(exp: &Expression) -> impl Iterator<Item = Expression> {
 /// Gets all children of given expression recursively, iterating over
 /// the set of leaf expressions. Does not enter substitutions.
 pub fn unique_child_leaves(exp: &Expression) -> impl Iterator<Item = Expression> {
-    let mut leaves = Vec::<Expression>::new();
+    let mut leaves = HashSet::<Expression>::new();
     let mut queue = LinkedList::<Expression>::new();
 
     queue.extend(children_of(exp));
 
     while let Some(top) = queue.pop_front() {
         let children = if matches!(top, Expression::Substitution(_)) {
-            leaves.push(top);
+            leaves.insert(top);
             continue;
         } else {
             children_of(&top)
         };
         if children.is_empty() {
-            leaves.push(top);
+            leaves.insert(top);
         } else {
             queue.extend(children);
         }
@@ -347,5 +348,15 @@ mod tests {
                 v("x"),
             )
         )
+    }
+
+    #[test]
+    fn unique_leaves() {
+        let exp = product_of(&[v("a"), sum_of(&[v("a"), v("b")])]);
+
+        let leaves: Vec<_> = unique_child_leaves(&exp).collect();
+        assert_eq!(leaves.len(), 2);
+        assert!(leaves.contains(&v("a")));
+        assert!(leaves.contains(&v("b")));
     }
 }

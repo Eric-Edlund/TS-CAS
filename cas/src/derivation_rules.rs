@@ -150,6 +150,11 @@ pub static STRICT_SIMPLIFYING_RULES: RwLock<&[&(dyn DerivationRule + Sync)]> = R
     &multiply_exponents::MultiplyExponents {},
 ]);
 
+/// These rules have the same properties as arithmetic rules when their
+/// input contains no variables.
+pub static ARITHMETIC_IF_CONSTANT: RwLock<&[&(dyn DerivationRule + Sync)]> =
+    RwLock::new(&[&make_common_denominators::MakeCommonDenominators {}]);
+
 /// These rules evaluate numeric expressions without losing any percision.
 pub static ARITHMETIC: RwLock<&[&(dyn DerivationRule + Sync)]> = RwLock::new(&[
     &evaluate_sums::EvaluateSums {},
