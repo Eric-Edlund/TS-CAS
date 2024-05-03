@@ -104,10 +104,12 @@ document.addEventListener("DOMContentLoaded", () => {
         // Contract Uninteresting Steps
         const UNINTERESTING_STEPS = new Set([
             "EvaluateSums",
+            "EvaluateProducts",
             "MultiplicativeIdentity",
             "ExponentToOne",
             "UnitFraction",
             "PropogateUndefined",
+            "AssociativeProperty",
         ])
         let i = 0
         while (i + 2 < res.length) {
