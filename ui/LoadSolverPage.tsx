@@ -130,6 +130,8 @@ document.addEventListener("DOMContentLoaded", () => {
         setSteps(tmpSteps)
         if (res[res.length - 1]) {
             setAnswer(parseExpressionJSON(res[res.length - 1]))
+        } else {
+            setAnswer(null)
         }
     }
 
@@ -137,6 +139,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (expression() === null) {
             setWorking(false)
             setSteps([])
+            setAnswer(null)
             casWorker.postMessage({
                 cancel: true
             })
