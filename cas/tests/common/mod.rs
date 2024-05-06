@@ -118,8 +118,8 @@ pub fn report_results() {
             let _ = running.pop().unwrap().join();
         }
 
-        let results = &*TEST_RESULTS.lock().unwrap();
-        for result in results {
+        let mut results = TEST_RESULTS.lock().unwrap();
+        for result in &*results {
             if result.success {
                 println!("Test {} passed.", &result.test.0);
             } else {
@@ -129,6 +129,8 @@ pub fn report_results() {
                 passed_all = false;
             }
         }
+        results.clear();
+        running.clear();
     }
 
     assert!(passed_all);
