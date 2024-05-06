@@ -13,6 +13,14 @@
             "expected": ["Sum", ["Logarithm", "E", ["Abs",{"var": "x"}]], ["Product", {"num": 3}, ["Exponent", {"var": "x"}, {"num": 2}]], ["Divide", {"var": "x"}, {"num": 2}]]
         },
         {
+            "input": ["Integral", ["Product", ["Cos", {"var": "x"}], ["Negation",["Sin", {"var": "x"}]]], {"var": "x"}],
+            "expected": ["Negation",["Divide", ["Exponent", ["Sin", {"var": "x"}], {"num": 2}], {"num": 2}]]
+        },
+        {
+            "input": ["Integral", ["Exponent", {"var": "x"}, ["Divide", {"num": 1}, {"num": 2}]], {"var": "x"}],
+            "expected": ["Product", ["Exponent", {"var": "x"}, ["Divide", {"num": 3}, {"num": 2}]], ["Divide", {"num": 2}, {"num": 3}]]
+        },
+        {
             "input": ["Integral", ["Sum", ["Exponent", {"var": "x"}, ["Divide", {"num": 3}, {"num": 2}]], ["Product", {"num": 10}, ["Exponent", ["Exponent", {"var": "x"}, {"num": 3}], ["Divide", {"num": 5}, {"num": 3}]]]], {"var": "x"}],
             "expected": {"var": "x"}
         }
