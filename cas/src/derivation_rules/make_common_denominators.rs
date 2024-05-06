@@ -31,6 +31,12 @@ impl DerivationRule for MakeCommonDenominators {
                     panic!()
                 };
                 f.denominator()
+            })
+            .filter(|den| {
+                let Expression::Integer(i) = den else {
+                    return true;
+                };
+                i.value() != 1
             });
 
         let mut equivalents = Vec::<Expression>::new();
@@ -71,8 +77,8 @@ impl DerivationRule for MakeCommonDenominators {
 #[cfg(test)]
 mod tests {
     use crate::{
-        convenience_expressions::v,
-        derivation_rules::helpers::expect_no_result,
+        convenience_expressions::{i, v},
+        derivation_rules::helpers::{expect_no_result, expect_result},
         expressions::{sum::sum_of, Integral},
     };
 
@@ -97,5 +103,24 @@ mod tests {
             &rule,
             sum_of(&[Integral::of(v("x"), v("x")), Fraction::of(v("a"), v("b"))]),
         );
+    }
+    #[test]
+    fn no_trivial_derivations() {
+        let rule = MakeCommonDenominators {};
+
+        expect_result(
+            &rule,
+            sum_of(&[Fraction::of(i(1), i(2)), i(1)]),
+            sum_of(&[
+                Fraction::of(i(1), i(2)),
+                Fraction::of(product_of(&[i(1), i(2)]), i(2)),
+            ]),
+        );
+    }
+    #[test]
+    fn no_den_one() {
+        let rule = MakeCommonDenominators {};
+
+        expect_no_result(&rule, sum_of(&[v("x"), Fraction::of(v("x"), i(1))]));
     }
 }
