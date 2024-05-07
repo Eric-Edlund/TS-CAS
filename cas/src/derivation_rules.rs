@@ -148,6 +148,9 @@ pub static STRICT_SIMPLIFYING_RULES: RwLock<&[&(dyn DerivationRule + Sync)]> = R
     &integral_of_negative_one::FlipNegativeOne {},
     &pull_out_unit_fractions::PullOutUnitFractions {},
     &multiply_exponents::MultiplyExponents {},
+    &derivative_of_constant::DerivativeOfConst {},
+    &derivative_of_power::PowerRule {},
+    &derivative_of_sum::DerivativeOfSum {},
 ]);
 
 /// These rules have the same properties as arithmetic rules when their

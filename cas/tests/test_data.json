@@ -21,6 +21,10 @@
             "expected": ["Product", ["Exponent", {"var": "x"}, ["Divide", {"num": 3}, {"num": 2}]], ["Divide", {"num": 2}, {"num": 3}]]
         },
         {
+            "input": ["Integral", ["Divide", {"num": 8}, ["Sum", ["Exponent", {"var": "x"}, {"num": 2}], {"num": 2}]], {"var": "x"}],
+            "expected": ["Divide", ["Product", {"num": 8}, ["Arctan", ["Divide", {"var": "x"}, ["Exponent", {"num": 2}, ["Divide", {"num": 1}, {"num": 2}]]]]], ["Exponent", {"num": 2}, ["Divide", {"num": 1}, {"num": 2}]]]
+        },
+        {
             "input": ["Integral", ["Sum", ["Exponent", {"var": "x"}, ["Divide", {"num": 3}, {"num": 2}]], ["Product", {"num": 10}, ["Exponent", ["Exponent", {"var": "x"}, {"num": 3}], ["Divide", {"num": 5}, {"num": 3}]]]], {"var": "x"}],
             "expected": {"var": "x"}
         }
