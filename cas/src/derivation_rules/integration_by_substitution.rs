@@ -2,6 +2,7 @@ use std::collections::HashSet;
 use std::rc::Rc;
 
 use petgraph::visit::IntoNodeReferences;
+use serde_json::json;
 
 use crate::derivation_rules::helpers::is_one;
 use crate::deriver::Deriver;
@@ -61,7 +62,7 @@ impl DerivationRule for IntegrateBySubstitution {
             .filter(|exp| !matches!(exp, Expression::Substitution(_)))
             .filter(|exp| !is_one(exp));
 
-        let mut substitutions = Vec::<Expression>::new();
+        let mut substitutions = Vec::<(Expression, u32)>::new();
 
         'u_for: for u_exp in sub_expressions {
             let u_sub = Substitution::of(u_exp.clone());
@@ -140,26 +141,30 @@ impl DerivationRule for IntegrateBySubstitution {
                 }
             }
 
-            substitutions.push(Integral::of(substituted, u_sub));
+            let Expression::Substitution(s) = u_sub.clone() else {
+                unreachable!()
+            };
+            substitutions.push((Integral::of(substituted, u_sub), s.sub_id()));
         }
 
         substitutions
             .into_iter()
-            .map(|exp| {
-                (
-                    exp,
-                    Argument::new(
-                        String::from("U-Substitution"),
-                        vec![input.clone()],
-                        self.name(),
-                    ),
-                )
+            .map(|(exp, sub_id)| {
+                let mut arg = Argument::new_raw(
+                    String::from("U-Substitution"),
+                    vec![input.clone()],
+                    self.name(),
+                );
+                arg.set_extra_data(json!({
+                    "substitution_id": sub_id
+                }));
+                (exp, arg.into())
             })
             .collect()
     }
 
     fn name(&self) -> String {
-        "u-sub".into()
+        "IntegrationBySubstitution".into()
     }
 }
 

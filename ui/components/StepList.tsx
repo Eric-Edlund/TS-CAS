@@ -8,6 +8,7 @@ export interface Step {
     argument: {
         message: string
         rule_name: string
+        extra_data: any 
     }
     expression: Expression
 }
@@ -16,7 +17,7 @@ export interface Props {
     steps: Accessor<Step[]>
 }
 
-export function StepList({ steps }: Props): Element {
+export function StepList({ steps }: Props) {
     createEffect(() => {
         MathJax.typeset()
     }, steps())
@@ -26,7 +27,7 @@ export function StepList({ steps }: Props): Element {
             <For each={steps()}>
                 {step => (
                     <SolutionStep
-                        argument={step.argument.message}
+                        argument={step.argument}
                         expression={step.expression}
                     />
                 )}

@@ -47,6 +47,6 @@ impl DerivationRule for IntegralToNaturalLog {
         )]
     }
     fn name(&self) -> String {
-        String::from("IntegralToNaturalLog")
+        String::from("IntegrationToNaturalLog")
     }
 }

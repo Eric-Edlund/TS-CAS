@@ -15,6 +15,7 @@ pub struct Argument {
     msg: String,
     grounds: HashSet<Expression>,
     rule_name: String,
+    extra_data: Option<Value>,
 }
 
 impl Hash for Argument {
@@ -29,8 +30,18 @@ impl Argument {
             msg,
             grounds: HashSet::from_iter(grounds),
             rule_name,
+            extra_data: None,
         }
         .into()
+    }
+
+    pub fn new_raw(msg: String, grounds: Vec<Expression>, rule_name: String) -> Argument {
+        Argument {
+            msg,
+            grounds: HashSet::from_iter(grounds),
+            rule_name,
+            extra_data: None,
+        }
     }
 
     pub fn message(&self) -> &str {
@@ -48,7 +59,16 @@ impl Argument {
     pub fn to_json(&self) -> Value {
         json!({
             "message": self.msg,
-            "rule_name": self.rule_name
+            "rule_name": self.rule_name,
+            "extra_data": self.extra_data,
         })
+    }
+
+    pub fn set_extra_data(&mut self, data: Value) {
+        self.extra_data = Some(data)
+    }
+
+    pub fn extra_data(&self) -> Option<&Value> {
+        self.extra_data.as_ref()
     }
 }
