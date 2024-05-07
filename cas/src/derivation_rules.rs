@@ -135,6 +135,51 @@ pub static ALL_RULES: RwLock<&[&(dyn DerivationRule + Sync)]> = RwLock::new(&[
     &multiply_exponents::MultiplyExponents {},
 ]);
 
+/// All rules not included in lists below
+pub static REMAINING_RULES: RwLock<&[&(dyn DerivationRule + Sync)]> = RwLock::new(&[
+    &distributive_property::DistributiveProperty {},
+    &multiply_exponent_powers::MultiplyExponentPowers {},
+    &divide_fractions::DivideFractions {},
+    &foil::Foil {},
+    // TODO: These rules aren't passing tests yet
+    // &sum_coefficients_of_terms::SumCoefficientsOfTerms {},
+    // &subtract_exponents_on_fractions::SubtractExponentsOnFractions {},
+    &make_common_denominators::MakeCommonDenominators {},
+    &integration_power_rule::IntegralPowerRule {},
+    &integral_sum_rule::IntegralSumRule {},
+    &integral_constant_coefficients::IntegralConstCoeff {},
+    &integral_of_constant::IntegralOfConst {},
+    &derivative_of_constant::DerivativeOfConst {},
+    &derivative_of_power::PowerRule {},
+    &derivative_of_sum::DerivativeOfSum {},
+    &derivative_of_negation::PullOutNegation {},
+    &derivative_constant_coefficients::PullOutConst {},
+    &evaluate_exponents::EvaluateExponents {},
+    &pythagorean_identities::Pythagoras {},
+    &tan_identity::TanIdentity {},
+    &integral_of_trig::IntegralOfTrig {},
+    &derivative_of_trig::DerivativeOfTrig {},
+    &cancel_trig_inverses::CancelTrigInverses {},
+    &cancel_trig_arcs::CancelTrigArcFunctions {},
+    &trig_reflections::TrigReflections {},
+    &integral_pull_out_negative::IntegralPullOutNegative {},
+    &products_into_numerator::ProductsIntoNumerator {},
+    &add_fractions::AddFractions {},
+    &fractions_in_denominator::NestedFractions {},
+    &multiply_fractions::MultiplyFractions {},
+    &pull_negative_arround_fraction::PullNegativeOutOfFraction {},
+    &integrate_arctrig::IntegrateArcTrig {},
+    &imaginary_identity::ImaginaryIdentity {},
+    &integration_by_substitution::IntegrateBySubstitution {},
+    &integral_to_natural_log::IntegralToNaturalLog {},
+    &integral_of_negative_one::FlipNegativeOne {},
+    &split_fractions_over_addition::SplitFractionsAddition {},
+    &multiply_exponents::MultiplyExponents {},
+]);
+
+pub static ONLY_OUTSIDE_INTEGRANDS: RwLock<&[&(dyn DerivationRule + Sync)]> =
+    RwLock::new(&[&inline_substitutions::InlineSubstitutions {}]);
+
 /// These rules always bring us closer to a simplified expression. Once all of
 /// them have been applied to an expression, if any of them yielded a result,
 /// we are confident that he original expression is no longer of interest.

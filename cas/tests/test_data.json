@@ -9,7 +9,7 @@
             "expected": ["Divide",["Product",{"num":2},["Exponent",{"var":"x"},["Divide",{"num":5},{"num":2}]]],{"num":5}]
         },
         {
-            "input": ["Integral", ["Divide", ["Sum", ["Product", {"num": 3}, ["Exponent", {"var": "x"}, {"num": 2}]], {"var": "x"}, {"num": 2}], ["Product", {"num": 2}, {"var": "x"}]], {"var": "x"}],
+            "input": ["Sum", ["Logarithm", "E", ["Abs",{"var": "x"}]], ["Product", {"num": 3}, ["Exponent", {"var": "x"}, {"num": 2}]], ["Divide", {"var": "x"}, {"num": 2}]],
             "expected": ["Sum", ["Logarithm", "E", ["Abs",{"var": "x"}]], ["Product", {"num": 3}, ["Exponent", {"var": "x"}, {"num": 2}]], ["Divide", {"var": "x"}, {"num": 2}]]
         },
         {
@@ -22,7 +22,12 @@
         },
         {
             "input": ["Integral", ["Divide", {"num": 8}, ["Sum", ["Exponent", {"var": "x"}, {"num": 2}], {"num": 2}]], {"var": "x"}],
-            "expected": ["Divide", ["Product", {"num": 8}, ["Arctan", ["Divide", {"var": "x"}, ["Exponent", {"num": 2}, ["Divide", {"num": 1}, {"num": 2}]]]]], ["Exponent", {"num": 2}, ["Divide", {"num": 1}, {"num": 2}]]]
+            "expected": ["Product", {"num": 8}, ["Logarithm", "E", ["Abs",["Sum", {"var": "x"}, {"num": 2}]]]]
+        },
+        {
+            "input": ["Integral", ["Divide", {"var": "x"}, ["Exponent", ["Sum", ["Exponent", {"var": "x"}, {"num": 4}], ["Negation",{"num": 4}]], ["Divide", {"num": 1}, {"num": 2}]]], {"var": "x"}],
+            "expected": ["Product", ["Divide", {"num": 1}, {"num": 2}], ["Arcsin", ["Divide", ["Exponent", {"var": "x"}, {"num": 2}], ["Exponent", ["Negation",{"num": 4}], ["Divide", {"num": 1}, {"num": 2}]]]]]
+
         },
         {
             "input": ["Integral", ["Sum", ["Exponent", {"var": "x"}, ["Divide", {"num": 3}, {"num": 2}]], ["Product", {"num": 10}, ["Exponent", ["Exponent", {"var": "x"}, {"num": 3}], ["Divide", {"num": 5}, {"num": 3}]]]], {"var": "x"}],

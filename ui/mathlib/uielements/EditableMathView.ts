@@ -1,20 +1,20 @@
-import { MathElement } from "../expressions/MathElement"
+import { MathElement, NameTable } from "../expressions/MathElement"
 
 /**
  * Displays math and is editable.
  */
 export class MathView extends HTMLDivElement {
-    public constructor(expression: MathElement | null = null) {
+    public constructor(expression: MathElement | null = null, tbl: NameTable = {}) {
         super()
-        this.value = expression
+        this.setValue(expression, tbl)
     }
 
     public connectedCallback(): void {}
 
-    public set value(e: MathElement | null) {
+    public setValue(e: MathElement | null, tbl: NameTable = {}): void {
         this._value = e
         this.innerHTML =
-            "<math display='block'>" + (e?.toMathXML({}) ?? "") + "</math>"
+            "<math display='block'>" + (e?.toMathXML(tbl) ?? "") + "</math>"
         this.listeners.forEach(l => l(this._value))
         MathJax.typeset([this])
     }

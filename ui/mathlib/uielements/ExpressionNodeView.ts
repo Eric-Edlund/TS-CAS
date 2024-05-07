@@ -1,4 +1,5 @@
 import { Expression } from "../expressions/Expression"
+import { NameTable } from "../expressions/MathElement"
 import { Variable } from "../expressions/Variable"
 import { MathView } from "./EditableMathView"
 import { GraphNodeView } from "./GraphNodeView"
@@ -9,13 +10,14 @@ import { GraphNodeView } from "./GraphNodeView"
 export class ExpressionNodeView extends GraphNodeView {
     public constructor(
         node: Expression,
+        tbl: NameTable,
         setStyle: (view: GraphNodeView) => void
     ) {
         super(setStyle)
         this.node = node
 
         this.editableMathView = new MathView()
-        this.editableMathView.value = this.node
+        this.editableMathView.setValue(this.node, tbl)
         this.appendChild(this.editableMathView)
 
         this.addEventListener("click", () => {

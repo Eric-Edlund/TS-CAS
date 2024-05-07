@@ -6,7 +6,7 @@ use crate::{
     expressions::{product::product_of_iter, Expression, Fraction},
 };
 
-use super::DerivationRule;
+use super::{helpers::children_rec, DerivationRule};
 
 /// a(b/c) = (ab)/c
 ///
@@ -25,9 +25,15 @@ impl DerivationRule for ProductsIntoNumerator {
             .iter()
             .partition(|x| matches!(x, Expression::Fraction(_)));
 
-        let (should_not, should_pull): (Vec<&Expression>, Vec<&Expression>) = not
-            .into_iter()
-            .partition(|e| matches!(e, Expression::Integral(_)));
+        let (should_not, should_pull): (Vec<&Expression>, Vec<&Expression>) =
+            not.into_iter().partition(|e| match e {
+                Expression::Integral(_) => true,
+                Expression::Fraction(_) => true,
+                Expression::Trig(t) => {
+                    matches!(t.exp(), Expression::Fraction(_))
+                }
+                _ => false,
+            });
 
         if fractions.is_empty() {
             return vec![];

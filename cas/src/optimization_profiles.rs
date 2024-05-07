@@ -1,5 +1,6 @@
 use std::{cell::RefCell, collections::HashSet, rc::Rc};
 
+use crate::derivation_rules::{ONLY_OUTSIDE_INTEGRANDS, REMAINING_RULES};
 use crate::{
     argument::Argument,
     derivation_rules::{
@@ -7,7 +8,7 @@ use crate::{
         STRICT_SIMPLIFYING_RULES,
     },
     deriver::DerivationDebugInfo,
-    equivalence_disbatchers::equiv,
+    equivalence_disbatchers::{equiv, GuardDecision},
     expressions::Expression,
 };
 
@@ -58,7 +59,7 @@ impl OptimizationProfile for BruteForceProfile {
             .iter()
             .filter(|rule| self.allowed_rules.contains(&rule.name()))
             .flat_map(|rule| {
-                let result = equiv(exp, &|e| rule.apply(e.clone()), &|_| true);
+                let result = equiv(exp, &|e| rule.apply(e.clone()), &|_| GuardDecision::Explore);
                 if let Option::Some(ref debug) = self.debug {
                     if !result.is_empty() {
                         *debug.borrow_mut().rule_uses.entry(rule.name()).or_insert(0) += 1;
@@ -108,7 +109,9 @@ impl OptimizationProfile for EvaluateFirstProfile {
         }
 
         for identity in *IDENTITIES.read().unwrap() {
-            let mut result = equiv(exp, &|e| identity.apply(e.clone()), &|_| true);
+            let mut result = equiv(exp, &|e| identity.apply(e.clone()), &|_| {
+                GuardDecision::Explore
+            });
             // Remove derivations we've already seen so we can add fractions with created common
             // denominators.
             result.retain(|(e, _)| {
@@ -134,7 +137,7 @@ impl OptimizationProfile for EvaluateFirstProfile {
         }
 
         for rule in *ARITHMETIC.read().unwrap() {
-            let result = equiv(exp, &|e| rule.apply(e.clone()), &|_| true);
+            let result = equiv(exp, &|e| rule.apply(e.clone()), &|_| GuardDecision::Explore);
             if !result.is_empty() {
                 if let Option::Some(ref debug) = self.debug {
                     *debug.borrow_mut().rule_uses.entry(rule.name()).or_insert(0) += 1;
@@ -146,7 +149,11 @@ impl OptimizationProfile for EvaluateFirstProfile {
 
         for rule in *ARITHMETIC_IF_CONSTANT.read().unwrap() {
             let result = equiv(exp, &|e| rule.apply(e.clone()), &|e| {
-                unique_child_leaves(e).all(|e| matches!(e, Expression::Integer(_)))
+                if unique_child_leaves(e).all(|e| matches!(e, Expression::Integer(_))) {
+                    GuardDecision::Explore
+                } else {
+                    GuardDecision::ExploreChildren
+                }
             });
             if !result.is_empty() {
                 if let Option::Some(ref debug) = self.debug {
@@ -166,7 +173,7 @@ impl OptimizationProfile for EvaluateFirstProfile {
             .unwrap()
             .iter()
             .flat_map(|rule| {
-                let result = equiv(exp, &|e| rule.apply(e.clone()), &|_| true);
+                let result = equiv(exp, &|e| rule.apply(e.clone()), &|_| GuardDecision::Explore);
                 if let Option::Some(ref debug) = self.debug {
                     if !result.is_empty() {
                         *debug.borrow_mut().rule_uses.entry(rule.name()).or_insert(0) += 1;
@@ -180,11 +187,12 @@ impl OptimizationProfile for EvaluateFirstProfile {
             return strict_simplifying.collect();
         }
 
-        let all_rules = ALL_RULES.read().unwrap();
+        let all_rules = REMAINING_RULES.read().unwrap();
+        let outside_integrands = ONLY_OUTSIDE_INTEGRANDS.read().unwrap();
         all_rules
             .iter()
             .flat_map(|rule| {
-                let result = equiv(exp, &|e| rule.apply(e.clone()), &|_| true);
+                let result = equiv(exp, &|e| rule.apply(e.clone()), &|_| GuardDecision::Explore);
                 if let Option::Some(ref debug) = self.debug {
                     if !result.is_empty() {
                         *debug.borrow_mut().rule_uses.entry(rule.name()).or_insert(0) += 1;
@@ -192,6 +200,21 @@ impl OptimizationProfile for EvaluateFirstProfile {
                 }
                 result
             })
+            .chain(outside_integrands.iter().flat_map(|rule| {
+                let result = equiv(exp, &|e| rule.apply(e.clone()), &|e| {
+                    if matches!(e, Expression::Integral(_)) {
+                        GuardDecision::TurnAround
+                    } else {
+                        GuardDecision::Explore
+                    }
+                });
+                if let Option::Some(ref debug) = self.debug {
+                    if !result.is_empty() {
+                        *debug.borrow_mut().rule_uses.entry(rule.name()).or_insert(0) += 1;
+                    }
+                }
+                result
+            }))
             .collect()
     }
 
@@ -204,68 +227,6 @@ impl OptimizationProfile for EvaluateFirstProfile {
         Ok(())
     }
 }
-
-/// Applies derivative and simplifying rules only. Evaluates derivatives as
-/// efficiently as possible. Not a general solver.
-pub struct DerivativesOnlyProfile {
-    already_seen: HashSet<Expression>,
-}
-
-impl DerivativesOnlyProfile {
-    pub fn new() -> Self {
-        Self {
-            already_seen: HashSet::new(),
-        }
-    }
-}
-
-impl OptimizationProfile for DerivativesOnlyProfile {
-    fn find_equivalents(&mut self, exp: &Expression) -> Vec<(Expression, Rc<Argument>)> {
-        if self.already_seen.contains(exp) {
-            return vec![];
-        }
-        self.already_seen.insert(exp.clone());
-        let simplifying_rules = STRICT_SIMPLIFYING_RULES.read().unwrap();
-
-        let mut simple = simplifying_rules
-            .iter()
-            .flat_map(|rule| equiv(exp, &|e| rule.apply(e.clone()), &|_| true))
-            .peekable();
-
-        if simple.peek().is_some() {
-            simple.collect()
-        } else {
-            vec![]
-        }
-    }
-}
-
-// pub struct WalkBackEvaluateFirstProfile {
-//     evaluate_first: Box<EvaluateFirstProfile>,
-// }
-//
-// impl WalkBackEvaluateFirstProfile {
-//     pub fn new() -> Box<Self> {
-//         Self {
-//             evaluate_first: EvaluateFirstProfile::new(),
-//         }
-//         .into()
-//     }
-// }
-//
-// impl OptimizationProfile for WalkBackEvaluateFirstProfile {
-//     fn find_equivalents(&mut self, exp: &Expression) -> Vec<(Expression, Rc<Argument>)> {
-//         let result = self.evaluate_first.find_equivalents()
-//     }
-//
-//     fn set_rules(&mut self, rules: &[String]) -> Result<(), ()> {
-//         self.evaluate_first.set_rules(rules)
-//     }
-//
-//     fn set_debug(&mut self, debug: Rc<RefCell<DerivationDebugInfo>>) -> Result<(), ()> {
-//         self.evaluate_first.set_debug(debug)
-//     }
-// }
 
 #[cfg(test)]
 mod tests {
