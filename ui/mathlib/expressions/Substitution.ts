@@ -52,7 +52,7 @@ export class Substitution extends Expression {
         throw new Error("Method not implemented.");
     }
     public toJSON(): string {
-        throw new Error("Substitutions shouldn't be encoded from the frontend")
+        return "\"Undefined\""
     }
 
     private constructor(exp: Expression, subId: number) {

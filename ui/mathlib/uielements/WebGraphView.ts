@@ -164,10 +164,12 @@ export class WebGraphView extends HTMLDivElement {
         })
         this.edges.clear()
 
+        const nameTable = {};
+
         // Fetch nodes
         this.graph.getNodes().forEach(node => {
             if (node instanceof Expression) {
-                const view = new ExpressionNodeView(node, this.baseNodeStyle)
+                const view = new ExpressionNodeView(node, nameTable, this.baseNodeStyle)
                 view.style.position = "absolute"
                 this.nodes.set(node, view)
                 this.append(view)

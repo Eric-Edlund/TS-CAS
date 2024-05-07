@@ -12,6 +12,15 @@ type Derivation = (Expression, Rc<Argument>);
 type EquivList = Vec<Derivation>;
 type EquivFn = dyn Fn(&Expression) -> EquivList;
 
+pub enum GuardDecision {
+    /// Explore and explore children.
+    Explore,
+    /// Do not explore, but continue to explore children.
+    ExploreChildren,
+    /// Do not explore, do not explore children.
+    TurnAround,
+}
+
 /// Decomposes expressions, finding equivalents for their components using
 /// the given equivalence finding rule. Only applies the equivalence function to
 /// subexpressions satisfying the guard predicate. Children of expressions which
@@ -19,30 +28,36 @@ type EquivFn = dyn Fn(&Expression) -> EquivList;
 pub fn equiv(
     exp: &Expression,
     direct: &EquivFn,
-    guard: &impl Fn(&Expression) -> bool,
+    guard: &impl Fn(&Expression) -> GuardDecision,
 ) -> EquivList {
     let mut result = HashSet::<Derivation>::new();
-    if guard(exp) {
-        result.extend(direct(exp));
+    let decision = guard(exp);
+    if let GuardDecision::Explore = decision {
+        result.extend(direct(exp))
     }
 
-    result.extend(match exp {
-        Expression::Variable(_) => vec![],
-        Expression::Integer(_) => vec![],
-        Expression::ConstantExp(_) => vec![],
-        Expression::Substitution(_) => vec![],
-        Expression::Sum(_) => sum_equiv(exp, direct, guard),
-        Expression::Product(_) => product_equiv(exp, direct, guard),
-        Expression::Exponent(_) => exponent_equiv(exp, direct, guard),
-        Expression::Fraction(_) => fraction_equiv(exp, direct, guard),
-        Expression::Integral(_) => integral_equiv(exp, direct, guard),
-        Expression::Derivative(_) => derivative_equiv(exp, direct, guard),
-        Expression::Negation(_) => negation_equiv(exp, direct, guard),
-        Expression::Trig(_) => trig_equiv(exp, direct, guard),
-        Expression::Logarithm(_) => log_equiv(exp, direct, guard),
-        Expression::AbsoluteValue(_) => abs_equiv(exp, direct, guard),
-        Expression::Undefined => vec![],
-    });
+    if matches!(
+        decision,
+        GuardDecision::Explore | GuardDecision::ExploreChildren
+    ) {
+        result.extend(match exp {
+            Expression::Variable(_) => vec![],
+            Expression::Integer(_) => vec![],
+            Expression::ConstantExp(_) => vec![],
+            Expression::Substitution(_) => vec![],
+            Expression::Sum(_) => sum_equiv(exp, direct, guard),
+            Expression::Product(_) => product_equiv(exp, direct, guard),
+            Expression::Exponent(_) => exponent_equiv(exp, direct, guard),
+            Expression::Fraction(_) => fraction_equiv(exp, direct, guard),
+            Expression::Integral(_) => integral_equiv(exp, direct, guard),
+            Expression::Derivative(_) => derivative_equiv(exp, direct, guard),
+            Expression::Negation(_) => negation_equiv(exp, direct, guard),
+            Expression::Trig(_) => trig_equiv(exp, direct, guard),
+            Expression::Logarithm(_) => log_equiv(exp, direct, guard),
+            Expression::AbsoluteValue(_) => abs_equiv(exp, direct, guard),
+            Expression::Undefined => vec![],
+        });
+    }
 
     result.into_iter().collect()
 }
@@ -50,7 +65,7 @@ pub fn equiv(
 fn sum_equiv(
     exp: &Expression,
     direct: &EquivFn,
-    guard: &impl Fn(&Expression) -> bool,
+    guard: &impl Fn(&Expression) -> GuardDecision,
 ) -> EquivList {
     let mut equivalent_sums = HashSet::<Derivation>::new();
 
@@ -74,7 +89,7 @@ fn sum_equiv(
 fn product_equiv(
     exp: &Expression,
     direct: &EquivFn,
-    guard: &impl Fn(&Expression) -> bool,
+    guard: &impl Fn(&Expression) -> GuardDecision,
 ) -> EquivList {
     let mut equivalent_products = HashSet::<Derivation>::new();
 
@@ -98,7 +113,7 @@ fn product_equiv(
 fn exponent_equiv(
     exp: &Expression,
     direct: &EquivFn,
-    guard: &impl Fn(&Expression) -> bool,
+    guard: &impl Fn(&Expression) -> GuardDecision,
 ) -> EquivList {
     let mut equivalents = Vec::<Derivation>::new();
     let Expression::Exponent(ref exponent) = exp else {
@@ -121,7 +136,7 @@ fn exponent_equiv(
 fn fraction_equiv(
     exp: &Expression,
     direct: &EquivFn,
-    guard: &impl Fn(&Expression) -> bool,
+    guard: &impl Fn(&Expression) -> GuardDecision,
 ) -> EquivList {
     let mut equivalents = Vec::<Derivation>::new();
     let Expression::Fraction(ref fraction) = exp else {
@@ -143,7 +158,7 @@ fn fraction_equiv(
 fn integral_equiv(
     exp: &Expression,
     direct: &EquivFn,
-    guard: &impl Fn(&Expression) -> bool,
+    guard: &impl Fn(&Expression) -> GuardDecision,
 ) -> EquivList {
     let mut equivalents = Vec::<Derivation>::new();
     let Expression::Integral(ref integral) = exp else {
@@ -166,7 +181,7 @@ fn integral_equiv(
 fn derivative_equiv(
     exp: &Expression,
     direct: &EquivFn,
-    guard: &impl Fn(&Expression) -> bool,
+    guard: &impl Fn(&Expression) -> GuardDecision,
 ) -> EquivList {
     let mut equivalents = Vec::<Derivation>::new();
     let Expression::Derivative(ref derivative) = exp else {
@@ -189,7 +204,7 @@ fn derivative_equiv(
 fn negation_equiv(
     exp: &Expression,
     direct: &EquivFn,
-    guard: &impl Fn(&Expression) -> bool,
+    guard: &impl Fn(&Expression) -> GuardDecision,
 ) -> EquivList {
     let mut equivalents = Vec::<Derivation>::new();
     let Expression::Negation(ref negation) = exp else {
@@ -205,7 +220,7 @@ fn negation_equiv(
 fn trig_equiv(
     exp: &Expression,
     direct: &EquivFn,
-    guard: &impl Fn(&Expression) -> bool,
+    guard: &impl Fn(&Expression) -> GuardDecision,
 ) -> EquivList {
     let mut equivalents = Vec::<Derivation>::new();
     let Expression::Trig(ref trig) = exp else {
@@ -221,7 +236,7 @@ fn trig_equiv(
 fn log_equiv(
     exp: &Expression,
     direct: &EquivFn,
-    guard: &impl Fn(&Expression) -> bool,
+    guard: &impl Fn(&Expression) -> GuardDecision,
 ) -> EquivList {
     let mut equivalents = Vec::<Derivation>::new();
     let Expression::Logarithm(ref log) = exp else {
@@ -244,7 +259,7 @@ fn log_equiv(
 fn abs_equiv(
     exp: &Expression,
     direct: &EquivFn,
-    guard: &impl Fn(&Expression) -> bool,
+    guard: &impl Fn(&Expression) -> GuardDecision,
 ) -> EquivList {
     let mut equivalents = Vec::<Derivation>::new();
     let Expression::AbsoluteValue(ref abs) = exp else {
@@ -275,7 +290,11 @@ mod tests {
                     Argument::new(String::from(""), vec![], String::from("")),
                 )]
             },
-            &|e| e != &inner,
+            &|e| {
+                (e != &inner)
+                    .then(|| GuardDecision::Explore)
+                    .unwrap_or(GuardDecision::ExploreChildren)
+            },
         );
 
         assert_eq!(result.len(), 4);

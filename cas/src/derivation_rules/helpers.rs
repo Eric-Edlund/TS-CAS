@@ -43,11 +43,9 @@ pub fn dependent_variables(exp: &Expression) -> Vec<Expression> {
         .collect()
 }
 
-/**
-* Gets all children of given expression recursively.
-* This includes branches and leafs. Does not include the
-* given expression.
-*/
+/// Gets all children of given expression recursively.
+/// This includes branches and leafs. Does not include the
+/// given expression.
 pub fn children_rec(exp: &Expression) -> impl Iterator<Item = Expression> {
     let mut children = Vec::<Expression>::new();
     let mut queue = LinkedList::<Expression>::new();
@@ -63,13 +61,32 @@ pub fn children_rec(exp: &Expression) -> impl Iterator<Item = Expression> {
     children.into_iter()
 }
 
+/// Gets all children of the given expression recursively. Includes branches and leaves.
+/// Includes the given expression. Does not traverse into substitutions.
+pub fn children_rec_no_subs(exp: &Expression) -> impl Iterator<Item = Expression> {
+    let mut children = Vec::<Expression>::new();
+    let mut queue = LinkedList::<Expression>::new();
+
+    queue.push_back(exp.clone());
+
+    while !queue.is_empty() {
+        let child = queue.pop_front().unwrap();
+        children.push(child.clone());
+        if !matches!(child, Expression::Substitution(_)) {
+            queue.extend(children_of(&child));
+        }
+    }
+
+    children.into_iter()
+}
+
 /// Gets all children of given expression recursively, iterating over
 /// the set of leaf expressions. Does not enter substitutions.
 pub fn unique_child_leaves(exp: &Expression) -> impl Iterator<Item = Expression> {
     let mut leaves = HashSet::<Expression>::new();
     let mut queue = LinkedList::<Expression>::new();
 
-    queue.extend(children_of(exp));
+    queue.push_back(exp.clone());
 
     while let Some(top) = queue.pop_front() {
         let children = if matches!(top, Expression::Substitution(_)) {
@@ -332,7 +349,8 @@ mod tests {
     use crate::{
         convenience_expressions::{i, v},
         expressions::{
-            product::product_of, sum::sum_of, trig_expression::TrigFn, Integer, Variable,
+            product::product_of, substitution::Substitution, sum::sum_of, trig_expression::TrigFn,
+            Integer, Variable,
         },
     };
 
@@ -390,5 +408,9 @@ mod tests {
         assert_eq!(leaves.len(), 2);
         assert!(leaves.contains(&v("a")));
         assert!(leaves.contains(&v("b")));
+
+        let exp2 = sum_of(&[Substitution::of(sum_of(&[v("x"), v("y")])), v("x")]);
+
+        assert_eq!(unique_child_leaves(&exp2).collect::<Vec<_>>().len(), 2);
     }
 }

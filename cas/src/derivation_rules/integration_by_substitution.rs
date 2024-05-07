@@ -1,8 +1,8 @@
+use std::collections::HashSet;
 use std::rc::Rc;
 
 use petgraph::visit::IntoNodeReferences;
 
-use crate::derivation_rules::associative_property;
 use crate::derivation_rules::helpers::is_one;
 use crate::deriver::Deriver;
 use crate::expressions::derivative::Derivative;
@@ -18,8 +18,11 @@ use crate::{
     graph_traversal::expression_complexity_cmp,
 };
 
-use super::helpers::{separate_constant_factors, substitute_with};
-use super::{helpers::without_factor, DerivationRule};
+use super::helpers::{
+    children_rec_no_subs, dependent_variables, factors_in, separate_constant_factors,
+    substitute_with, unique_child_leaves,
+};
+use super::DerivationRule;
 
 /// U-substitution
 pub struct IntegrateBySubstitution {}
@@ -33,7 +36,7 @@ impl DerivationRule for IntegrateBySubstitution {
 
         let integrand = integral.integrand();
 
-        let sub_expressions = children_rec(&integral.integrand())
+        let sub_expressions = children_rec_no_subs(&integral.integrand())
             // Consider x^2 as a possible substitution for x^4
             .flat_map(|exp| match exp {
                 Expression::Exponent(ref e) => {
@@ -50,12 +53,17 @@ impl DerivationRule for IntegrateBySubstitution {
                         vec![exp]
                     }
                 }
+                Expression::Integer(_) => vec![],
                 _ => vec![exp],
-            });
+            })
+            // Don't make identity substitutions
+            .filter(|exp| exp != &integral.variable())
+            .filter(|exp| !matches!(exp, Expression::Substitution(_)))
+            .filter(|exp| !is_one(exp));
 
         let mut substitutions = Vec::<Expression>::new();
 
-        for u_exp in sub_expressions {
+        'u_for: for u_exp in sub_expressions {
             let u_sub = Substitution::of(u_exp.clone());
 
             // Search the integrand for u
@@ -85,46 +93,54 @@ impl DerivationRule for IntegrateBySubstitution {
             let (du_constants, du_not) = match simplest_derivative(&u_exp, &integral.variable()) {
                 Some(e) => separate_constant_factors(&e, &u_exp),
                 None => {
-                    println!("No derivative found");
                     continue;
                 }
             };
-            let du_sub = Substitution::of(du_not.clone());
 
             // Search for du
-            substituted = substitute_with(&substituted, &|exp| {
-                // Handle constant multiple differences between du and the integrand
-                let (exp_constants, exp_not) = separate_constant_factors(exp, &integral.variable());
+            let mut found = false;
+            substituted = product_of(
+                &factors_in(&substituted)
+                    .into_iter()
+                    .filter_map(|exp| {
+                        // Handle constant multiple differences between du and the integrand
+                        let (exp_constants, exp_not) =
+                            separate_constant_factors(&exp, &integral.variable());
 
-                if exp_not != du_not {
-                    return None;
-                }
-                let coefficient = if is_one(&exp_constants) && is_one(&du_constants) {
-                    None
-                } else if is_one(&du_constants) {
-                    Some(exp_constants)
-                } else {
-                    Some(Fraction::of(exp_constants, du_constants.clone()))
-                };
+                        if exp_not != du_not {
+                            return Some(exp);
+                        }
 
-                if let Some(coefficient) = coefficient {
-                    Some(product_of(&[coefficient, du_sub.clone()]))
-                } else {
-                    Some(product_of(&[du_sub.clone()]))
-                }
-            });
+                        if found {
+                            return Some(exp);
+                        }
+                        found = true;
 
-            let associative_property = associative_property::AssociativeProperty {};
-            substituted = associative_property
-                .apply(substituted.clone())
-                .into_iter()
-                .map(|t| t.0)
-                .nth(0)
-                .unwrap_or(substituted);
+                        if is_one(&exp_constants) && is_one(&du_constants) {
+                            None
+                        } else if is_one(&du_constants) {
+                            Some(exp_constants)
+                        } else {
+                            Some(Fraction::of(exp_constants, du_constants.clone()))
+                        }
+                    })
+                    .collect::<Vec<_>>(),
+            );
 
-            if let Some(new_integrand) = without_factor(&substituted, &du_sub) {
-                substitutions.push(Integral::of(new_integrand, u_sub));
+            if !found {
+                continue 'u_for;
             }
+
+            // Valid substitutions leave none of the original variables
+            let original_variables = dependent_variables(&integral.variable());
+            let new_variables = unique_child_leaves(&substituted).collect::<HashSet<_>>();
+            for var in &original_variables {
+                if new_variables.contains(var) {
+                    continue 'u_for;
+                }
+            }
+
+            substitutions.push(Integral::of(substituted, u_sub));
         }
 
         substitutions
@@ -133,7 +149,7 @@ impl DerivationRule for IntegrateBySubstitution {
                 (
                     exp,
                     Argument::new(
-                        String::from("U-substitution"),
+                        String::from("U-Substitution"),
                         vec![input.clone()],
                         self.name(),
                     ),
@@ -171,6 +187,7 @@ fn simplest_derivative(exp: &Expression, variable: &Expression) -> Option<Expres
 mod tests {
     use crate::{
         convenience_expressions::{i, v},
+        derivation_rules::helpers::expect_no_result,
         expressions::{product::product_of, trig_expression::TrigFn, Integral, TrigExp},
     };
 
@@ -192,7 +209,10 @@ mod tests {
             ]),
             v("x"),
         );
-        let result = rule.apply(start).first().unwrap().0.clone();
+        let results = rule.apply(start);
+        assert_eq!(results.len(), 1);
+
+        let result = results.first().unwrap().0.clone();
 
         // We have to reuse the substitution from the result to get
         // referential equality because flywheel.
@@ -208,5 +228,21 @@ mod tests {
 
         assert_eq!(result, Integral::of(sub.clone(), sub.clone()));
         assert_eq!(typed_sub.exp(), TrigExp::of(TrigFn::Sin, v("x")));
+    }
+
+    #[test]
+    fn false_positive() {
+        let rule = IntegrateBySubstitution {};
+
+        expect_no_result(
+            &rule,
+            Integral::of(Substitution::of(i(1)), Substitution::of(i(2))),
+        );
+        let sub = Substitution::of(i(1));
+        expect_no_result(&rule, Integral::of(sub.clone(), sub));
+        expect_no_result(
+            &rule,
+            Integral::of(Substitution::of(v("x")), Substitution::of(v("x"))),
+        );
     }
 }
