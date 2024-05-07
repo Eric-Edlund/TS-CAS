@@ -241,6 +241,38 @@ where
     }
 }
 
+/// Like substitute but the predicate returns an option expression containing the
+/// expression to replace with or none if the supplied expression shouldn't be  
+/// replaced.
+pub fn substitute_with<'a, P>(exp: &'a Expression, predicate: &P) -> Expression
+where
+    P: Fn(&Expression) -> Option<Expression>,
+{
+    if let Some(replacement) = predicate(exp) {
+        return replacement.clone();
+    };
+
+    let sub = |exp: &Expression| substitute_with(exp, predicate);
+
+    match exp {
+        Expression::Integer(_) => exp.clone(),
+        Expression::ConstantExp(_) => exp.clone(),
+        Expression::Variable(_) => exp.clone(),
+        Expression::Substitution(_) => exp.clone(),
+        Expression::Product(p) => product_of_iter(&mut p.factors().iter().map(sub)),
+        Expression::Sum(s) => sum_of_iter(&mut s.terms().clone().iter().map(sub)),
+        Expression::Exponent(e) => Exponent::of(sub(&e.base()), sub(&e.power())),
+        Expression::Integral(i) => Integral::of(sub(&i.integrand()), sub(&i.variable())),
+        Expression::Negation(n) => Negation::of(sub(&n.child())),
+        Expression::Fraction(f) => Fraction::of(sub(&f.numerator()), sub(&f.denominator())),
+        Expression::Logarithm(l) => Logarithm::of(sub(&l.base()), sub(&l.exp())),
+        Expression::Derivative(d) => Derivative::of(sub(&d.exp()), sub(&d.relative_to())),
+        Expression::Trig(t) => TrigExp::of(t.operation, sub(&t.exp())),
+        Expression::AbsoluteValue(a) => AbsoluteValue::of(sub(&a.exp())),
+        Expression::Undefined => exp.clone(),
+    }
+}
+
 /// Searches the given expression, replacing all children which match the
 /// predicate with the given replacement. Traverses the tree top down.
 /// Does not traverse into subtituted expressions. Only enters into expressions

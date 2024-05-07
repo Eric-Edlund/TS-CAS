@@ -60,7 +60,7 @@ impl IExpression for Substitution {
 
 impl fmt::Debug for Substitution {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "Sub{}{:?}", self.id, self.exp())
+        write!(f, "Sub{}={:?}", self.id, self.exp())
     }
 }
 
