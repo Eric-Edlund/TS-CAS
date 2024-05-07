@@ -42,6 +42,10 @@ impl Substitution {
     pub fn exp(&self) -> Expression {
         self.exp.clone()
     }
+
+    pub fn sub_id(&self) -> u32 {
+        self.id
+    }
 }
 
 impl IExpression for Substitution {

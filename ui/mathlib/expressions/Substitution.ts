@@ -28,6 +28,14 @@ export class Substitution extends Expression {
     }
     private static instances: Map<number, Substitution> = new Map();
 
+    public static getById(id: number): Substitution {
+        return Substitution.instances.get(id)!
+    }
+
+    public child(): Expression {
+        return this.exp
+    }
+
     public toMathXML(table: NameTable): string {
         if (!table[this.subId]) {
             table[this.subId] = getSymbol(Object.keys(table).length)
