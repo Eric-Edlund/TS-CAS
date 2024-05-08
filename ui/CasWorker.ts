@@ -47,7 +47,7 @@ async function init_wasm_in_worker() {
             let timeout = setTimeout(() => {
                 postMessage({finished: true} as IncrementalSimplifyResult)
                 giveUp()
-            }, 3000)
+            }, 4000)
 
             let incrementInterval = setInterval(() => {
                 let incrementalResult = JSON.parse(handle.do_pass(50)) as IncrementalSimplifyResult & IncrementalGraphResult

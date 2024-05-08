@@ -51,6 +51,7 @@ mod multiply_exponent_powers;
 mod multiply_exponents;
 mod multiply_fractions;
 mod one_to_any_power;
+mod product_exponents;
 mod products_into_numerator;
 mod propogate_undefined;
 mod pull_negative_arround_fraction;
@@ -133,6 +134,7 @@ pub static ALL_RULES: RwLock<&[&(dyn DerivationRule + Sync)]> = RwLock::new(&[
     &exponent_to_one::ExponentToOne {},
     &propogate_undefined::PropogateUndefined {},
     &multiply_exponents::MultiplyExponents {},
+    &product_exponents::ProductExponents {},
 ]);
 
 /// All rules not included in lists below
@@ -175,6 +177,7 @@ pub static REMAINING_RULES: RwLock<&[&(dyn DerivationRule + Sync)]> = RwLock::ne
     &integral_of_negative_one::FlipNegativeOne {},
     &split_fractions_over_addition::SplitFractionsAddition {},
     &multiply_exponents::MultiplyExponents {},
+    &product_exponents::ProductExponents {},
 ]);
 
 pub static ONLY_OUTSIDE_INTEGRANDS: RwLock<&[&(dyn DerivationRule + Sync)]> =
