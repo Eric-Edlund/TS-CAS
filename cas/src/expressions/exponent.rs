@@ -15,7 +15,6 @@ impl Exponent {
         let id = get_id(&base, &power);
 
         let mut instances = EXPRESSION_INSTANCES.lock().unwrap();
-        dbg!(&instances);
 
         if let Some(result) = instances.get(&id) {
             return result.clone();

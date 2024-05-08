@@ -58,9 +58,6 @@ impl DerivationRule for SubtractExponentsOnFractions {
             .map(as_exponent)
             .collect::<Vec<Arc<Exponent>>>();
 
-        println!("Top Exp: {:?}", top_exponents);
-        println!("Bot Exp: {:?}", bottom_exponents);
-
         // Find bases shared between numerator and denominator
         let common_bases = top_exponents
             .iter()
@@ -76,8 +73,6 @@ impl DerivationRule for SubtractExponentsOnFractions {
         if common_bases.is_empty() {
             return vec![];
         }
-
-        println!("Common bases: {:?}", common_bases);
 
         // Store the new terms for the exponent of each base.
         let mut exponent_terms = HashMap::<Expression, Vec<Expression>>::new();
@@ -97,18 +92,14 @@ impl DerivationRule for SubtractExponentsOnFractions {
             if !common_bases.contains(&exp.base()) {
                 continue;
             }
-            println!("Bottom Exponents Iter {:?}", exp);
             exponent_terms
                 .get_mut(&exp.base())
                 .unwrap()
                 .push(Negation::of(exp.power()));
         }
 
-        println!("Exponent Terms {:?}", exponent_terms);
-
         let mut result_top_factors = top_exponents.into_iter().map(|exponent| {
             if common_bases.contains(&exponent.base()) {
-                println!("e {:?}", exponent_terms[&exponent.base()].len());
                 Exponent::of(exponent.base(), sum_of(&exponent_terms[&exponent.base()]))
             } else {
                 Expression::Exponent(exponent)

@@ -45,7 +45,6 @@ impl DerivationRule for ProductExponents {
             .into_iter()
             .map(|base| {
                 let powers = &new_factors[&base];
-                dbg!(&base, &powers);
                 if powers.len() == 1 {
                     let only = powers.first().unwrap();
                     if is_one(only) {
