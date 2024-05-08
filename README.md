@@ -34,7 +34,7 @@ cargo build
 Run the cas cli test tool:
 
 ```bash
-cd cas
+cd ihateintegrals
 echo "[\"Integral\", [\"Divide\", [\"Sum\", [\"Product\", {\"num\": 3}, [\"Exponent\", {\"var\": \"x\"}, {\"num\": 2}]], {\"var\": \"x\"}, {\"num\": 2}], [\"Divide\", {\"num\": 1}, [\"Product\", {\"num\": 2}, {\"var\": \"x\"}]]], {\"var\": \"x\"}]
 " | cargo run -- --depth 20 --report-statistics --max-derivations 5000
 ```
