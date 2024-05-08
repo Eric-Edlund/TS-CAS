@@ -10,9 +10,7 @@ use serde_json::{from_str, Value};
 
 /// Reads expression objects out of JSON expressions
 
-/**
-* Reads a JSON string into an expression or give an error message.
-*/
+/// Reads a JSON string into an expression or give an error message.
 pub fn read_object_from_json(json: &str) -> Result<Expression, anyhow::Error> {
     let obj: Value = match from_str(json) {
         Ok(val) => val,

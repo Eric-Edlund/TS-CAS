@@ -42,10 +42,8 @@ impl Sum {
     }
 }
 
-/**
-* Takes one or more terms. If 2 or more, returns sum,
-* otherwise, returns the given term.
-*/
+/// Takes one or more terms. If 2 or more, returns sum,
+/// otherwise, returns the given term.
 pub fn sum_of(terms: &[Expression]) -> Expression {
     if terms.len() == 1 {
         return terms[0].clone();
