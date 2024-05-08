@@ -20,5 +20,5 @@ pub struct Relationship {
     pub derived_from: HashSet<Rc<Argument>>,
 }
 
-/// Graph type for expressions
+/// Graph type for expressions.
 pub type Graph = DiGraph<Expression, Relationship, u32>;

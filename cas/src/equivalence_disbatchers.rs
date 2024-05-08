@@ -209,7 +209,7 @@ fn negation_equiv(
         panic!();
     };
 
-    for deriv in equiv(&negation.child(), direct, guard) {
+    for deriv in equiv(&negation.exp(), direct, guard) {
         equivalents.push((Negation::of(deriv.0), deriv.1));
     }
     equivalents

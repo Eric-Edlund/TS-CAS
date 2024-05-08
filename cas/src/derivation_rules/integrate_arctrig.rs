@@ -119,7 +119,7 @@ impl DerivationRule for IntegrateArcTrig {
                     let Expression::Negation(n) = term else {
                         return vec![];
                     };
-                    a = Some(n.child());
+                    a = Some(n.exp());
                 } else {
                     let Expression::Exponent(e) = term else {
                         return vec![];

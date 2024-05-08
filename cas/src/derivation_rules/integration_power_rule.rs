@@ -41,7 +41,7 @@ impl DerivationRule for IntegralPowerRule {
         };
 
         if let Expression::Negation(ref n) = power {
-            if let Expression::Integer(i) = n.child() {
+            if let Expression::Integer(i) = n.exp() {
                 if i.value() == 1 {
                     return vec![];
                 }

@@ -25,7 +25,7 @@ impl DerivationRule for FlipNegativeOne {
         let Expression::Negation(n) = e.power() else {
             return vec![];
         };
-        let Expression::Integer(i) = n.child() else {
+        let Expression::Integer(i) = n.exp() else {
             return vec![];
         };
 

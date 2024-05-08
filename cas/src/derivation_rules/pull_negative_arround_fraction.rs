@@ -28,9 +28,9 @@ impl DerivationRule for PullNegativeOutOfFraction {
         let result = if (num.is_some() && den.is_some()) || (num.is_none() && den.is_none()) {
             return vec![];
         } else if num.is_some() {
-            Negation::of(Fraction::of(num.unwrap().child(), frac.denominator()))
+            Negation::of(Fraction::of(num.unwrap().exp(), frac.denominator()))
         } else {
-            Negation::of(Fraction::of(frac.numerator(), den.unwrap().child()))
+            Negation::of(Fraction::of(frac.numerator(), den.unwrap().exp()))
         };
 
         vec![(

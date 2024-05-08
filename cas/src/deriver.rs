@@ -13,13 +13,14 @@ use crate::{
     optimization_profiles::OptimizationProfile,
 };
 
+/// Debug information yielded during a derivation operation.
 #[derive(Clone)]
 pub struct DerivationDebugInfo {
     /// How many times each rule was applied and returned an expression.
     pub rule_uses: HashMap<String, u32>,
 }
 
-/// Object used to expand graphs.
+/// Object used to expand equivalence graphs. Derefs to the graph it holds.
 pub struct Deriver {
     graph: Graph,
     optimizer: Box<dyn OptimizationProfile>,
@@ -31,6 +32,13 @@ pub struct Deriver {
 }
 
 impl Deriver {
+    /// * `graph` - A graph containing the initial expressions to derive from.
+    /// * `optimizer` - An optimization profile used in the derivation process.
+    /// * `allowed_rules` - If not specifed, all rules are applied as the optimization profile
+    /// finds appropriate. If specified and the optimization profile supports it, only the rules
+    /// specified by name are used.
+    /// * `debug_info` - If supplied debug information about the derivation process is recorded in
+    /// this object.
     pub fn new(
         graph: Graph,
         optimizer: Box<dyn OptimizationProfile>,
@@ -56,7 +64,12 @@ impl Deriver {
         }
     }
 
-    /// Expands the graph until one of the given constraints is met.
+    /// Expands the graph with derivation rules until one of the given constraints is met.
+    ///
+    /// * `depth` - The maximum number of derivation steps from the original expressions in the
+    /// graph to take.
+    /// * `max_derivations` - The maximum number of equivalent expressions to derive. This number
+    /// is approximate and may be slightly exceeded before the process is stopped.
     pub fn expand_to_constraint(&mut self, depth: u32, max_derivations: u32) {
         for i in self.graph.node_indices() {
             let node = self.graph.node_weight(i).unwrap();
@@ -101,8 +114,12 @@ impl Deriver {
         }
     }
 
-    /// We might go slightly over max_new_derivations
-    /// Returns true if nothing left to derive.
+    /// Expands the graph with derivation rules.
+    ///
+    /// * `max_new_derivations` - The maximum number of new expressions to derive during this call.
+    /// May be slightly exceeded.
+    ///
+    /// Returns true if there are no further derivations to make. Any further call to this function would yield no result.
     pub fn expand_increment(&mut self, max_new_derivations: u32) -> bool {
         let mut derivations = 0;
 

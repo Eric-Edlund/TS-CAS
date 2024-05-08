@@ -195,7 +195,7 @@ pub fn complexity_rec(a: &Expression) -> u32 {
         Expression::Sum(s) => {
             s.terms().len() as u32 + s.terms().iter().map(complexity_rec).sum::<u32>()
         }
-        Expression::Negation(n) => 1 + complexity_rec(&n.child()),
+        Expression::Negation(n) => 1 + complexity_rec(&n.exp()),
         Expression::Exponent(e) => 2 + complexity_rec(&e.base()) + complexity_rec(&e.power()),
         Expression::Integer(_) => 1,
         Expression::Variable(_) => 1,
@@ -222,6 +222,7 @@ pub fn complexity_rec(a: &Expression) -> u32 {
     }
 }
 
+/// A sequence of expressions interspersed with derivation steps.
 pub struct Path {
     pub start: Expression,
     pub steps: Vec<(Rc<Argument>, Expression)>,

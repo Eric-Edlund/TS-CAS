@@ -5,16 +5,13 @@ use serde_json::json;
 
 use super::{Expression, IExpression, EXPRESSION_INSTANCES};
 
+/// The negation of an expression.
 #[derive(PartialEq, Eq, Hash)]
 pub struct Negation {
     expression: Expression,
 }
 
 impl Negation {
-    pub fn child(&self) -> Expression {
-        self.expression.clone()
-    }
-
     pub fn of(expression: Expression) -> Expression {
         let id = get_id(&expression);
 
@@ -27,6 +24,11 @@ impl Negation {
         let result = Expression::Negation(Arc::new(Negation { expression }));
         instances.insert(id, result.clone());
         result
+    }
+
+    /// The expression being negated
+    pub fn exp(&self) -> Expression {
+        self.expression.clone()
     }
 }
 
@@ -43,10 +45,7 @@ impl IExpression for Negation {
     }
 
     fn to_json(&self) -> serde_json::Value {
-        json!([
-            "Negation",
-            self.child().to_json()
-        ])
+        json!(["Negation", self.exp().to_json()])
     }
 }
 

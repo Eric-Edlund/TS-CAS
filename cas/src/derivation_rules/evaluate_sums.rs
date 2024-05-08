@@ -26,7 +26,7 @@ impl DerivationRule for EvaluateSums {
             match term {
                 Expression::Integer(i) => integer_terms.push(i.value() as i64),
                 Expression::Negation(n) => {
-                    if let Expression::Integer(i) = n.child() {
+                    if let Expression::Integer(i) = n.exp() {
                         integer_terms.push(-(i.value() as i64));
                     } else {
                         other_terms.push(term.clone());

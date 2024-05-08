@@ -30,7 +30,7 @@ impl DerivationRule for ImaginaryIdentity {
         };
 
         vec![(
-            product_of(&[ConstantExp::of(Constant::Imaginary), sqrt(n.child())]),
+            product_of(&[ConstantExp::of(Constant::Imaginary), sqrt(n.exp())]),
             Argument::new(
                 String::from("Imagainary Identity"),
                 vec![input],

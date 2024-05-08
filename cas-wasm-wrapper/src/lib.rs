@@ -1,3 +1,4 @@
+use cas::{expression_from_json, BruteForceProfile, EvaluateFirstProfile, OptimizationProfile};
 use serde_json::json;
 use wasm_bindgen::prelude::*;
 
@@ -10,7 +11,14 @@ pub fn get_all_equivalents(
     optimizer: &str,
     max_derived: u32,
 ) -> String {
-    cas::get_all_equivalents(json_expression, search_depth, optimizer, max_derived)
+    let expression = expression_from_json(json_expression).expect("Invalid expression");
+    let opt: Box<dyn OptimizationProfile> = match optimizer {
+        "brute_force" => BruteForceProfile::new(),
+        "evaluate_first" => EvaluateFirstProfile::new(),
+        _ => panic!("Invalid optimizer"),
+    };
+
+    cas::get_all_equivalents(&expression, opt, search_depth, max_derived)
 }
 
 #[wasm_bindgen]
@@ -57,12 +65,15 @@ impl DerivationHandle {
 
 #[wasm_bindgen]
 pub fn simplify_incremental(json_expression: &str, optimizer: &str) -> DerivationHandle {
-    match cas::simplify_incremental_js(json_expression, optimizer) {
-        Ok(handle) => DerivationHandle {
-            handle,
-            last_graph_checked: cas::graph::Graph::new(),
-        },
-        Err(m) => panic!("{}", m),
+    let expression = expression_from_json(json_expression).expect("Invalid expression");
+    let opt: Box<dyn OptimizationProfile> = match optimizer {
+        "brute_force" => BruteForceProfile::new(),
+        "evaluate_first" => EvaluateFirstProfile::new(),
+        _ => panic!("Invalid optimizer"),
+    };
+    DerivationHandle {
+        handle: cas::simplify_incremental(&expression, opt, None),
+        last_graph_checked: cas::graph::Graph::new(),
     }
 }
 
