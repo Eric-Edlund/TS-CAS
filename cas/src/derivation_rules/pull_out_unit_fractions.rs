@@ -2,6 +2,7 @@ use std::rc::Rc;
 
 use crate::{
     argument::Argument,
+    derivation_rules::helpers::is_one,
     expressions::{product::product_of, Fraction},
     Expression,
 };
@@ -28,7 +29,10 @@ impl DerivationRule for PullOutUnitFractions {
             let mut j = 0;
             while j < denominator.len() {
                 if numerator[i] == denominator[j] {
-                    common.push(numerator.remove(i));
+                    let factor = numerator.remove(i);
+                    if !is_one(&factor) {
+                        common.push(factor);
+                    }
                     denominator.remove(j);
                     continue 'outer;
                 }
