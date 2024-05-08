@@ -6,6 +6,7 @@ import { CasWorkerMsg, IncrementalSimplifyResult } from "./CasWorkerTypes"
 import { Accessor, Show, createEffect, createSignal } from "solid-js"
 import { Step, StepList } from "./components/StepList"
 import { ExpressionInput } from "./components/ExpressionInput"
+import { SidePanel } from "./components/SidePanel"
 
 declare const M: any
 
@@ -22,6 +23,8 @@ createEffect(() => {
 })
 
 document.addEventListener("DOMContentLoaded", () => {
+    render(SidePanel, document.getElementById("slide-out")!)
+
     const { mathInput: expressionInput, setFocused } = ExpressionInput({
         editCb: setExpression
     })
