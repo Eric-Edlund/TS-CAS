@@ -1,8 +1,10 @@
-use cas::{expression_from_json, BruteForceProfile, EvaluateFirstProfile, OptimizationProfile};
+use ihateintegrals::{
+    expression_from_json, BruteForceProfile, EvaluateFirstProfile, OptimizationProfile,
+};
 use serde_json::json;
 use wasm_bindgen::prelude::*;
 
-/// Just provide wrappers for the functions in cas.
+/// Just provide wrappers for the functions in ihateintegrals.
 
 #[wasm_bindgen]
 pub fn get_all_equivalents(
@@ -18,13 +20,13 @@ pub fn get_all_equivalents(
         _ => panic!("Invalid optimizer"),
     };
 
-    cas::get_all_equivalents(&expression, opt, search_depth, max_derived)
+    ihateintegrals::get_all_equivalents(&expression, opt, search_depth, max_derived)
 }
 
 #[wasm_bindgen]
 pub struct DerivationHandle {
-    handle: cas::DerivationHandle,
-    last_graph_checked: cas::graph::Graph,
+    handle: ihateintegrals::DerivationHandle,
+    last_graph_checked: ihateintegrals::graph::Graph,
 }
 
 #[wasm_bindgen]
@@ -37,7 +39,7 @@ impl DerivationHandle {
     /// Gets the difference in the constructed derivation graph since the
     /// last time this function was called.
     pub fn get_graph_difference(&mut self) -> String {
-        let new_graph: &cas::graph::Graph = self.handle.get_deriver();
+        let new_graph: &ihateintegrals::graph::Graph = self.handle.deriver();
         let diff: Vec<_> = new_graph
             .clone()
             .into_nodes_edges()
@@ -72,8 +74,8 @@ pub fn simplify_incremental(json_expression: &str, optimizer: &str) -> Derivatio
         _ => panic!("Invalid optimizer"),
     };
     DerivationHandle {
-        handle: cas::simplify_incremental(&expression, opt, None),
-        last_graph_checked: cas::graph::Graph::new(),
+        handle: ihateintegrals::simplify_incremental(&expression, opt, None),
+        last_graph_checked: ihateintegrals::graph::Graph::new(),
     }
 }
 
