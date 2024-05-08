@@ -4,7 +4,7 @@ use std::thread;
 use std::{sync::Mutex, thread::JoinHandle};
 
 use anyhow::anyhow;
-use cas::{
+use ihateintegrals::{
     expression_from_json, simplify_incremental, BruteForceProfile, DerivationHandle,
     EvaluateFirstProfile, OptimizationProfile,
 };
@@ -101,7 +101,7 @@ fn assert_simplify(start: &str, expected: &str, max_derivations: u32) -> bool {
         return false;
     };
     handle.do_pass(max_derivations);
-    let graph = handle.get_deriver();
+    let graph = handle.deriver();
 
     let Ok(expected_exp) = expression_from_json(expected) else {
         println!("Failed to parse expected expression.");
