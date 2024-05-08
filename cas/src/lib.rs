@@ -193,7 +193,7 @@ impl DerivationHandle {
     }
 
     /// Returns a reference to the underlying deriver used by this handle.
-    pub fn get_deriver(&self) -> &Deriver {
+    pub fn deriver(&self) -> &Deriver {
         &self.deriver
     }
 }
@@ -338,6 +338,6 @@ mod tests {
         );
 
         // Assess the produced derivation graph
-        let graph: &Graph = handle.get_deriver();
+        let graph: &Graph = handle.deriver();
     }
 }

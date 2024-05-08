@@ -1,8 +1,8 @@
-use cas::{
+use clap::Parser;
+use ihateintegrals::{
     expression_from_json, get_all_equivalents, simplify, BruteForceProfile, DerivationDebugInfo,
     EvaluateFirstProfile, OptimizationProfile,
 };
-use clap::Parser;
 use serde_json::json;
 use std::{
     cell::RefCell,
