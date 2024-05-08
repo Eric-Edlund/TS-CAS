@@ -262,7 +262,7 @@ mod tests {
         let first = profile.find_equivalents(&start);
         dbg!(&first);
 
-        profile
+        let _ = profile
             .find_equivalents(&first.0.first().unwrap().0)
             .0
             .first()

@@ -289,9 +289,11 @@ mod tests {
                 )]
             },
             &|e| {
-                (e != &inner)
-                    .then(|| GuardDecision::Explore)
-                    .unwrap_or(GuardDecision::ExploreChildren)
+                if e != &inner {
+                    GuardDecision::Explore
+                } else {
+                    GuardDecision::ExploreChildren
+                }
             },
         );
 

@@ -1,13 +1,8 @@
-/*
-* Helper functions for derivation rules.
-*/
-
 use std::collections::HashSet;
 use std::{collections::LinkedList, iter::once};
 
 use crate::convenience_expressions::i;
 use crate::convenience_expressions::sum_of_iter;
-use crate::expressions::product::product_of;
 use crate::expressions::product::product_of_iter;
 use crate::expressions::AbsoluteValue;
 use crate::expressions::Derivative;
@@ -124,24 +119,6 @@ pub fn factors_in(exp: &Expression) -> Vec<Expression> {
     }
 }
 
-/// Removes the given factor from the expression once. If the expression does
-/// not contain the expression, returns none.
-pub fn without_factor(exp: &Expression, factor: &Expression) -> Option<Expression> {
-    // Pull apart fractions, products, etc.
-    // Fraction denominator terms -> 1/part
-
-    let mut factors = factors_in(exp);
-
-    for i in 0..factors.len() {
-        if &factors[i] == factor {
-            factors.remove(i);
-            return Some(product_of(&factors));
-        }
-    }
-
-    None
-}
-
 /// Checks if the given expression is equal to the integer 1
 pub fn is_one(exp: &Expression) -> bool {
     match exp {
@@ -222,46 +199,10 @@ pub fn children_of(exp: &Expression) -> Vec<Expression> {
     }
 }
 
-/// Searches the given expression, replacing all children which match the
-/// predicate with the given replacement. Traverses the tree top down.
-/// Does not traverse into subtituted expressions.
-pub fn substitute<'a, P>(
-    exp: &'a Expression,
-    replacement: &'a Expression,
-    predicate: &P,
-) -> Expression
-where
-    P: Fn(&Expression) -> bool,
-{
-    if predicate(exp) {
-        return replacement.clone();
-    }
-
-    let sub = |exp: &Expression| substitute(exp, replacement, predicate);
-
-    match exp {
-        Expression::Integer(_) => exp.clone(),
-        Expression::ConstantExp(_) => exp.clone(),
-        Expression::Variable(_) => exp.clone(),
-        Expression::Substitution(_) => exp.clone(),
-        Expression::Product(p) => product_of_iter(&mut p.factors().iter().map(sub)),
-        Expression::Sum(s) => sum_of_iter(&mut s.terms().clone().iter().map(sub)),
-        Expression::Exponent(e) => Exponent::of(sub(&e.base()), sub(&e.power())),
-        Expression::Integral(i) => Integral::of(sub(&i.integrand()), sub(&i.variable())),
-        Expression::Negation(n) => Negation::of(sub(&n.exp())),
-        Expression::Fraction(f) => Fraction::of(sub(&f.numerator()), sub(&f.denominator())),
-        Expression::Logarithm(l) => Logarithm::of(sub(&l.base()), sub(&l.exp())),
-        Expression::Derivative(d) => Derivative::of(sub(&d.exp()), sub(&d.relative_to())),
-        Expression::Trig(t) => TrigExp::of(t.operation, sub(&t.exp())),
-        Expression::AbsoluteValue(a) => AbsoluteValue::of(sub(&a.exp())),
-        Expression::Undefined => exp.clone(),
-    }
-}
-
 /// Like substitute but the predicate returns an option expression containing the
 /// expression to replace with or none if the supplied expression shouldn't be  
 /// replaced.
-pub fn substitute_with<'a, P>(exp: &'a Expression, predicate: &P) -> Expression
+pub fn substitute_with<P>(exp: &Expression, predicate: &P) -> Expression
 where
     P: Fn(&Expression) -> Option<Expression>,
 {
@@ -349,8 +290,7 @@ mod tests {
     use crate::{
         convenience_expressions::{i, v},
         expressions::{
-            product::product_of, substitution::Substitution, sum::sum_of, trig_expression::TrigFn,
-            Integer, Variable,
+            product::product_of, substitution::Substitution, sum::sum_of, Integer, Variable,
         },
     };
 
@@ -375,29 +315,6 @@ mod tests {
         assert!(!is_constant(&var_exp, &delta));
         assert!(!is_constant(&var_exp2, &delta));
         assert!(is_constant(&const_exp2, &delta2));
-    }
-
-    #[test]
-    fn substitute_test() {
-        let first = Integral::of(
-            product_of(&[
-                TrigExp::of(TrigFn::Sin, v("x")),
-                TrigExp::of(TrigFn::Cos, v("x")),
-            ]),
-            v("x"),
-        );
-
-        let result = substitute(&first, &v("a"), &|exp| {
-            *exp == TrigExp::of(TrigFn::Sin, v("x"))
-        });
-
-        assert_eq!(
-            result,
-            Integral::of(
-                product_of(&[v("a"), TrigExp::of(TrigFn::Cos, v("x")),]),
-                v("x"),
-            )
-        )
     }
 
     #[test]
