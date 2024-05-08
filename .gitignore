@@ -5,10 +5,10 @@ out
 .webpack
 public/bundle.js
 .directory
-cas/target
-cas/pkg
+ihateintegrals/target
+ihateintegrals/pkg
 public/*.wasm
-cas/Cargo.lock
+ihateintegrals/Cargo.lock
 pkg
-cas/src/derivation_rules/integral_of_arctrig.rs
+ihateintegrals/src/derivation_rules/integral_of_arctrig.rs
 public/*.js
