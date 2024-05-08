@@ -1,7 +1,5 @@
 use serde_json::json;
 
-
-
 use super::{Expression, IExpression, EXPRESSION_INSTANCES};
 use core::fmt;
 use std::sync::Arc;
@@ -17,12 +15,13 @@ impl Exponent {
         let id = get_id(&base, &power);
 
         let mut instances = EXPRESSION_INSTANCES.lock().unwrap();
+        dbg!(&instances);
 
         if let Some(result) = instances.get(&id) {
             return result.clone();
         }
 
-        let result = Expression::Exponent(Arc::new(Exponent{base, power}));
+        let result = Expression::Exponent(Arc::new(Exponent { base, power }));
         instances.insert(id, result.clone());
         result
     }
@@ -38,9 +37,11 @@ impl Exponent {
 
 impl IExpression for Exponent {
     fn to_unambigious_string(&self) -> String {
-        format!("({})^({})", 
-            self.base.as_stringable().to_unambigious_string(), 
-            self.power.as_stringable().to_unambigious_string())
+        format!(
+            "({})^({})",
+            self.base.as_stringable().to_unambigious_string(),
+            self.power.as_stringable().to_unambigious_string()
+        )
     }
 
     fn id(&self) -> String {
@@ -48,20 +49,16 @@ impl IExpression for Exponent {
     }
 
     fn to_json(&self) -> serde_json::Value {
-        json!([
-            "Pow",
-            self.base.to_json(),
-            self.power.to_json()
-        ])
+        json!(["Pow", self.base.to_json(), self.power.to_json()])
     }
 }
 
 fn get_id(base: &Expression, power: &Expression) -> String {
-        format!(
-            "exponent{}{}",
-            &base.as_stringable().id(),
-            &power.as_stringable().id()
-        )
+    format!(
+        "exponent({})({})",
+        &base.as_stringable().id(),
+        &power.as_stringable().id()
+    )
 }
 
 impl fmt::Debug for Exponent {
@@ -78,7 +75,6 @@ mod tests {
 
     #[test]
     fn flywheel_impl() {
-
         let first = Exponent::of(Integer::of(1), Integer::of(1));
         let second = Exponent::of(Integer::of(1), Integer::of(1));
         let third = Exponent::of(Integer::of(1), Integer::of(0));
@@ -90,5 +86,4 @@ mod tests {
         assert_ne!(first, forth);
         assert_ne!(third, forth);
     }
-
 }

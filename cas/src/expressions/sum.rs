@@ -81,13 +81,14 @@ impl IExpression for Sum {
 }
 
 fn id_from_terms(terms: &[Expression]) -> String {
-    String::from("sum")
+    String::from("sum(")
         + terms
             .iter()
             .map(|x| x.as_stringable().id())
             .reduce(|x, y| x + y.as_str())
             .unwrap()
             .as_str()
+        + ")"
 }
 
 impl fmt::Debug for Sum {
