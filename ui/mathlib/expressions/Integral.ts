@@ -69,7 +69,6 @@ export class Integral extends Expression {
     }
 
     public evaluate(_values: VariableValueMap): number {
-        // Nah fuck this bro
         return NaN
     }
 
