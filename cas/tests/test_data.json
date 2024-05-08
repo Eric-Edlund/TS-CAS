@@ -30,6 +30,10 @@
 
         },
         {
+            "input": ["Product", {"num": 2}, ["Sum", ["Product", {"num": 1}, ["Exponent", {"var": "x"}, {"num": 2}]], ["Divide", ["Exponent", {"var": "x"}, {"num": 3}], {"num": 3}], ["Divide", ["Product", {"num": 3}, ["Exponent", {"var": "x"}, {"num": 4}]], {"num": 4}]]],
+            "expected": ["Product", {"num": 2}, ["Sum", ["Exponent", {"var": "x"}, {"num": 2}], ["Divide", ["Exponent", {"var": "x"}, {"num": 3}], {"num": 3}], ["Divide", ["Product", {"num": 3}, ["Exponent", {"var": "x"}, {"num": 4}]], {"num": 4}]]]
+        },
+        {
             "Note": "Minor formatting detail to explore in answer",
             "input": ["Integral", ["Sum", ["Exponent", {"var": "x"}, ["Divide", {"num": 3}, {"num": 2}]], ["Product", {"num": 10}, ["Exponent", {"var": "x"}, {"num": 3}]]], {"var": "x"}],
             "expected": ["Sum", ["Product", {"num": 10}, ["Divide", ["Exponent", {"var": "x"}, {"num": 4}], {"num": 4}]], ["Divide", ["Product", {"num": 2}, ["Exponent", {"var": "x"}, ["Divide", {"num": 5}, {"num": 2}]]], {"num": 5}]]
