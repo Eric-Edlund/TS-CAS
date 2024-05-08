@@ -11,6 +11,12 @@
 //! Here's an example of solving/simplifying a trivial integral.
 //!
 //! ```
+//! use ihateintegrals::simplify_incremental;
+//! use ihateintegrals::{integral::Integral, integer::Integer, exponent::Exponent, variable::Variable};
+//! use ihateintegrals::product::product_of;
+//! use ihateintegrals::graph::Graph;
+//! use ihateintegrals::EvaluateFirstProfile;
+//!
 //! // Create an expression for the integral of 2x with respect to x
 //! let start = Integral::of(
 //!     product_of(&[Integer::of(2), Variable::of("x")]),
@@ -31,7 +37,7 @@
 //! );
 //!
 //! // Assess the produced derivation graph
-//! let graph: &Graph = handle.get_deriver();
+//! let graph: &Graph = handle.deriver();
 //! ```
 //!
 
@@ -289,10 +295,11 @@ fn build_path(graph: &Graph, start_exp: &Expression, start: NodeIndex, end: Node
 
 #[cfg(test)]
 mod tests {
-    use crate::expressions::Exponent;
+    use crate::{expressions::Exponent, integral::Integral, product::product_of, sum::sum_of};
 
-    use self::expressions::{product::product_of, sum::sum_of, Integer, Integral, Variable};
+    use integer::Integer;
     use optimization_profiles::BruteForceProfile;
+    use variable::Variable;
 
     use super::*;
 
