@@ -1,47 +1,77 @@
-# A Computer Algebra System built in TypeScript + Rust
+<div align="center">
 
-Does integrals so I don't have to. Also has a UI.
+# ihateintegrals
 
+<img style="width: 25%; aspect-ratio: 1" src="public/icon.svg">
 
-## Building the Website
+<br>
+<br>
+</div>
 
-Run the "npm *" tasks from the project root. They're listed
-in package.json.
-It will compile all the ts files into a bundle.js in `public`.
+An open source computer algebra system focused on solving frustrating integrals.
+Comes with a [website](https://ihateintegrals.com).
 
-Then run `npm run serve` to start a local dev server and devigate
-to one of the html files in `public`.
+## Getting Started
 
-## Testing
+These instructions will get you a copy of the project up and running on your
+local machine for development and testing purposes. See deployment for notes on
+how to deploy the project on a live system.
 
-The project uses jest.
-Test files should go in the 'tests' directory, although it 
-doesn't matter where you put them. Test files must end in '.test.ts'.
+### Prerequisites
 
-To do the tests, run "npm test"
-You have to have 'jest' installed on your system.
+To build the library in `cas` you Rust installed. To build the website, you
+additionally need npm and jest.
 
-## How it Works
+### Installing
 
-Equation rendering is done with MathJax
-Read the theory document in `mathlib` directory.
-Expression parsing is done with ANTLR.
+Build the library:
 
-## ANTLR
+```bash
+cd cas
+cargo build
+```
 
-The ANTLR runtime is a dependency of the project. The way this work is
-in the src files there is a grammar file (ending in .g) which describes
-the grammar for parsing math expressions. We use the command line tool
-antlr4 to turn this file into generated JS code which will parse math 
-expressions. You have to install antlr4 on your system. On KDE Neon it was
+Run the cas cli test tool:
 
-    sudo apt install antlr4
+```bash
+cd cas
+echo "[\"Integral\", [\"Divide\", [\"Sum\", [\"Product\", {\"num\": 3}, [\"Exponent\", {\"var\": \"x\"}, {\"num\": 2}]], {\"var\": \"x\"}, {\"num\": 2}], [\"Divide\", {\"num\": 1}, [\"Product\", {\"num\": 2}, {\"var\": \"x\"}]]], {\"var\": \"x\"}]
+" | cargo run -- --depth 20 --report-statistics --max-derivations 5000
+```
 
-but this is a popular tool, and I'm sure you can find it other ways.
-I've added a dependency to the project which adds the necessary
-runtime files. The generated JS files require these runtime files 
-to work. They will be shipped to the client browser along with everything 
-else.
+Build the website:
 
-Good luck.
+```bash
+npm run build
+npm run serve # Starts local dev server at localhost:8080
+```
 
+## Running the tests
+
+Explain how to run the automated tests for this system
+
+Tests for the website are run with `npm run test`. The library is tested with
+the `cargo test` command.
+
+### CAS Library Tests
+
+The cas system has many unit tests which are run with `cargo test`. There are
+also integration tests which verify that the capabilities of the derivation
+process as a whole do not degrade during optimization which is still happening.
+These are run with `cargo test --test '*'`.
+
+## Built With
+
+-   [Rust](https://www.rust-lang.org/) - Library language
+-   [TypeScript](https://www.typescriptlang.org/) - Website typing
+-   [MathQuill](http://mathquill.com/) - Latex expression input
+-   [MathJax](https://www.mathjax.org/) - Math rendering
+
+## Contributing
+
+This project is in a very early stage and contributions probably won't be helpful.
+
+## License
+
+This project is licensed under the MIT License - see the
+[LICENSE.md](LICENSE.md) file for details
