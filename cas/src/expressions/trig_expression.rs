@@ -44,9 +44,7 @@ impl fmt::Display for TrigFn {
     }
 }
 
-/**
-* Represents any of sin, cos, tan, sec, csc, cot, and arc*
-*/
+/// Represents any of sin, cos, tan, sec, csc, cot, and arc*
 #[derive(PartialEq, Eq, Hash, Clone)]
 pub struct TrigExp {
     pub operation: TrigFn,
@@ -73,9 +71,7 @@ impl TrigExp {
         self.exp.clone()
     }
 
-    /**
-     * True if the expression is an arc trig function.
-     */
+    /// True if the expression is an arc trig function.
     pub fn arc(&self) -> bool {
         matches!(
             self.operation,

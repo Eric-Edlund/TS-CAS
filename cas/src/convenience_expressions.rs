@@ -1,7 +1,13 @@
 #![allow(dead_code)]
 use std::cmp::Ordering;
 
-use crate::{derivation_rules::helpers::dependent_variables, expressions::{product::product_of, trig_expression::TrigFn, AbsoluteValue, Exponent, Expression, Fraction, Integer, Product, Sum, TrigExp, Variable}};
+use crate::{
+    derivation_rules::helpers::dependent_variables,
+    expressions::{
+        product::product_of, trig_expression::TrigFn, AbsoluteValue, Exponent, Expression,
+        Fraction, Integer, Product, Sum, TrigExp, Variable,
+    },
+};
 
 pub fn product(f: Expression, f1: Expression) -> Expression {
     Product::of(&[f, f1]).unwrap()
@@ -18,7 +24,6 @@ pub fn sum_of_iter(terms: &mut dyn Iterator<Item = Expression>) -> Expression {
     }
     Sum::of(&terms).unwrap()
 }
-
 
 pub fn power(b: Expression, p: Expression) -> Expression {
     Exponent::of(b, p)
@@ -75,19 +80,17 @@ pub fn abs(exp: Expression) -> Expression {
     AbsoluteValue::of(exp)
 }
 
-/**
-* Returns a version of the expression with the products ordered
-* nicely. This is stuff like 7a instead of a7.
-* Not recursive.
-*/
+/// Returns a version of the expression with the products ordered
+/// nicely. This is stuff like 7a instead of a7.
+/// Not recursive.
 pub fn ordered(exp: Expression) -> Expression {
     match exp {
         Expression::Product(p) => {
             let mut factors = p.factors().clone();
             factors.sort_by(factor_ord);
             product_of(&factors)
-        },
-        _ => exp
+        }
+        _ => exp,
     }
 }
 
@@ -104,18 +107,20 @@ fn factor_ord(a: &Expression, b: &Expression) -> Ordering {
         return Ordering::Equal;
     }
 
-    let min_a = vars_a.iter()
+    let min_a = vars_a
+        .iter()
         .map(|e| match e {
             Expression::Variable(v) => v.symbol(),
-            _ => panic!()
+            _ => panic!(),
         })
         .min_by(|a, b| a.cmp(b))
         .unwrap();
 
-    let min_b = vars_b.iter()
+    let min_b = vars_b
+        .iter()
         .map(|e| match e {
             Expression::Variable(v) => v.symbol(),
-            _ => panic!()
+            _ => panic!(),
         })
         .min_by(|a, b| a.cmp(b))
         .unwrap();

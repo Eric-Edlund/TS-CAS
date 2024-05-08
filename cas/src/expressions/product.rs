@@ -5,9 +5,7 @@ use serde_json::{json, Value};
 
 use super::{Expression, IExpression, Integer, EXPRESSION_INSTANCES};
 
-/**
-* Stores 2 or more ordered expressions as a product.
-*/
+/// Stores 2 or more ordered expressions as a product.
 #[derive(PartialEq, Eq, Hash)]
 pub struct Product {
     _factors: Vec<Expression>,
@@ -18,10 +16,8 @@ impl Product {
         &self._factors
     }
 
-    /**
-     * Creates a product from the given factors.
-     * @param factors Length >= 2
-     */
+    /// Creates a product from the given factors.
+    /// - factors Length >= 2
     pub fn of(factors: &[Expression]) -> Result<Expression, ()> {
         let id = {
             let mut tmp = String::from("product");
@@ -56,11 +52,9 @@ impl Product {
     }
 }
 
-/**
-* Takes 0 or more expressions, returning a product of them
-* if there are more than 1, or just the 1 if there is only 1.
-* If no expressions are given, returns the integer 1.
-*/
+/// Takes 0 or more expressions, returning a product of them
+/// if there are more than 1, or just the 1 if there is only 1.
+/// If no expressions are given, returns the integer 1.
 pub fn product_of(factors: &[Expression]) -> Expression {
     if factors.is_empty() {
         return Integer::of(1);
@@ -71,11 +65,9 @@ pub fn product_of(factors: &[Expression]) -> Expression {
     Product::of(factors).unwrap()
 }
 
-/**
-* Produces a product from the expressions.
-* If there are no expressions, returns 1.
-* If there is only 1 expression, returns it.
-*/
+/// Produces a product from the expressions.
+/// If there are no expressions, returns 1.
+/// If there is only 1 expression, returns it.
 pub fn product_of_iter(factors: &mut dyn Iterator<Item = Expression>) -> Expression {
     let factors = factors.collect::<Vec<Expression>>();
     if factors.is_empty() {
