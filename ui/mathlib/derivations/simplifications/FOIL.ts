@@ -53,7 +53,7 @@ export class FOIL extends NoContextExpressionSimplificationRule {
                     r: Relationship.Equal,
                     n1: result
                 },
-                "Foil that shit",
+                "Foil it",
                 RULE_ID
             )
         )

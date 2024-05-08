@@ -54,7 +54,7 @@ export class Flattener extends arithmeticVisitor<ClosedContext> {
      * sets those sums parents to the ctx.
      * The given sumcontext and all its sum children
      * must have exactly 2 expression part children.
-     * This prevents the mind fuck of rearranging the
+     * This prevents us from needing to rearranging the
      * AST on the way back out.
      */
     private flattenAddition(ctx: SumContext): ClosedContext {
