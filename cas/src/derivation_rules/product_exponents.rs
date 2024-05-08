@@ -58,6 +58,12 @@ impl DerivationRule for ProductExponents {
             })
             .collect::<Vec<_>>();
 
+        let result = product_of(&factors);
+
+        if result == input {
+            return vec![];
+        }
+
         vec![(
             product_of(&factors),
             Argument::new(String::from("Add exponents"), vec![input], self.name()),
