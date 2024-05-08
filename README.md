@@ -3,10 +3,11 @@
 # ihateintegrals
 
 <img style="width: 25%; aspect-ratio: 1" src="public/icon.svg">
-
-<br>
-<br>
 </div>
+
+<br/>
+<br/>
+<br/>
 
 An open source computer algebra system focused on solving frustrating integrals.
 Comes with a [website](https://ihateintegrals.com).

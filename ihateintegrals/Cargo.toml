@@ -6,6 +6,8 @@ edition = "2021"
 authors = ["Eric Edlund <ericedlund2017@gmail.com>"]
 license = "MIT"
 categories = ["mathematics"]
+repository = "https://github.com/Eric-Edlund/ihateintegrals"
+homepage = "https://ihateintegrals.com"
 
 [[bin]]
 name = "cmd"
