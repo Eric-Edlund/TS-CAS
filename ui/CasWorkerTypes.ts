@@ -29,7 +29,7 @@ export interface IncrementalGraphResult extends IncrementalResult {
         // Expression json 
         source: string,
         // Argument text
-        edge: string,
+        edge: any,
         target: string, 
     }[]
 }

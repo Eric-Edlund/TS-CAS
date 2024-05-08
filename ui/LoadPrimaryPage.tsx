@@ -64,7 +64,7 @@ document.addEventListener("DOMContentLoaded", () => {
             return
         }
 
-        for (const { source, target } of newData) {
+        for (const { source, target, edge: argument} of newData) {
             let n = parseExpressionJSON(source)
             let n1 = parseExpressionJSON(target)
             graph().addEdge(
@@ -73,7 +73,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 new Argument(
                     setOf(n),
                     { n: n, r: Relationship.Equal, n1: n1 },
-                    "From backend",
+                    argument.rule_name,
                     "unknown"
                 )
             )
