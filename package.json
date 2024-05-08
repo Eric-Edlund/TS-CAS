@@ -7,7 +7,6 @@
     "test": "jest",
     "format": "prettier --write ui/**/*",
     "build": "npx webpack",
-    "build-grammar": "java -jar ~/antlr4.jar -Dlanguage=TypeScript -visitor ./ui/mathlib/userinput/arithmetic.g4",
     "serve": "npx webpack serve"
   },
   "author": "Eric Edlund",

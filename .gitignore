@@ -11,3 +11,4 @@ public/*.wasm
 cas/Cargo.lock
 pkg
 cas/src/derivation_rules/integral_of_arctrig.rs
+public/*.js
