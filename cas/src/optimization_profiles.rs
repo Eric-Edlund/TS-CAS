@@ -16,7 +16,9 @@ use crate::{
 /// to minimize derivation steps.
 pub trait OptimizationProfile {
     /// Generates a set of equivalent expressions from the given expression.
-    fn find_equivalents(&mut self, exp: &Expression) -> Vec<(Expression, Rc<Argument>)>;
+    /// Also gives a bool. If true, the returned expressions should be prioritized in the
+    /// derivation process.
+    fn find_equivalents(&mut self, exp: &Expression) -> (Vec<(Expression, Rc<Argument>)>, bool);
 
     /// Sets the list of rules which are allowed to be used, if supported.
     /// Returns Err if not supported.
@@ -49,25 +51,29 @@ impl BruteForceProfile {
 }
 
 impl OptimizationProfile for BruteForceProfile {
-    fn find_equivalents(&mut self, exp: &Expression) -> Vec<(Expression, Rc<Argument>)> {
+    fn find_equivalents(&mut self, exp: &Expression) -> (Vec<(Expression, Rc<Argument>)>, bool) {
         if self.already_seen.contains(exp) {
-            return vec![];
+            return (vec![], false);
         }
         self.already_seen.insert(exp.clone());
         let rules = *ALL_RULES.read().unwrap();
-        rules
-            .iter()
-            .filter(|rule| self.allowed_rules.contains(&rule.name()))
-            .flat_map(|rule| {
-                let result = equiv(exp, &|e| rule.apply(e.clone()), &|_| GuardDecision::Explore);
-                if let Option::Some(ref debug) = self.debug {
-                    if !result.is_empty() {
-                        *debug.borrow_mut().rule_uses.entry(rule.name()).or_insert(0) += 1;
+        (
+            rules
+                .iter()
+                .filter(|rule| self.allowed_rules.contains(&rule.name()))
+                .flat_map(|rule| {
+                    let result =
+                        equiv(exp, &|e| rule.apply(e.clone()), &|_| GuardDecision::Explore);
+                    if let Option::Some(ref debug) = self.debug {
+                        if !result.is_empty() {
+                            *debug.borrow_mut().rule_uses.entry(rule.name()).or_insert(0) += 1;
+                        }
                     }
-                }
-                result
-            })
-            .collect()
+                    result
+                })
+                .collect(),
+            false,
+        )
     }
 
     fn set_rules(&mut self, rules: &[String]) -> Result<(), ()> {
@@ -103,9 +109,9 @@ impl EvaluateFirstProfile {
 }
 
 impl OptimizationProfile for EvaluateFirstProfile {
-    fn find_equivalents(&mut self, exp: &Expression) -> Vec<(Expression, Rc<Argument>)> {
+    fn find_equivalents(&mut self, exp: &Expression) -> (Vec<(Expression, Rc<Argument>)>, bool) {
         if self.defeated_by_identities.contains(exp) {
-            return vec![];
+            return (vec![], false);
         }
 
         for identity in *IDENTITIES.read().unwrap() {
@@ -128,12 +134,12 @@ impl OptimizationProfile for EvaluateFirstProfile {
                         .or_insert(0) += 1;
                 }
                 self.defeated_by_identities.insert(exp.clone());
-                return result;
+                return (result, true);
             }
         }
 
         if self.defeated_by_arithmetic.contains(exp) {
-            return vec![];
+            return (vec![], false);
         }
 
         for rule in *ARITHMETIC.read().unwrap() {
@@ -143,7 +149,7 @@ impl OptimizationProfile for EvaluateFirstProfile {
                     *debug.borrow_mut().rule_uses.entry(rule.name()).or_insert(0) += 1;
                 }
                 self.defeated_by_arithmetic.insert(exp.clone());
-                return result;
+                return (result, true);
             }
         }
 
@@ -160,12 +166,12 @@ impl OptimizationProfile for EvaluateFirstProfile {
                     *debug.borrow_mut().rule_uses.entry(rule.name()).or_insert(0) += 1;
                 }
                 self.defeated_by_arithmetic.insert(exp.clone());
-                return result;
+                return (result, true);
             }
         }
 
         if self.seen_by_strict_simplifying_rules.contains(exp) {
-            return vec![];
+            return (vec![], false);
         }
         self.seen_by_strict_simplifying_rules.insert(exp.clone());
         let mut strict_simplifying = STRICT_SIMPLIFYING_RULES
@@ -184,38 +190,42 @@ impl OptimizationProfile for EvaluateFirstProfile {
             .peekable();
 
         if strict_simplifying.peek().is_some() {
-            return strict_simplifying.collect();
+            return (strict_simplifying.collect(), true);
         }
 
         let all_rules = REMAINING_RULES.read().unwrap();
         let outside_integrands = ONLY_OUTSIDE_INTEGRANDS.read().unwrap();
-        all_rules
-            .iter()
-            .flat_map(|rule| {
-                let result = equiv(exp, &|e| rule.apply(e.clone()), &|_| GuardDecision::Explore);
-                if let Option::Some(ref debug) = self.debug {
-                    if !result.is_empty() {
-                        *debug.borrow_mut().rule_uses.entry(rule.name()).or_insert(0) += 1;
+        (
+            all_rules
+                .iter()
+                .flat_map(|rule| {
+                    let result =
+                        equiv(exp, &|e| rule.apply(e.clone()), &|_| GuardDecision::Explore);
+                    if let Option::Some(ref debug) = self.debug {
+                        if !result.is_empty() {
+                            *debug.borrow_mut().rule_uses.entry(rule.name()).or_insert(0) += 1;
+                        }
                     }
-                }
-                result
-            })
-            .chain(outside_integrands.iter().flat_map(|rule| {
-                let result = equiv(exp, &|e| rule.apply(e.clone()), &|e| {
-                    if matches!(e, Expression::Integral(_)) {
-                        GuardDecision::TurnAround
-                    } else {
-                        GuardDecision::Explore
+                    result
+                })
+                .chain(outside_integrands.iter().flat_map(|rule| {
+                    let result = equiv(exp, &|e| rule.apply(e.clone()), &|e| {
+                        if matches!(e, Expression::Integral(_)) {
+                            GuardDecision::TurnAround
+                        } else {
+                            GuardDecision::Explore
+                        }
+                    });
+                    if let Option::Some(ref debug) = self.debug {
+                        if !result.is_empty() {
+                            *debug.borrow_mut().rule_uses.entry(rule.name()).or_insert(0) += 1;
+                        }
                     }
-                });
-                if let Option::Some(ref debug) = self.debug {
-                    if !result.is_empty() {
-                        *debug.borrow_mut().rule_uses.entry(rule.name()).or_insert(0) += 1;
-                    }
-                }
-                result
-            }))
-            .collect()
+                    result
+                }))
+                .collect(),
+            false,
+        )
     }
 
     fn set_rules(&mut self, _rules: &[String]) -> Result<(), ()> {
@@ -253,7 +263,8 @@ mod tests {
         dbg!(&first);
 
         profile
-            .find_equivalents(&first.first().unwrap().0)
+            .find_equivalents(&first.0.first().unwrap().0)
+            .0
             .first()
             .unwrap()
             .0
