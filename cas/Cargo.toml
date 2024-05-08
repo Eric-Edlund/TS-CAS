@@ -1,7 +1,7 @@
 [package]
 name = "ihateintegrals"
 description = "A computer algebra library for solving integrals."
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 authors = ["Eric Edlund <ericedlund2017@gmail.com>"]
 license = "MIT"
