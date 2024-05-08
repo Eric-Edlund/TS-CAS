@@ -177,7 +177,6 @@ pub static REMAINING_RULES: RwLock<&[&(dyn DerivationRule + Sync)]> = RwLock::ne
     &integral_of_negative_one::FlipNegativeOne {},
     &split_fractions_over_addition::SplitFractionsAddition {},
     &multiply_exponents::MultiplyExponents {},
-    &product_exponents::ProductExponents {},
 ]);
 
 pub static ONLY_OUTSIDE_INTEGRANDS: RwLock<&[&(dyn DerivationRule + Sync)]> =
@@ -199,6 +198,7 @@ pub static STRICT_SIMPLIFYING_RULES: RwLock<&[&(dyn DerivationRule + Sync)]> = R
     &derivative_of_constant::DerivativeOfConst {},
     &derivative_of_power::PowerRule {},
     &derivative_of_sum::DerivativeOfSum {},
+    &product_exponents::ProductExponents {},
 ]);
 
 /// These rules have the same properties as arithmetic rules when their

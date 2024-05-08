@@ -22,9 +22,7 @@ pub enum GuardDecision {
 }
 
 /// Decomposes expressions, finding equivalents for their components using
-/// the given equivalence finding rule. Only applies the equivalence function to
-/// subexpressions satisfying the guard predicate. Children of expressions which
-/// do not satisfy the guard are explored regardless.
+/// the given equivalence finding rule.
 pub fn equiv(
     exp: &Expression,
     direct: &EquivFn,
