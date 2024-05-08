@@ -338,6 +338,6 @@ mod tests {
         );
 
         // Assess the produced derivation graph
-        let graph: &Graph = handle.deriver();
+        let _graph: &Graph = handle.deriver();
     }
 }
