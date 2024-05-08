@@ -6,7 +6,7 @@ use crate::{
     expressions::{product::product_of_iter, Expression, Fraction},
 };
 
-use super::{helpers::children_rec, DerivationRule};
+use super::DerivationRule;
 
 /// a(b/c) = (ab)/c
 ///
