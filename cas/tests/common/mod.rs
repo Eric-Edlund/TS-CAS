@@ -3,7 +3,11 @@
 use std::thread;
 use std::{sync::Mutex, thread::JoinHandle};
 
-use cas::{read_object_from_json, simplify_incremental_js};
+use anyhow::anyhow;
+use cas::{
+    expression_from_json, simplify_incremental, BruteForceProfile, DerivationHandle,
+    EvaluateFirstProfile, OptimizationProfile,
+};
 use once_cell::sync::Lazy;
 
 /// Functions used to generate JSON expressions for testing the API.
@@ -73,6 +77,20 @@ pub const T: &str = "{\"var\":\"t\"}";
 /// and expected solution.
 pub type Problem = (String, String);
 
+pub fn simplify_incremental_js(
+    expression_json: &str,
+    optimizer: &str,
+) -> Result<DerivationHandle, anyhow::Error> {
+    let exp = expression_from_json(expression_json)?;
+    let opt: Box<dyn OptimizationProfile> = match optimizer {
+        "brute_force" => BruteForceProfile::new(),
+        "evaluate_first" => EvaluateFirstProfile::new(),
+        _ => return Err(anyhow!("Invalid optimization profile given")),
+    };
+
+    Ok(simplify_incremental(&exp, opt, None))
+}
+
 /// Takes a start and expected expression in MathJSON format
 /// and runs the deriver. Tests if the expected value is derived
 /// and marked as the simplest equivalent found.
@@ -85,7 +103,7 @@ fn assert_simplify(start: &str, expected: &str, max_derivations: u32) -> bool {
     handle.do_pass(max_derivations);
     let graph = handle.get_deriver();
 
-    let Ok(expected_exp) = read_object_from_json(expected) else {
+    let Ok(expected_exp) = expression_from_json(expected) else {
         println!("Failed to parse expected expression.");
         return false;
     };

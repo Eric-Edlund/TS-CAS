@@ -17,11 +17,11 @@ pub mod integral;
 pub mod logarithm;
 pub mod negation;
 pub mod product;
-mod read_from_json;
+pub mod read_from_json;
 pub mod substitution;
 pub mod sum;
 pub mod trig_expression;
-mod undefined;
+pub mod undefined;
 pub mod variable;
 
 pub use absolute_value::AbsoluteValue;
@@ -34,7 +34,6 @@ pub use integral::Integral;
 pub use logarithm::Logarithm;
 pub use negation::Negation;
 pub use product::Product;
-pub use read_from_json::*;
 use serde_json::Value;
 pub use sum::Sum;
 pub use trig_expression::TrigExp;
@@ -59,16 +58,20 @@ pub trait IExpression {
 // For JS interop
 pub type ExpressionId = String;
 
-/// This gives idiomatic disbatching at a small cost of boilerplate
-/// actually the boilerplate is pretty conventient- it centralizes
-/// the trivial "this expression type has property" boilerplate
-/// which in JS would be on each class separately. With this, we can
-/// implement stuff like hash as an implementation for the enum.
+/// Expression enum with variants for every expression type. Expressions use flywheel pattern and
+/// should be created using the respective static function for that expression type.
 ///
-/// We also get exaustive checking for Expression matches.
+/// ```
+/// Integer::of(1); // Returns an Expression
+/// ```
 ///
-/// If we want to access an Expression attribute, we have to
-/// unwrap the enum and consider each variant.
+/// Expressions are immutable and this class only holds references to them. To access an
+/// expression's children, use the specific variant.
+///
+/// ```
+/// let Expression::Integer(i) = exp else {return};
+/// i.value();
+/// ```
 #[derive(Eq, Clone)]
 pub enum Expression {
     Negation(Arc<Negation>),
@@ -87,8 +90,6 @@ pub enum Expression {
     Substitution(Arc<Substitution>),
     Undefined,
 }
-
-impl Expression {}
 
 impl fmt::Debug for Expression {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {

@@ -19,7 +19,7 @@ impl DerivationRule for CancelNegatives {
             Expression::Product(ref p) => p.clone(),
             Expression::Negation(ref n) => {
                 sign = true;
-                match n.child() {
+                match n.exp() {
                     Expression::Product(p) => p,
                     _ => return vec![],
                 }
@@ -33,7 +33,7 @@ impl DerivationRule for CancelNegatives {
             match factor {
                 Expression::Negation(f) => {
                     sign = !sign;
-                    new_factors.push(f.child().clone());
+                    new_factors.push(f.exp().clone());
                 }
                 _ => new_factors.push(factor.clone()),
             }

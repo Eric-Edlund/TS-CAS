@@ -46,7 +46,7 @@ impl DerivationRule for SumCoefficientsOfTerms {
         let expanded_terms = terms
             .iter()
             .map(|term| match term {
-                Expression::Negation(n) => (true, n.child()),
+                Expression::Negation(n) => (true, n.exp()),
                 _ => (false, term.clone()),
             })
             .map(|term| match term.1 {

@@ -1,6 +1,6 @@
 use cas::{
-    get_all_equivalents, read_object_from_json, simplify_internal, BruteForceProfile,
-    DerivationDebugInfo, EvaluateFirstProfile, OptimizationProfile,
+    expression_from_json, get_all_equivalents, simplify, BruteForceProfile, DerivationDebugInfo,
+    EvaluateFirstProfile, OptimizationProfile,
 };
 use clap::Parser;
 use serde_json::json;
@@ -62,18 +62,19 @@ pub fn main() -> anyhow::Result<()> {
             None
         };
 
-        let expression = match read_object_from_json(&input) {
+        let expression = match expression_from_json(&input) {
             Ok(e) => e,
             _ => continue,
         };
 
-        let opt: Box<dyn OptimizationProfile> = match optimizer.as_str() {
-            "brute_force" => BruteForceProfile::new(),
-            "evaluate_first" => EvaluateFirstProfile::new(),
-            _ => panic!("Invalid optimizer"),
-        };
+        let (opt, opt2): (Box<dyn OptimizationProfile>, Box<dyn OptimizationProfile>) =
+            match optimizer.as_str() {
+                "brute_force" => (BruteForceProfile::new(), BruteForceProfile::new()),
+                "evaluate_first" => (EvaluateFirstProfile::new(), EvaluateFirstProfile::new()),
+                _ => panic!("Invalid optimizer"),
+            };
 
-        let result = &simplify_internal(
+        let result = &simplify(
             &expression,
             depth,
             opt,
@@ -100,7 +101,7 @@ pub fn main() -> anyhow::Result<()> {
         if !result.success {
             println!(
                 "{}",
-                get_all_equivalents(&input, depth, &optimizer, args.max_derivations)
+                get_all_equivalents(&expression, opt2, depth, args.max_derivations)
             )
         }
     }

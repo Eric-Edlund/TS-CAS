@@ -21,7 +21,7 @@ impl DerivationRule for PullOutNegation {
         };
 
         vec![(
-            Negation::of(Derivative::of(n.child(), derivative.relative_to())),
+            Negation::of(Derivative::of(n.exp(), derivative.relative_to())),
             Argument::new("Pull out constant -1".into(), vec![input], self.name()),
         )]
     }
