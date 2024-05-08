@@ -70,7 +70,7 @@ impl Deriver {
                 let expression = self.graph.node_weight(i).unwrap().clone();
                 let equivalents = self.optimizer.find_equivalents(&expression);
 
-                for (derived, argument) in equivalents {
+                for (derived, argument) in equivalents.0 {
                     let index = if let Entry::Vacant(e) = self.node_indices.entry(derived.clone()) {
                         let result = self.graph.add_node(derived.clone());
                         e.insert(result);
@@ -111,13 +111,19 @@ impl Deriver {
 
             let equivalents = self.optimizer.find_equivalents(&expression);
 
-            for (derived, argument) in equivalents {
+            for (derived, argument) in equivalents.0 {
                 let index = if let Entry::Vacant(e) = self.node_indices.entry(derived.clone()) {
                     let result = self.graph.add_node(derived.clone());
                     e.insert(result);
                     derivations += 1;
-                    self.derivation_queue
-                        .push((u32::MAX - complexity_rec(&derived), result));
+                    self.derivation_queue.push((
+                        if equivalents.1 {
+                            u32::MAX
+                        } else {
+                            u32::MAX / 2
+                        } - complexity_rec(&derived),
+                        result,
+                    ));
                     result
                 } else {
                     self.node_indices[&derived]

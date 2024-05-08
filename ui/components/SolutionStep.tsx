@@ -7,7 +7,7 @@ import { Variable } from "../mathlib/expressions/Variable"
 import { ConstantExp } from "../mathlib/expressions/ConstantExp"
 
 interface Props {
-    argument: string
+    argument: any
     expression: Expression
 }
 
