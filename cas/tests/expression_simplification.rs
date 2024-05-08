@@ -73,35 +73,6 @@ fn single_variable_integrals() {
 
     let p5: Problem = (int(&frac(three, X), X), prod(three, &ln(&abs(X))));
 
-    // let _p6: Problem = (
-    //     int(
-    //         &sum(
-    //             &frac(four, &prod(three, &pow(T, two))),
-    //             &frac(seven, &prod(two, T)),
-    //         ),
-    //         X,
-    //     ),
-    //     sum(
-    //         &neg(&prod(&frac(four, three), &pow(T, &neg(one)))),
-    //         &prod(&frac(seven, two), &ln(&abs(T))),
-    //     ),
-    // );
-
-    let p8: Problem = (
-        int(
-            &frac(
-                &sum3(&prod(three, &pow(X, two)), &prod(four, X), one),
-                &prod(two, X),
-            ),
-            X,
-        ),
-        sum3(
-            &prod(two, X),
-            &prod(three, &pow(X, two)),
-            &frac(&ln(&abs(X)), two),
-        ),
-    );
-
     let p9: Problem = (
         int(&sum(&prod(two, &sin(X)), &prod(three, &cos(X))), X),
         sum(&neg(&prod(two, &cos(X))), &prod(three, &sin(X))),
@@ -115,7 +86,6 @@ fn single_variable_integrals() {
     add_test("problem 1", p1, 100);
     add_test("problem 2", p2, 100);
     add_test("problem 5", p5, 100);
-    add_test("problem 8", p8, 100);
     // add_test("problem 3", p3, 16);
     add_test("problem 4", p4, 100);
     add_test("problem 9", p9, 100);

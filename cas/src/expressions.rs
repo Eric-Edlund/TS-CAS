@@ -61,14 +61,14 @@ pub type ExpressionId = String;
 /// Expression enum with variants for every expression type. Expressions use flywheel pattern and
 /// should be created using the respective static function for that expression type.
 ///
-/// ```
-/// Integer::of(1); // Returns an Expression
-/// ```
-///
 /// Expressions are immutable and this class only holds references to them. To access an
 /// expression's children, use the specific variant.
 ///
 /// ```
+/// use ihateintegrals::integer::Integer;
+/// use ihateintegrals::Expression;
+///
+/// let exp: Expression = Integer::of(1);
 /// let Expression::Integer(i) = exp else {return};
 /// i.value();
 /// ```

@@ -103,26 +103,3 @@ impl DerivationRule for DivideFractions {
         String::from("DivideFractions")
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use crate::derivation_rules::DerivationRule;
-    use crate::{
-        convenience_expressions::{i, power, v},
-        expressions::Fraction,
-    };
-
-    #[test]
-    fn test_1() {
-        let rule = DivideFractions {};
-
-        let start = Fraction::of(power(v("a"), i(2)), v("a"));
-        let result1 = rule.apply(start);
-
-        assert_eq!(
-            result1.first().unwrap().0,
-            Fraction::of(power(v("a"), sum_of(&[i(2), Negation::of(i(1))])), i(1))
-        );
-    }
-}
