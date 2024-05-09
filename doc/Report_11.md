@@ -2,7 +2,7 @@
 
 4/29/24
 
-## Worked 13 hours.
+Worked 13 hours.
 
 ## This Week
 
