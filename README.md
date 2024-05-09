@@ -28,7 +28,7 @@ additionally need npm and jest.
 Build the library:
 
 ```bash
-cd cas
+cd ihateintegrals
 cargo build
 ```
 
